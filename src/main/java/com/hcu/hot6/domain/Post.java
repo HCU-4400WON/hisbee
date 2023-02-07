@@ -41,8 +41,7 @@ public abstract class Post {
     private boolean isCompleted;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
-    @Column(nullable = false)
+    @JoinColumn(name = "author_id", nullable = false)
     private Member author;
 
     @ManyToMany
