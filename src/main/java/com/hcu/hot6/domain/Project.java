@@ -44,7 +44,7 @@ public class Project extends Post{
         project.setCompleted(false);
 
         // Author 양방향 매핑
-        project.changeAuthor(author);
+        project.registerAuthor(author);
 
         // Project 멤버 변수 지정
         project.setMaxDeveloper(maxDeveloper);
