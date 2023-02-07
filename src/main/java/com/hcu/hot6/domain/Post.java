@@ -36,6 +36,6 @@ public abstract class Post {
     @JoinTable(name = "PostLike",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "member_id"))
-    private List<Member> likedMembers = new ArrayList<>();
+    private List<Member> likes = new ArrayList<>();
 
 }
