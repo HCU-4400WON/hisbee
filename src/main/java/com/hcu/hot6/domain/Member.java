@@ -38,4 +38,5 @@ public class Member {
 
     @OneToMany(mappedBy = "author")
     private List<Post> posts = new ArrayList<>();
+    
 }
