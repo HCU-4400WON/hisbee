@@ -41,7 +41,7 @@ public class Study extends Post {
         study.setCompleted(false);
 
         // Author 양방향 매핑
-        study.changeAuthor(author);
+        study.registerAuthor(author);
 
         // Study 멤버 변수 지정
         study.setMaxMember(maxMember);

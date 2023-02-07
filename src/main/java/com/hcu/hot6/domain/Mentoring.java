@@ -42,7 +42,7 @@ public class Mentoring extends Post{
         mentoring.setCompleted(false);
 
         // Author 양방향 매핑
-        mentoring.changeAuthor(author);
+        mentoring.registerAuthor(author);
 
         // Mentoring 멤버 변수 지정
         mentoring.setMaxMentor(maxMentor);
