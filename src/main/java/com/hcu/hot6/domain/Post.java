@@ -9,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "dtype")
 public abstract class Post {
 
