@@ -51,6 +51,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.26",
     "react-router": "^6.8.1",
-    "react-router-dom": "^6.8.1"
+    "react-router-dom": "^6.8.1",
+    "tailwind-styled-components": "^2.2.0"
   }
 }
