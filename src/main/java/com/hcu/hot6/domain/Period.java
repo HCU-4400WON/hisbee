@@ -32,4 +32,5 @@ public class Period {
         this.projectStart = projectStart;
         this.projectEnd = projectEnd;
     }
+
 }

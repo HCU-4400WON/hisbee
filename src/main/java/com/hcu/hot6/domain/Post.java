@@ -42,6 +42,7 @@ public abstract class Post {
     @JoinTable(name = "PostLike",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "member_id"))
+    @Builder.Default
     private List<Member> likes = new ArrayList<>();
 
     //=== 연관관계 메서드 ===//
@@ -50,22 +51,14 @@ public abstract class Post {
         author.getPosts().add(this);
     }
 
-    @Builder
-    public Post(String title, String content, String contact, LocalDateTime postEnd, LocalDateTime projectStart, LocalDateTime projectEnd, Member author, int total){
-        Assert.notNull(title, "모집글의 제목(title)은 필수 입력사항입니다.");
-        Assert.notNull(contact, "모집글의 문의처(contact)은 필수 입력사항입니다.");
-        Assert.notNull(contact, "모집글의 작성자(author)은 필수 입력사항입니다.");
-
-        Period period = Period.ByPeriodBuilder()
-                .postEnd(postEnd)
-                .projectStart(projectStart)
-                .projectEnd(projectEnd)
-                .build();
+    public Post(String title, String content, String contact, Member author, int total){
+        Assert.hasText(title, "모집글의 제목(title)은 필수 입력사항입니다.");
+        Assert.hasText(contact, "모집글의 문의처(contact)은 필수 입력사항입니다.");
+        Assert.hasText(contact, "모집글의 작성자(author)은 필수 입력사항입니다.");
 
         this.title = title;
         this.content = content;
         this.contact = contact;
-        this.period = period;
         this.total = total;
         this.isCompleted = false;
         this.registerAuthor(author);

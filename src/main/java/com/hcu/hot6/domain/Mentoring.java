@@ -57,23 +57,12 @@ public class Mentoring extends Post{
 //    }
 
     //=== Builder 사용해서 리팩토링 해보기 ===//
-    @Builder(builderClassName = "ByCreateBuilder", builderMethodName = "ByCreateBuilder")
-    public Mentoring(String title, String content, String contact, LocalDateTime postEnd, LocalDateTime projectStart, LocalDateTime projectEnd, Member author, int maxMentor, int maxMentee, boolean hasPay){
-        super(title, content, contact, postEnd, projectStart, projectEnd, author, (maxMentor + maxMentee));
+    public Mentoring(String title, String content, String contact, LocalDateTime postEnd, LocalDateTime projectStart, LocalDateTime projectEnd, Member author, int maxMentor, int maxMentee, boolean hasPay, int total){
+        super(title, content, contact, author, total);
 
-        Assert.notNull(title, "멘토링의 모집멘토인원(maxMentor)은 필수 입력사항입니다.");
-        Assert.notNull(contact, "멘토링의 모집멘티인원(maxMentee)은 필수 입력사항입니다.");
-        Assert.notNull(contact, "멘토링의 보수유무(hasPay)은 필수 입력사항입니다.");
-
-//        Mentoring mentoring = Mentoring.ByCreateBuilder()
-//                .title(title)
-//                .content(content)
-//                .contact(contact)
-//                .postEnd(postEnd)
-//                .projectStart(projectStart)
-//                .projectEnd(projectEnd)
-//                .author(author)
-//                .build();
+        Assert.hasText(title, "멘토링의 모집멘토인원(maxMentor)은 필수 입력사항입니다.");
+        Assert.hasText(contact, "멘토링의 모집멘티인원(maxMentee)은 필수 입력사항입니다.");
+        Assert.hasText(contact, "멘토링의 보수유무(hasPay)은 필수 입력사항입니다.");
 
         this.maxMentor = maxMentor;
         this.maxMentee = maxMentee;
