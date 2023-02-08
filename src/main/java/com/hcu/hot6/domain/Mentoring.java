@@ -60,9 +60,9 @@ public class Mentoring extends Post{
     public Mentoring(String title, String content, String contact, LocalDateTime postEnd, LocalDateTime projectStart, LocalDateTime projectEnd, Member author, int maxMentor, int maxMentee, boolean hasPay, int total){
         super(title, content, contact, author, total);
 
-        Assert.hasText(title, "멘토링의 모집멘토인원(maxMentor)은 필수 입력사항입니다.");
-        Assert.hasText(contact, "멘토링의 모집멘티인원(maxMentee)은 필수 입력사항입니다.");
-        Assert.hasText(contact, "멘토링의 보수유무(hasPay)은 필수 입력사항입니다.");
+        Assert.notNull(maxMentor, "멘토링의 멘토모집인원(maxMentor)은 필수 입력사항입니다.");
+        Assert.notNull(maxMentee, "멘토링의 멘티모집인원(maxMentee)은 필수 입력사항입니다.");
+        Assert.notNull(hasPay, "멘토링의 보수여부(hasPay)은 필수 입력사항입니다.");
 
         this.maxMentor = maxMentor;
         this.maxMentee = maxMentee;

@@ -54,7 +54,8 @@ public abstract class Post {
     public Post(String title, String content, String contact, Member author, int total){
         Assert.hasText(title, "모집글의 제목(title)은 필수 입력사항입니다.");
         Assert.hasText(contact, "모집글의 문의처(contact)은 필수 입력사항입니다.");
-        Assert.hasText(contact, "모집글의 작성자(author)은 필수 입력사항입니다.");
+        Assert.notNull(author, "모집글의 작성자(author)은 필수 입력사항입니다.");
+        Assert.notNull(total, "모집글의 모집 총 인원(total)은 필수 입력사항입니다.");
 
         this.title = title;
         this.content = content;
