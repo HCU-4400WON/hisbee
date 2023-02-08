@@ -31,7 +31,7 @@ public class PostTest {
 
     @Test
     public void 멘토링_객체_생성() throws Exception{
-        final Member member = new Member();
+        final Member member = createMember();
         final Period period = Period.ByPeriodBuilder()
                 .postEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0))
                 .projectStart(LocalDateTime.of(2023, 3, 3, 0, 0, 0))
@@ -73,7 +73,7 @@ public class PostTest {
 
     @Test
     public void 스터디_객체_생성() throws Exception{
-        final Member member = new Member();
+        final Member member = createMember();
         final Period period = Period.ByPeriodBuilder()
                 .postEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0))
                 .projectStart(LocalDateTime.of(2023, 3, 3, 0, 0, 0))
@@ -110,7 +110,7 @@ public class PostTest {
 
     @Test
     public void 프로젝트_객체_생성() throws Exception{
-        final Member member = new Member();
+        final Member member = createMember();
         final Period period = Period.ByPeriodBuilder()
                 .postEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0))
                 .projectStart(LocalDateTime.of(2023, 3, 3, 0, 0, 0))
@@ -151,6 +151,21 @@ public class PostTest {
         Assertions.assertThat(project.isHasPay()).isEqualTo(true);
         Assertions.assertThat(project.isCompleted()).isEqualTo(false);
         Assertions.assertThat(project.getTotal()).isEqualTo(4);
+    }
+
+    public Member createMember(){
+        return Member.ByMemberBuilder()
+                .email("22000123@handong.ac.kr")
+                .nickname("User1")
+                .isPublic(false)
+                .department(Department.ICT)
+                .position(Position.PLANNER)
+                .bio("안녕하세요. 저는 00학번 ICT학부 000입니다.")
+                .grade(2)
+                .club("MIC")
+                .contact("010-0000-0000")
+                .externalLinks("naver.blog.000.com")
+                .build();
     }
 
 
