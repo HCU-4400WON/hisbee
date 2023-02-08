@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.util.Assert;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +49,7 @@ public abstract class Post {
         author.getPosts().add(this);
     }
 
+    //=== 생성 메서드 ===//
     public Post(String title, String content, String contact, Member author, int total){
         Assert.hasText(title, "모집글의 제목(title)은 필수 입력사항입니다.");
         Assert.hasText(contact, "모집글의 문의처(contact)은 필수 입력사항입니다.");
