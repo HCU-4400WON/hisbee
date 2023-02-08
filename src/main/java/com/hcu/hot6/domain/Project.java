@@ -32,10 +32,10 @@ public class Project extends Post{
         project.setContact(contact);
 
         // LocalDateTime 지정
-        project.setPostStart(LocalDateTime.now());
-        project.setPostEnd(postEnd);
-        project.setProjectStart(projectStart);
-        project.setProjectEnd(projectEnd);
+        project.getPeriod().setPostStart(LocalDateTime.now());
+        project.getPeriod().setPostEnd(postEnd);
+        project.getPeriod().setProjectStart(projectStart);
+        project.getPeriod().setProjectEnd(projectEnd);
 
         // Total 계산 및 지정
         project.setTotal(maxDeveloper + maxPlanner + maxDesigner);

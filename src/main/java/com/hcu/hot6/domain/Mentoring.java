@@ -30,10 +30,10 @@ public class Mentoring extends Post{
         mentoring.setContact(contact);
 
         // LocalDateTime 지정
-        mentoring.setPostStart(LocalDateTime.now());
-        mentoring.setPostEnd(postEnd);
-        mentoring.setProjectStart(projectStart);
-        mentoring.setProjectEnd(projectEnd);
+        mentoring.getPeriod().setPostStart(LocalDateTime.now());
+        mentoring.getPeriod().setPostEnd(postEnd);
+        mentoring.getPeriod().setProjectStart(projectStart);
+        mentoring.getPeriod().setProjectEnd(projectEnd);
 
         // Total 계산 및 지정
         mentoring.setTotal(maxMentor + maxMentee);

@@ -26,14 +26,8 @@ public abstract class Post {
     @Column(nullable = false)
     private String contact;
 
-    @Column(nullable = false)
-    private LocalDateTime postStart;
-    @Column(nullable = false)
-    private LocalDateTime postEnd;
-    @Column(nullable = false)
-    private LocalDateTime projectStart;
-    @Column(nullable = false)
-    private LocalDateTime projectEnd;
+    @Embedded
+    private Period period;
 
     @Column(nullable = false)
     private int total;

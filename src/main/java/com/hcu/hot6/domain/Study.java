@@ -29,10 +29,10 @@ public class Study extends Post {
         study.setContact(contact);
 
         // LocalDateTime 지정
-        study.setPostStart(LocalDateTime.now());
-        study.setPostEnd(postEnd);
-        study.setProjectStart(projectStart);
-        study.setProjectEnd(projectEnd);
+        study.getPeriod().setPostStart(LocalDateTime.now());
+        study.getPeriod().setPostEnd(postEnd);
+        study.getPeriod().setProjectStart(projectStart);
+        study.getPeriod().setProjectEnd(projectEnd);
 
         // Total 계산 및 지정
         study.setTotal(maxMember);
