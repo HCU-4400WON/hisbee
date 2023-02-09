@@ -28,9 +28,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .formLogin().disable()
+                .httpBasic().disable()
                 .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint()
-                        .userService(this.oAuth2UserService()));
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(this.oAuth2UserService()))
+                );
         return http.build();
     }
 
