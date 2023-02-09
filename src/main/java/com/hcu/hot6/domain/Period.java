@@ -21,6 +21,7 @@ public class Period {
     @Column(nullable = false)
     private LocalDateTime projectEnd;
 
+    //=== 생성 메서드 ===//
     @Builder(builderClassName = "ByPeriodBuilder", builderMethodName = "ByPeriodBuilder")
     public Period(LocalDateTime postEnd, LocalDateTime projectStart, LocalDateTime projectEnd){
         Assert.notNull(postEnd, "모집글의 게시 마감일(postEnd)은 필수 입력사항입니다.");
