@@ -11,8 +11,7 @@ public class PostRepository {
 
     private final EntityManager em;
 
-    public Post save(Post post){
+    public void save(Post post){
         em.persist(post);
-        return post;
     }
 }
