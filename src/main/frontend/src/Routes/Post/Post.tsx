@@ -2,7 +2,7 @@ import tw from "tailwind-styled-components";
 
 const Banner = tw.div`
 h-60 
-mt-5 
+mt-10 
 mx-5 
 bg-gradient-to-r from-gray-300 to-gray-500
 `;
@@ -12,6 +12,7 @@ relative
 flex 
 h-16 
 mx-5 
+my-1
 border-b-2 
 border-black 
 item-center
