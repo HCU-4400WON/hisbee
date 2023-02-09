@@ -191,10 +191,15 @@ public class PostApiTest {
     }
 
     /**
-     * 필수로 입력해야 하는 사항에 대해 입력하지 않은 경우 BAD_REQUEST 에러가 나야 한다.
-     * PostCreationRequest에서 사용한 Validation 어노테이션이 잘 작동하는지 확인.
+     * Validation 체크. RequestBody가 정상적으로 들어왔는지 다음과 같은 기준으로 확인한다. (PostCreationRequest에서 사용한 Validation 어노테이션이 잘 작동하는지 확인.)
+     *
+     * 1. 필수로 입력해야 하는 사항에 대해 입력하지 않은 경우 BAD_REQUEST 에러가 나야 한다.
+     * 2. 날짜 입력 @Future
+     * 3. 모집 인원 @PositiveOrZero
+     * 4. 날짜 포맷팅
+     * 5. hasPay
      * */
-    @DisplayName("@NotNull validation 체크 - BAD_REQUEST 에러가 나야 한다.")
+    @DisplayName("PostCreationRequest @NotNull validation 체크 - BAD_REQUEST 에러가 나야 한다.")
     @Test
     public void notnull_validation() throws Exception{
         // dtype, title, contact, authorId, postEnd, projectEnd, projectStart 각각 주석 처리 해가면서 체크하기
@@ -220,6 +225,30 @@ public class PostApiTest {
 //        멘토링인 경우 아래 코드 활성화
 //        request.setMaxMentor(1);
 //        request.setMaxMentee(4);
+
+        String url = "http://localhost:"+port+"/posts";
+
+        ResponseEntity<PostCreationResponse> response = restTemplate.postForEntity(url, request, PostCreationResponse.class);
+
+        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @DisplayName("날짜 입력 중 과거 날짜가 하나라도 들어온 상황에는 BAD_REQUEST 상태가 반환되어야 한다.")
+    @Test
+    public void 날짜입력_Future(){
+        PostCreationRequest request = new PostCreationRequest();
+        request.setDtype("P");
+        request.setTitle("제목 test");
+        request.setContent("내용 test");
+        request.setContact("연락처 test");
+        request.setPostEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0));
+        request.setProjectStart(LocalDateTime.of(2023, 3, 10, 0, 0, 0));
+        request.setProjectEnd(LocalDateTime.of(2022, 7, 2, 0, 0, 0));
+        request.setAuthorId(1L);
+        request.setHasPay(true);
+        request.setMaxDeveloper(3);
+        request.setMaxPlanner(2);
+        request.setMaxDesigner(1);
 
         String url = "http://localhost:"+port+"/posts";
 
