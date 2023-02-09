@@ -94,19 +94,21 @@ items-center
 `;
 
 function Post() {
+  const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
+    console.log(event.currentTarget.value);
+  };
+
+  // Filtering
   const [filterCategory, setFilterCategory] = useState<string>("");
   const [filterPosition, setFilterPosition] = useState<string>("");
   const [filterPay, setFilterPay] = useState<string>("");
 
-  const [positionButton, setPositionButton] = useState([]);
-  const [payButton, setPayButton] = useState([]);
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (event.currentTarget.id === "category") {
       // 필터링 취소
       if (filterCategory === event.currentTarget.name) {
         setFilterCategory("");
       } else setFilterCategory(event.currentTarget.name);
-
       setFilterPosition("");
       setFilterPay("");
     } else if (event.currentTarget.id === "position") {
@@ -114,7 +116,6 @@ function Post() {
       if (filterPosition === event.currentTarget.name) {
         setFilterPosition("");
       } else setFilterPosition(event.currentTarget.name);
-      setFilterPay("");
     } else if (event.currentTarget.id === "pay") {
       //3차 필터링 취소
       if (filterPay === event.currentTarget.name) {
@@ -133,15 +134,29 @@ function Post() {
     [key: string]: string[];
   }
 
+  // const positions: IFiltering = {
+  //   study: ["member"],
+  //   mentoring: ["mentor", "mentee"],
+  //   project: ["planner", "developer", "designer"],
+  // };
+
+  // const pays: IFiltering = {
+  //   mentoring: ["true", "false"],
+  //   project: ["true", "false"],
+  // };
+
+  const categories: string[] = ["스터디", "멘토링", "프로젝트"];
+
   const positions: IFiltering = {
-    study: ["member"],
-    mentoring: ["mentor", "mentee"],
-    project: ["planner", "developer", "designer"],
+    스터디: ["맴버"],
+    멘토링: ["멘토", "멘티"],
+    프로젝트: ["기획자", "개발자", "디자이너"],
   };
 
   const pays: IFiltering = {
-    mentoring: ["true", "false"],
-    project: ["true", "false"],
+    // 스터디: [],
+    멘토링: ["있음", "없음"],
+    프로젝트: ["있음", "없음"],
   };
 
   return (
@@ -158,15 +173,17 @@ bg-gray-200"
       <FilterRow>
         <FilterTitle>CATEGORY</FilterTitle>
         <FilterButtonBox>
-          <Button id="category" name="study" onClick={onClick}>
-            스터디
-          </Button>
-          <Button id="category" name="mentoring" onClick={onClick}>
-            멘토링
-          </Button>
-          <Button id="category" name="project" onClick={onClick}>
-            프로젝트
-          </Button>
+          {categories.map((category) => (
+            <Button
+              key={category}
+              id="category"
+              name={category}
+              onClick={onClick}
+              className={`${category === filterCategory && "bg-purple-200"}`}
+            >
+              {category}
+            </Button>
+          ))}
         </FilterButtonBox>
       </FilterRow>
       {filterCategory === "" ? null : (
@@ -179,6 +196,7 @@ bg-gray-200"
                 name={position}
                 key={position}
                 onClick={onClick}
+                className={`${position === filterPosition && "bg-purple-200"}`}
               >
                 {position}
               </Button>
@@ -187,12 +205,18 @@ bg-gray-200"
         </FilterRow>
       )}
 
-      {filterCategory === "" || filterCategory === "study" ? null : (
+      {filterCategory === "" || filterCategory === "스터디" ? null : (
         <FilterRow>
           <FilterTitle>PAY</FilterTitle>
           <FilterButtonBox>
             {pays[filterCategory].map((pay) => (
-              <Button id="pay" name={pay} key={pay} onClick={onClick}>
+              <Button
+                id="pay"
+                name={pay}
+                key={pay}
+                onClick={onClick}
+                className={`${pay === filterPay && "bg-purple-200"}`}
+              >
                 {pay}
               </Button>
             ))}
@@ -202,9 +226,9 @@ bg-gray-200"
 
       <SortBox>
         <SortTitle>Sort by</SortTitle>
-        <SortSelect>
-          <option>평점 순</option>
-          <option>좋아요 순</option>
+        <SortSelect onInput={onInput}>
+          <option value="평점">평점 순</option>
+          <option value="좋아요">좋아요 순</option>
         </SortSelect>
       </SortBox>
 
