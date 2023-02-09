@@ -1,10 +1,10 @@
 package com.hcu.hot6;
 
 import com.hcu.hot6.domain.request.PostCreationRequest;
-import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,7 +18,7 @@ public class PostApiController {
      * 모집글 게시(CREATE)
      * */
     @PostMapping("/posts")
-    public ResponseEntity createPost(@RequestBody PostCreationRequest request){
+    public ResponseEntity createPost(@RequestBody @Validated PostCreationRequest request) throws Exception{
         return ResponseEntity.ok(postService.createPost(request));
     }
 }

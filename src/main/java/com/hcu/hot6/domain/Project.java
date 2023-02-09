@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
@@ -18,14 +19,21 @@ import java.time.LocalDateTime;
 @DiscriminatorValue("P")
 public class Project extends Post{
 
+    @NotNull
     private int maxDeveloper;
+    @NotNull
     private int maxPlanner;
+    @NotNull
     private int maxDesigner;
 
+    @NotNull
     private int currDeveloper;
+    @NotNull
     private int currPlanner;
+    @NotNull
     private int currDesigner;
 
+    @NotNull
     private boolean hasPay;
 
     //=== 생성 메서드 ===//

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -27,13 +28,13 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NotNull
     private String uid;
 
-    @Column(nullable = false)
+    @NotNull
     private String email;
 
-    @Column(nullable = false)
+    @NotNull
     private String pictureUrl;
 
     @Enumerated(value = EnumType.STRING)

@@ -1,9 +1,11 @@
 package com.hcu.hot6.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
@@ -15,12 +17,17 @@ import java.time.LocalDateTime;
 @DiscriminatorValue("M")
 public class Mentoring extends Post{
 
+    @NotNull
     private int maxMentor;
+    @NotNull
     private int maxMentee;
 
+    @NotNull
     private int currMentor;
+    @NotNull
     private int currMentee;
 
+    @NotNull
     private boolean hasPay;
 
     //=== 생성 메서드 ===//

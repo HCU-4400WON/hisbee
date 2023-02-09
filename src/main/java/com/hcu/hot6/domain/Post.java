@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import net.minidev.json.annotate.JsonIgnore;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,23 +20,24 @@ public abstract class Post {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NotNull
     private String title;
     private String content;
-    @Column(nullable = false)
+    @NotNull
     private String contact;
 
     @Embedded
     private Period period;
 
-    @Column(nullable = false)
+    @NotNull
     private int total;
-    @Column(nullable = false)
+    @NotNull
     private boolean isCompleted;
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "author_id", nullable = false)
+    @NotNull
+    @JoinColumn(name = "author_id")
     private Member author;
 
     @ManyToMany
