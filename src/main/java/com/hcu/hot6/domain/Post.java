@@ -3,6 +3,7 @@ package com.hcu.hot6.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +34,12 @@ public abstract class Post {
     private boolean isCompleted;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "author_id", nullable = false)
     private Member author;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(name = "PostLike",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "member_id"))

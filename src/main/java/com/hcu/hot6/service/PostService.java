@@ -22,7 +22,7 @@ public class PostService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public Post createPost(PostCreationRequest request) {
+    public PostCreationResponse createPost(PostCreationRequest request) {
         Optional<Member> author = memberRepository.findMemberById(request.getUid());
 
         if(author == null){
@@ -82,10 +82,10 @@ public class PostService {
             postCreationResponse.setDtype("M");
         }
 
-        return postRepository.save(post);
+        postRepository.save(post);
 
-//        postCreationResponse.setId(post.getId());
-//        postCreationResponse.setTitle(post.getTitle());
-//        return postCreationResponse;
+        postCreationResponse.setId(post.getId());
+        postCreationResponse.setTitle(post.getTitle());
+        return postCreationResponse;
     }
 }
