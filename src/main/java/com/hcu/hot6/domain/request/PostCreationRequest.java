@@ -13,7 +13,7 @@ public class PostCreationRequest {
     private String content;
     private String contact;
 
-    private Long authorId;
+    private String uid;
 
     private int maxMentor;
     private int maxMentee;

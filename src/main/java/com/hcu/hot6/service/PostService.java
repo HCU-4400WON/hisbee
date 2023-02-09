@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class PostService {
 
     @Transactional
     public Post createPost(PostCreationRequest request) {
-        Member author = memberRepository.findById(request.getAuthorId());
+        Optional<Member> author = memberRepository.findMemberById(request.getUid());
 
         if(author == null){
             throw new EntityNotFoundException("Author is not registred");
@@ -70,7 +72,7 @@ public class PostService {
                     .content(request.getContent())
                     .contact(request.getContact())
                     .period(period)
-                    .author(author)
+                    .author(author.get())
                     .maxMentor(request.getMaxMentor())
                     .maxMentee(request.getMaxMentee())
                     .hasPay(request.isHasPay())
