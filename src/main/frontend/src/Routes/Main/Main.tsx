@@ -1,3 +1,4 @@
+import { posts } from "api";
 import tw from "tailwind-styled-components";
 
 const titles = [
@@ -82,17 +83,34 @@ function Main() {
           </TitleRow>
 
           <PostGrid>
-            {[0, 0, 0, 0].map((e) => (
-              <Post style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.3)" }}>
-                <PostImage />
+            {posts.slice(0, 4).map((post, index) => (
+              <Post
+                key={index}
+                style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.3)" }}
+              >
+                <PostImage
+                  className={`${
+                    post.category === "PROJECT"
+                      ? "bg-gradient-to-r from-white to-yellow-200 to-green-300"
+                      : post.category === "STUDY"
+                      ? "bg-gradient-to-r from-white to-purple-200 to-purple-300"
+                      : "bg-gradient-to-r from-white to-cyan-200 to-blue-300"
+                  }`}
+                />
 
                 <PostContentFirstRow>
                   <p className="mx-5 my-1 text-sm font-bold">개발자</p>
-                  <p className="text-sm text-blue-500">2명 모집</p>
+                  <p className="text-sm text-blue-500">{post.total}명 모집</p>
                 </PostContentFirstRow>
-                <p className="mx-5 my-1 text-lg font-bold">앱 개발 팀원 모집</p>
+                <p className="mx-5 my-1 text-lg font-bold">
+                  {post.title.length > 20
+                    ? post.title.slice(0, 20) + "..."
+                    : post.title}
+                </p>
                 <p className="mx-5 my-3">
-                  안녕하세요! 사이드 프로젝트 팀원을 구하고 있는...!!!
+                  {post.content.length > 20
+                    ? post.content.slice(0, 20) + "..."
+                    : post.content}
                 </p>
                 <span></span>
               </Post>
