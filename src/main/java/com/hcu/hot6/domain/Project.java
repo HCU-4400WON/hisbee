@@ -2,13 +2,19 @@ package com.hcu.hot6.domain;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter
+@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorValue("P")
 public class Project extends Post{
 
@@ -23,38 +29,22 @@ public class Project extends Post{
     private boolean hasPay;
 
     //=== 생성 메서드 ===//
-//    public static Project createProject(String title, String content, String contact, LocalDateTime postEnd, LocalDateTime projectStart, LocalDateTime projectEnd, Member author, int maxDeveloper, int maxPlanner, int maxDesigner) {
-//        Project project = new Project();
-//
-//        // String 기본 정보 지정
-//        project.setTitle(title);
-//        project.setContent(content);
-//        project.setContact(contact);
-//
-//        // LocalDateTime 지정
-//        project.getPeriod().setPostStart(LocalDateTime.now());
-//        project.getPeriod().setPostEnd(postEnd);
-//        project.getPeriod().setProjectStart(projectStart);
-//        project.getPeriod().setProjectEnd(projectEnd);
-//
-//        // Total 계산 및 지정
-//        project.setTotal(maxDeveloper + maxPlanner + maxDesigner);
-//
-//        // initial value : isCompleted = false
-//        project.setCompleted(false);
-//
-//        // Author 양방향 매핑
-//        project.registerAuthor(author);
-//
-//        // Project 멤버 변수 지정
-//        project.setMaxDeveloper(maxDeveloper);
-//        project.setMaxPlanner(maxPlanner);
-//        project.setMaxDesigner(maxDesigner);
-//        project.setCurrDeveloper(0);
-//        project.setCurrPlanner(0);
-//        project.setCurrDesigner(0);
-//
-//        return project;
-//    }
+    public Project(String title, String content, String contact, Member author, int maxDeveloper, int maxPlanner, int maxDesigner, boolean hasPay, int total){
+        super(title, content, contact, author, (maxDeveloper + maxPlanner + maxDesigner));
+
+        Assert.notNull(maxDeveloper, "프로젝트의 개발자모집인원(maxDeveloper)은 필수 입력사항입니다.");
+        Assert.notNull(maxPlanner, "프로젝트의 기획자모집인원(maxPlanner)은 필수 입력사항입니다.");
+        Assert.notNull(maxDesigner, "프로젝트의 디자이너모집인원(maxDesigner)은 필수 입력사항입니다.");
+
+        this.maxDeveloper = maxDeveloper;
+        this.maxPlanner = maxPlanner;
+        this.maxDesigner = maxDesigner;
+
+        this.currDeveloper = 0;
+        this.currPlanner = 0;
+        this.currDesigner = 0;
+
+        this.hasPay = hasPay;
+    }
 
 }
