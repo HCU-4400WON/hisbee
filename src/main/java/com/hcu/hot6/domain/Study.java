@@ -1,7 +1,9 @@
 package com.hcu.hot6.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.Null;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +23,8 @@ public class Study extends Post {
 
     @NotNull
     private int maxMember;
-    @NotNull
+
+    @Column(nullable = false)
     private int currMember;
 
     //=== 생성 메서드 ===//

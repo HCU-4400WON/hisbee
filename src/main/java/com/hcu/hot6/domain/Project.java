@@ -1,5 +1,6 @@
 package com.hcu.hot6.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
@@ -26,11 +27,11 @@ public class Project extends Post{
     @NotNull
     private int maxDesigner;
 
-    @NotNull
+    @Column(nullable = false)
     private int currDeveloper;
-    @NotNull
+    @Column(nullable = false)
     private int currPlanner;
-    @NotNull
+    @Column(nullable = false)
     private int currDesigner;
 
     @NotNull

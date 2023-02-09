@@ -29,9 +29,8 @@ public abstract class Post {
     @Embedded
     private Period period;
 
-    @NotNull
     private int total;
-    @NotNull
+    @Column(nullable = false)
     private boolean isCompleted;
 
     @ManyToOne

@@ -22,9 +22,9 @@ public class Mentoring extends Post{
     @NotNull
     private int maxMentee;
 
-    @NotNull
+    @Column(nullable = false)
     private int currMentor;
-    @NotNull
+    @Column(nullable = false)
     private int currMentee;
 
     @NotNull
