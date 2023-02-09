@@ -16,7 +16,7 @@ import java.util.List;
 @DiscriminatorColumn(name = "dtype")
 public abstract class Post {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)

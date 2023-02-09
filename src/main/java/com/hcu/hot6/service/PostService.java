@@ -23,7 +23,7 @@ public class PostService {
 
     @Transactional
     public PostCreationResponse createPost(PostCreationRequest request) {
-        Optional<Member> author = memberRepository.findMemberById(request.getUid());
+        Member author = memberRepository.findById(request.getAuthorId());
 
         if(author == null){
             throw new EntityNotFoundException("Author is not registred");
@@ -37,42 +37,42 @@ public class PostService {
 
         Post post = null;
         PostCreationResponse postCreationResponse = new PostCreationResponse();
-//        if(request.getDtype().compareTo("P") == 0){
-//            post = Project.builder()
-//                    .title(request.getTitle())
-//                    .content(request.getContent())
-//                    .contact(request.getContact())
-//                    .period(period)
-//                    .author(author)
-//                    .maxDeveloper(request.getMaxDeveloper())
-//                    .maxPlanner(request.getMaxPlanner())
-//                    .maxDesigner(request.getMaxDesigner())
-//                    .hasPay(request.isHasPay())
-//                    .total(request.getMaxDeveloper() + request.getMaxPlanner() + request.getMaxDesigner())
-//                    .build();
-//
-//            postCreationResponse.setDtype("P");
-//        }
-//        else if(request.getDtype().compareTo("S") == 0){
-//            post = Study.builder()
-//                    .title(request.getTitle())
-//                    .content(request.getContent())
-//                    .contact(request.getContact())
-//                    .period(period)
-//                    .author(author)
-//                    .maxMember(request.getMaxMember())
-//                    .total(request.getMaxMember())
-//                    .build();
-//
-//            postCreationResponse.setDtype("S");
-//        }
-        if(request.getDtype().compareTo("M") == 0){
+        if(request.getDtype().compareTo("P") == 0){
+            post = Project.builder()
+                    .title(request.getTitle())
+                    .content(request.getContent())
+                    .contact(request.getContact())
+                    .period(period)
+                    .author(author)
+                    .maxDeveloper(request.getMaxDeveloper())
+                    .maxPlanner(request.getMaxPlanner())
+                    .maxDesigner(request.getMaxDesigner())
+                    .hasPay(request.isHasPay())
+                    .total(request.getMaxDeveloper() + request.getMaxPlanner() + request.getMaxDesigner())
+                    .build();
+
+            postCreationResponse.setDtype("P");
+        }
+        else if(request.getDtype().compareTo("S") == 0){
+            post = Study.builder()
+                    .title(request.getTitle())
+                    .content(request.getContent())
+                    .contact(request.getContact())
+                    .period(period)
+                    .author(author)
+                    .maxMember(request.getMaxMember())
+                    .total(request.getMaxMember())
+                    .build();
+
+            postCreationResponse.setDtype("S");
+        }
+        else if(request.getDtype().compareTo("M") == 0){
             post = Mentoring.builder()
                     .title(request.getTitle())
                     .content(request.getContent())
                     .contact(request.getContact())
                     .period(period)
-                    .author(author.get())
+                    .author(author)
                     .maxMentor(request.getMaxMentor())
                     .maxMentee(request.getMaxMentee())
                     .hasPay(request.isHasPay())
