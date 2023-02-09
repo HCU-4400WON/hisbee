@@ -10,9 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,8 @@ public class PostApiTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    // ==== CREATE ==== //
 
     /**
      * Project, Study, Mentoring 각각, 정상 create 케이스 테스트
@@ -271,5 +274,23 @@ public class PostApiTest {
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
+
+    // ==== DELETE ==== //
+
+    @DisplayName("모집글 삭제 정상 케이스 테스트 - 삭제된 모집글의 PK가 반환되어야 한다.")
+    @Test
+    public void 모집글_삭제(){
+        // url에 id와 Assertions의 id를 현재 디비에 있는 값으로 바꿔서 테스트 진행하기
+        String url = "http://localhost:"+port+"/posts/6";
+        ResponseEntity<Long> result
+                = restTemplate.exchange(
+                url,
+                HttpMethod.DELETE,
+                HttpEntity.EMPTY,
+                Long.class
+        );
+
+        Assertions.assertThat(result.getBody()).isEqualTo(6L);
+    }
 
 }
