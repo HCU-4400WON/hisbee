@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
@@ -18,7 +19,9 @@ import java.time.LocalDateTime;
 @DiscriminatorValue("S")
 public class Study extends Post {
 
+    @NotNull
     private int maxMember;
+    @NotNull
     private int currMember;
 
     //=== 생성 메서드 ===//

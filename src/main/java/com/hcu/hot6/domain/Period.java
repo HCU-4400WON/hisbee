@@ -1,8 +1,8 @@
 package com.hcu.hot6.domain;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 @Embeddable
 public class Period {
 
-    @Column(nullable = false)
+    @NotNull
     private LocalDateTime postStart;
-    @Column(nullable = false)
+    @NotNull
     private LocalDateTime postEnd;
-    @Column(nullable = false)
+    @NotNull
     private LocalDateTime projectStart;
-    @Column(nullable = false)
+    @NotNull
     private LocalDateTime projectEnd;
 
     //=== 생성 메서드 ===//
