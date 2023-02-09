@@ -2,13 +2,16 @@ package com.hcu.hot6.domain;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter
+@SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorValue("M")
 public class Mentoring extends Post{
 
@@ -21,35 +24,19 @@ public class Mentoring extends Post{
     private boolean hasPay;
 
     //=== 생성 메서드 ===//
-    public static Mentoring createMentoring(String title, String content, String contact, LocalDateTime postEnd, LocalDateTime projectStart, LocalDateTime projectEnd, Member author, int maxMentor, int maxMentee) {
-        Mentoring mentoring = new Mentoring();
+    public Mentoring(String title, String content, String contact, Member author, int maxMentor, int maxMentee, boolean hasPay, int total){
+        super(title, content, contact, author, total);
 
-        // String 기본 정보 지정
-        mentoring.setTitle(title);
-        mentoring.setContent(content);
-        mentoring.setContact(contact);
+        Assert.notNull(maxMentor, "멘토링의 멘토모집인원(maxMentor)은 필수 입력사항입니다.");
+        Assert.notNull(maxMentee, "멘토링의 멘티모집인원(maxMentee)은 필수 입력사항입니다.");
+        Assert.notNull(hasPay, "멘토링의 보수여부(hasPay)은 필수 입력사항입니다.");
 
-        // LocalDateTime 지정
-        mentoring.setPostStart(LocalDateTime.now());
-        mentoring.setPostEnd(postEnd);
-        mentoring.setProjectStart(projectStart);
-        mentoring.setProjectEnd(projectEnd);
+        this.maxMentor = maxMentor;
+        this.maxMentee = maxMentee;
 
-        // Total 계산 및 지정
-        mentoring.setTotal(maxMentor + maxMentee);
+        this.currMentor = 0;
+        this.currMentee = 0;
 
-        // initial value : isCompleted = false
-        mentoring.setCompleted(false);
-
-        // Author 양방향 매핑
-        mentoring.registerAuthor(author);
-
-        // Mentoring 멤버 변수 지정
-        mentoring.setMaxMentor(maxMentor);
-        mentoring.setMaxMentee(maxMentee);
-        mentoring.setCurrMentor(0);
-        mentoring.setCurrMentee(0);
-
-        return mentoring;
+        this.hasPay = hasPay;
     }
 }
