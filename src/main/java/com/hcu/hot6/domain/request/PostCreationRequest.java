@@ -13,14 +13,14 @@ public class PostCreationRequest {
     private String content;
     private String contact;
 
-    private String uid;
+    private Long authorId;
 
     private int maxMentor;
     private int maxMentee;
-//    private int maxMember;
-//    private int maxDeveloper;
-//    private int maxPlanner;
-//    private int maxDesigner;
+    private int maxMember;
+    private int maxDeveloper;
+    private int maxPlanner;
+    private int maxDesigner;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime postEnd;
