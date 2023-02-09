@@ -1,5 +1,5 @@
 import { departments, IPost, posts } from "api";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
 
 const Banner = tw.div`
@@ -94,6 +94,56 @@ items-center
 `;
 
 function Post() {
+  const [filterCategory, setFilterCategory] = useState<string>("");
+  const [filterPosition, setFilterPosition] = useState<string>("");
+  const [filterPay, setFilterPay] = useState<string>("");
+
+  const [positionButton, setPositionButton] = useState([]);
+  const [payButton, setPayButton] = useState([]);
+  const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (event.currentTarget.id === "category") {
+      // 필터링 취소
+      if (filterCategory === event.currentTarget.name) {
+        setFilterCategory("");
+      } else setFilterCategory(event.currentTarget.name);
+
+      setFilterPosition("");
+      setFilterPay("");
+    } else if (event.currentTarget.id === "position") {
+      // 2차 필터링 취소
+      if (filterPosition === event.currentTarget.name) {
+        setFilterPosition("");
+      } else setFilterPosition(event.currentTarget.name);
+      setFilterPay("");
+    } else if (event.currentTarget.id === "pay") {
+      //3차 필터링 취소
+      if (filterPay === event.currentTarget.name) {
+        setFilterPay("");
+      } else {
+        setFilterPay(event.currentTarget.name);
+      }
+    }
+  };
+
+  useEffect(() => {
+    console.log(filterCategory, filterPosition, filterPay);
+  }, [filterCategory, filterPosition, filterPay]);
+
+  interface IFiltering {
+    [key: string]: string[];
+  }
+
+  const positions: IFiltering = {
+    study: ["member"],
+    mentoring: ["mentor", "mentee"],
+    project: ["planner", "developer", "designer"],
+  };
+
+  const pays: IFiltering = {
+    mentoring: ["true", "false"],
+    project: ["true", "false"],
+  };
+
   return (
     <>
       {/* <img
@@ -108,26 +158,47 @@ bg-gray-200"
       <FilterRow>
         <FilterTitle>CATEGORY</FilterTitle>
         <FilterButtonBox>
-          <Button>스터디</Button>
-          <Button>멘토링</Button>
-          <Button>프로젝트</Button>
+          <Button id="category" name="study" onClick={onClick}>
+            스터디
+          </Button>
+          <Button id="category" name="mentoring" onClick={onClick}>
+            멘토링
+          </Button>
+          <Button id="category" name="project" onClick={onClick}>
+            프로젝트
+          </Button>
         </FilterButtonBox>
       </FilterRow>
-      <FilterRow>
-        <FilterTitle>POSITION</FilterTitle>
-        <FilterButtonBox>
-          <Button>기획자</Button>
-          <Button>개발자</Button>
-          <Button>디자이너</Button>
-        </FilterButtonBox>
-      </FilterRow>
-      <FilterRow>
-        <FilterTitle>PAY</FilterTitle>
-        <FilterButtonBox>
-          <Button>YES</Button>
-          <Button>NO</Button>
-        </FilterButtonBox>
-      </FilterRow>
+      {filterCategory === "" ? null : (
+        <FilterRow>
+          <FilterTitle>POSITION</FilterTitle>
+          <FilterButtonBox>
+            {positions[filterCategory].map((position) => (
+              <Button
+                id="position"
+                name={position}
+                key={position}
+                onClick={onClick}
+              >
+                {position}
+              </Button>
+            ))}
+          </FilterButtonBox>
+        </FilterRow>
+      )}
+
+      {filterCategory === "" || filterCategory === "study" ? null : (
+        <FilterRow>
+          <FilterTitle>PAY</FilterTitle>
+          <FilterButtonBox>
+            {pays[filterCategory].map((pay) => (
+              <Button id="pay" name={pay} key={pay} onClick={onClick}>
+                {pay}
+              </Button>
+            ))}
+          </FilterButtonBox>
+        </FilterRow>
+      )}
 
       <SortBox>
         <SortTitle>Sort by</SortTitle>
@@ -138,8 +209,11 @@ bg-gray-200"
       </SortBox>
 
       <PostGrid>
-        {posts.map((post) => (
-          <PostBox style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.3)" }}>
+        {posts.map((post, index) => (
+          <PostBox
+            key={index}
+            style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.3)" }}
+          >
             <PostImage
               className={`${
                 post.category === "PROJECT"
