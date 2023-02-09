@@ -4,6 +4,8 @@ import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +25,7 @@ public class PostApiController {
     }
 
     /**
-     * 모집글 삭제(DELETE)
+     * 모집글 삭제(DELETE) -> 권한 설정 미완
      * */
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<Long> deletePost(@PathVariable Long postId) throws Exception{
