@@ -14,11 +14,9 @@ public class PostApiController {
 
     private final PostService postService;
 
-//    @PostMapping("/posts")
-//    public PostCreationResponse createPost(@RequestBody PostCreationRequest request){
-//        return postService.createPost(request);
-//    }
-
+    /**
+     * 모집글 게시(CREATE)
+     * */
     @PostMapping("/posts")
     public ResponseEntity createPost(@RequestBody PostCreationRequest request){
         return ResponseEntity.ok(postService.createPost(request));
