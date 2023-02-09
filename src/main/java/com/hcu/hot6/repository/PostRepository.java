@@ -14,4 +14,13 @@ public class PostRepository {
     public void save(Post post){
         em.persist(post);
     }
+
+    public Long delete(Post post) {
+        em.remove(post);
+        return post.getId();
+    }
+
+    public Post findOne(Long postId) {
+        return em.find(Post.class, postId);
+    }
 }

@@ -88,4 +88,10 @@ public class PostService {
         postCreationResponse.setTitle(post.getTitle());
         return postCreationResponse;
     }
+
+    @Transactional
+    public Long deletePost(Long postId) {
+        Post post = postRepository.findOne(postId);
+        return postRepository.delete(post);
+    }
 }

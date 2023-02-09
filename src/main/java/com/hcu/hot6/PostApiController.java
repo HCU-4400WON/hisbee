@@ -21,4 +21,12 @@ public class PostApiController {
     public ResponseEntity createPost(@RequestBody @Validated PostCreationRequest request) throws Exception{
         return ResponseEntity.ok(postService.createPost(request));
     }
+
+    /**
+     * 모집글 삭제(DELETE)
+     * */
+    @DeleteMapping("/posts/{postId}")
+    public ResponseEntity<Long> deletePost(@PathVariable Long postId) throws Exception{
+        return ResponseEntity.ok(postService.deletePost(postId));
+    }
 }
