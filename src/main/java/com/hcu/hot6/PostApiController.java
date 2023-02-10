@@ -1,6 +1,7 @@
 package com.hcu.hot6;
 
 import com.hcu.hot6.domain.request.PostCreationRequest;
+import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -38,5 +39,13 @@ public class PostApiController {
     @GetMapping("/posts/{postId}")
     public ResponseEntity readOnePost(@PathVariable Long postId) throws Exception{
         return ResponseEntity.ok(postService.readOnePost(postId));
+    }
+
+    /**
+     * 모집글 정보 수정(update) : 단순 수정 + 모집 현황 수정
+     * */
+    @PutMapping("/posts/{postId}")
+    public ResponseEntity updatePost(@PathVariable Long postId, @RequestBody PostUpdateRequest request) throws Exception{
+        return ResponseEntity.ok(postService.updatePost(postId, request));
     }
 }

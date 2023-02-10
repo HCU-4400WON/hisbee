@@ -1,5 +1,6 @@
 package com.hcu.hot6.domain;
 
+import com.hcu.hot6.domain.request.PostUpdateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter @Setter
+@Getter
 @SuperBuilder
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,6 +34,9 @@ public abstract class Post {
     private Period period;
 
     private int total;
+
+    @Column(nullable = false)
+    private int currTotal;
     @Column(nullable = false)
     private boolean isCompleted;
 
@@ -71,4 +75,17 @@ public abstract class Post {
         this.registerAuthor(author);
     }
 
+    protected void updatePost(PostUpdateRequest request, int total, int currTotal) {
+        this.title = request.getTitle();
+        this.content = request.getContent();
+        this.contact = request.getContact();
+        this.period.setPostEnd(request.getPostEnd());
+        this.period.setProjectStart(request.getProjectStart());
+        this.period.setProjectEnd(request.getProjectEnd());
+        this.isCompleted = request.isCompleted();
+        this.total = total;
+        this.currTotal = currTotal;
+
+        if(currTotal >= total) this.isCompleted = true;
+    }
 }

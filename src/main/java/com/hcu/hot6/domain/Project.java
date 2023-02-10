@@ -1,5 +1,6 @@
 package com.hcu.hot6.domain;
 
+import com.hcu.hot6.domain.request.PostUpdateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -56,4 +57,16 @@ public class Project extends Post{
         this.hasPay = hasPay;
     }
 
+    public void updateProject(PostUpdateRequest request) {
+        this.maxDeveloper = request.getMaxDeveloper();
+        this.maxPlanner = request.getMaxPlanner();
+        this.maxDesigner = request.getMaxDesigner();
+
+        this.currDeveloper = request.getCurrDeveloper();
+        this.currPlanner = request.getCurrPlanner();
+        this.currDesigner = request.getCurrDesigner();
+
+        this.hasPay = request.isHasPay();
+        super.updatePost(request, (maxDeveloper + maxPlanner + maxDesigner), (currDeveloper + currPlanner + currDesigner));
+    }
 }

@@ -1,5 +1,6 @@
 package com.hcu.hot6.domain;
 
+import com.hcu.hot6.domain.request.PostUpdateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -36,5 +37,12 @@ public class Study extends Post {
         this.maxMember = maxMember;
 
         this.currMember = 0;
+    }
+
+    public void updateStudy(PostUpdateRequest request) {
+        this.maxMember = request.getMaxMember();
+        this.currMember = request.getCurrMember();
+
+        super.updatePost(request, maxMember, currMember);
     }
 }

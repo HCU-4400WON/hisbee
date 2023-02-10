@@ -1,6 +1,7 @@
 package com.hcu.hot6.service;
 
 import com.hcu.hot6.domain.*;
+import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
 import com.hcu.hot6.repository.MemberRepository;
@@ -8,11 +9,8 @@ import com.hcu.hot6.repository.PostRepository;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -100,10 +98,40 @@ public class PostService {
         Post post = postRepository.findOne(postId);
 
         if(post == null){
-            throw new EntityNotFoundException("Post is not present.");
+            throw new EntityNotFoundException("Post is not found.");
         }
 
+        return responseOne(post);
+    }
+
+    @Transactional
+    public PostReadOneResponse updatePost(Long postId, PostUpdateRequest request) {
+        Post post = postRepository.findOne(postId);
+
+        // update
+        if(post == null){
+            throw new EntityNotFoundException("Post is not found.");
+        }
+
+        if(request.getDtype().compareTo("P") == 0){
+            Project project = (Project) post;
+            project.updateProject(request);
+        }
+        else if(request.getDtype().compareTo("M") == 0){
+            Mentoring mentoring = (Mentoring) post;
+            mentoring.updateMentoring(request);
+        }
+        else if(request.getDtype().compareTo("S") == 0){
+            Study study = (Study) post;
+            study.updateStudy(request);
+        }
+
+        return responseOne(post);
+    }
+
+    private PostReadOneResponse responseOne(Post post){
         PostReadOneResponse response = new PostReadOneResponse();
+
         response.setDtype(post.getDtype());
         response.setId(post.getId());
         response.setTitle(post.getTitle());
@@ -143,9 +171,7 @@ public class PostService {
             Study study = (Study) post;
 
             response.setMaxMember(study.getMaxMember());
-
             response.setCurrMember(study.getCurrMember());
-
         }
 
         return response;

@@ -1,5 +1,6 @@
 package com.hcu.hot6.domain;
 
+import com.hcu.hot6.domain.request.PostUpdateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -45,5 +46,16 @@ public class Mentoring extends Post{
         this.currMentee = 0;
 
         this.hasPay = hasPay;
+    }
+
+    public void updateMentoring(PostUpdateRequest request) {
+        this.maxMentor = request.getMaxMentor();
+        this.maxMentee = request.getMaxMentee();
+
+        this.currMentor = request.getCurrMentor();
+        this.currMentee = request.getCurrMentee();
+
+        this.hasPay = request.isHasPay();
+        super.updatePost(request, (maxMentor + maxMentee), (currMentor + currMentee));
     }
 }
