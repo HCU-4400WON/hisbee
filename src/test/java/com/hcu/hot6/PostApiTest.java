@@ -1,6 +1,7 @@
 package com.hcu.hot6;
 
 import com.hcu.hot6.domain.request.PostCreationRequest;
+import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
 import org.assertj.core.api.Assertions;
@@ -300,7 +301,7 @@ public class PostApiTest {
     @Test
     public void 모집글_상세_보기(){
         // url에 id와 Assertions의 id를 현재 디비에 있는 값으로 바꿔서 테스트 진행하기
-        String url = "http://localhost:"+port+"/posts/12";
+        String url = "http://localhost:"+port+"/posts/1";
         ResponseEntity<PostReadOneResponse> result
                 = restTemplate.exchange(
                 url,
@@ -310,11 +311,11 @@ public class PostApiTest {
         );
 
         Assertions.assertThat(result.getBody().getDtype()).isEqualTo("M");
-        Assertions.assertThat(result.getBody().getId()).isEqualTo(12L);
+        Assertions.assertThat(result.getBody().getId()).isEqualTo(1L);
         Assertions.assertThat(result.getBody().getTitle()).isEqualTo("제목 test");
         Assertions.assertThat(result.getBody().getContent()).isEqualTo("내용 test");
         Assertions.assertThat(result.getBody().getContact()).isEqualTo("연락처 test");
-        Assertions.assertThat(result.getBody().getPostStart().toString()).isEqualTo("2023-02-10T07:21:38.324874");
+        Assertions.assertThat(result.getBody().getPostStart().toString()).isEqualTo("2023-02-10T12:38:43.516279");
         Assertions.assertThat(result.getBody().getPostEnd().toString()).isEqualTo("2023-03-02T00:00");
         Assertions.assertThat(result.getBody().getProjectStart().toString()).isEqualTo("2023-03-10T00:00");
         Assertions.assertThat(result.getBody().getProjectEnd().toString()).isEqualTo("2023-07-02T00:00");
@@ -325,6 +326,55 @@ public class PostApiTest {
         Assertions.assertThat(result.getBody().getCurrMentee()).isEqualTo(0);
         Assertions.assertThat(result.getBody().isHasPay()).isEqualTo(true);
 
+    }
+
+    // === UPDATE === //
+    @DisplayName("수정된 내용들이 바뀌고, 모집인원 현황이 바뀌고, total, currTotal도 갱신되어야 한다.")
+    @Test
+    public void 모집글_현황_수정(){
+        // isComplete = false, dtype 빼고는 모두 수정한 상태
+        PostUpdateRequest request = new PostUpdateRequest();
+        request.setDtype("M"); // 수정해서는 안된다. 유형 알려주는 용도
+        request.setTitle("제목 수정 test");
+        request.setContent("내용 수정 test");
+        request.setContact("연락처 수정 test");
+        request.setPostEnd(LocalDateTime.of(2023, 3, 3, 0, 0, 0));
+        request.setProjectStart(LocalDateTime.of(2023, 3, 11, 0, 0, 0));
+        request.setProjectEnd(LocalDateTime.of(2023, 7, 3, 0, 0, 0));
+        request.setCompleted(false);
+        request.setHasPay(false);
+        request.setMaxMentor(2);
+        request.setMaxMentee(3);
+        request.setCurrMentor(1);
+        request.setCurrMentee(2);
+
+        HttpEntity<PostUpdateRequest> httpEntity = new HttpEntity<>(request);
+
+        // url에 id와 Assertions의 id를 현재 디비에 있는 값으로 바꿔서 테스트 진행하기
+        String url = "http://localhost:"+port+"/posts/1";
+        ResponseEntity<PostReadOneResponse> result
+                = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                httpEntity,
+                PostReadOneResponse.class
+        );
+
+        Assertions.assertThat(result.getBody().getDtype()).isEqualTo("M");
+        Assertions.assertThat(result.getBody().getId()).isEqualTo(1L);
+        Assertions.assertThat(result.getBody().getTitle()).isEqualTo("제목 수정 test");
+        Assertions.assertThat(result.getBody().getContent()).isEqualTo("내용 수정 test");
+        Assertions.assertThat(result.getBody().getContact()).isEqualTo("연락처 수정 test");
+        Assertions.assertThat(result.getBody().getPostStart().toString()).isEqualTo("2023-02-10T12:38:43.516279");
+        Assertions.assertThat(result.getBody().getPostEnd().toString()).isEqualTo("2023-03-03T00:00");
+        Assertions.assertThat(result.getBody().getProjectStart().toString()).isEqualTo("2023-03-11T00:00");
+        Assertions.assertThat(result.getBody().getProjectEnd().toString()).isEqualTo("2023-07-03T00:00");
+        Assertions.assertThat(result.getBody().getWriter()).isEqualTo("memberA");
+        Assertions.assertThat(result.getBody().getMaxMentor()).isEqualTo(2);
+        Assertions.assertThat(result.getBody().getMaxMentee()).isEqualTo(3);
+        Assertions.assertThat(result.getBody().getCurrMentor()).isEqualTo(1);
+        Assertions.assertThat(result.getBody().getCurrMentee()).isEqualTo(2);
+        Assertions.assertThat(result.getBody().isHasPay()).isEqualTo(false);
     }
 
 }
