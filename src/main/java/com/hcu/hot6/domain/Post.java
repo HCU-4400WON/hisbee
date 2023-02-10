@@ -20,6 +20,9 @@ public abstract class Post {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name="dtype", insertable = false, updatable = false)
+    private String dtype;
+
     @NotNull
     private String title;
     private String content;
@@ -33,7 +36,7 @@ public abstract class Post {
     @Column(nullable = false)
     private boolean isCompleted;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @NotNull
     @JoinColumn(name = "author_id")
