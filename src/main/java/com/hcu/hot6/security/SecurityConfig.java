@@ -15,8 +15,11 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
 
@@ -42,8 +45,25 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(this.oAuth2UserService()))
+                        .successHandler(this.oAuth2SuccessHandler())
                 );
         return http.build();
+    }
+
+    private AuthenticationSuccessHandler oAuth2SuccessHandler() {
+        final DefaultRedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+
+        return (request, response, authentication) -> {
+            OAuth2User userinfo = (OAuth2User) authentication.getPrincipal();
+            String email = userinfo.getAttribute("email");
+            String accessToken = jwtService.generateToken(email);
+
+            String targetUrl = UriComponentsBuilder.fromUriString("/oauth2/redirect")
+                    .queryParam("token", accessToken)
+                    .build().toUriString();
+
+            redirectStrategy.sendRedirect(request, response, targetUrl);
+        };
     }
 
     private OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService() {
