@@ -2,6 +2,7 @@ package com.hcu.hot6.service;
 
 import com.hcu.hot6.domain.*;
 import com.hcu.hot6.domain.response.PostCreationResponse;
+import com.hcu.hot6.domain.response.PostReadOneResponse;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.repository.PostRepository;
 import com.hcu.hot6.domain.request.PostCreationRequest;
@@ -93,5 +94,60 @@ public class PostService {
     public Long deletePost(Long postId) {
         Post post = postRepository.findOne(postId);
         return postRepository.delete(post);
+    }
+
+    public PostReadOneResponse readOnePost(Long postId) {
+        Post post = postRepository.findOne(postId);
+
+        if(post == null){
+            throw new EntityNotFoundException("Post is not present.");
+        }
+
+        PostReadOneResponse response = new PostReadOneResponse();
+        response.setDtype(post.getDtype());
+        response.setId(post.getId());
+        response.setTitle(post.getTitle());
+        response.setContent(post.getContent());
+        response.setContact(post.getContact());
+        response.setPostStart(post.getPeriod().getPostStart());
+        response.setPostEnd(post.getPeriod().getPostEnd());
+        response.setProjectStart(post.getPeriod().getProjectStart());
+        response.setProjectEnd(post.getPeriod().getProjectEnd());
+        response.setWriter(post.getAuthor().getNickname());
+
+        if(post.getDtype().compareTo("M") == 0){
+            Mentoring mentoring = (Mentoring) post;
+
+            response.setMaxMentor(mentoring.getMaxMentor());
+            response.setMaxMentee(mentoring.getMaxMentee());
+
+            response.setCurrMentor(mentoring.getCurrMentor());
+            response.setCurrMentee(mentoring.getCurrMentee());
+
+            response.setHasPay(mentoring.isHasPay());
+        }
+        else if(post.getDtype().compareTo("P") == 0){
+            Project project = (Project) post;
+
+            response.setMaxDeveloper(project.getMaxDeveloper());
+            response.setMaxPlanner(project.getMaxPlanner());
+            response.setMaxDesigner(project.getMaxDesigner());
+
+            response.setCurrDeveloper(project.getCurrDeveloper());
+            response.setCurrPlanner(project.getCurrPlanner());
+            response.setCurrDesigner(project.getCurrDesigner());
+
+            response.setHasPay(project.isHasPay());
+        }
+        else if(post.getDtype().compareTo("S") == 0){
+            Study study = (Study) post;
+
+            response.setMaxMember(study.getMaxMember());
+
+            response.setCurrMember(study.getCurrMember());
+
+        }
+
+        return response;
     }
 }

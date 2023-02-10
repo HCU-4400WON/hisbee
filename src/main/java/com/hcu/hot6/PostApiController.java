@@ -31,4 +31,12 @@ public class PostApiController {
     public ResponseEntity<Long> deletePost(@PathVariable Long postId) throws Exception{
         return ResponseEntity.ok(postService.deletePost(postId));
     }
+
+    /**
+     * 모집글 정보 상세조회(READ)
+     * */
+    @GetMapping("/posts/{postId}")
+    public ResponseEntity readOnePost(@PathVariable Long postId) throws Exception{
+        return ResponseEntity.ok(postService.readOnePost(postId));
+    }
 }
