@@ -329,9 +329,9 @@ public class PostApiTest {
     }
 
     // === UPDATE === //
-    @DisplayName("수정된 내용들이 바뀌고, 모집인원 현황이 바뀌고, total, currTotal도 갱신되어야 한다.")
+    @DisplayName("Mentoring : 수정된 내용들이 바뀌고, 모집인원 현황이 바뀌고, total, currTotal도 갱신되어야 한다.")
     @Test
-    public void 모집글_현황_수정(){
+    public void 모집글_수정_Mentoring(){
         // isComplete = false, dtype 빼고는 모두 수정한 상태
         PostUpdateRequest request = new PostUpdateRequest();
         request.setDtype("M"); // 수정해서는 안된다. 유형 알려주는 용도
@@ -375,6 +375,100 @@ public class PostApiTest {
         Assertions.assertThat(result.getBody().getCurrMentor()).isEqualTo(1);
         Assertions.assertThat(result.getBody().getCurrMentee()).isEqualTo(2);
         Assertions.assertThat(result.getBody().isHasPay()).isEqualTo(false);
+    }
+
+    @DisplayName("Project : 수정된 내용들이 바뀌고, 모집인원 현황이 바뀌고, total, currTotal도 갱신되어야 한다.")
+    @Test
+    public void 모집글_수정_Project(){
+        // isComplete = false, dtype 빼고는 모두 수정한 상태
+        PostUpdateRequest request = new PostUpdateRequest();
+        request.setDtype("P"); // 수정해서는 안된다. 유형 알려주는 용도
+        request.setTitle("제목 수정 test");
+        request.setContent("내용 수정 test");
+        request.setContact("연락처 수정 test");
+        request.setPostEnd(LocalDateTime.of(2023, 3, 3, 0, 0, 0));
+        request.setProjectStart(LocalDateTime.of(2023, 3, 11, 0, 0, 0));
+        request.setProjectEnd(LocalDateTime.of(2023, 7, 3, 0, 0, 0));
+        request.setCompleted(false);
+        request.setHasPay(false);
+        request.setMaxDeveloper(2);
+        request.setMaxPlanner(3);
+        request.setMaxDesigner(2);
+        request.setCurrDeveloper(1);
+        request.setCurrPlanner(1);
+        request.setCurrDesigner(1);
+
+        HttpEntity<PostUpdateRequest> httpEntity = new HttpEntity<>(request);
+
+        // url에 id와 Assertions의 id를 현재 디비에 있는 값으로 바꿔서 테스트 진행하기
+        String url = "http://localhost:"+port+"/posts/2";
+        ResponseEntity<PostReadOneResponse> result
+                = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                httpEntity,
+                PostReadOneResponse.class
+        );
+
+        Assertions.assertThat(result.getBody().getDtype()).isEqualTo("P");
+        Assertions.assertThat(result.getBody().getId()).isEqualTo(2L);
+        Assertions.assertThat(result.getBody().getTitle()).isEqualTo("제목 수정 test");
+        Assertions.assertThat(result.getBody().getContent()).isEqualTo("내용 수정 test");
+        Assertions.assertThat(result.getBody().getContact()).isEqualTo("연락처 수정 test");
+        Assertions.assertThat(result.getBody().getPostStart().toString()).isEqualTo("2023-02-10T13:48:24.255690");
+        Assertions.assertThat(result.getBody().getPostEnd().toString()).isEqualTo("2023-03-03T00:00");
+        Assertions.assertThat(result.getBody().getProjectStart().toString()).isEqualTo("2023-03-11T00:00");
+        Assertions.assertThat(result.getBody().getProjectEnd().toString()).isEqualTo("2023-07-03T00:00");
+        Assertions.assertThat(result.getBody().getWriter()).isEqualTo("memberA");
+        Assertions.assertThat(result.getBody().getMaxDeveloper()).isEqualTo(2);
+        Assertions.assertThat(result.getBody().getMaxPlanner()).isEqualTo(3);
+        Assertions.assertThat(result.getBody().getMaxDesigner()).isEqualTo(2);
+        Assertions.assertThat(result.getBody().getCurrDeveloper()).isEqualTo(1);
+        Assertions.assertThat(result.getBody().getCurrPlanner()).isEqualTo(1);
+        Assertions.assertThat(result.getBody().getCurrDesigner()).isEqualTo(1);
+        Assertions.assertThat(result.getBody().isHasPay()).isEqualTo(false);
+    }
+
+    @DisplayName("Study : 수정된 내용들이 바뀌고, 모집인원 현황이 바뀌고, total, currTotal도 갱신되어야 한다.")
+    @Test
+    public void 모집글_수정_Study(){
+        // isComplete = false, dtype 빼고는 모두 수정한 상태
+        PostUpdateRequest request = new PostUpdateRequest();
+        request.setDtype("S"); // 수정해서는 안된다. 유형 알려주는 용도
+        request.setTitle("제목 수정 test");
+        request.setContent("내용 수정 test");
+        request.setContact("연락처 수정 test");
+        request.setPostEnd(LocalDateTime.of(2023, 3, 3, 0, 0, 0));
+        request.setProjectStart(LocalDateTime.of(2023, 3, 11, 0, 0, 0));
+        request.setProjectEnd(LocalDateTime.of(2023, 7, 3, 0, 0, 0));
+        request.setCompleted(false);
+        request.setMaxMember(4);
+        request.setCurrMember(1);
+
+        HttpEntity<PostUpdateRequest> httpEntity = new HttpEntity<>(request);
+
+        // url에 id와 Assertions의 id를 현재 디비에 있는 값으로 바꿔서 테스트 진행하기
+        String url = "http://localhost:"+port+"/posts/3";
+        ResponseEntity<PostReadOneResponse> result
+                = restTemplate.exchange(
+                url,
+                HttpMethod.PUT,
+                httpEntity,
+                PostReadOneResponse.class
+        );
+
+        Assertions.assertThat(result.getBody().getDtype()).isEqualTo("S");
+        Assertions.assertThat(result.getBody().getId()).isEqualTo(3L);
+        Assertions.assertThat(result.getBody().getTitle()).isEqualTo("제목 수정 test");
+        Assertions.assertThat(result.getBody().getContent()).isEqualTo("내용 수정 test");
+        Assertions.assertThat(result.getBody().getContact()).isEqualTo("연락처 수정 test");
+        Assertions.assertThat(result.getBody().getPostStart().toString()).isEqualTo("2023-02-10T13:57:39.402273");
+        Assertions.assertThat(result.getBody().getPostEnd().toString()).isEqualTo("2023-03-03T00:00");
+        Assertions.assertThat(result.getBody().getProjectStart().toString()).isEqualTo("2023-03-11T00:00");
+        Assertions.assertThat(result.getBody().getProjectEnd().toString()).isEqualTo("2023-07-03T00:00");
+        Assertions.assertThat(result.getBody().getWriter()).isEqualTo("memberA");
+        Assertions.assertThat(result.getBody().getMaxMember()).isEqualTo(4);
+        Assertions.assertThat(result.getBody().getCurrMember()).isEqualTo(1);
     }
 
 }
