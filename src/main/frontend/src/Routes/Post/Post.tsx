@@ -1,3 +1,5 @@
+import { departments, IPost, posts } from "api";
+import React, { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
 
 const Banner = tw.div`
@@ -84,7 +86,6 @@ h-2/5
 mx-5 
 mt-5 
 mb-3 
-bg-gradient-to-r from-white to-purple-200 to-purple-300
 `;
 
 const PostContentFirstRow = tw.div`
@@ -93,6 +94,71 @@ items-center
 `;
 
 function Post() {
+  const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
+    console.log(event.currentTarget.value);
+  };
+
+  // Filtering
+  const [filterCategory, setFilterCategory] = useState<string>("");
+  const [filterPosition, setFilterPosition] = useState<string>("");
+  const [filterPay, setFilterPay] = useState<string>("");
+
+  const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (event.currentTarget.id === "category") {
+      // 필터링 취소
+      if (filterCategory === event.currentTarget.name) {
+        setFilterCategory("");
+      } else setFilterCategory(event.currentTarget.name);
+      setFilterPosition("");
+      setFilterPay("");
+    } else if (event.currentTarget.id === "position") {
+      // 2차 필터링 취소
+      if (filterPosition === event.currentTarget.name) {
+        setFilterPosition("");
+      } else setFilterPosition(event.currentTarget.name);
+    } else if (event.currentTarget.id === "pay") {
+      //3차 필터링 취소
+      if (filterPay === event.currentTarget.name) {
+        setFilterPay("");
+      } else {
+        setFilterPay(event.currentTarget.name);
+      }
+    }
+  };
+
+  useEffect(() => {
+    console.log(filterCategory, filterPosition, filterPay);
+  }, [filterCategory, filterPosition, filterPay]);
+
+  interface IFiltering {
+    [key: string]: string[];
+  }
+
+  // const positions: IFiltering = {
+  //   study: ["member"],
+  //   mentoring: ["mentor", "mentee"],
+  //   project: ["planner", "developer", "designer"],
+  // };
+
+  // const pays: IFiltering = {
+  //   mentoring: ["true", "false"],
+  //   project: ["true", "false"],
+  // };
+
+  const categories: string[] = ["스터디", "멘토링", "프로젝트"];
+
+  const positions: IFiltering = {
+    스터디: ["맴버"],
+    멘토링: ["멘토", "멘티"],
+    프로젝트: ["기획자", "개발자", "디자이너"],
+  };
+
+  const pays: IFiltering = {
+    // 스터디: [],
+    멘토링: ["있음", "없음"],
+    프로젝트: ["있음", "없음"],
+  };
+
   return (
     <>
       {/* <img
@@ -107,47 +173,94 @@ bg-gray-200"
       <FilterRow>
         <FilterTitle>CATEGORY</FilterTitle>
         <FilterButtonBox>
-          <Button>스터디</Button>
-          <Button>멘토링</Button>
-          <Button>프로젝트</Button>
+          {categories.map((category) => (
+            <Button
+              key={category}
+              id="category"
+              name={category}
+              onClick={onClick}
+              className={`${category === filterCategory && "bg-purple-200"}`}
+            >
+              {category}
+            </Button>
+          ))}
         </FilterButtonBox>
       </FilterRow>
-      <FilterRow>
-        <FilterTitle>POSITION</FilterTitle>
-        <FilterButtonBox>
-          <Button>기획자</Button>
-          <Button>개발자</Button>
-          <Button>디자이너</Button>
-        </FilterButtonBox>
-      </FilterRow>
-      <FilterRow>
-        <FilterTitle>PAY</FilterTitle>
-        <FilterButtonBox>
-          <Button>YES</Button>
-          <Button>NO</Button>
-        </FilterButtonBox>
-      </FilterRow>
+      {filterCategory === "" ? null : (
+        <FilterRow>
+          <FilterTitle>POSITION</FilterTitle>
+          <FilterButtonBox>
+            {positions[filterCategory].map((position) => (
+              <Button
+                id="position"
+                name={position}
+                key={position}
+                onClick={onClick}
+                className={`${position === filterPosition && "bg-purple-200"}`}
+              >
+                {position}
+              </Button>
+            ))}
+          </FilterButtonBox>
+        </FilterRow>
+      )}
+
+      {filterCategory === "" || filterCategory === "스터디" ? null : (
+        <FilterRow>
+          <FilterTitle>PAY</FilterTitle>
+          <FilterButtonBox>
+            {pays[filterCategory].map((pay) => (
+              <Button
+                id="pay"
+                name={pay}
+                key={pay}
+                onClick={onClick}
+                className={`${pay === filterPay && "bg-purple-200"}`}
+              >
+                {pay}
+              </Button>
+            ))}
+          </FilterButtonBox>
+        </FilterRow>
+      )}
 
       <SortBox>
         <SortTitle>Sort by</SortTitle>
-        <SortSelect>
-          <option>평점 순</option>
-          <option>좋아요 순</option>
+        <SortSelect onInput={onInput}>
+          <option value="평점">평점 순</option>
+          <option value="좋아요">좋아요 순</option>
         </SortSelect>
       </SortBox>
 
       <PostGrid>
-        {[0, 0, 0, 0].map((e) => (
-          <PostBox style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.3)" }}>
-            <PostImage />
+        {posts.map((post, index) => (
+          <PostBox
+            key={index}
+            style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.3)" }}
+          >
+            <PostImage
+              className={`${
+                post.category === "PROJECT"
+                  ? "bg-gradient-to-r from-white to-yellow-200 to-green-300"
+                  : post.category === "STUDY"
+                  ? "bg-gradient-to-r from-white to-purple-200 to-purple-300"
+                  : "bg-gradient-to-r from-white to-cyan-200 to-blue-300"
+              }`}
+            />
 
             <PostContentFirstRow>
               <p className="mx-5 my-1 text-sm font-bold">개발자</p>
-              <p className="text-sm text-blue-500">2명 모집</p>
+              <p className="text-sm text-blue-500">{post.total}명 모집</p>
             </PostContentFirstRow>
-            <p className="mx-5 my-1 text-lg font-bold">앱 개발 팀원 모집</p>
+            <p className="mx-5 my-1 text-lg font-bold">
+              {post.title.length > 20
+                ? post.title.slice(0, 20) + "..."
+                : post.title}
+            </p>
             <p className="mx-5 my-3">
-              안녕하세요! 사이드 프로젝트 팀원을 구하고 있는...!!!
+              {post.content.length > 20
+                ? post.content.slice(0, 20) + "..."
+                : post.content}
             </p>
             <span></span>
           </PostBox>
