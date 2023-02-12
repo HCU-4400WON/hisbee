@@ -1,5 +1,7 @@
 package com.hcu.hot6.domain;
 
+import com.hcu.hot6.domain.request.PostUpdateRequest;
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
@@ -7,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
@@ -18,14 +21,21 @@ import java.time.LocalDateTime;
 @DiscriminatorValue("P")
 public class Project extends Post{
 
+    @NotNull
     private int maxDeveloper;
+    @NotNull
     private int maxPlanner;
+    @NotNull
     private int maxDesigner;
 
+    @Column(nullable = false)
     private int currDeveloper;
+    @Column(nullable = false)
     private int currPlanner;
+    @Column(nullable = false)
     private int currDesigner;
 
+    @NotNull
     private boolean hasPay;
 
     //=== 생성 메서드 ===//
@@ -47,4 +57,16 @@ public class Project extends Post{
         this.hasPay = hasPay;
     }
 
+    public void updateProject(PostUpdateRequest request) {
+        this.maxDeveloper = request.getMaxDeveloper();
+        this.maxPlanner = request.getMaxPlanner();
+        this.maxDesigner = request.getMaxDesigner();
+
+        this.currDeveloper = request.getCurrDeveloper();
+        this.currPlanner = request.getCurrPlanner();
+        this.currDesigner = request.getCurrDesigner();
+
+        this.hasPay = request.isHasPay();
+        super.updatePost(request, (maxDeveloper + maxPlanner + maxDesigner), (currDeveloper + currPlanner + currDesigner));
+    }
 }
