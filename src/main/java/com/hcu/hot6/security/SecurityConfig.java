@@ -2,7 +2,6 @@ package com.hcu.hot6.security;
 
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.filter.JwtAuthorizationFilter;
-import com.hcu.hot6.oauth.OAuth2UserDetails;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.service.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -91,15 +90,10 @@ public class SecurityConfig {
 
         return userRequest -> {
             OAuth2User oAuth2User = delegate.loadUser(userRequest);
-            OAuth2UserDetails userDetails = new OAuth2UserDetails(oAuth2User.getAttributes());
-            Optional<Member> registered = memberRepository.findMemberById(userDetails.getUid());
+            Optional<Member> registered = memberRepository.findMemberById(oAuth2User.getName());
 
             if (registered.isEmpty()) {
-                Member member = Member.builder()
-                        .uid(userDetails.getUid())
-                        .email(userDetails.getEmail())
-                        .pictureUrl(userDetails.getPicture())
-                        .build();
+                Member member = new Member(oAuth2User.getAttributes());
                 memberRepository.register(member);
             }
             return oAuth2User;
