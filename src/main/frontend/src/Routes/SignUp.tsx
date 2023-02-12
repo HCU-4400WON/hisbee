@@ -1,5 +1,37 @@
 import tw from "tailwind-styled-components";
 
+const Container = tw.div`
+h-[1600px] 
+flex 
+items-center 
+justify-center 
+bg-[#bababa]
+`;
+
+const SignUpCard = tw.div`
+w-[800px] 
+bg-[#fff] 
+px-[60px] 
+pt-[50px] 
+flex 
+flex-col
+rounded-3xl
+`;
+
+const Title = tw.p`
+  text-[40px]
+  font-bold
+`;
+
+const SubTitle = tw.p`
+ text-[22px]
+ font-bold
+ border-b border-black
+ mt-[40px]
+ pb-[10px]
+ mb-[30px]
+ `;
+
 const FlexRowBox = tw.div`
 flex
 align-center
@@ -10,12 +42,15 @@ justify-between
 `;
 const FlexPositionBox = tw(FlexRowBox)`
 justify-evenly
+
 `;
 
-const FlexColRox = tw.div`
-flex
-flex-col
-items-center
+const PositionBox = tw.div`
+  h-[115px]
+  flex
+  flex-col
+  items-center
+  justify-between
 `;
 
 const PositionGradientBox = tw.span`
@@ -24,28 +59,70 @@ w-[80px]
 h-[80px]
 `;
 
+const Info = tw.p`
+  text-[18px]
+  my-[20px]
+`;
+
+const InfoInput = tw.input`
+  w-[320px]
+  h-[35px]
+  bg-[#eeeeee]
+  rounded-full
+`;
+
+const InfoBox = tw.div`
+  w-[320px]
+  flex
+  flex-col
+`;
+
+const IntroduceBox = tw.div`
+flex
+flex-col
+justify-between
+h-[200px]
+w-[680px]
+`;
+
+const IntroduceArea = tw.textarea`
+w-[680px]
+h-[110px]
+bg-[#eeeeee]
+`;
+
+const StartButton = tw.button`
+mx-auto
+my-[80px]
+w-[250px]
+h-[33px]
+bg-[#eeeeee]
+rounded-full
+`;
+
 function SignUp() {
   return (
-    <div className="h-[1600px] flex items-center justify-center bg-[#bababa]">
-      <div className="w-[800px] h-[1422px] bg-[#fff] px-[75px] py-[80px] flex flex-col">
-        <div>Sign Up</div>
+    <Container>
+      <SignUpCard>
+        <Title>Sign Up</Title>
 
-        <div className="border-b border-black">필수정보 입력하기</div>
+        <SubTitle className="">필수정보 입력하기</SubTitle>
 
         <FlexRequiredBox>
           <div className="flex flex-col justify-evenly h-[400px]">
-            <div>
-              <p>학부</p>
-              <input />
-            </div>
-            <div>
-              <p>학기 수</p>
-              <input />
-            </div>
-            <div>
-              <p>포지션</p>
+            <InfoBox>
+              <Info>학부</Info>
+              <InfoInput />
+            </InfoBox>
+            <InfoBox>
+              <Info>학기 수</Info>
+              <InfoInput />
+            </InfoBox>
+
+            <InfoBox>
+              <Info>포지션</Info>
               <FlexPositionBox>
-                <FlexColRox>
+                <PositionBox>
                   <PositionGradientBox
                     style={{
                       background:
@@ -53,8 +130,8 @@ function SignUp() {
                     }}
                   ></PositionGradientBox>
                   <p>기획자</p>
-                </FlexColRox>
-                <FlexColRox>
+                </PositionBox>
+                <PositionBox>
                   <PositionGradientBox
                     style={{
                       background:
@@ -62,8 +139,8 @@ function SignUp() {
                     }}
                   ></PositionGradientBox>
                   <p>디자이너</p>
-                </FlexColRox>
-                <FlexColRox>
+                </PositionBox>
+                <PositionBox>
                   <PositionGradientBox
                     style={{
                       background:
@@ -71,46 +148,47 @@ function SignUp() {
                     }}
                   ></PositionGradientBox>
                   <p>개발자</p>
-                </FlexColRox>
+                </PositionBox>
               </FlexPositionBox>
-            </div>
+            </InfoBox>
           </div>
-          <div className="flex flex-col items-center justify-evenly h-[400px]">
+          <div className="flex flex-col items-center justify-evenly mt-[15px]">
             <span className="border w-[300px] h-[300px] "></span>
             <span>프로필 사진 업로드</span>
           </div>
         </FlexRequiredBox>
 
-        <div>선택사항</div>
+        <SubTitle className="mt-[80px]">선택사항</SubTitle>
+        <IntroduceBox>
+          <Info className="my-[25px]">자기소개</Info>
+          <IntroduceArea />
+        </IntroduceBox>
 
-        <p>자기소개</p>
-        <textarea></textarea>
+        <FlexRowBox className="justify-between ">
+          <InfoBox>
+            <Info className="my-[25px]">동아리 / 학회</Info>
+            <InfoInput />
+          </InfoBox>
+          <InfoBox>
+            <Info className="my-[25px]">이메일 주소</Info>
+            <InfoInput />
+          </InfoBox>
+        </FlexRowBox>
 
-        <div className="flex justify-between">
-          <div>
-            <p>동아리 / 학회</p>
-            <input />
-          </div>
-          <div>
-            <p>이메일 주소</p>
-            <input />
-          </div>
-        </div>
+        <FlexRowBox className="justify-between">
+          <InfoBox>
+            <Info className="my-[25px]">연락수단</Info>
+            <InfoInput />
+          </InfoBox>
+          <InfoBox>
+            <Info className="my-[25px]">외부링크</Info>
+            <InfoInput />
+          </InfoBox>
+        </FlexRowBox>
 
-        <div className="flex justify-between">
-          <div>
-            <p>연락수단</p>
-            <input />
-          </div>
-          <div>
-            <p>외부링크</p>
-            <input />
-          </div>
-        </div>
-
-        <button>시작하기</button>
-      </div>
-    </div>
+        <StartButton className="">시작하기</StartButton>
+      </SignUpCard>
+    </Container>
   );
 }
 
