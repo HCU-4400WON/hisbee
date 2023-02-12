@@ -5,6 +5,8 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class PostRepository {
@@ -20,7 +22,7 @@ public class PostRepository {
         return post.getId();
     }
 
-    public Post findOne(Long postId) {
-        return em.find(Post.class, postId);
+    public Optional<Post> findOne(Long postId) {
+        return Optional.ofNullable(em.find(Post.class, postId));
     }
 }

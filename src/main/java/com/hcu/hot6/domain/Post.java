@@ -1,14 +1,19 @@
 package com.hcu.hot6.domain;
 
+import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import net.minidev.json.annotate.JsonIgnore;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.util.Assert;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -18,10 +23,11 @@ import java.util.List;
 @DiscriminatorColumn(name = "dtype")
 public abstract class Post {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="dtype", insertable = false, updatable = false)
+    @Column(name = "dtype", insertable = false, updatable = false)
     private String dtype;
 
     @NotNull
@@ -34,11 +40,8 @@ public abstract class Post {
     private Period period;
 
     private int total;
-
-    @Column(nullable = false)
-    private int currTotal;
-    @Column(nullable = false)
-    private boolean isCompleted;
+    private int currTotal = 0;
+    private boolean isCompleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
@@ -54,25 +57,38 @@ public abstract class Post {
     @Builder.Default
     private List<Member> likes = new ArrayList<>();
 
-    //=== 연관관계 메서드 ===//
-    public void registerAuthor(Member author){
-        this.author = author;
-        author.getPosts().add(this);
+    public static Optional<Post> determinePostType(PostCreationRequest request, Member author) {
+        switch (request.getDtype()) {
+            case "P" -> {
+                return Optional.of(new Project(request, author));
+            }
+            case "S" -> {
+                return Optional.of(new Study(request, author));
+            }
+            case "M" -> {
+                return Optional.of(new Mentoring(request, author));
+            }
+        }
+        return Optional.empty();
     }
 
-    //=== 생성 메서드 ===//
-    public Post(String title, String content, String contact, Member author, int total){
-        Assert.hasText(title, "모집글의 제목(title)은 필수 입력사항입니다.");
-        Assert.hasText(contact, "모집글의 문의처(contact)은 필수 입력사항입니다.");
-        Assert.notNull(author, "모집글의 작성자(author)은 필수 입력사항입니다.");
-        Assert.notNull(total, "모집글의 모집 총 인원(total)은 필수 입력사항입니다.");
-
-        this.title = title;
-        this.content = content;
-        this.contact = contact;
+    public Post(PostCreationRequest request, Member author, int total) {
+        this.title = request.getTitle();
+        this.content = request.getContent();
+        this.contact = request.getContact();
+        this.period = Period.ByPeriodBuilder()
+                .postEnd(request.getPostEnd())
+                .projectStart(request.getProjectStart())
+                .projectEnd(request.getProjectEnd())
+                .build();
         this.total = total;
-        this.isCompleted = false;
-        this.registerAuthor(author);
+        registerAuthor(author);
+    }
+
+    //=== 연관관계 메서드 ===//
+    private void registerAuthor(Member author) {
+        this.author = author;
+        author.getPosts().add(this);
     }
 
     protected void updatePost(PostUpdateRequest request, int total, int currTotal) {
@@ -82,10 +98,8 @@ public abstract class Post {
         this.period.setPostEnd(request.getPostEnd());
         this.period.setProjectStart(request.getProjectStart());
         this.period.setProjectEnd(request.getProjectEnd());
-        this.isCompleted = request.isCompleted();
         this.total = total;
         this.currTotal = currTotal;
-
-        if(currTotal >= total) this.isCompleted = true;
+        this.isCompleted = total == currTotal;
     }
 }

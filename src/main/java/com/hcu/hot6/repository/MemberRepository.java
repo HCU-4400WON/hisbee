@@ -26,4 +26,12 @@ public class MemberRepository {
     public void register(Member info) {
         em.persist(info);
     }
+
+    public Optional<Member> findByEmail(String email) {
+        return em.createQuery("select m from Member m where email = :email", Member.class)
+                .setParameter("email", email)
+                .getResultList()
+                .stream()
+                .findFirst();
+    }
 }
