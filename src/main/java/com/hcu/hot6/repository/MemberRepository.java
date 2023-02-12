@@ -26,4 +26,8 @@ public class MemberRepository {
     public void register(Member info) {
         em.persist(info);
     }
+
+    public Member findById(Long authorId) {
+        return em.find(Member.class, authorId);
+    }
 }

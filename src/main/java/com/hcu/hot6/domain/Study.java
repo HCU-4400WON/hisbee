@@ -1,12 +1,16 @@
 package com.hcu.hot6.domain;
 
+import com.hcu.hot6.domain.request.PostUpdateRequest;
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.Null;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
@@ -18,7 +22,10 @@ import java.time.LocalDateTime;
 @DiscriminatorValue("S")
 public class Study extends Post {
 
+    @NotNull
     private int maxMember;
+
+    @Column(nullable = false)
     private int currMember;
 
     //=== 생성 메서드 ===//
@@ -30,5 +37,12 @@ public class Study extends Post {
         this.maxMember = maxMember;
 
         this.currMember = 0;
+    }
+
+    public void updateStudy(PostUpdateRequest request) {
+        this.maxMember = request.getMaxMember();
+        this.currMember = request.getCurrMember();
+
+        super.updatePost(request, maxMember, currMember);
     }
 }

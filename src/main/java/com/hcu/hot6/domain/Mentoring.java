@@ -1,9 +1,12 @@
 package com.hcu.hot6.domain;
 
+import com.hcu.hot6.domain.request.PostUpdateRequest;
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
@@ -15,12 +18,17 @@ import java.time.LocalDateTime;
 @DiscriminatorValue("M")
 public class Mentoring extends Post{
 
+    @NotNull
     private int maxMentor;
+    @NotNull
     private int maxMentee;
 
+    @Column(nullable = false)
     private int currMentor;
+    @Column(nullable = false)
     private int currMentee;
 
+    @NotNull
     private boolean hasPay;
 
     //=== 생성 메서드 ===//
@@ -38,5 +46,16 @@ public class Mentoring extends Post{
         this.currMentee = 0;
 
         this.hasPay = hasPay;
+    }
+
+    public void updateMentoring(PostUpdateRequest request) {
+        this.maxMentor = request.getMaxMentor();
+        this.maxMentee = request.getMaxMentee();
+
+        this.currMentor = request.getCurrMentor();
+        this.currMentee = request.getCurrMentee();
+
+        this.hasPay = request.isHasPay();
+        super.updatePost(request, (maxMentor + maxMentee), (currMentor + currMentee));
     }
 }

@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -26,13 +28,13 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @NotNull
     private String uid;
 
-    @Column(nullable = false)
+    @NotNull
     private String email;
 
-    @Column(nullable = false)
+    @NotNull
     private String pictureUrl;
 
     @Enumerated(value = EnumType.STRING)
@@ -50,9 +52,11 @@ public class Member {
     private String externalLinks;
 
     @ManyToMany(mappedBy = "likes")
+    @JsonIgnore
     private List<Post> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "author")
+    @JsonIgnore
     private List<Post> posts = new ArrayList<>();
 
     //=== 생성 메서드 ===//

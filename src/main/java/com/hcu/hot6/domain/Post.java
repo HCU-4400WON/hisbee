@@ -1,42 +1,53 @@
 package com.hcu.hot6.domain;
 
+import com.hcu.hot6.domain.request.PostUpdateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import net.minidev.json.annotate.JsonIgnore;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter @Setter
+@Getter
 @SuperBuilder
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorColumn(name = "dtype")
 public abstract class Post {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name="dtype", insertable = false, updatable = false)
+    private String dtype;
+
+    @NotNull
     private String title;
     private String content;
-    @Column(nullable = false)
+    @NotNull
     private String contact;
 
     @Embedded
     private Period period;
 
-    @Column(nullable = false)
     private int total;
+
+    @Column(nullable = false)
+    private int currTotal;
     @Column(nullable = false)
     private boolean isCompleted;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @NotNull
+    @JoinColumn(name = "author_id")
     private Member author;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(name = "PostLike",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "member_id"))
@@ -64,4 +75,17 @@ public abstract class Post {
         this.registerAuthor(author);
     }
 
+    protected void updatePost(PostUpdateRequest request, int total, int currTotal) {
+        this.title = request.getTitle();
+        this.content = request.getContent();
+        this.contact = request.getContact();
+        this.period.setPostEnd(request.getPostEnd());
+        this.period.setProjectStart(request.getProjectStart());
+        this.period.setProjectEnd(request.getProjectEnd());
+        this.isCompleted = request.isCompleted();
+        this.total = total;
+        this.currTotal = currTotal;
+
+        if(currTotal >= total) this.isCompleted = true;
+    }
 }
