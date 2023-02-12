@@ -3,7 +3,11 @@ module.exports = {
   // src경로 내부에 자바스크립트, 타입스크립트, jsx를 리턴하는 파일들을 모두 작성 해줍니다.
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        hello: "#222222",
+      },
+    },
   },
   plugins: [],
 };
