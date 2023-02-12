@@ -45,4 +45,15 @@ public class Mentoring extends Post {
         this.hasPay = request.isHasPay();
         super.updatePost(request, (maxMentor + maxMentee), (currMentor + currMentee));
     }
+
+    public void updateMentoring(PostUpdateRequest request) {
+        this.maxMentor = request.getMaxMentor();
+        this.maxMentee = request.getMaxMentee();
+
+        this.currMentor = request.getCurrMentor();
+        this.currMentee = request.getCurrMentee();
+
+        this.hasPay = request.isHasPay();
+        super.updatePost(request, (maxMentor + maxMentee), (currMentor + currMentee));
+    }
 }

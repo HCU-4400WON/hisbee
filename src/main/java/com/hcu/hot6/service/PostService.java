@@ -104,7 +104,6 @@ public class PostService {
             response.setMaxMember(study.getMaxMember());
             response.setCurrMember(study.getCurrMember());
         }
-
         return response;
     }
 }
