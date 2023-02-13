@@ -179,7 +179,7 @@ function Person() {
       <div className=" w-full mx-[60px]  flex flex-col">
         <div className="h-[240px] my-[60px] bg-[#898989] rounded-xl"></div>
         <div className="grid grid-cols-4 gap-10 w-full justify-between">
-          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
+          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
             <Item>
               <div className="flex border rounded-full bg-white m-2 w-[65px] h-[25px] justify-center items-center">
                 <p className="text-[13px] font-bold">디자이너</p>
