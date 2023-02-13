@@ -27,7 +27,11 @@ public class MemberRepository {
         em.persist(info);
     }
 
-    public Member findById(Long authorId) {
-        return em.find(Member.class, authorId);
+    public Optional<Member> findByEmail(String email) {
+        return em.createQuery("select m from Member m where email = :email", Member.class)
+                .setParameter("email", email)
+                .getResultList()
+                .stream()
+                .findFirst();
     }
 }

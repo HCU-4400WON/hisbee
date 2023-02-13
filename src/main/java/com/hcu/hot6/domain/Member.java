@@ -11,18 +11,12 @@ import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
-
-    @Builder
-    public Member(String uid, String email, String pictureUrl) {
-        this.uid = uid;
-        this.email = email;
-        this.pictureUrl = pictureUrl;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,7 +55,7 @@ public class Member {
 
     //=== 생성 메서드 ===//
     @Builder(builderClassName = "ByMemberBuilder", builderMethodName = "ByMemberBuilder")
-    public Member(String email, String nickname, boolean isPublic, Department department, Position position, String bio, int grade, String club, String contact, String externalLinks){
+    public Member(String email, String nickname, boolean isPublic, Department department, Position position, String bio, int grade, String club, String contact, String externalLinks) {
         Assert.hasText(email, "유저의 소셜로그인이메일(email)은 필수 입력사항입니다.");
         Assert.hasText(nickname, "유저의 닉네임(nickname)은 필수 입력사항입니다.");
         Assert.notNull(isPublic, "유저의 인재풀공개여부(isPublic)은 필수 입력사항입니다.");
@@ -77,5 +71,10 @@ public class Member {
         this.contact = contact;
         this.externalLinks = externalLinks;
     }
-    
+
+    public Member(Map<String, Object> attributes) {
+        this.uid = (String) attributes.get("sub");
+        this.email = (String) attributes.get("email");
+        this.pictureUrl = (String) attributes.get("picture");
+    }
 }
