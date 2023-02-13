@@ -4,6 +4,7 @@ import Post from "Routes/Post";
 import Header from "components/Header";
 import Login from "Routes/Login";
 import SignUp from "Routes/SignUp";
+import Person from "Routes/Person";
 
 function Router() {
   return (
@@ -14,6 +15,7 @@ function Router() {
         <Route path="post" element={<Post />}></Route>
         <Route path="login" element={<Login />}></Route>
         <Route path="signup" element={<SignUp />}></Route>
+        <Route path="person" element={<Person />}></Route>
       </Routes>
     </BrowserRouter>
   );
