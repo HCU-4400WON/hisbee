@@ -2,7 +2,6 @@ package com.hcu.hot6.domain;
 
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
-import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
@@ -33,17 +32,6 @@ public class Mentoring extends Post {
         super(request, author, request.getMaxMentor() + request.getMaxMentee());
         this.maxMentor = request.getMaxMentor();
         this.maxMentee = request.getMaxMentee();
-    }
-
-    public void updateMentoring(PostUpdateRequest request) {
-        this.maxMentor = request.getMaxMentor();
-        this.maxMentee = request.getMaxMentee();
-
-        this.currMentor = request.getCurrMentor();
-        this.currMentee = request.getCurrMentee();
-
-        this.hasPay = request.isHasPay();
-        super.updatePost(request, (maxMentor + maxMentee), (currMentor + currMentee));
     }
 
     public void updateMentoring(PostUpdateRequest request) {
