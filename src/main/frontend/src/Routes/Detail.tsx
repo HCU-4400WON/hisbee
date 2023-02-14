@@ -1,4 +1,5 @@
 import tw from "tailwind-styled-components";
+import React from "react";
 
 const Grid = tw.div`
 grid 
@@ -46,8 +47,15 @@ mr-[10px]
 function Detail() {
   return (
     <div className="flex relative justify-center flex-col">
-      <span className="absolute top-0"> - 제목</span>
-      <p className="absolute top-0">내용</p>
+      <span className="absolute top-[100px] left-[80px] flex items-center">
+        <i className="fa-solid fa-arrow-left mr-9 text-[23px]"></i>
+        <p className="text-[21px] font-semibold">제목</p>
+      </span>
+      <span>
+        <p className="absolute top-0 left-[135px] text-[21px] top-[460px] font-semibold">
+          내용
+        </p>
+      </span>
       <div className="mx-auto w-[1000px] border-l-2 border-gray-300 border-r-2 h-full ">
         <header className=" mt-[80px] py-[20px] px-[40px] text-[22px] border-t-2 border-gray-300">
           웹개발 프로젝트 모집합니다 (디자이너, 퍼블리셔, 프론트엔드, 백엔드,

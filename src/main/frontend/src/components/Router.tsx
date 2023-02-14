@@ -7,6 +7,7 @@ import SignUp from "Routes/SignUp";
 import Person from "Routes/Person";
 import PostAddForm from "Routes/PostAddForm";
 import Detail from "Routes/Detail";
+import Profile from "Routes/Profile";
 
 function Router() {
   return (
@@ -20,6 +21,7 @@ function Router() {
         <Route path="login" element={<Login />}></Route>
         <Route path="signup" element={<SignUp />}></Route>
         <Route path="person" element={<Person />}></Route>
+        <Route path="profile" element={<Profile />}></Route>
       </Routes>
     </BrowserRouter>
   );
