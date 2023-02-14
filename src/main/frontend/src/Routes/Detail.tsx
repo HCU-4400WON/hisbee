@@ -17,7 +17,6 @@ const GridItem = tw.div`
 flex 
 items-center 
 h-[30px] 
-
 `;
 
 const ItemTitle = tw.span`

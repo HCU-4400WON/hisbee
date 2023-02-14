@@ -48,6 +48,7 @@ mr-3
 const StyledliText = tw.p`
 text-[15px]
 font-bold
+
 `;
 
 function Person() {
