@@ -1,5 +1,6 @@
 import tw from "tailwind-styled-components";
 import React from "react";
+import { IPost, posts } from "api";
 
 const Grid = tw.div`
 grid 
@@ -44,6 +45,10 @@ mr-[10px]
 `;
 
 function Detail() {
+  const detailPost: IPost = posts[0];
+
+  console.log(detailPost);
+
   return (
     <div className="flex relative justify-center flex-col">
       <span className="absolute top-[100px] left-[80px] flex items-center">
@@ -57,48 +62,107 @@ function Detail() {
       </span>
       <div className="mx-auto w-[1000px] border-l-2 border-gray-300 border-r-2 h-full ">
         <header className=" mt-[80px] py-[20px] px-[40px] text-[22px] border-t-2 border-gray-300">
-          웹개발 프로젝트 모집합니다 (디자이너, 퍼블리셔, 프론트엔드, 백엔드,
-          풀스택 다 환영합니다!!)
+          {detailPost.title}
         </header>
         <Grid>
           <GridItem>
             <ItemTitle>모집 기간</ItemTitle>
-            <ItemText>2022 / 02 / 01</ItemText>
+            <ItemText>
+              {detailPost.postStart.getFullYear()} /{" "}
+              {(detailPost.postStart.getMonth() + 1 + "").padStart(2, "0")} /{" "}
+              {(detailPost.postStart.getDate() + "").padStart(2, "0")}
+            </ItemText>
             <ItemText className=" mx-[10px]">~</ItemText>
-            <ItemText>2022 / 02 / 18</ItemText>
+            <ItemText>
+              {detailPost.postEnd.getFullYear()} /{" "}
+              {(detailPost.postEnd.getMonth() + 1 + "").padStart(2, "0")} /{" "}
+              {(detailPost.postEnd.getDate() + "").padStart(2, "0")}
+            </ItemText>
           </GridItem>
           <GridItem>
             <ItemTitle>모집 유형</ItemTitle>
-            <ItemText>프로젝트</ItemText>
+            <ItemText>
+              {detailPost.dtype === "P"
+                ? "프로젝트"
+                : detailPost.dtype === "S"
+                ? "스터디"
+                : "멘토링"}
+            </ItemText>
           </GridItem>
           <GridItem>
             <ItemTitle>모집 인원</ItemTitle>
-            <ItemText>기획자 1명 ,&nbsp;</ItemText>
-            <ItemText> 개발자 2명</ItemText>
+            {detailPost.dtype === "P" ? (
+              <>
+                {detailPost.maxDeveloper !== 0 && (
+                  <ItemText>
+                    개발자 {detailPost.maxDeveloper}명 ,&nbsp;
+                  </ItemText>
+                )}
+                {detailPost.maxPlanner !== 0 && (
+                  <ItemText>기획자 {detailPost.maxPlanner}명 ,&nbsp;</ItemText>
+                )}
+                {detailPost.maxDesigner !== 0 && (
+                  <ItemText>디자이너 {detailPost.maxDesigner}명</ItemText>
+                )}
+              </>
+            ) : detailPost.dtype === "M" ? (
+              <>
+                {detailPost.maxMentor !== 0 && (
+                  <ItemText>개발자 {detailPost.maxMentor}명 ,&nbsp;</ItemText>
+                )}
+                {detailPost.maxMentee !== 0 && (
+                  <ItemText>기획자 {detailPost.maxMentee}명 ,&nbsp;</ItemText>
+                )}
+              </>
+            ) : (
+              <>
+                {detailPost.maxMember !== 0 && (
+                  <ItemText>개발자 {detailPost.maxMember}명 ,&nbsp;</ItemText>
+                )}
+              </>
+            )}
           </GridItem>
           <GridItem>
             <ItemTitle>프로젝트 기간</ItemTitle>
-            <ItemText>2022 / 03 / 01</ItemText>
+            <ItemText>
+              {detailPost.projectStart.getFullYear()} /{" "}
+              {(detailPost.projectStart.getMonth() + 1 + "").padStart(2, "0")} /{" "}
+              {(detailPost.projectStart.getDate() + "").padStart(2, "0")}
+            </ItemText>
             <ItemText className=" mx-[10px]">~</ItemText>
-            <ItemText>2022 / 03 / 31</ItemText>
+            <ItemText>
+              {detailPost.projectEnd.getFullYear()} /{" "}
+              {(detailPost.projectEnd.getMonth() + 1 + "").padStart(2, "0")} /{" "}
+              {(detailPost.projectEnd.getDate() + "").padStart(2, "0")}
+            </ItemText>
           </GridItem>
           <GridItem>
             <ItemTitle>보수 유무</ItemTitle>
-            <ItemText>Yes</ItemText>
+            {detailPost.hasPay ? (
+              <ItemText>Yes</ItemText>
+            ) : (
+              <ItemText>No</ItemText>
+            )}
           </GridItem>
           <GridItem>
             <ItemTitle>연락수단</ItemTitle>
-            <ItemText>@iamjjang</ItemText>
+            <ItemText>{detailPost.contact}</ItemText>
           </GridItem>
         </Grid>
-        <div className="min-h-[600px] px-[40px] py-[20px] ">content</div>
+        <div className="min-h-[600px] px-[40px] py-[20px] ">
+          {detailPost.content}
+        </div>
       </div>
       <WriteInfoBox className="border-t-2 border-gray-300">
         <div className="flex mx-auto w-[1000px] px-[40px]">
           <WriteInfo className="">작성자</WriteInfo>
-          <WriteInfo className="mr-[40px]">김밍밍</WriteInfo>
+          <WriteInfo className="mr-[40px]">{detailPost.writer}</WriteInfo>
           <WriteInfo>작성일</WriteInfo>
-          <WriteInfo>2022 / 01 / 30</WriteInfo>
+          <WriteInfo>
+            {detailPost.postStart.getFullYear()} /{" "}
+            {(detailPost.postStart.getMonth() + 1 + "").padStart(2, "0")} /{" "}
+            {(detailPost.postStart.getDate() + "").padStart(2, "0")}
+          </WriteInfo>
         </div>
       </WriteInfoBox>
     </div>
