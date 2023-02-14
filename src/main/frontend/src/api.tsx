@@ -22,7 +22,7 @@ export interface IPost {
 export const posts: IPost[] = [
   {
     id: 1,
-    title: "프로젝트 하실 분 구합니다..!",
+    title: "프로젝트 하실 분 구합니다",
     content:
       "채원 디자이너님에게\n안녕하세요?\n위의 모든 기능은 화면에 보여줘야 할 정보가 동일합니다.\n따라서 하나의 통일된 화면을 만들어두고, 수정하기 버튼, 인원 등록 및 삭제 팝업(?)\n그대로 보여주면 모집 상세보기 화면으로 사용할 수 있도록 하면 좋을 것 같아요!",
     contact: "hellohi@handong.ac.kr",
@@ -54,7 +54,7 @@ export const posts: IPost[] = [
   },
   {
     id: 0,
-    title: "저만의 멘토..구합니다..ㅠ",
+    title: "저만의 멘토, 구합니다",
     content:
       "다음 대기자를 위해 반드시 취소 처리를 부탁드립니다.\n별도 알림 없이 불참하실 경우 향후 행사 참여 제한이 있을 수 있습니다.",
     contact: "dsyjf_2@handong.ac.kr",

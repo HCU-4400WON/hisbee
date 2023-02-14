@@ -65,18 +65,21 @@ const SortSelect = tw.select`
 const PostGrid = tw.div`
 grid 
 grid-cols-1
-gap-10 
+gap-x-48
+gap-y-24
+
 mx-10
 sm:grid-cols-2
 xl:grid-cols-4
 
 `;
 
-const PostBox = tw.div`
-h-80 
-w-200
+const PostItem = tw.div`
+relative
+h-[200px] 
+w-[340px]
 rounded-md
-
+p-[15px]
 `;
 
 const PostImage = tw.div`
@@ -90,6 +93,7 @@ mb-3
 
 const PostContentFirstRow = tw.div`
 flex 
+justify-between
 items-center
 `;
 
@@ -232,38 +236,57 @@ bg-gray-200"
         </SortSelect>
       </SortBox>
 
-      <PostGrid>
+      <PostGrid className="relative">
         {posts.map((post, index) => (
-          <PostBox
+          <PostItem
+            className={`${
+              post.category === "PROJECT"
+                ? "bg-gradient-to-r from-gray-300 to-gray-200  to-white"
+                : post.category === "STUDY"
+                ? "bg-gradient-to-r from-purple-300 to-purple-200 to-white"
+                : "bg-gradient-to-r from-blue-300 to-blue-200 to-white"
+            }`}
             key={index}
-            style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.3)" }}
+            style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
           >
-            <PostImage
-              className={`${
-                post.category === "PROJECT"
-                  ? "bg-gradient-to-r from-white to-yellow-200 to-green-300"
-                  : post.category === "STUDY"
-                  ? "bg-gradient-to-r from-white to-purple-200 to-purple-300"
-                  : "bg-gradient-to-r from-white to-cyan-200 to-blue-300"
-              }`}
-            />
-
             <PostContentFirstRow>
-              <p className="mx-5 my-1 text-sm font-bold">개발자</p>
-              <p className="text-sm text-blue-500">{post.total}명 모집</p>
+              <span className="text-[#185ee4] bg-[#fff] border w-[80px] text-[14px] font-medium text-center rounded-full">
+                {post.category === "PROJECT"
+                  ? "프로젝트"
+                  : post.category === "STUDY"
+                  ? "스터디"
+                  : "멘토링"}
+              </span>
+              <i className="fa-regular fa-heart text-[20px]"></i>
+              {/* <p className="mx-5 my-1 text-sm font-bold">개발자</p>
+            <p className="text-sm text-blue-500">{post.total}명 모집</p> */}
             </PostContentFirstRow>
-            <p className="mx-5 my-1 text-lg font-bold">
+
+            {/* secondRow */}
+            <p className="ml-[10px] mt-[25px] text-lg font-bold">
               {post.title.length > 20
                 ? post.title.slice(0, 20) + "..."
                 : post.title}
             </p>
-            <p className="mx-5 my-3">
-              {post.content.length > 20
-                ? post.content.slice(0, 20) + "..."
-                : post.content}
-            </p>
-            <span></span>
-          </PostBox>
+
+            {/* ThirdRow */}
+            <div className="flex ml-[10px] mt-[8px] text-[14px] font-semibold items-center">
+              <p>{post.period}주 플랜</p>
+              <p className="mx-[20px] ">/</p>
+              <p> {post.projectStart} 시작</p>
+            </div>
+
+            {/* lastRow */}
+            <div className="absolute left-[25px] bottom-[15px] flex items-center gap-3">
+              <p className=" text-[#185ee4] text-[15px]">{post.total}명 모집</p>
+              <span className="border-gray-400 border-2 rounded-full px-[10px] text-[13px] text-gray-500 font-medium">
+                개발자 2명
+              </span>
+              <span className="border-gray-400 border-2 rounded-full px-[10px] text-[13px] text-gray-500 font-medium">
+                기획자 1명
+              </span>
+            </div>
+          </PostItem>
         ))}
       </PostGrid>
     </>
