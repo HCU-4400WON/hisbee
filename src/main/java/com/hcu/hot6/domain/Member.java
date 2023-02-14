@@ -77,4 +77,11 @@ public class Member {
         this.email = (String) attributes.get("email");
         this.pictureUrl = (String) attributes.get("picture");
     }
+
+    @Builder
+    public Member(String uid, String email, String pictureUrl) {
+        this.uid = uid;
+        this.email = email;
+        this.pictureUrl = pictureUrl;
+    }
 }

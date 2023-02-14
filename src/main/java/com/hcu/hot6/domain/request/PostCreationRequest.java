@@ -1,14 +1,16 @@
 package com.hcu.hot6.domain.request;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
+@Builder
 public class PostCreationRequest {
 
     @NotNull
@@ -18,9 +20,6 @@ public class PostCreationRequest {
     private String content;
     @NotNull
     private String contact;
-
-    @NotNull
-    private Long authorId;
 
     @PositiveOrZero
     private int maxMentor;
