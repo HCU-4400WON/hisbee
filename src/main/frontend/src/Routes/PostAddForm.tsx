@@ -1,7 +1,9 @@
-import { IPost } from "api";
+import { createStudy, IPost } from "api";
+import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import tw from "tailwind-styled-components";
 
 const StyledUl = tw.ul`
@@ -142,6 +144,7 @@ function PostAddForm() {
     watch,
     setError,
     formState,
+    setValue,
     getValues,
     getFieldState,
   } = useForm({
@@ -171,6 +174,7 @@ function PostAddForm() {
     },
   });
 
+  const navigate = useNavigate();
   const [cat, setCat] = useState("");
 
   const onClick = (e: React.FormEvent<HTMLInputElement>) => {
@@ -202,6 +206,10 @@ function PostAddForm() {
         projectStart: new Date(data.projectStart),
         projectEnd: new Date(data.projectEnd),
       };
+
+      createStudy(newPost);
+
+      // navigate("../");
     } else if (data.category === "mentoring") {
       if (data.mentor + data.mentee === 0) {
         setError("mentor", { message: "0보다 커야 합니다." });

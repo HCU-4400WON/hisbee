@@ -1,6 +1,63 @@
 // 가상 Entity interface
 
 import { useState } from "react";
+import { EphemeralKeyInfo } from "tls";
+import axios from "axios";
+
+export interface IStudy {
+  dtype: string;
+  title: string;
+  content: string;
+  contact: string;
+  maxMember: number;
+  postEnd: Date;
+  projectStart: Date;
+  projectEnd: Date;
+}
+
+export interface IProject {
+  dtype: string;
+  title: string;
+  content: string;
+  contact: string;
+  maxDeveloper: number;
+  maxPlanner: number;
+  maxDesigner: number;
+  postEnd: Date;
+  projectStart: Date;
+  projectEnd: Date;
+  hasPay: boolean;
+}
+
+export interface IMentoring {
+  dtype: string;
+  title: string;
+  content: string;
+  contact: string;
+  maxMentor: number;
+  maxMentee: number;
+  postEnd: Date;
+  projectStart: Date;
+  projectEnd: Date;
+  hasPay: boolean;
+}
+
+export interface IMember {
+  id: number;
+  email: string;
+  nickname: string;
+  isPublic: boolean;
+  department: string;
+  position: string;
+  bio: string;
+  grade: number;
+  club: string;
+  contact: string;
+  externalLinks: string;
+  // like 추가
+  // more_info 이슈 해결
+  // posts 추가
+}
 
 export interface IPost {
   dtype: string;
@@ -329,3 +386,51 @@ export enum positions {
 
 //   category: string;
 // }
+
+//api
+
+export const readOnePost = async (id: number) => {
+  try {
+    const TOKEN = await localStorage.getItem("key");
+    axios.defaults.headers.common["Authorization"] = await `Bearer ${TOKEN}`;
+    const response = await axios.get(`http://localhost:8080/posts/${id}`);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const createMentoring = async (data: IMentoring) => {
+  try {
+    const TOKEN = await localStorage.getItem("key");
+    axios.defaults.headers.common["Authorization"] = await `Bearer ${TOKEN}`;
+    const response = axios.post("http://localhost:8080/posts", data);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const createStudy = (data: IStudy) => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
+    const response = axios.post("http://localhost:8080/posts", data, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const createProject = async (data: IProject) => {
+  try {
+    const TOKEN = await localStorage.getItem("key");
+    axios.defaults.headers.common["Authorization"] = await `Bearer ${TOKEN}`;
+    const response = axios.post("http://localhost:8080/posts", data);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
