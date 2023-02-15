@@ -1,171 +1,325 @@
 // 가상 Entity interface
 
 import { useState } from "react";
+import { EphemeralKeyInfo } from "tls";
+import axios from "axios";
+
+export interface IStudy {
+  dtype: string;
+  title: string;
+  content: string;
+  contact: string;
+  maxMember: number;
+  postEnd: Date;
+  projectStart: Date;
+  projectEnd: Date;
+}
+
+export interface IProject {
+  dtype: string;
+  title: string;
+  content: string;
+  contact: string;
+  maxDeveloper: number;
+  maxPlanner: number;
+  maxDesigner: number;
+  postEnd: Date;
+  projectStart: Date;
+  projectEnd: Date;
+  hasPay: boolean;
+}
+
+export interface IMentoring {
+  dtype: string;
+  title: string;
+  content: string;
+  contact: string;
+  maxMentor: number;
+  maxMentee: number;
+  postEnd: Date;
+  projectStart: Date;
+  projectEnd: Date;
+  hasPay: boolean;
+}
+
+export interface IMember {
+  id: number;
+  email: string;
+  nickname: string;
+  isPublic: boolean;
+  department: string;
+  position: string;
+  bio: string;
+  grade: number;
+  club: string;
+  contact: string;
+  externalLinks: string;
+  // like 추가
+  // more_info 이슈 해결
+  // posts 추가
+}
 
 export interface IPost {
+  dtype: string;
   id: number;
   title: string;
   content: string;
   contact: string;
-  period: number;
-  total: number;
-  isCompleted: boolean;
-  author: string;
-  postStart: string;
-  postEnd: string;
-  projectStart: string;
-  projectEnd: string;
+  postStart: Date;
+  postEnd: Date;
+  projectStart: Date;
+  projectEnd: Date;
+  writer: string;
+  maxDeveloper: number;
+  maxPlanner: number;
+  maxDesigner: number;
+  currDeveloper: number;
+  currPlanner: number;
+  currDesigner: number;
+  maxMember: number;
+  currMember: number;
+  maxMentor: number;
+  maxMentee: number;
+  currMentor: number;
+  currMentee: number;
+  hasPay: boolean;
 
-  category: string;
+  // period: number;
+  // total: number;
+  // category: string;
 }
 
 export const posts: IPost[] = [
   {
+    dtype: "P",
     id: 1,
-    title: "프로젝트 하실 분 구합니다",
-    content:
-      "채원 디자이너님에게\n안녕하세요?\n위의 모든 기능은 화면에 보여줘야 할 정보가 동일합니다.\n따라서 하나의 통일된 화면을 만들어두고, 수정하기 버튼, 인원 등록 및 삭제 팝업(?)\n그대로 보여주면 모집 상세보기 화면으로 사용할 수 있도록 하면 좋을 것 같아요!",
-    contact: "hellohi@handong.ac.kr",
-    period: 20,
-    total: 4,
-    isCompleted: false,
-    author: "hello_0803",
-    postStart: "2022-08-22",
-    postEnd: "2022-09-02",
-    projectStart: "2022-06-22",
-    projectEnd: "2022-07-12",
-    category: "PROJECT",
+    title: "title test",
+    content: "content test",
+    contact: "contact test",
+    postStart: new Date("2023-02-15"),
+    postEnd: new Date("2023-03-02"),
+    projectStart: new Date("2023-04-02"),
+    projectEnd: new Date("2023-07-02"),
+    writer: "null",
+    maxDeveloper: 3,
+    maxPlanner: 2,
+    maxDesigner: 1,
+    currDeveloper: 0,
+    currPlanner: 0,
+    currDesigner: 0,
+    maxMember: 0,
+    currMember: 0,
+    maxMentor: 0,
+    maxMentee: 0,
+    currMentor: 0,
+    currMentee: 0,
+    hasPay: true,
   },
   {
+    dtype: "P",
     id: 2,
-    title: "모두의 아이디어 랩",
-    content:
-      "반드시 읽어주세요\n이번 행사는 오프라인으로 진행됩니다.\n참가 신청 후 취소 의향이 있으실 경우, 다음 대기자를 위해 반드시 취소 처리를 부탁드립니다.\n별도 알림 없이 불참하실 경우 향후 행사 참여 제한이 있을 수 있습니다.",
-    contact: "dsyjf_2@handong.ac.kr",
-    period: 30,
-    total: 5,
-    isCompleted: false,
-    author: "Inhyuk_52",
-    postStart: "2022-05-02",
-    postEnd: "2022-06-01",
-    projectStart: "2022-06-07",
-    projectEnd: "2022-07-07",
-    category: "STUDY",
+    title: "title test",
+    content: "content test",
+    contact: "contact test",
+    postStart: new Date("2023-02-15"),
+    postEnd: new Date("2023-03-02"),
+    projectStart: new Date("2023-04-02"),
+    projectEnd: new Date("2023-04-18"),
+    writer: "null",
+    maxDeveloper: 3,
+    maxPlanner: 2,
+    maxDesigner: 1,
+    currDeveloper: 0,
+    currPlanner: 0,
+    currDesigner: 0,
+    maxMember: 0,
+    currMember: 0,
+    maxMentor: 0,
+    maxMentee: 0,
+    currMentor: 0,
+    currMentee: 0,
+    hasPay: true,
   },
   {
-    id: 0,
-    title: "저만의 멘토, 구합니다",
-    content:
-      "다음 대기자를 위해 반드시 취소 처리를 부탁드립니다.\n별도 알림 없이 불참하실 경우 향후 행사 참여 제한이 있을 수 있습니다.",
-    contact: "dsyjf_2@handong.ac.kr",
-    period: 30,
-    total: 5,
-    isCompleted: false,
-    author: "mentos_1",
-    postStart: "2022-05-02",
-    postEnd: "2022-06-01",
-    projectStart: "2022-06-07",
-    projectEnd: "2022-07-07",
-    category: "MENTORING",
+    dtype: "P",
+    id: 3,
+    title: "title test",
+    content: "content test",
+    contact: "contact test",
+    postStart: new Date("2023-02-15"),
+    postEnd: new Date("2023-03-02"),
+    projectStart: new Date("2023-04-02"),
+    projectEnd: new Date("2023-07-02"),
+    writer: "null",
+    maxDeveloper: 3,
+    maxPlanner: 2,
+    maxDesigner: 1,
+    currDeveloper: 0,
+    currPlanner: 0,
+    currDesigner: 0,
+    maxMember: 0,
+    currMember: 0,
+    maxMentor: 0,
+    maxMentee: 0,
+    currMentor: 0,
+    currMentee: 0,
+    hasPay: true,
   },
   {
-    id: 0,
-    title:
-      "프론트엔드_더 쉽고 빠른 지식/정보 콘텐츠 요약 플랫폼_사이드프로젝트",
-    content:
-      "크리에이터와 엔드유저, 그외에 관련이 있는 다양한 Stakeholder들에게 보여드렸고\n실제로 관심을 가지신 분들이 많아요! (두근두근)\n아이디어를 프로토타입으로 간단한 MVP테스트와 Usability, Fake door test를 진행해봤고 결과를 공유드릴 수 있습니다.",
-    contact: "dsyjf_2@handong.ac.kr",
-    period: 30,
-    total: 5,
-    isCompleted: false,
-    author: "Inhyuk_52",
-    postStart: "2022-05-02",
-    postEnd: "2022-06-01",
-    projectStart: "2022-06-07",
-    projectEnd: "2022-07-07",
-    category: "STUDY",
+    dtype: "D",
+    id: 4,
+    title: "title test",
+    content: "content test",
+    contact: "contact test",
+    postStart: new Date("2023-02-15"),
+    postEnd: new Date("2023-03-02"),
+    projectStart: new Date("2023-04-02"),
+    projectEnd: new Date("2023-07-02"),
+    writer: "null",
+    maxDeveloper: 3,
+    maxPlanner: 2,
+    maxDesigner: 1,
+    currDeveloper: 0,
+    currPlanner: 0,
+    currDesigner: 0,
+    maxMember: 0,
+    currMember: 0,
+    maxMentor: 0,
+    maxMentee: 0,
+    currMentor: 0,
+    currMentee: 0,
+    hasPay: true,
   },
-  {
-    id: 0,
-    title:
-      "프론트엔드_더 쉽고 빠른 지식/정보 콘텐츠 요약 플랫폼_사이드프로젝트",
-    content:
-      "크리에이터와 엔드유저, 그외에 관련이 있는 다양한 Stakeholder들에게 보여드렸고\n실제로 관심을 가지신 분들이 많아요! (두근두근)\n아이디어를 프로토타입으로 간단한 MVP테스트와 Usability, Fake door test를 진행해봤고 결과를 공유드릴 수 있습니다.",
-    contact: "dsyjf_2@handong.ac.kr",
-    period: 30,
-    total: 5,
-    isCompleted: false,
-    author: "Inhyuk_52",
-    postStart: "2022-05-02",
-    postEnd: "2022-06-01",
-    projectStart: "2022-06-07",
-    projectEnd: "2022-07-07",
-    category: "STUDY",
-  },
-  {
-    id: 0,
-    title: "저만의 멘토..구합니다..ㅠ",
-    content:
-      "다음 대기자를 위해 반드시 취소 처리를 부탁드립니다.\n별도 알림 없이 불참하실 경우 향후 행사 참여 제한이 있을 수 있습니다.",
-    contact: "dsyjf_2@handong.ac.kr",
-    period: 30,
-    total: 5,
-    isCompleted: false,
-    author: "mentos_1",
-    postStart: "2022-05-02",
-    postEnd: "2022-06-01",
-    projectStart: "2022-06-07",
-    projectEnd: "2022-07-07",
-    category: "MENTORING",
-  },
-  {
-    id: 0,
-    title: "저만의 멘토..구합니다..ㅠ",
-    content:
-      "다음 대기자를 위해 반드시 취소 처리를 부탁드립니다.\n별도 알림 없이 불참하실 경우 향후 행사 참여 제한이 있을 수 있습니다.",
-    contact: "dsyjf_2@handong.ac.kr",
-    period: 30,
-    total: 5,
-    isCompleted: false,
-    author: "mentos_1",
-    postStart: "2022-05-02",
-    postEnd: "2022-06-01",
-    projectStart: "2022-06-07",
-    projectEnd: "2022-07-07",
-    category: "MENTORING",
-  },
-  {
-    id: 1,
-    title: "프로젝트 하실 분 구합니다..!",
-    content:
-      "채원 디자이너님에게\n안녕하세요?\n위의 모든 기능은 화면에 보여줘야 할 정보가 동일합니다.\n따라서 하나의 통일된 화면을 만들어두고, 수정하기 버튼, 인원 등록 및 삭제 팝업(?)\n그대로 보여주면 모집 상세보기 화면으로 사용할 수 있도록 하면 좋을 것 같아요!",
-    contact: "hellohi@handong.ac.kr",
-    period: 20,
-    total: 4,
-    isCompleted: false,
-    author: "hello_0803",
-    postStart: "2022-08-22",
-    postEnd: "2022-09-02",
-    projectStart: "2022-06-22",
-    projectEnd: "2022-07-12",
-    category: "PROJECT",
-  },
-  {
-    id: 1,
-    title: "프로젝트 하실 분 구합니다..!",
-    content:
-      "채원 디자이너님에게\n안녕하세요?\n위의 모든 기능은 화면에 보여줘야 할 정보가 동일합니다.\n따라서 하나의 통일된 화면을 만들어두고, 수정하기 버튼, 인원 등록 및 삭제 팝업(?)\n그대로 보여주면 모집 상세보기 화면으로 사용할 수 있도록 하면 좋을 것 같아요!",
-    contact: "hellohi@handong.ac.kr",
-    period: 20,
-    total: 4,
-    isCompleted: false,
-    author: "hello_0803",
-    postStart: "2022-08-22",
-    postEnd: "2022-09-02",
-    projectStart: "2022-06-22",
-    projectEnd: "2022-07-12",
-    category: "PROJECT",
-  },
+  // {
+  //   id: 2,
+  //   title: "모두의 아이디어 랩",
+  //   content:
+  //     "반드시 읽어주세요\n이번 행사는 오프라인으로 진행됩니다.\n참가 신청 후 취소 의향이 있으실 경우, 다음 대기자를 위해 반드시 취소 처리를 부탁드립니다.\n별도 알림 없이 불참하실 경우 향후 행사 참여 제한이 있을 수 있습니다.",
+  //   contact: "dsyjf_2@handong.ac.kr",
+  //   period: 30,
+  //   total: 5,
+  //   isCompleted: false,
+  //   author: "Inhyuk_52",
+  //   postStart: new Date("2022-05-02"),
+  //   postEnd: new Date("2022-06-01"),
+  //   projectStart: new Date("2022-06-07"),
+  //   projectEnd: new Date("2022-07-07"),
+  //   category: "STUDY",
+  // },
+  // {
+  //   id: 0,
+  //   title: "저만의 멘토, 구합니다",
+  //   content:
+  //     "다음 대기자를 위해 반드시 취소 처리를 부탁드립니다.\n별도 알림 없이 불참하실 경우 향후 행사 참여 제한이 있을 수 있습니다.",
+  //   contact: "dsyjf_2@handong.ac.kr",
+  //   period: 30,
+  //   total: 5,
+  //   isCompleted: false,
+  //   author: "mentos_1",
+  //   postStart: "2022-05-02",
+  //   postEnd: "2022-06-01",
+  //   projectStart: "2022-06-07",
+  //   projectEnd: "2022-07-07",
+  //   category: "MENTORING",
+  // },
+  // {
+  //   id: 0,
+  //   title:
+  //     "프론트엔드_더 쉽고 빠른 지식/정보 콘텐츠 요약 플랫폼_사이드프로젝트",
+  //   content:
+  //     "크리에이터와 엔드유저, 그외에 관련이 있는 다양한 Stakeholder들에게 보여드렸고\n실제로 관심을 가지신 분들이 많아요! (두근두근)\n아이디어를 프로토타입으로 간단한 MVP테스트와 Usability, Fake door test를 진행해봤고 결과를 공유드릴 수 있습니다.",
+  //   contact: "dsyjf_2@handong.ac.kr",
+  //   period: 30,
+  //   total: 5,
+  //   isCompleted: false,
+  //   author: "Inhyuk_52",
+  //   postStart: "2022-05-02",
+  //   postEnd: "2022-06-01",
+  //   projectStart: "2022-06-07",
+  //   projectEnd: "2022-07-07",
+  //   category: "STUDY",
+  // },
+  // {
+  //   id: 0,
+  //   title:
+  //     "프론트엔드_더 쉽고 빠른 지식/정보 콘텐츠 요약 플랫폼_사이드프로젝트",
+  //   content:
+  //     "크리에이터와 엔드유저, 그외에 관련이 있는 다양한 Stakeholder들에게 보여드렸고\n실제로 관심을 가지신 분들이 많아요! (두근두근)\n아이디어를 프로토타입으로 간단한 MVP테스트와 Usability, Fake door test를 진행해봤고 결과를 공유드릴 수 있습니다.",
+  //   contact: "dsyjf_2@handong.ac.kr",
+  //   period: 30,
+  //   total: 5,
+  //   isCompleted: false,
+  //   author: "Inhyuk_52",
+  //   postStart: "2022-05-02",
+  //   postEnd: "2022-06-01",
+  //   projectStart: "2022-06-07",
+  //   projectEnd: "2022-07-07",
+  //   category: "STUDY",
+  // },
+  // {
+  //   id: 0,
+  //   title: "저만의 멘토..구합니다..ㅠ",
+  //   content:
+  //     "다음 대기자를 위해 반드시 취소 처리를 부탁드립니다.\n별도 알림 없이 불참하실 경우 향후 행사 참여 제한이 있을 수 있습니다.",
+  //   contact: "dsyjf_2@handong.ac.kr",
+  //   period: 30,
+  //   total: 5,
+  //   isCompleted: false,
+  //   author: "mentos_1",
+  //   postStart: "2022-05-02",
+  //   postEnd: "2022-06-01",
+  //   projectStart: "2022-06-07",
+  //   projectEnd: "2022-07-07",
+  //   category: "MENTORING",
+  // },
+  // {
+  //   id: 0,
+  //   title: "저만의 멘토..구합니다..ㅠ",
+  //   content:
+  //     "다음 대기자를 위해 반드시 취소 처리를 부탁드립니다.\n별도 알림 없이 불참하실 경우 향후 행사 참여 제한이 있을 수 있습니다.",
+  //   contact: "dsyjf_2@handong.ac.kr",
+  //   period: 30,
+  //   total: 5,
+  //   isCompleted: false,
+  //   author: "mentos_1",
+  //   postStart: "2022-05-02",
+  //   postEnd: "2022-06-01",
+  //   projectStart: "2022-06-07",
+  //   projectEnd: "2022-07-07",
+  //   category: "MENTORING",
+  // },
+  // {
+  //   id: 1,
+  //   title: "프로젝트 하실 분 구합니다..!",
+  //   content:
+  //     "채원 디자이너님에게\n안녕하세요?\n위의 모든 기능은 화면에 보여줘야 할 정보가 동일합니다.\n따라서 하나의 통일된 화면을 만들어두고, 수정하기 버튼, 인원 등록 및 삭제 팝업(?)\n그대로 보여주면 모집 상세보기 화면으로 사용할 수 있도록 하면 좋을 것 같아요!",
+  //   contact: "hellohi@handong.ac.kr",
+  //   period: 20,
+  //   total: 4,
+  //   isCompleted: false,
+  //   author: "hello_0803",
+  //   postStart: "2022-08-22",
+  //   postEnd: "2022-09-02",
+  //   projectStart: "2022-06-22",
+  //   projectEnd: "2022-07-12",
+  //   category: "PROJECT",
+  // },
+  // {
+  //   id: 1,
+  //   title: "프로젝트 하실 분 구합니다..!",
+  //   content:
+  //     "채원 디자이너님에게\n안녕하세요?\n위의 모든 기능은 화면에 보여줘야 할 정보가 동일합니다.\n따라서 하나의 통일된 화면을 만들어두고, 수정하기 버튼, 인원 등록 및 삭제 팝업(?)\n그대로 보여주면 모집 상세보기 화면으로 사용할 수 있도록 하면 좋을 것 같아요!",
+  //   contact: "hellohi@handong.ac.kr",
+  //   period: 20,
+  //   total: 4,
+  //   isCompleted: false,
+  //   author: "hello_0803",
+  //   postStart: "2022-08-22",
+  //   postEnd: "2022-09-02",
+  //   projectStart: "2022-06-22",
+  //   projectEnd: "2022-07-12",
+  //   category: "PROJECT",
+  // },
 ];
 
 export enum departments {
@@ -232,3 +386,87 @@ export enum positions {
 
 //   category: string;
 // }
+
+//api
+
+export const readOnePost = async (id: number) => {
+  try {
+    // const TOKEN = await localStorage.getItem("key");
+    // axios.defaults.headers.common["Authorization"] = await `Bearer ${TOKEN}`;
+    // const response = await axios.get(`http://localhost:8080/posts/${id}`);
+
+    const TOKEN = localStorage.getItem("key");
+    // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
+    const response = await axios.get(`http://localhost:8080/posts/${id}`, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const createMentoring = async (data: IMentoring) => {
+  try {
+    const TOKEN = await localStorage.getItem("key");
+    axios.defaults.headers.common["Authorization"] = await `Bearer ${TOKEN}`;
+    const response = axios.post("http://localhost:8080/posts", data);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const createStudy = (data: IStudy) => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
+    const response = axios.post("http://localhost:8080/posts", data, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const createProject = async (data: IProject) => {
+  try {
+    const TOKEN = await localStorage.getItem("key");
+    axios.defaults.headers.common["Authorization"] = await `Bearer ${TOKEN}`;
+    const response = axios.post("http://localhost:8080/posts", data);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const deletePost = (id: number) => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
+    const response = axios.delete(`http://localhost:8080/posts/${id}`, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const updatePost = (id: number, data: any) => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
+    const response = axios.put(`http://localhost:8080/posts/${id}`, data, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};

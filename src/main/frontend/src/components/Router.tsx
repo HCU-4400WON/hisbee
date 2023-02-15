@@ -19,7 +19,7 @@ function Router() {
         <Route path="post/:id" element={<Detail />}></Route>
         <Route path="add" element={<PostAddForm />}></Route>
         <Route path="login" element={<Login />}></Route>
-        <Route path="signup" element={<SignUp />}></Route>
+        <Route path="oauth2/redirect" element={<SignUp />}></Route>
         <Route path="person" element={<Person />}></Route>
         <Route path="profile" element={<Profile />}></Route>
       </Routes>

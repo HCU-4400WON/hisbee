@@ -43,7 +43,7 @@ flex
 const PostGrid = tw.div`
 grid 
 grid-cols-1
-gap-12
+gap-48
 mt-[40px]
 mb-[80px]
 sm:grid-cols-2
@@ -51,10 +51,10 @@ xl:grid-cols-3
 
 `;
 
-const PostBox = tw.div`
+const PostItem = tw.div`
 relative
 h-[200px] 
-w-[340px]
+w-[380px]
 rounded-md
 p-[15px]
 `;
@@ -134,11 +134,11 @@ function Profile() {
 
         <PostGrid>
           {posts.slice(0, 3).map((post, index) => (
-            <PostBox
+            <PostItem
               className={`${
-                post.category === "PROJECT"
+                post.dtype === "P"
                   ? "bg-gradient-to-r from-gray-300 to-gray-200  to-white"
-                  : post.category === "STUDY"
+                  : post.dtype === "S"
                   ? "bg-gradient-to-r from-purple-300 to-purple-200 to-white"
                   : "bg-gradient-to-r from-blue-300 to-blue-200 to-white"
               }`}
@@ -147,15 +147,15 @@ function Profile() {
             >
               <PostContentFirstRow>
                 <span className="text-[#185ee4] bg-[#fff] border w-[80px] text-[14px] font-medium text-center rounded-full">
-                  {post.category === "PROJECT"
+                  {post.dtype === "P"
                     ? "프로젝트"
-                    : post.category === "STUDY"
+                    : post.dtype === "S"
                     ? "스터디"
                     : "멘토링"}
                 </span>
                 <i className="fa-regular fa-heart text-[20px]"></i>
                 {/* <p className="mx-5 my-1 text-sm font-bold">개발자</p>
-                <p className="text-sm text-blue-500">{post.total}명 모집</p> */}
+          <p className="text-sm text-blue-500">{post.total}명 모집</p> */}
               </PostContentFirstRow>
 
               {/* secondRow */}
@@ -167,82 +167,108 @@ function Profile() {
 
               {/* ThirdRow */}
               <div className="flex ml-[10px] mt-[8px] text-[14px] font-semibold items-center">
-                <p>{post.period}주 플랜</p>
+                {(post.projectEnd.getTime() - post.projectStart.getTime()) /
+                  (1000 * 24 * 60 * 60) >=
+                365 ? (
+                  <p>
+                    {Math.floor(
+                      (post.projectEnd.getTime() -
+                        post.projectStart.getTime()) /
+                        (1000 * 24 * 60 * 60 * 365)
+                    )}{" "}
+                    년 플랜
+                  </p>
+                ) : (post.projectEnd.getTime() - post.projectStart.getTime()) /
+                    (1000 * 24 * 60 * 60) >=
+                  30 ? (
+                  <p>
+                    {Math.floor(
+                      (post.projectEnd.getTime() -
+                        post.projectStart.getTime()) /
+                        (1000 * 24 * 60 * 60 * 30)
+                    )}{" "}
+                    달 플랜
+                  </p>
+                ) : (post.projectEnd.getTime() - post.projectStart.getTime()) /
+                    (1000 * 24 * 60 * 60) >=
+                  7 ? (
+                  <p>
+                    {Math.floor(
+                      (post.projectEnd.getTime() -
+                        post.projectStart.getTime()) /
+                        (1000 * 24 * 60 * 60 * 7)
+                    )}{" "}
+                    주 플랜
+                  </p>
+                ) : (
+                  <p>
+                    {Math.floor(
+                      (post.projectEnd.getTime() -
+                        post.projectStart.getTime()) /
+                        (1000 * 24 * 60 * 60)
+                    )}{" "}
+                    일 플랜
+                  </p>
+                )}
                 <p className="mx-[20px] ">/</p>
-                <p> {post.projectStart} 시작</p>
+                <p>
+                  {" "}
+                  {post.projectStart.getFullYear()}-
+                  {post.projectStart.getMonth()}-{post.projectStart.getDate()}{" "}
+                  시작
+                </p>
               </div>
 
               {/* lastRow */}
               <div className="absolute left-[25px] bottom-[15px] flex items-center gap-3">
                 <p className=" text-[#185ee4] text-[15px]">
-                  {post.total}명 모집
+                  {post.dtype === "P"
+                    ? post.maxDesigner + post.maxDeveloper + post.maxPlanner
+                    : post.dtype === "S"
+                    ? post.maxMember
+                    : post.maxMentee + post.maxMentor}
+                  명 모집
                 </p>
-                <span className="border-gray-400 border-2 rounded-full px-[10px] text-[13px] text-gray-500 font-medium">
-                  개발자 2명
-                </span>
-                <span className="border-gray-400 border-2 rounded-full px-[10px] text-[13px] text-gray-500 font-medium">
-                  기획자 1명
-                </span>
+
+                {post.dtype === "P" ? (
+                  <>
+                    {post.maxDeveloper !== 0 && (
+                      <span className="border-gray-400 border-2 rounded-full px-[10px] text-[13px] text-gray-500 font-medium">
+                        개발자 {post.maxDeveloper}명
+                      </span>
+                    )}
+                    {post.maxPlanner !== 0 && (
+                      <span className="border-gray-400 border-2 rounded-full px-[10px] text-[13px] text-gray-500 font-medium">
+                        기획자 {post.maxPlanner}명
+                      </span>
+                    )}
+
+                    {post.maxDesigner !== 0 && (
+                      <span className="border-gray-400 border-2 rounded-full px-[10px] text-[13px] text-gray-500 font-medium">
+                        디자이너 {post.maxDesigner}명
+                      </span>
+                    )}
+                  </>
+                ) : post.dtype === "S" ? (
+                  <span className="border-gray-400 border-2 rounded-full px-[10px] text-[13px] text-gray-500 font-medium">
+                    스터디원 {post.maxMember}명
+                  </span>
+                ) : (
+                  <>
+                    {post.maxMentor !== 0 && (
+                      <span className="border-gray-400 border-2 rounded-full px-[10px] text-[13px] text-gray-500 font-medium">
+                        멘토 {post.maxMentor}명
+                      </span>
+                    )}
+                    {post.maxMentee !== 0 && (
+                      <span className="border-gray-400 border-2 rounded-full px-[10px] text-[13px] text-gray-500 font-medium">
+                        멘티 {post.maxMentee}명
+                      </span>
+                    )}
+                  </>
+                )}
               </div>
-            </PostBox>
-          ))}
-        </PostGrid>
-
-        <span className="text-[20px] font-semibold">찜한 모집글</span>
-
-        <PostGrid>
-          {posts.slice(0, 3).map((post, index) => (
-            <PostBox
-              className={`${
-                post.category === "PROJECT"
-                  ? "bg-gradient-to-r from-gray-300 to-gray-200  to-white"
-                  : post.category === "STUDY"
-                  ? "bg-gradient-to-r from-purple-300 to-purple-200 to-white"
-                  : "bg-gradient-to-r from-blue-300 to-blue-200 to-white"
-              }`}
-              key={index}
-              style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
-            >
-              <PostContentFirstRow>
-                <span className="text-[#185ee4] bg-[#fff] border w-[80px] text-[14px] font-medium text-center rounded-full">
-                  {post.category === "PROJECT"
-                    ? "프로젝트"
-                    : post.category === "STUDY"
-                    ? "스터디"
-                    : "멘토링"}
-                </span>
-                <i className="fa-regular fa-heart text-[20px]"></i>
-                {/* <p className="mx-5 my-1 text-sm font-bold">개발자</p>
-                <p className="text-sm text-blue-500">{post.total}명 모집</p> */}
-              </PostContentFirstRow>
-
-              {/* secondRow */}
-              <p className="ml-[10px] mt-[25px] text-lg font-bold">
-                {post.title.length > 20
-                  ? post.title.slice(0, 20) + "..."
-                  : post.title}
-              </p>
-
-              {/* ThirdRow */}
-              <div className="flex ml-[10px] mt-[8px] text-[14px] font-semibold items-center">
-                <p>{post.period}주 플랜</p>
-                <p className="mx-[20px] ">/</p>
-                <p> {post.projectStart} 시작</p>
-              </div>
-
-              {/* lastRow */}
-              <div className="absolute left-[25px] bottom-[15px] flex items-center gap-3">
-                <p className=" text-[#185ee4] text-[15px]">
-                  {post.total}명 모집
-                </p>
-                <span className="border-gray-400 border-2 rounded-full px-[10px] text-[13px] text-gray-500 font-medium">
-                  개발자 2명
-                </span>
-                <span className="border-gray-400 border-2 rounded-full px-[10px] text-[13px] text-gray-500 font-medium">
-                  기획자 1명
-                </span>
-              </div>
-            </PostBox>
+            </PostItem>
           ))}
         </PostGrid>
 
