@@ -116,7 +116,7 @@ public class SecurityConfig {
 
             if (registered.isEmpty()) {
                 Member member = new Member(oAuth2User.getAttributes());
-                memberRepository.save(member);
+                memberRepository.register(member);
             }
             return oAuth2User;
         };

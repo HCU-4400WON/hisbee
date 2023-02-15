@@ -435,3 +435,17 @@ export const createProject = async (data: IProject) => {
     console.error(error);
   }
 };
+
+export const deletePost = (id: number) => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
+    const response = axios.delete(`http://localhost:8080/posts/${id}`, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
