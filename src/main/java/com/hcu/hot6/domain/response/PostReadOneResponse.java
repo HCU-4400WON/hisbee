@@ -1,5 +1,9 @@
 package com.hcu.hot6.domain.response;
 
+import com.hcu.hot6.domain.Mentoring;
+import com.hcu.hot6.domain.Post;
+import com.hcu.hot6.domain.Project;
+import com.hcu.hot6.domain.Study;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,6 +41,48 @@ public class PostReadOneResponse {
     private int currMentor;
     private int currMentee;
     private boolean hasPay;
+
+    public PostReadOneResponse(Post post) {
+        this.dtype = post.getDtype();
+        this.id = post.getId();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.contact = post.getContact();
+        this.writer = post.getAuthor().getNickname();
+        this.postStart = post.getPeriod().getPostStart();
+        this.postEnd = post.getPeriod().getPostEnd();
+        this.projectStart = post.getPeriod().getProjectStart();
+        this.projectEnd = post.getPeriod().getProjectEnd();
+
+        switch (dtype) {
+            case "P" -> {
+                Project project = (Project) post;
+
+                this.maxDesigner = project.getMaxDesigner();
+                this.maxDeveloper = project.getMaxDeveloper();
+                this.maxPlanner = project.getMaxPlanner();
+
+                this.currDesigner = project.getCurrDesigner();
+                this.currDeveloper = project.getCurrDeveloper();
+                this.currPlanner = project.getCurrPlanner();
+            }
+            case "S" -> {
+                Study study = (Study) post;
+
+                this.maxDesigner = study.getMaxMember();
+                this.currMember = study.getCurrMember();
+            }
+            case "M" -> {
+                Mentoring mentoring = (Mentoring) post;
+
+                this.maxMentor = mentoring.getMaxMentor();
+                this.maxMentee = mentoring.getCurrMentee();
+
+                this.currMentor = mentoring.getCurrMentor();
+                this.currMentee = mentoring.getCurrMentee();
+            }
+        }
+    }
 
     //Todo: isCompleted를 반환할 것인지 상의 -> 반환 한다면 tag 형식으로 표시하면 좋을 것 같음.
 }

@@ -1,13 +1,13 @@
 package com.hcu.hot6.domain;
 
+import com.hcu.hot6.domain.request.MemberRequest;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,21 +55,20 @@ public class Member {
 
     //=== 생성 메서드 ===//
     @Builder(builderClassName = "ByMemberBuilder", builderMethodName = "ByMemberBuilder")
-    public Member(String email, String nickname, boolean isPublic, Department department, Position position, String bio, int grade, String club, String contact, String externalLinks) {
-        Assert.hasText(email, "유저의 소셜로그인이메일(email)은 필수 입력사항입니다.");
-        Assert.hasText(nickname, "유저의 닉네임(nickname)은 필수 입력사항입니다.");
-        Assert.notNull(isPublic, "유저의 인재풀공개여부(isPublic)은 필수 입력사항입니다.");
-
+    public Member(String email, String pictureUrl, Department department, Position position, boolean isPublic, String nickname, String bio, Integer grade, String club, String contact, String externalLinks, List<Post> likes, List<Post> posts) {
         this.email = email;
-        this.nickname = nickname;
-        this.isPublic = isPublic;
+        this.pictureUrl = pictureUrl;
         this.department = department;
         this.position = position;
+        this.isPublic = isPublic;
+        this.nickname = nickname;
         this.bio = bio;
         this.grade = grade;
         this.club = club;
         this.contact = contact;
         this.externalLinks = externalLinks;
+        this.likes = likes;
+        this.posts = posts;
     }
 
     public Member(Map<String, Object> attributes) {
@@ -83,5 +82,19 @@ public class Member {
         this.uid = uid;
         this.email = email;
         this.pictureUrl = pictureUrl;
+    }
+
+    public void update(MemberRequest form) {
+        this.nickname = form.getNickname();
+        this.isPublic = form.getIsPublic();
+
+        this.department = form.getDepartment();
+        this.position = form.getPosition();
+        this.bio = form.getBio();
+        this.grade = form.getGrade();
+        this.contact = form.getContact();
+        this.club = String.join(",", form.getClub());
+        this.externalLinks = String.join(",", form.getExternalLinks());
+
     }
 }

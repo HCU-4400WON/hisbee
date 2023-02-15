@@ -2,6 +2,7 @@ package com.hcu.hot6.domain;
 
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
+import com.hcu.hot6.domain.response.PostReadOneResponse;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import net.minidev.json.annotate.JsonIgnore;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -100,5 +102,9 @@ public abstract class Post {
         this.total = total;
         this.currTotal = currTotal;
         this.isCompleted = total == currTotal;
+    }
+
+    public PostReadOneResponse toResponse() {
+        return new PostReadOneResponse(this);
     }
 }
