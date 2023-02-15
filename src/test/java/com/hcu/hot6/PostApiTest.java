@@ -75,7 +75,7 @@ public class PostApiTest {
                 .pictureUrl("picture")
                 .build();
 
-        memberRepository.register(member);
+        memberRepository.save(member);
     }
 
     // ==== CREATE ==== //
