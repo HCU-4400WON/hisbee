@@ -1,12 +1,13 @@
 package com.hcu.hot6.domain;
 
+import com.hcu.hot6.domain.request.MemberRequest;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -83,5 +84,19 @@ public class Member {
         this.uid = uid;
         this.email = email;
         this.pictureUrl = pictureUrl;
+    }
+
+    public void update(MemberRequest form) {
+        this.nickname = form.getNickname();
+        this.isPublic = form.getIsPublic();
+
+        this.department = form.getDepartment();
+        this.position = form.getPosition();
+        this.bio = form.getBio();
+        this.grade = form.getGrade();
+        this.contact = form.getContact();
+        this.club = String.join(",", form.getClub());
+        this.externalLinks = String.join(",", form.getExternalLinks());
+
     }
 }
