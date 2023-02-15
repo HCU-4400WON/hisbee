@@ -6,6 +6,7 @@ public enum Position {
      * 디자이너
      * 개발자
      */
+    NONE,
     PLANNER,
     DESIGNER,
     DEVELOPER
