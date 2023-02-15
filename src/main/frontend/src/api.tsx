@@ -391,9 +391,16 @@ export enum positions {
 
 export const readOnePost = async (id: number) => {
   try {
-    const TOKEN = await localStorage.getItem("key");
-    axios.defaults.headers.common["Authorization"] = await `Bearer ${TOKEN}`;
-    const response = await axios.get(`http://localhost:8080/posts/${id}`);
+    // const TOKEN = await localStorage.getItem("key");
+    // axios.defaults.headers.common["Authorization"] = await `Bearer ${TOKEN}`;
+    // const response = await axios.get(`http://localhost:8080/posts/${id}`);
+
+    const TOKEN = localStorage.getItem("key");
+    // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
+    const response = await axios.get(`http://localhost:8080/posts/${id}`, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
     return response;
   } catch (error) {
     console.error(error);
@@ -441,6 +448,20 @@ export const deletePost = (id: number) => {
     const TOKEN = localStorage.getItem("key");
     // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
     const response = axios.delete(`http://localhost:8080/posts/${id}`, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const updatePost = (id: number, data: any) => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
+    const response = axios.put(`http://localhost:8080/posts/${id}`, data, {
       headers: { Authorization: `Bearer ${TOKEN}` },
       withCredentials: true,
     });
