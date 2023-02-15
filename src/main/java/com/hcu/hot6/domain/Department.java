@@ -1,6 +1,8 @@
 package com.hcu.hot6.domain;
 
 public enum Department {
+    NONE,
+
     // 글로벌리더십학부
     GLS,
 

@@ -23,7 +23,7 @@ public class MemberRepository {
     }
 
     @Transactional
-    public void register(Member info) {
+    public void save(Member info) {
         em.persist(info);
     }
 
