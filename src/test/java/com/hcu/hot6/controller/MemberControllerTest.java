@@ -1,8 +1,9 @@
 package com.hcu.hot6.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hcu.hot6.domain.Member;
+import com.hcu.hot6.domain.*;
 import com.hcu.hot6.domain.request.MemberRequest;
+import com.hcu.hot6.domain.response.MemberProfileResponse;
 import com.hcu.hot6.domain.response.MemberResponse;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.service.MemberService;
@@ -18,6 +19,11 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
@@ -25,6 +31,7 @@ import static org.mockito.Mockito.anyString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -142,5 +149,101 @@ class MemberControllerTest {
                         .with(csrf())
                 ).andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void 프로필_조회_기본정보() throws Exception {
+        // given
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.ofNullable(Member.ByMemberBuilder()
+                        .email(TEST_EMAIL)
+                        .nickname("username")
+                        .isPublic(true)
+                        .bio("bio")
+                        .grade(1)
+                        .contact("contact")
+                        .department(Department.CSEE)
+                        .position(Position.DEVELOPER)
+                        .club("club")
+                        .externalLinks("link")
+                        .posts(new ArrayList<>())
+                        .likes(new ArrayList<>())
+                        .build()));
+
+        // when
+        MvcResult mvcResult = mvc
+                .perform(get("/users/me")
+                        .with(oauth2Login()
+                                .attributes(attr -> attr
+                                        .put("sub", TEST_EMAIL))))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        MemberProfileResponse res = objectMapper.readValue(mvcResult.getResponse()
+                .getContentAsString(), MemberProfileResponse.class);
+
+        // then
+        assertThat(res.getEmail()).isEqualTo(TEST_EMAIL);
+        assertThat(res.getDepartment()).isEqualTo(Department.CSEE);
+        assertThat(res.getPosition()).isEqualTo(Position.DEVELOPER);
+    }
+
+    @Test
+    public void 프로필_조회_모집글_포함() throws Exception {
+        // given
+        given(memberRepository.findByEmail(anyString()))
+                .willReturn(Optional.ofNullable(Member.ByMemberBuilder()
+                        .email(TEST_EMAIL)
+                        .nickname("username")
+                        .isPublic(true)
+                        .bio("bio")
+                        .grade(1)
+                        .contact("contact")
+                        .department(Department.CSEE)
+                        .position(Position.DEVELOPER)
+                        .club("club")
+                        .externalLinks("link")
+                        .posts(List.of(Project.builder()
+                                .dtype("P")
+                                .title("title")
+                                .content("content")
+                                .contact("contact")
+                                .author(Member.builder()
+                                        .uid("1")
+                                        .email(TEST_EMAIL)
+                                        .pictureUrl("picture")
+                                        .build())
+                                .period(Period.ByPeriodBuilder()
+                                        .postEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0))
+                                        .projectStart(LocalDateTime.of(2023, 3, 10, 0, 0, 0))
+                                        .projectEnd(LocalDateTime.of(2023, 7, 2, 0, 0, 0))
+                                        .build())
+                                .maxDeveloper(3)
+                                .maxDesigner(1)
+                                .build()))
+                        .likes(new ArrayList<>())
+                        .build()));
+
+        // when
+        MvcResult mvcResult = mvc
+                .perform(get("/users/me")
+                        .with(oauth2Login()
+                                .attributes(attr -> attr
+                                        .put("sub", TEST_EMAIL))))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        MemberProfileResponse res = objectMapper.readValue(mvcResult.getResponse()
+                .getContentAsString(), MemberProfileResponse.class);
+
+        // then
+        assertThat(res.getEmail()).isEqualTo(TEST_EMAIL);
+        assertThat(res.getDepartment()).isEqualTo(Department.CSEE);
+        assertThat(res.getPosition()).isEqualTo(Position.DEVELOPER);
+
+        assertThat(res.getPosts().size()).isEqualTo(1);
+        assertThat(res.getPosts().get(0).getMaxDeveloper()).isEqualTo(3);
     }
 }
