@@ -417,6 +417,7 @@ export const createStudy = (data: IStudy) => {
     // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
     const response = axios.post("http://localhost:8080/posts", data, {
       headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
     });
     return response;
   } catch (error) {
