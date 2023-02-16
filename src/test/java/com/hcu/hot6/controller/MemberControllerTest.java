@@ -307,4 +307,25 @@ class MemberControllerTest {
         assertThat(res.getNickname()).isEqualTo("modified");
         assertThat(res.getIsPublic()).isEqualTo(false);
     }
+
+    @Test
+    public void 프로필_삭제() throws Exception {
+        // given
+        given(memberService.deleteMember(anyString()))
+                .willReturn(TEST_EMAIL);
+
+        // when
+        MvcResult mvcResult = mvc
+                .perform(delete("/users/me")
+                        .with(oauth2Login()
+                                .attributes(attr -> attr
+                                        .put("sub", TEST_EMAIL)))
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+        // then
+        assertThat(mvcResult.getResponse()
+                .getContentAsString()).isEqualTo(TEST_EMAIL);
+    }
 }
