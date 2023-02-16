@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -105,5 +107,9 @@ public class PostService {
             response.setCurrMember(study.getCurrMember());
         }
         return response;
+    }
+
+    public List<Post> readFilteredPost(SearchInfo searchInfo) {
+        return postRepository.findAll(searchInfo);
     }
 }
