@@ -31,8 +31,7 @@ import static org.mockito.Mockito.anyString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -83,7 +82,7 @@ class MemberControllerTest {
                 .build();
 
         given(memberService.updateMember(anyString(), any()))
-                .willReturn(MemberResponse.builder()
+                .willReturn(Member.ByMemberBuilder()
                         .nickname(form.getNickname())
                         .isPublic(form.getIsPublic())
                         .build());
@@ -245,5 +244,88 @@ class MemberControllerTest {
 
         assertThat(res.getPosts().size()).isEqualTo(1);
         assertThat(res.getPosts().get(0).getMaxDeveloper()).isEqualTo(3);
+    }
+
+    @Test
+    public void 프로필_수정() throws Exception {
+        // given
+        MemberRequest form = MemberRequest.builder()
+                .nickname("modified")
+                .isPublic(false)
+                .build();
+
+        given(memberService.updateMember(anyString(), any()))
+                .willReturn(Member.ByMemberBuilder()
+                        .email(TEST_EMAIL)
+                        .nickname("modified")
+                        .isPublic(false)
+                        .bio("bio")
+                        .grade(1)
+                        .contact("contact")
+                        .department(Department.CSEE)
+                        .position(Position.DEVELOPER)
+                        .club("club")
+                        .externalLinks("link")
+                        .posts(List.of(Project.builder()
+                                .dtype("P")
+                                .title("title")
+                                .content("content")
+                                .contact("contact")
+                                .author(Member.builder()
+                                        .uid("1")
+                                        .email(TEST_EMAIL)
+                                        .pictureUrl("picture")
+                                        .build())
+                                .period(Period.ByPeriodBuilder()
+                                        .postEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0))
+                                        .projectStart(LocalDateTime.of(2023, 3, 10, 0, 0, 0))
+                                        .projectEnd(LocalDateTime.of(2023, 7, 2, 0, 0, 0))
+                                        .build())
+                                .maxDeveloper(3)
+                                .maxDesigner(1)
+                                .build()))
+                        .likes(new ArrayList<>())
+                        .build());
+
+        // when
+        MvcResult mvcResult = mvc
+                .perform(put("/users/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(form))
+                        .with(oauth2Login()
+                                .attributes(attr -> attr
+                                        .put("sub", TEST_EMAIL)))
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        MemberProfileResponse res = objectMapper.readValue(mvcResult.getResponse()
+                .getContentAsString(), MemberProfileResponse.class);
+
+        // then
+        assertThat(res.getNickname()).isEqualTo("modified");
+        assertThat(res.getIsPublic()).isEqualTo(false);
+    }
+
+    @Test
+    public void 프로필_삭제() throws Exception {
+        // given
+        given(memberService.deleteMember(anyString()))
+                .willReturn(TEST_EMAIL);
+
+        // when
+        MvcResult mvcResult = mvc
+                .perform(delete("/users/me")
+                        .with(oauth2Login()
+                                .attributes(attr -> attr
+                                        .put("sub", TEST_EMAIL)))
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+        // then
+        assertThat(mvcResult.getResponse()
+                .getContentAsString()).isEqualTo(TEST_EMAIL);
     }
 }

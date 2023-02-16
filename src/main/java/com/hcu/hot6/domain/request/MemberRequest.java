@@ -5,12 +5,9 @@ import com.hcu.hot6.domain.Position;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Builder
 @Getter
 public class MemberRequest {
@@ -21,11 +18,11 @@ public class MemberRequest {
     private final Boolean isPublic;
 
     private final String bio;
-    private final Department department = Department.NONE;
-    private final Position position = Position.NONE;
+    private final Department department;
+    private final Position position;
     private final Integer grade;
     private final String contact;
-    private final List<String> club = new ArrayList<>();
-    private final List<String> externalLinks = new ArrayList<>();
+    private final List<String> club;
+    private final List<String> externalLinks;
 
 }

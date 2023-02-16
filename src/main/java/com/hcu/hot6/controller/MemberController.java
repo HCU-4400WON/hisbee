@@ -12,9 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -27,17 +25,26 @@ public class MemberController {
     @PostMapping("/users")
     public ResponseEntity<MemberResponse> registerMember(@AuthenticationPrincipal OAuth2User user,
                                                          @RequestBody @Valid MemberRequest form) {
-        String email = user.getName();
-        MemberResponse response = memberService.updateMember(email, form);
-
-        return ResponseEntity.ok(response);
+        Member member = memberService.updateMember(user.getName(), form);
+        return ResponseEntity.ok(new MemberResponse(member));
     }
 
     @GetMapping("/users/me")
     public ResponseEntity<MemberProfileResponse> getProfile(@AuthenticationPrincipal OAuth2User user) {
         Member member = memberRepository.findByEmail(user.getName())
                 .orElseThrow();
-
         return ResponseEntity.ok(new MemberProfileResponse(member));
+    }
+
+    @PutMapping("/users/me")
+    public ResponseEntity<MemberProfileResponse> modifyProfile(@AuthenticationPrincipal OAuth2User user,
+                                                               @RequestBody @Valid MemberRequest form) {
+        Member member = memberService.updateMember(user.getName(), form);
+        return ResponseEntity.ok(new MemberProfileResponse(member));
+    }
+
+    @DeleteMapping("/users/me")
+    public ResponseEntity<String> deleteAccount(@AuthenticationPrincipal OAuth2User user) {
+        return ResponseEntity.ok(memberService.deleteMember(user.getName()));
     }
 }
