@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -20,5 +22,14 @@ public class MemberService {
         member.update(form);
 
         return member;
+    }
+
+    @Transactional
+    public String deleteMember(String email) {
+        Optional<Member> member = memberRepository.findByEmail(email);
+
+        return (member.isPresent())
+                ? memberRepository.remove(member.get())
+                : "";
     }
 }
