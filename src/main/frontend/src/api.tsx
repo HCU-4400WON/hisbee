@@ -409,9 +409,11 @@ export const readOnePost = async (id: number) => {
 
 export const createMentoring = async (data: IMentoring) => {
   try {
-    const TOKEN = await localStorage.getItem("key");
-    axios.defaults.headers.common["Authorization"] = await `Bearer ${TOKEN}`;
-    const response = axios.post("http://localhost:8080/posts", data);
+    const TOKEN = localStorage.getItem("key");
+    const response = axios.post("http://localhost:8080/posts", data, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
     return response;
   } catch (error) {
     console.error(error);
@@ -434,9 +436,12 @@ export const createStudy = (data: IStudy) => {
 
 export const createProject = async (data: IProject) => {
   try {
-    const TOKEN = await localStorage.getItem("key");
-    axios.defaults.headers.common["Authorization"] = await `Bearer ${TOKEN}`;
-    const response = axios.post("http://localhost:8080/posts", data);
+    const TOKEN = localStorage.getItem("key");
+    // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
+    const response = axios.post("http://localhost:8080/posts", data, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
     return response;
   } catch (error) {
     console.error(error);
