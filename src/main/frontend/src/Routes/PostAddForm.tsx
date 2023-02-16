@@ -1,4 +1,4 @@
-import { createStudy, IPost } from "api";
+import { createMentoring, createProject, createStudy, IPost } from "api";
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
@@ -209,7 +209,7 @@ function PostAddForm() {
 
       createStudy(newPost);
 
-      // navigate("../");
+      navigate("../post");
     } else if (data.category === "mentoring") {
       if (data.mentor + data.mentee === 0) {
         setError("mentor", { message: "0보다 커야 합니다." });
@@ -227,6 +227,9 @@ function PostAddForm() {
         projectEnd: new Date(data.projectEnd),
         hasPay: data.pay === "yes" ? true : false,
       };
+
+      createMentoring(newPost);
+      navigate("../post");
     } else {
       if (data.developer + data.planner + data.designer === 0) {
         setError("planner", { message: "0보다 커야 합니다." });
@@ -245,6 +248,9 @@ function PostAddForm() {
         projectEnd: new Date(data.projectEnd),
         hasPay: data.pay === "yes" ? true : false,
       };
+
+      createProject(newPost);
+      navigate("../post");
     }
   };
 
