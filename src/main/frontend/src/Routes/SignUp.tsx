@@ -101,6 +101,13 @@ bg-[#eeeeee]
 rounded-full
 `;
 
+const SubmitButton = tw.button`
+w-[150px]
+h-[33px]
+bg-[#eeeeee]
+rounded-full
+`;
+
 function SignUp() {
   const location = useLocation();
   console.log(location);
@@ -116,6 +123,19 @@ function SignUp() {
 
         <SubTitle className="">필수정보 입력하기</SubTitle>
 
+        <InfoBox className="flex w-full ">
+          <Info>닉네임</Info>
+          <InfoInput className="w-full" />
+        </InfoBox>
+
+        <InfoBox className="flex w-full flex-row mt-[40px] justify-end">
+          <SubmitButton className="">제출하기</SubmitButton>
+        </InfoBox>
+        <SubTitle className="mt-[80px]">선택사항</SubTitle>
+        <Info>
+          * 선택 사항을 기입하시면 인재풀 페이지를 열람 하실 수 있습니다.
+        </Info>
+
         <FlexRequiredBox>
           <div className="flex flex-col justify-evenly h-[400px]">
             <InfoBox>
@@ -123,13 +143,22 @@ function SignUp() {
               <InfoInput />
             </InfoBox>
             <InfoBox>
-              <Info>학기 수</Info>
+              <Info>학년</Info>
               <InfoInput />
             </InfoBox>
 
             <InfoBox>
               <Info>포지션</Info>
               <FlexPositionBox>
+                <PositionBox>
+                  <PositionGradientBox
+                    style={{
+                      background:
+                        "radial-gradient(closest-side,#3aea31 , white)",
+                    }}
+                  ></PositionGradientBox>
+                  <p>일반</p>
+                </PositionBox>
                 <PositionBox>
                   <PositionGradientBox
                     style={{
@@ -166,7 +195,6 @@ function SignUp() {
           </div>
         </FlexRequiredBox>
 
-        <SubTitle className="mt-[80px]">선택사항</SubTitle>
         <IntroduceBox>
           <Info className="my-[25px]">자기소개</Info>
           <IntroduceArea />
@@ -194,7 +222,7 @@ function SignUp() {
           </InfoBox>
         </FlexRowBox>
 
-        <StartButton className="">시작하기</StartButton>
+        <StartButton className="">제출하기</StartButton>
       </SignUpCard>
     </Container>
   );

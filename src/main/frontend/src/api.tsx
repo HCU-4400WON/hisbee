@@ -401,7 +401,7 @@ export const readOnePost = async (id: number) => {
       headers: { Authorization: `Bearer ${TOKEN}` },
       withCredentials: true,
     });
-    return response;
+    return response.data;
   } catch (error) {
     console.error(error);
   }

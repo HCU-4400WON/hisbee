@@ -87,6 +87,7 @@ interface IStudy {
   content: string;
   contact: string;
   maxMember: number;
+  postStart: Date;
   postEnd: Date;
   projectStart: Date;
   projectEnd: Date;
@@ -100,6 +101,7 @@ interface IProject {
   maxDeveloper: number;
   maxPlanner: number;
   maxDesigner: number;
+  postStart: Date;
   postEnd: Date;
   projectStart: Date;
   projectEnd: Date;
@@ -113,6 +115,7 @@ interface IMentoring {
   contact: string;
   maxMentor: number;
   maxMentee: number;
+  postStart: Date;
   postEnd: Date;
   projectStart: Date;
   projectEnd: Date;
@@ -202,6 +205,8 @@ function PostAddForm() {
         content: data.content,
         contact: data.contact,
         maxMember: data.member,
+        // postStart: new Date(data.postStart),
+        postStart: new Date("2023-02-17"),
         postEnd: new Date(data.postEnd),
         projectStart: new Date(data.projectStart),
         projectEnd: new Date(data.projectEnd),
@@ -222,6 +227,7 @@ function PostAddForm() {
         contact: data.contact,
         maxMentor: data.mentor,
         maxMentee: data.mentee,
+        postStart: new Date(data.postStart),
         postEnd: new Date(data.postEnd),
         projectStart: new Date(data.projectStart),
         projectEnd: new Date(data.projectEnd),
@@ -243,6 +249,7 @@ function PostAddForm() {
         maxDeveloper: data.developer,
         maxPlanner: data.planner,
         maxDesigner: data.designer,
+        postStart: new Date(data.postStart),
         postEnd: new Date(data.postEnd),
         projectStart: new Date(data.projectStart),
         projectEnd: new Date(data.projectEnd),
@@ -383,7 +390,7 @@ function PostAddForm() {
                     />
                   </Styledli>
                   <Styledli>
-                    <label htmlFor="mentee">디자이너</label>
+                    <label htmlFor="mentee">멘티</label>
                     <StyledInputNumber
                       {...register("mentee")}
                       min="0"
