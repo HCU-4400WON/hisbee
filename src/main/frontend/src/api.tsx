@@ -531,3 +531,16 @@ export const memberUpdate = (data: IUser) => {
     console.error(error);
   }
 };
+
+export const memberProfile = async () => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    const response = await axios.get("http://localhost:8080/users/me", {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
