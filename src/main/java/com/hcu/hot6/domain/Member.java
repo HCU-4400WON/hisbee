@@ -40,7 +40,7 @@ public class Member {
     private boolean isPublic = false;
     private String nickname;
     private String bio;
-    private Integer grade;
+    private String grade;
     private String club;
     private String contact;
     private String externalLinks;
@@ -55,7 +55,7 @@ public class Member {
 
     //=== 생성 메서드 ===//
     @Builder(builderClassName = "ByMemberBuilder", builderMethodName = "ByMemberBuilder")
-    public Member(String email, String pictureUrl, Department department, Position position, boolean isPublic, String nickname, String bio, Integer grade, String club, String contact, String externalLinks, List<Post> likes, List<Post> posts) {
+    public Member(String email, String pictureUrl, Department department, Position position, boolean isPublic, String nickname, String bio, String grade, String club, String contact, String externalLinks, List<Post> likes, List<Post> posts) {
         this.email = email;
         this.pictureUrl = pictureUrl;
         this.department = department;

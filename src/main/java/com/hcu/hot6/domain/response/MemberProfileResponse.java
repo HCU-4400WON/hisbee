@@ -46,7 +46,7 @@ public class MemberProfileResponse {
     private final Department department;
     private final Position position;
     private final String bio;
-    private final Integer grade;
+    private final String grade;
     private final String contact;
     private final List<String> club;
     private final List<String> externalLinks;
