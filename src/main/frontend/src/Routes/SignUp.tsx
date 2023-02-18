@@ -1,19 +1,26 @@
-import { useLocation } from "react-router";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { ImemberSignup, memberSignUp } from "api";
+import { AnimatePresence, motion } from "framer-motion";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useLocation, useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 import tw from "tailwind-styled-components";
 
 const Container = tw.div`
-h-[1600px] 
+h-screen
 flex 
-items-center 
 justify-center 
 bg-[#bababa]
 `;
 
-const SignUpCard = tw.div`
+const SignUpCard = tw.form`
 w-[800px] 
+h-[500px]
 bg-[#fff] 
-px-[60px] 
-pt-[50px] 
+px-[60px]
+mt-[100px] 
+py-[50px]
 flex 
 flex-col
 rounded-3xl
@@ -70,6 +77,7 @@ const InfoInput = tw.input`
   h-[35px]
   bg-[#eeeeee]
   rounded-full
+  px-[20px]
 `;
 
 const InfoBox = tw.div`
@@ -108,6 +116,24 @@ bg-[#eeeeee]
 rounded-full
 `;
 
+const ValidationVariant = {
+  hidden: {
+    y: -10,
+    color: "red",
+    opacity: 0,
+  },
+
+  showing: {
+    y: 0,
+    opacity: 1,
+  },
+
+  exit: {
+    y: 10,
+    opacity: 0,
+  },
+};
+
 function SignUp() {
   const location = useLocation();
   console.log(location);
@@ -116,113 +142,59 @@ function SignUp() {
 
   localStorage.setItem("key", keyword.get("token") as any);
 
+  const navigate = useNavigate();
+  const { register, handleSubmit, formState } = useForm();
+
+  interface IOnValid {
+    nickname: string;
+  }
+  const onValid = (submitData: IOnValid) => {
+    const newMember: ImemberSignup = {
+      nickname: submitData?.nickname,
+      isPublic: false,
+    };
+    memberSignUp(newMember);
+    navigate("/oauth2/redirect/optional");
+  };
+  // console.log(formState.errors);
+
+  //
+
   return (
     <Container>
-      <SignUpCard>
+      <SignUpCard onSubmit={handleSubmit(onValid as any)}>
         <Title>Sign Up</Title>
 
         <SubTitle className="">필수정보 입력하기</SubTitle>
 
-        <InfoBox className="flex w-full ">
+        <InfoBox className=" relative flex w-full ">
           <Info>닉네임</Info>
-          <InfoInput className="w-full" />
+          {/* 중복 검사 추가 필요 */}
+          {/* 랜덤 생성기 있으면 좋을 듯 */}
+          <InfoInput
+            {...register("nickname", { required: "필수 항목입니다." })}
+            className="w-full"
+          />
+          <AnimatePresence>
+            {(formState.errors.nickname?.message as string) && (
+              <motion.div
+                variants={ValidationVariant}
+                className="absolute top-[100px] mt-[10px]"
+                initial="hidden"
+                animate="showing"
+                exit="exit"
+              >
+                * {formState.errors.nickname?.message as string}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </InfoBox>
 
         <InfoBox className="flex w-full flex-row mt-[40px] justify-end">
+          {/* <Link to="/oauth2/redirect/optional"> */}
           <SubmitButton className="">제출하기</SubmitButton>
+          {/* </Link> */}
         </InfoBox>
-        <SubTitle className="mt-[80px]">선택사항</SubTitle>
-        <Info>
-          * 선택 사항을 기입하시면 인재풀 페이지를 열람 하실 수 있습니다.
-        </Info>
-
-        <FlexRequiredBox>
-          <div className="flex flex-col justify-evenly h-[400px]">
-            <InfoBox>
-              <Info>학부</Info>
-              <InfoInput />
-            </InfoBox>
-            <InfoBox>
-              <Info>학년</Info>
-              <InfoInput />
-            </InfoBox>
-
-            <InfoBox>
-              <Info>포지션</Info>
-              <FlexPositionBox>
-                <PositionBox>
-                  <PositionGradientBox
-                    style={{
-                      background:
-                        "radial-gradient(closest-side,#3aea31 , white)",
-                    }}
-                  ></PositionGradientBox>
-                  <p>일반</p>
-                </PositionBox>
-                <PositionBox>
-                  <PositionGradientBox
-                    style={{
-                      background:
-                        "radial-gradient(closest-side,#7b87e7 , white)",
-                    }}
-                  ></PositionGradientBox>
-                  <p>기획자</p>
-                </PositionBox>
-                <PositionBox>
-                  <PositionGradientBox
-                    style={{
-                      background:
-                        "radial-gradient(closest-side,#e3a3ff , white)",
-                    }}
-                  ></PositionGradientBox>
-                  <p>디자이너</p>
-                </PositionBox>
-                <PositionBox>
-                  <PositionGradientBox
-                    style={{
-                      background:
-                        "radial-gradient(closest-side,#87879e , white)",
-                    }}
-                  ></PositionGradientBox>
-                  <p>개발자</p>
-                </PositionBox>
-              </FlexPositionBox>
-            </InfoBox>
-          </div>
-          <div className="flex flex-col items-center justify-evenly mt-[15px]">
-            <span className="border w-[300px] h-[300px] "></span>
-            <span>프로필 사진 업로드</span>
-          </div>
-        </FlexRequiredBox>
-
-        <IntroduceBox>
-          <Info className="my-[25px]">자기소개</Info>
-          <IntroduceArea />
-        </IntroduceBox>
-
-        <FlexRowBox className="justify-between ">
-          <InfoBox>
-            <Info className="my-[25px]">동아리 / 학회</Info>
-            <InfoInput />
-          </InfoBox>
-          <InfoBox>
-            <Info className="my-[25px]">이메일 주소</Info>
-            <InfoInput />
-          </InfoBox>
-        </FlexRowBox>
-
-        <FlexRowBox className="justify-between">
-          <InfoBox>
-            <Info className="my-[25px]">연락수단</Info>
-            <InfoInput />
-          </InfoBox>
-          <InfoBox>
-            <Info className="my-[25px]">외부링크</Info>
-            <InfoInput />
-          </InfoBox>
-        </FlexRowBox>
-
-        <StartButton className="">제출하기</StartButton>
       </SignUpCard>
     </Container>
   );

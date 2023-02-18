@@ -8,6 +8,7 @@ import Person from "Routes/Person";
 import PostAddForm from "Routes/PostAddForm";
 import Detail from "Routes/Detail";
 import Profile from "Routes/Profile";
+import SignUpOptional from "Routes/SignUpOptional";
 
 function Router() {
   return (
@@ -22,6 +23,10 @@ function Router() {
         <Route path="oauth2/redirect" element={<SignUp />}></Route>
         <Route path="person" element={<Person />}></Route>
         <Route path="profile" element={<Profile />}></Route>
+        <Route
+          path="oauth2/redirect/optional"
+          element={<SignUpOptional />}
+        ></Route>
       </Routes>
     </BrowserRouter>
   );

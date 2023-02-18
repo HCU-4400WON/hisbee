@@ -4,6 +4,22 @@ import { useState } from "react";
 import { EphemeralKeyInfo } from "tls";
 import axios from "axios";
 
+export interface IUser {
+  email: string;
+  pictureUrl: string;
+  nickname: string;
+  isPublic: boolean;
+  department?: string;
+  position?: string;
+  bio?: string;
+  grade?: number;
+  club?: string[];
+  contact?: string;
+  externalLinks?: string[];
+  likes?: IPost[];
+  posts?: IPost[];
+}
+
 export interface IStudy {
   dtype: string;
   title: string;
@@ -475,3 +491,30 @@ export const updatePost = (id: number, data: any) => {
     console.error(error);
   }
 };
+
+export interface ImemberSignup {
+  nickname: string;
+  isPublic: boolean;
+  bio?: string;
+  department?: string;
+  position?: string;
+  grade?: number;
+  contact?: string;
+  club?: string[];
+  externalLinks?: string[];
+}
+
+export const memberSignUp = (data: ImemberSignup) => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    const response = axios.post("http://localhost:8080/users", data, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// export const member
