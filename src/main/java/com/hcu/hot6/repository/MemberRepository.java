@@ -27,6 +27,11 @@ public class MemberRepository {
         em.persist(info);
     }
 
+    public String remove(Member info) {
+        em.remove(info);
+        return info.getEmail();
+    }
+
     public Optional<Member> findByEmail(String email) {
         return em.createQuery("select m from Member m where email = :email", Member.class)
                 .setParameter("email", email)
