@@ -1,3 +1,4 @@
+import { IUser, memberUpdate } from "api";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation } from "react-router";
@@ -125,7 +126,7 @@ rounded-full
 `;
 
 function SignUpOptional() {
-  const { register } = useForm();
+  const { register, handleSubmit } = useForm();
 
   const [positionId, setPositionId] = useState("");
   const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -134,9 +135,27 @@ function SignUpOptional() {
 
   console.log(positionId);
 
+  const onValid = (data: any) => {
+    const newUser = {
+      // pictureUrl?: data.pictureUrl;
+      isPublic: true,
+      department: data.department,
+      position: data.position,
+      bio: data.bio,
+      //   grade 조금 바꾸는 거 필요
+      grade: data.grade,
+      club: [data?.club1, data.club2],
+      contact: data?.contact,
+      //   externalLinks: data?.externalLinks.map((link: string) => link),
+    };
+
+    // console.log([data.externalLinks]);
+    memberUpdate(newUser);
+  };
+
   return (
     <Container>
-      <SignUpCard>
+      <SignUpCard onSubmit={handleSubmit(onValid)}>
         <Title>Sign Up</Title>
 
         <SubTitle className="mt-[80px]">선택사항</SubTitle>
@@ -272,11 +291,17 @@ function SignUpOptional() {
         <FlexRowBox className="justify-between">
           <InfoBox>
             <Info className="my-[25px]">연락수단</Info>
-            <InfoInput placeholder="ex) email or phone" />
+            <InfoInput
+              {...register("contact")}
+              placeholder="ex) email or phone"
+            />
           </InfoBox>
           <InfoBox>
             <Info className="my-[25px]">외부링크</Info>
-            <InfoInput placeholder="ex) github or Linked-In" />
+            <InfoInput
+              {...register("externalLinks")}
+              placeholder="ex) github or Linked-In"
+            />
           </InfoBox>
         </FlexRowBox>
 

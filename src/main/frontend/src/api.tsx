@@ -5,14 +5,14 @@ import { EphemeralKeyInfo } from "tls";
 import axios from "axios";
 
 export interface IUser {
-  email: string;
-  pictureUrl: string;
-  nickname: string;
+  email?: string;
+  pictureUrl?: string;
+  nickname?: string;
   isPublic: boolean;
-  department?: string;
-  position?: string;
-  bio?: string;
-  grade?: number;
+  department: string;
+  position: string;
+  bio: string;
+  grade: number;
   club?: string[];
   contact?: string;
   externalLinks?: string[];
@@ -518,3 +518,16 @@ export const memberSignUp = (data: ImemberSignup) => {
 };
 
 // export const member
+
+export const memberUpdate = (data: IUser) => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    const response = axios.put("http://localhost:8080/users/me", data, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
