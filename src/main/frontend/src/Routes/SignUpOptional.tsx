@@ -1,7 +1,7 @@
 import { IUser, memberUpdate } from "api";
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useLocation } from "react-router";
+import { Navigate, useLocation, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import tw from "tailwind-styled-components";
 
@@ -126,32 +126,69 @@ rounded-full
 `;
 
 function SignUpOptional() {
-  const { register, handleSubmit } = useForm();
+  const [Links, setLinks] = useState<string[]>([]);
+  const [externalLink, setExternalLink] = useState<string>("");
+  const onChange = (event: React.FormEvent<HTMLInputElement>) => {
+    setExternalLink(event.currentTarget.value);
+  };
+  const onDelete = (link: string) => {
+    const idx = Links.findIndex((elem) => elem === link);
+    setLinks((prev) => [...prev.slice(0, idx), ...prev.slice(idx + 1)]);
+  };
+  const onClickPlus = () => {
+    setLinks((prev) => [...prev, externalLink]);
+    setExternalLink("");
+  };
+  const { register, handleSubmit, formState } = useForm();
 
   const [positionId, setPositionId] = useState("");
   const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setPositionId(event.currentTarget.id);
   };
 
+  const navigate = useNavigate();
+
   console.log(positionId);
 
   const onValid = (data: any) => {
     const newUser = {
-      // pictureUrl?: data.pictureUrl;
+      nickname: "abcd",
+      pictureUrl: uploadImage,
       isPublic: true,
       department: data.department,
-      position: data.position,
+      position: positionId,
       bio: data.bio,
-      //   grade 조금 바꾸는 거 필요
       grade: data.grade,
-      club: [data?.club1, data.club2],
+      club: [data.club1, data.club2],
       contact: data?.contact,
-      //   externalLinks: data?.externalLinks.map((link: string) => link),
+      externalLinks: Links,
     };
-
+    console.log(data);
     // console.log([data.externalLinks]);
     memberUpdate(newUser);
+    navigate("/");
   };
+
+  const [uploadImage, setUploadImage] = useState("");
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const onUploadImage = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!e.target.files) {
+        return;
+      }
+      setUploadImage("/img/" + e.target.files[0].name);
+    },
+    []
+  );
+
+  const onUploadImageButtonClick = useCallback(() => {
+    if (!inputRef.current) {
+      return;
+    }
+    inputRef.current.click();
+  }, []);
 
   return (
     <Container>
@@ -185,6 +222,8 @@ function SignUpOptional() {
                 <option>전산전자공학부</option>
                 <option>상담심리사회복지학부</option>
                 <option>ICT창업학부</option>
+                <option>AI융합교육원</option>
+                <option>창의융합교육원</option>
               </InfoSelect>
             </InfoBox>
             <InfoBox>
@@ -264,8 +303,24 @@ function SignUpOptional() {
             </InfoBox>
           </div>
           <div className="flex flex-col items-center justify-evenly mt-[15px]">
-            <span className="border w-[300px] h-[300px] "></span>
-            <span>프로필 사진 업로드</span>
+            <img
+              className="border w-[300px] h-[300px] "
+              src={uploadImage}
+            ></img>
+            <input
+              className="hidden"
+              type="file"
+              accept="image/*"
+              ref={inputRef}
+              onChange={onUploadImage}
+            />
+            <div className="flex items-center justify-between w-[170px]">
+              <i
+                onClick={onUploadImageButtonClick}
+                className="fa-solid fa-arrow-up-from-bracket p-2 border-2 rounded-full"
+              ></i>
+              <span>프로필 사진 업로드</span>
+            </div>
           </div>
         </FlexRequiredBox>
 
@@ -281,11 +336,14 @@ function SignUpOptional() {
         <FlexRowBox className="justify-between ">
           <InfoBox>
             <Info className="my-[25px]">동아리 / 학회 1</Info>
-            <InfoInput {...register("club1")} />
+            <InfoInput {...register("club1")} placeholder="선택 사항입니다" />
           </InfoBox>
           <InfoBox>
             <Info className="my-[25px]">동아리 / 학회 2</Info>
-            <InfoInput {...register("club2")} />
+            <InfoInput
+              {...register("club2")}
+              placeholder="최대 2개 작성 가능합니다"
+            />
           </InfoBox>
         </FlexRowBox>
         <FlexRowBox className="justify-between">
@@ -298,10 +356,27 @@ function SignUpOptional() {
           </InfoBox>
           <InfoBox>
             <Info className="my-[25px]">외부링크</Info>
-            <InfoInput
-              {...register("externalLinks")}
-              placeholder="ex) github or Linked-In"
-            />
+            <div className="flex items-center relative">
+              <InfoInput
+                value={externalLink}
+                onChange={onChange}
+                placeholder="ex) github or Linked-In"
+              />
+              <i
+                onClick={onClickPlus}
+                className="fa-solid fa-plus text-[20px] absolute right-3"
+              ></i>
+            </div>
+            {Links.map((link) => (
+              <div className="flex items-center justify-between bg-slate-100 px-[10px] h-[30px] rounded-full mt-2">
+                <i className="fa-solid fa-link"></i>
+                {link}{" "}
+                <i
+                  className="fa-regular fa-trash-can"
+                  onClick={() => onDelete(link)}
+                ></i>
+              </div>
+            ))}
           </InfoBox>
         </FlexRowBox>
 
