@@ -544,3 +544,16 @@ export const memberProfile = async () => {
     console.error(error);
   }
 };
+
+export const memberDelete = () => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    const response = axios.delete("http://localhost:8080/users/me", {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};

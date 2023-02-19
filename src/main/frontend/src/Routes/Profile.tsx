@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { IUser, memberProfile, memberUpdate, posts } from "api";
+import { IUser, memberDelete, memberProfile, memberUpdate, posts } from "api";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import tw from "tailwind-styled-components";
@@ -95,11 +95,11 @@ function Profile() {
 
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (event.currentTarget.id === "modify") {
-      if (nowModifying === false) {
-        setNowModifying(true);
-      } else {
-        setNowModifying(false);
-      }
+      setNowModifying((prev) => !prev);
+    } else if (event.currentTarget.id === "delete") {
+      memberDelete();
+
+      console.log();
     }
   };
 
@@ -571,7 +571,11 @@ function Profile() {
               </div>
             </div>
 
-            <button className="float-right mb-[40px] rounded-full border-2 border-red-500 text-red-500 w-[130px] h-[30px] ">
+            <button
+              onClick={onClick}
+              id="delete"
+              className="float-right mb-[40px] rounded-full border-2 border-red-500 text-red-500 w-[130px] h-[30px] "
+            >
               {" "}
               탈퇴하기{" "}
             </button>
