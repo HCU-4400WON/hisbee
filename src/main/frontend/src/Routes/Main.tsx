@@ -8,11 +8,10 @@ const titles = [
   "👨‍👦‍👦  모집인원 임박! 모집글",
 ];
 
-const Banner = tw.div`
+const Banner = tw.img`
 rounded-lg 
-h-96 
+w-screen
 mt-10 
-mx-10 
 bg-gradient-to-r from-gray-200 to-gray-500
 `;
 
@@ -69,7 +68,7 @@ justify-between
 function Main() {
   return (
     <>
-      <Banner></Banner>
+      <Banner src="/img/mainBanner.png"></Banner>
       {titles.map((title) => (
         <PostCategory>
           <TitleRow>
