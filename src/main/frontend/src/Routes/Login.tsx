@@ -37,7 +37,7 @@ function Login() {
             >
               <img src="img/google.png" className="w-[14px] mr-2" />
               <a
-                href="http://localhost:8080/login/oauth2/authorization/google"
+                href="http://localhost:8080/oauth2/authorization/google"
                 className="text-[14px]"
               >
                 <span className="font-medium">Google</span> 계정으로 로그인

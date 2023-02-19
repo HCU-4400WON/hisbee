@@ -11,16 +11,15 @@ import java.util.List;
 @Builder
 @Getter
 public class MemberRequest {
-    @NotNull
+
     private final String nickname;
 
-    @NotNull
     private final Boolean isPublic;
 
     private final String bio;
     private final Department department;
     private final Position position;
-    private final Integer grade;
+    private final String grade;
     private final String contact;
     private final List<String> club;
     private final List<String> externalLinks;

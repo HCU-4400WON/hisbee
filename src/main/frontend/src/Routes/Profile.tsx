@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { IUser, memberProfile, posts } from "api";
-import { useEffect } from "react";
+import { IUser, memberDelete, memberProfile, memberUpdate, posts } from "api";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import tw from "tailwind-styled-components";
 
 const Sidebar = tw.div`
@@ -23,6 +24,7 @@ mb-[20px]
 
 const ProfileInfoRow = tw.div`
     flex
+    my-[10px]
 `;
 const ProfileInfoTitle = tw.p`
 min-w-[150px] 
@@ -32,7 +34,7 @@ text-[#757575]
 const ProfileInfoContent = tw.p`
 `;
 
-const ProfileBanner = tw.div`
+const ProfileBanner = tw.form`
 min-h-[320px]
 min-w-[700px] 
 my-[40px] 
@@ -78,10 +80,74 @@ items-center
 `;
 
 function Profile() {
-  const { isLoading, data } = useQuery<IUser>(["User"], memberProfile);
-  useEffect(() => {
-    console.log(data);
-  }, []);
+  const { isLoading, data, refetch } = useQuery<IUser>(
+    ["User"],
+    memberProfile,
+    {
+      onSuccess: (data) => {
+        // 성공시 호출
+        setLinks(data?.externalLinks as any);
+      },
+    }
+  );
+
+  const [nowModifying, setNowModifying] = useState(false);
+
+  const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (event.currentTarget.id === "modify") {
+      setNowModifying((prev) => !prev);
+    } else if (event.currentTarget.id === "delete") {
+      memberDelete();
+
+      console.log();
+    }
+  };
+
+  const { register, handleSubmit } = useForm();
+
+  const [Links, setLinks] = useState<string[]>([]);
+  const [externalLink, setExternalLink] = useState<string>("");
+  const onChange = (event: React.FormEvent<HTMLInputElement>) => {
+    setExternalLink(event.currentTarget.value);
+  };
+  const onDelete = (link: string) => {
+    const idx = Links.findIndex((elem) => elem === link);
+    setLinks((prev) => [...prev.slice(0, idx), ...prev.slice(idx + 1)]);
+  };
+  const onClickPlus = () => {
+    setLinks((prev) => [...prev, externalLink]);
+    setExternalLink("");
+  };
+
+  interface Idata {
+    department: string;
+    position: string;
+    grade: string;
+    contact: string;
+    bio: string;
+    club1: string;
+    club2: string;
+  }
+
+  const onValid = async (newData: Idata) => {
+    console.log(newData);
+
+    const newUser = {
+      nickname: "abcd",
+      pictureUrl: "/img/user.png",
+      isPublic: true,
+      department: newData.department,
+      position: newData.position,
+      bio: newData.bio,
+      grade: newData.grade,
+      club: [newData.club1, newData.club2],
+      contact: newData?.contact,
+      externalLinks: Links,
+    };
+
+    await memberUpdate(newUser);
+    refetch();
+  };
 
   return (
     <>
@@ -98,7 +164,7 @@ function Profile() {
             <SidebarItemText>탈퇴하기</SidebarItemText>
           </Sidebar>
           <div className="px-[50px] w-full">
-            <ProfileBanner>
+            <ProfileBanner onSubmit={handleSubmit(onValid as any)}>
               <div className=" w-[140px] flex flex-col items-center">
                 <img
                   src="img/user.png"
@@ -111,38 +177,200 @@ function Profile() {
               <div className="w-full pl-[70px] text-[17px] flex flex-col justify-between">
                 <ProfileInfoRow>
                   <ProfileInfoTitle>학부</ProfileInfoTitle>
-                  <ProfileInfoContent>{data?.department}</ProfileInfoContent>
+                  {nowModifying ? (
+                    <select
+                      defaultValue={data?.department}
+                      className="border-2 h-[30px] px-2 rounded-lg"
+                      {...register("department")}
+                    >
+                      <option>글로벌리더십학부</option>
+                      <option>국제어문학부</option>
+                      <option>경영경제학부</option>
+                      <option>법학부</option>
+                      <option>커뮤니케이션학부</option>
+                      <option>공간환경시스템공학부</option>
+                      <option>기계제어공학부</option>
+                      <option>콘텐츠융합디자인학부</option>
+                      <option>생명과학부</option>
+                      <option>전산전자공학부</option>
+                      <option>상담심리사회복지학부</option>
+                      <option>ICT창업학부</option>
+                      <option>AI융합교육원</option>
+                      <option>창의융합교육원</option>
+                    </select>
+                  ) : (
+                    <ProfileInfoContent>{data?.department}</ProfileInfoContent>
+                  )}
                 </ProfileInfoRow>
                 <ProfileInfoRow>
                   <ProfileInfoTitle>포지션</ProfileInfoTitle>
-                  <ProfileInfoContent>{data?.position}</ProfileInfoContent>
+
+                  {nowModifying ? (
+                    <select
+                      defaultValue={data?.position}
+                      className="border-2 h-[30px] px-2 rounded-lg"
+                      {...register("position")}
+                    >
+                      <option>일반</option>
+                      <option>기획자</option>
+                      <option>개발자</option>
+                      <option>디자이너</option>
+                    </select>
+                  ) : (
+                    <ProfileInfoContent>{data?.position}</ProfileInfoContent>
+                  )}
                 </ProfileInfoRow>
                 <ProfileInfoRow>
                   <ProfileInfoTitle>학년</ProfileInfoTitle>
-                  <ProfileInfoContent>{data?.grade}</ProfileInfoContent>
+                  {nowModifying ? (
+                    <select
+                      defaultValue={data?.grade}
+                      className="border-2 h-[30px] px-2 rounded-lg"
+                      {...register("grade")}
+                    >
+                      <option>1학년</option>
+                      <option>2학년</option>
+                      <option>3학년</option>
+                      <option>4학년</option>
+                    </select>
+                  ) : (
+                    <ProfileInfoContent>{data?.grade}</ProfileInfoContent>
+                  )}
                 </ProfileInfoRow>
-                <ProfileInfoRow>
-                  <ProfileInfoTitle>자기소개</ProfileInfoTitle>
-                  <ProfileInfoContent>{data?.bio}</ProfileInfoContent>
-                </ProfileInfoRow>
+
                 <ProfileInfoRow>
                   <ProfileInfoTitle>연락수단</ProfileInfoTitle>
-                  <ProfileInfoContent>{data?.contact}</ProfileInfoContent>
+                  <ProfileInfoContent>
+                    {nowModifying ? (
+                      <input
+                        {...register("contact")}
+                        className="border-2 h-[30px] px-2 rounded-lg w-[400px]"
+                        defaultValue={data?.contact}
+                        type="text"
+                      />
+                    ) : (
+                      <ProfileInfoContent>{data?.contact}</ProfileInfoContent>
+                    )}
+                  </ProfileInfoContent>
                 </ProfileInfoRow>
-                <ProfileInfoRow className="relative items-start">
+
+                <ProfileInfoRow>
+                  <ProfileInfoTitle>동아리 / 학회</ProfileInfoTitle>
+
+                  {nowModifying ? (
+                    <div className="flex flex-col">
+                      <input
+                        {...register(`club1`)}
+                        className="border-2 h-[30px] px-2 rounded-lg w-[400px]"
+                        defaultValue={data?.club?.at(0)}
+                        placeholder="최대 2개"
+                        type="text"
+                      />
+
+                      <input
+                        {...register(`club2`)}
+                        className="border-2 h-[30px] px-2 rounded-lg w-[400px]"
+                        defaultValue={data?.club?.at(1)}
+                        placeholder="최대 2개"
+                        type="text"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex flex-col">
+                      {data?.club?.map((elem, index) =>
+                        data?.club?.at(index) === "" ? null : (
+                          <ProfileInfoContent key={index}>
+                            {elem}
+                          </ProfileInfoContent>
+                        )
+                      )}
+                    </div>
+                  )}
+
+                  {/* 
+                  <ProfileInfoContent>
+                    {nowModifying ? (
+                      <input
+                        {...register("club1")}
+                        className="border-2 h-[30px] px-2 rounded-lg w-[400px]"
+                        defaultValue={data?.club}
+                        type="text"
+                      />
+                    ) : (
+                      <ProfileInfoContent>{data?.club}</ProfileInfoContent>
+                    )}
+                  </ProfileInfoContent> */}
+                </ProfileInfoRow>
+
+                <ProfileInfoRow className=" items-start mb-0">
                   <ProfileInfoTitle>외부링크</ProfileInfoTitle>
-                  <div>
-                    {data?.externalLinks?.map((link, index) => (
+
+                  {nowModifying ? (
+                    <div>
+                      <div>
+                        <input
+                          className="border-2 px-2 rounded-lg w-[400px] h-[30px]"
+                          value={externalLink}
+                          onChange={onChange}
+                          placeholder="ex) github or Linked-In"
+                        />
+                        <i
+                          onClick={onClickPlus}
+                          className="fa-solid fa-plus text-[20px] relative right-7"
+                        ></i>
+                      </div>
+
+                      {Links?.map((link) => (
+                        <div className="flex items-center justify-between bg-slate-200 px-[10px] w-[400px] h-[30px] mt-[10px]">
+                          <i className="fa-solid fa-link"></i>
+                          {link}{" "}
+                          <i
+                            className="fa-regular fa-trash-can"
+                            onClick={() => onDelete(link)}
+                          ></i>
+                        </div>
+                      ))}
+
+                      {/* {data?.externalLinks?.map((link, index) => (
                       <ProfileInfoContent key={index}>
                         {link}
                       </ProfileInfoContent>
-                    ))}
-                  </div>
-
-                  <button className="bg-[#fff] w-[120px] h-[32px] border shadow  rounded-full absolute right-0 bottom-0">
-                    수정하기
-                  </button>
+                    ))} */}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col ">
+                      {Links?.map((link) => (
+                        <div className=" relative flex items-center justify-center bg-slate-200 px-[10px] w-[400px] h-[30px] mb-[10px]">
+                          <i className="fa-solid fa-link absolute left-2"></i>
+                          {link}{" "}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </ProfileInfoRow>
+                <ProfileInfoRow className="relative">
+                  <ProfileInfoTitle>자기소개</ProfileInfoTitle>
+                  <ProfileInfoContent>
+                    {nowModifying ? (
+                      <textarea
+                        {...register("bio")}
+                        className="border-2 px-2 rounded-lg w-[400px] h-[100px]"
+                        defaultValue={data?.bio}
+                      ></textarea>
+                    ) : (
+                      <ProfileInfoContent>{data?.bio}</ProfileInfoContent>
+                    )}
+                  </ProfileInfoContent>
+                </ProfileInfoRow>
+                <div className="w-full">
+                  <button
+                    id="modify"
+                    onClick={onClick}
+                    className="bg-[#fff] w-[120px] h-[32px] border shadow  rounded-full float-right"
+                  >
+                    {nowModifying ? "제출하기" : "수정하기"}
+                  </button>
+                </div>
               </div>
             </ProfileBanner>
 
@@ -343,7 +571,11 @@ function Profile() {
               </div>
             </div>
 
-            <button className="float-right mb-[40px] rounded-full border-2 border-red-500 text-red-500 w-[130px] h-[30px] ">
+            <button
+              onClick={onClick}
+              id="delete"
+              className="float-right mb-[40px] rounded-full border-2 border-red-500 text-red-500 w-[130px] h-[30px] "
+            >
               {" "}
               탈퇴하기{" "}
             </button>

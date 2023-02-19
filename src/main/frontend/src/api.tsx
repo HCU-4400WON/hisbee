@@ -12,7 +12,7 @@ export interface IUser {
   department: string;
   position: string;
   bio: string;
-  grade: number;
+  grade: string;
   club?: string[];
   contact?: string;
   externalLinks?: string[];
@@ -540,6 +540,19 @@ export const memberProfile = async () => {
       withCredentials: true,
     });
     return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const memberDelete = () => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    const response = axios.delete("http://localhost:8080/users/me", {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    return response;
   } catch (error) {
     console.error(error);
   }
