@@ -12,7 +12,7 @@ export interface IUser {
   department: string;
   position: string;
   bio: string;
-  grade: number;
+  grade: string;
   club?: string[];
   contact?: string;
   externalLinks?: string[];
