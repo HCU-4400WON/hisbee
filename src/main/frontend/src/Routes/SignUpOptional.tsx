@@ -164,7 +164,6 @@ function SignUpOptional() {
       externalLinks: Links,
     };
     console.log(data);
-    // console.log([data.externalLinks]);
     memberUpdate(newUser);
     navigate("/");
   };
@@ -190,17 +189,26 @@ function SignUpOptional() {
     inputRef.current.click();
   }, []);
 
+  const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      if (e.currentTarget.id == "외부링크") {
+        onClickPlus();
+      }
+      e.preventDefault();
+    }
+  };
+
   return (
     <Container>
-      <SignUpCard onSubmit={handleSubmit(onValid)}>
+      <SignUpCard onSubmit={handleSubmit(onValid as any)}>
         <Title>Sign Up</Title>
 
         <SubTitle className="mt-[80px]">선택사항</SubTitle>
         <Info>
           * 선택 사항을 기입하시면 인재풀 페이지를 열람 하실 수 있습니다.
           <Link to="/">
-            <button className="float-right w-[100px] border-2 border-red-500 rounded-full text-[red]">
-              나가기
+            <button className="float-right w-[150px] border-2 border-red-500 rounded-full text-[red]">
+              안하고 나가기
             </button>
           </Link>
         </Info>
@@ -336,11 +344,16 @@ function SignUpOptional() {
         <FlexRowBox className="justify-between ">
           <InfoBox>
             <Info className="my-[25px]">동아리 / 학회 1</Info>
-            <InfoInput {...register("club1")} placeholder="선택 사항입니다" />
+            <InfoInput
+              onKeyPress={onKeyPress}
+              {...register("club1")}
+              placeholder="선택 사항입니다"
+            />
           </InfoBox>
           <InfoBox>
             <Info className="my-[25px]">동아리 / 학회 2</Info>
             <InfoInput
+              onKeyPress={onKeyPress}
               {...register("club2")}
               placeholder="최대 2개 작성 가능합니다"
             />
@@ -350,6 +363,7 @@ function SignUpOptional() {
           <InfoBox>
             <Info className="my-[25px]">연락수단</Info>
             <InfoInput
+              onKeyPress={onKeyPress}
               {...register("contact")}
               placeholder="ex) email or phone"
             />
@@ -358,6 +372,8 @@ function SignUpOptional() {
             <Info className="my-[25px]">외부링크</Info>
             <div className="flex items-center relative">
               <InfoInput
+                id="외부링크"
+                onKeyPress={onKeyPress}
                 value={externalLink}
                 onChange={onChange}
                 placeholder="ex) github or Linked-In"

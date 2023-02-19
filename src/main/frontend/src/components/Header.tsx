@@ -6,8 +6,9 @@ flex
 
 justify-center
 items-center 
-mx-5 
 border-b-2 
+
+px-[20px]
 
 lg:justify-between
 
@@ -25,12 +26,19 @@ const NavButton = tw.button`
  sm:text-xl
 `;
 
-const LogoNav = tw(NavButton)`
+const Logo = tw.img`
     font-bold
-    text-2xl
+    w-[200px]
     hidden 
-
     lg:flex
+    
+    bg-white 
+    text-lg
+    text-black 
+  py-2 
+  hover:text-purple-500
+  
+ sm:text-xl
 `;
 const NavFlexBox = tw.div`
     flex
@@ -48,7 +56,7 @@ function Header() {
     <>
       <Nav>
         <Link to="/">
-          <LogoNav>LoGo</LogoNav>
+          <Logo src="/img/logo.png" />
         </Link>
         <NavCenterBox>
           <Link to="post">

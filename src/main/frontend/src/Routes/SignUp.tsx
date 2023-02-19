@@ -160,6 +160,12 @@ function SignUp() {
 
   //
 
+  const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
+
   return (
     <Container>
       <SignUpCard onSubmit={handleSubmit(onValid as any)}>
@@ -172,6 +178,7 @@ function SignUp() {
           {/* 중복 검사 추가 필요 */}
           {/* 랜덤 생성기 있으면 좋을 듯 */}
           <InfoInput
+            onKeyPress={onKeyPress}
             {...register("nickname", { required: "필수 항목입니다." })}
             className="w-full"
           />

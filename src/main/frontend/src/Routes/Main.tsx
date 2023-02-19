@@ -22,7 +22,7 @@ mx-5
 const TitleRow = tw.div`
 flex 
 justify-between 
-mx-20 
+mx-4
 mt-20 
 mb-10
 `;
@@ -34,17 +34,16 @@ font-bold
 
 const PostGrid = tw.div`
 grid
-grid-cols-1
-sm:grid-cols-2
-xl:grid-cols-4
-
+w-[1430px]
+grid-cols-4
 `;
 
+//justify-self-center
 const PostItem = tw.div`
 relative
-justify-self-center
+mx-auto
 h-[210px] 
-min-w-[330px]
+w-[330px]
 rounded-md
 overflow-hidden
 `;
