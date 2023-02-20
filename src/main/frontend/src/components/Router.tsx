@@ -9,6 +9,7 @@ import PostAddForm from "Routes/PostAddForm";
 import Detail from "Routes/Detail";
 import Profile from "Routes/Profile";
 import SignUpOptional from "Routes/SignUpOptional";
+import LoadingAnimation from "./LoadingAnimation";
 
 function Router() {
   return (
@@ -27,6 +28,7 @@ function Router() {
           path="oauth2/redirect/optional"
           element={<SignUpOptional />}
         ></Route>
+        <Route path="/loading" element={<LoadingAnimation />}></Route>
       </Routes>
     </BrowserRouter>
   );
