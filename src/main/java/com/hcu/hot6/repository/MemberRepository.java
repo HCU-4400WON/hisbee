@@ -23,8 +23,13 @@ public class MemberRepository {
     }
 
     @Transactional
-    public void register(Member info) {
+    public void save(Member info) {
         em.persist(info);
+    }
+
+    public String remove(Member info) {
+        em.remove(info);
+        return info.getEmail();
     }
 
     public Optional<Member> findByEmail(String email) {

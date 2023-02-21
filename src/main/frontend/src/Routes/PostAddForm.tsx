@@ -1,5 +1,9 @@
+import { createMentoring, createProject, createStudy, IPost } from "api";
+import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import tw from "tailwind-styled-components";
 
 const StyledUl = tw.ul`
@@ -21,10 +25,12 @@ const StyledInputName = tw.label`
 mr-[20px]
 `;
 const StyledInputNumber = tw.input`
-  w-[40px]
+  w-[30px]
   border-b-2
   border-gray-300
-  mx-[10px]
+  mx-[20px]
+  text-center
+
 
 `;
 const StyledFieldTitle = tw.label`
@@ -75,14 +81,91 @@ const ValidationVariant = {
   },
 };
 
+interface IStudy {
+  dtype: string;
+  title: string;
+  content: string;
+  contact: string;
+  maxMember: number;
+  postStart: Date;
+  postEnd: Date;
+  projectStart: Date;
+  projectEnd: Date;
+}
+
+interface IProject {
+  dtype: string;
+  title: string;
+  content: string;
+  contact: string;
+  maxDeveloper: number;
+  maxPlanner: number;
+  maxDesigner: number;
+  postStart: Date;
+  postEnd: Date;
+  projectStart: Date;
+  projectEnd: Date;
+  hasPay: boolean;
+}
+
+interface IMentoring {
+  dtype: string;
+  title: string;
+  content: string;
+  contact: string;
+  maxMentor: number;
+  maxMentee: number;
+  postStart: Date;
+  postEnd: Date;
+  projectStart: Date;
+  projectEnd: Date;
+  hasPay: boolean;
+}
+
+interface IData {
+  mentor: number;
+  mentee: number;
+  member: number;
+  category: string;
+  projectStart: string;
+  projectEnd: string;
+  postStart: string;
+  postEnd: string;
+  contact: string;
+  developer: number;
+  planner: number;
+  designer: number;
+  pay: string;
+  title: string;
+  content: string;
+}
+
 function PostAddForm() {
-  const { register, handleSubmit, watch, setError, formState } = useForm({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setError,
+    formState,
+    setValue,
+    getValues,
+    getFieldState,
+  } = useForm({
     mode: "onSubmit",
     defaultValues: {
+      mentor: "0",
+      mentee: "0",
+      member: "0",
       category: "",
       projectStart: "",
       projectEnd: "",
-      postStart: "",
+      postStart:
+        new Date().getFullYear() +
+        "" +
+        "-" +
+        (new Date().getMonth() + 1 + "").padStart(2, "0") +
+        "-" +
+        (new Date().getDate() + "").padStart(2, "0"),
       postEnd: "",
       contact: "",
       developer: "0",
@@ -94,23 +177,97 @@ function PostAddForm() {
     },
   });
 
-  const onValid = (data: any) => {
+  const navigate = useNavigate();
+  const [cat, setCat] = useState("");
+
+  const onClick = (e: React.FormEvent<HTMLInputElement>) => {
+    setCat(e.currentTarget.value);
+  };
+
+  const onValid = (data: IData) => {
     console.log(data);
-    if (+data.developer + +data.planner + +data.designer === 0) {
-      setError("developer", { message: "0보다 커야 합니다." });
-    }
+
     if (data.projectStart >= data.projectEnd) {
       setError("projectEnd", { message: "마감일이 이릅니다." });
     }
     if (data.postStart >= data.postEnd) {
       setError("postEnd", { message: "마감일이 이릅니다." });
     }
+
+    if (data.category === "study") {
+      if (data.member === 0) {
+        setError("member", { message: "0보다 커야 합니다." });
+      }
+
+      const newPost: IStudy = {
+        dtype: "S",
+        title: data.title,
+        content: data.content,
+        contact: data.contact,
+        maxMember: data.member,
+        // postStart: new Date(data.postStart),
+        postStart: new Date("2023-02-17"),
+        postEnd: new Date(data.postEnd),
+        projectStart: new Date(data.projectStart),
+        projectEnd: new Date(data.projectEnd),
+      };
+
+      createStudy(newPost);
+
+      navigate("../post");
+    } else if (data.category === "mentoring") {
+      if (data.mentor + data.mentee === 0) {
+        setError("mentor", { message: "0보다 커야 합니다." });
+      }
+
+      const newPost: IMentoring = {
+        dtype: "M",
+        title: data.title,
+        content: data.content,
+        contact: data.contact,
+        maxMentor: data.mentor,
+        maxMentee: data.mentee,
+        postStart: new Date(data.postStart),
+        postEnd: new Date(data.postEnd),
+        projectStart: new Date(data.projectStart),
+        projectEnd: new Date(data.projectEnd),
+        hasPay: data.pay === "yes" ? true : false,
+      };
+
+      createMentoring(newPost);
+      navigate("../post");
+    } else {
+      if (data.developer + data.planner + data.designer === 0) {
+        setError("planner", { message: "0보다 커야 합니다." });
+      }
+
+      const newPost: IProject = {
+        dtype: "P",
+        title: data.title,
+        content: data.content,
+        contact: data.contact,
+        maxDeveloper: data.developer,
+        maxPlanner: data.planner,
+        maxDesigner: data.designer,
+        postStart: new Date(data.postStart),
+        postEnd: new Date(data.postEnd),
+        projectStart: new Date(data.projectStart),
+        projectEnd: new Date(data.projectEnd),
+        hasPay: data.pay === "yes" ? true : false,
+      };
+
+      createProject(newPost);
+      navigate("../post");
+    }
   };
 
-  console.log(formState.errors);
+  console.log(getValues().category);
 
   return (
-    <form onSubmit={handleSubmit(onValid)} className="px-[100px] py-[50px]">
+    <form
+      onSubmit={handleSubmit(onValid as any)}
+      className="px-[100px] py-[50px]"
+    >
       <p className="w-full text-[30px] font-normal">모집글 작성하기</p>
       <FieldContainer>
         <FieldRow>
@@ -124,6 +281,8 @@ function PostAddForm() {
                   {...register("category", {
                     required: "필수 항목입니다.",
                   })}
+                  value="study"
+                  onClick={onClick}
                 />
                 <StyledInputName htmlFor="study">스터디</StyledInputName>
               </Styledli>
@@ -134,6 +293,8 @@ function PostAddForm() {
                   {...register("category", {
                     required: "필수 항목입니다.",
                   })}
+                  value="mentoring"
+                  onClick={onClick}
                 />
                 <StyledInputName htmlFor="mentoring">멘토링</StyledInputName>
               </Styledli>
@@ -144,6 +305,8 @@ function PostAddForm() {
                   {...register("category", {
                     required: "필수 항목입니다.",
                   })}
+                  value="project"
+                  onClick={onClick}
                 />
                 <StyledInputName htmlFor="project">프로젝트</StyledInputName>
               </Styledli>
@@ -167,47 +330,116 @@ function PostAddForm() {
           <FieldBox>
             <StyledFieldTitle>모집인원</StyledFieldTitle>
             <StyledUl>
-              <Styledli>
-                <label htmlFor="planner">기획자</label>
-                <StyledInputNumber
-                  {...register("planner", { required: "필수 사항 입니다." })}
-                  min="0"
-                  id="planner"
-                  type="number"
-                />
-              </Styledli>
-              <Styledli>
-                <label htmlFor="designer">디자이너</label>
-                <StyledInputNumber
-                  {...register("designer")}
-                  min="0"
-                  id="designer"
-                  type="number"
-                />
-              </Styledli>
-              <Styledli>
-                <label htmlFor="developer">개발자</label>
-                <StyledInputNumber
-                  {...register("developer")}
-                  min="0"
-                  id="developer"
-                  type="number"
-                />
-              </Styledli>
+              {cat === "project" ? (
+                <>
+                  <Styledli>
+                    <label htmlFor="planner">기획자</label>
+                    <StyledInputNumber
+                      {...register("planner", {
+                        required: "필수 사항 입니다.",
+                      })}
+                      min="0"
+                      id="planner"
+                      type="number"
+                    />
+                  </Styledli>
+                  <Styledli>
+                    <label htmlFor="designer">디자이너</label>
+                    <StyledInputNumber
+                      {...register("designer")}
+                      min="0"
+                      id="designer"
+                      type="number"
+                    />
+                  </Styledli>
+                  <Styledli>
+                    <label htmlFor="developer">개발자</label>
+                    <StyledInputNumber
+                      {...register("developer")}
+                      min="0"
+                      id="developer"
+                      type="number"
+                    />
+                  </Styledli>
 
-              <AnimatePresence>
-                {(formState.errors.developer?.message as any) && (
-                  <motion.li
-                    variants={ValidationVariant}
-                    className="text-xs my-auto"
-                    initial="hidden"
-                    animate="showing"
-                    exit="exit"
-                  >
-                    * {formState.errors.developer?.message as any}
-                  </motion.li>
-                )}
-              </AnimatePresence>
+                  <AnimatePresence>
+                    {(formState.errors.planner?.message as any) && (
+                      <motion.li
+                        variants={ValidationVariant}
+                        className="text-xs my-auto"
+                        initial="hidden"
+                        animate="showing"
+                        exit="exit"
+                      >
+                        * {formState.errors.planner?.message as any}
+                      </motion.li>
+                    )}
+                  </AnimatePresence>
+                </>
+              ) : cat === "mentoring" ? (
+                <>
+                  <Styledli>
+                    <label htmlFor="mentor">멘토</label>
+                    <StyledInputNumber
+                      {...register("mentor", {
+                        required: "필수 사항 입니다.",
+                      })}
+                      min="0"
+                      id="mentor"
+                      type="number"
+                    />
+                  </Styledli>
+                  <Styledli>
+                    <label htmlFor="mentee">멘티</label>
+                    <StyledInputNumber
+                      {...register("mentee")}
+                      min="0"
+                      id="mentee"
+                      type="number"
+                    />
+                  </Styledli>
+
+                  <AnimatePresence>
+                    {(formState.errors.mentor?.message as any) && (
+                      <motion.li
+                        variants={ValidationVariant}
+                        className="text-xs my-auto"
+                        initial="hidden"
+                        animate="showing"
+                        exit="exit"
+                      >
+                        * {formState.errors.mentor?.message as any}
+                      </motion.li>
+                    )}
+                  </AnimatePresence>
+                </>
+              ) : cat === "study" ? (
+                <>
+                  <Styledli>
+                    <label htmlFor="member">스터디원</label>
+                    <StyledInputNumber
+                      {...register("member")}
+                      min="0"
+                      id="member"
+                      type="number"
+                    />
+                  </Styledli>
+
+                  <AnimatePresence>
+                    {(formState.errors.member?.message as any) && (
+                      <motion.li
+                        variants={ValidationVariant}
+                        className="text-xs my-auto"
+                        initial="hidden"
+                        animate="showing"
+                        exit="exit"
+                      >
+                        * {formState.errors.member?.message as any}
+                      </motion.li>
+                    )}
+                  </AnimatePresence>
+                </>
+              ) : null}
             </StyledUl>
           </FieldBox>
         </FieldRow>
@@ -252,18 +484,19 @@ function PostAddForm() {
             </AnimatePresence>
           </FieldBox>
           <FieldBox>
-            <StyledFieldTitle htmlFor="postStart">모집 기간</StyledFieldTitle>
+            <StyledFieldTitle htmlFor="postEnd">모집 기간</StyledFieldTitle>
 
-            <input
+            {/* <input
               id="postStart"
               {...register("postStart", {
                 required: "필수 항목입니다.",
               })}
               type="date"
-            />
+            /> */}
+            <span>{formState.defaultValues?.postStart}</span>
             <StyledSpan>~</StyledSpan>
             <input
-              className="w-[150px] border"
+              className="w-[150px] "
               {...register("postEnd", {
                 required: "필수 항목입니다.",
               })}
@@ -271,8 +504,7 @@ function PostAddForm() {
             />
 
             <AnimatePresence>
-              {((formState.errors.postStart?.message as string) ||
-                (formState.errors.postEnd?.message as string)) && (
+              {(formState.errors.postEnd?.message as string) && (
                 <motion.div
                   variants={ValidationVariant}
                   className="text-xs my-auto mx-5"
@@ -280,9 +512,7 @@ function PostAddForm() {
                   animate="showing"
                   exit="exit"
                 >
-                  *{" "}
-                  {(formState.errors.postStart?.message as string) ||
-                    (formState.errors.postEnd?.message as string)}
+                  * {formState.errors.postEnd?.message as string}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -326,6 +556,7 @@ function PostAddForm() {
                     required: "보수 유무는 필수 항목입니다.",
                   })}
                   type="radio"
+                  value="yes"
                 />
                 <StyledInputName htmlFor="yes">Yes</StyledInputName>
               </Styledli>
@@ -336,6 +567,7 @@ function PostAddForm() {
                     required: "필수 항목입니다.",
                   })}
                   type="radio"
+                  value="no"
                 />
                 <StyledInputName htmlFor="no">No</StyledInputName>
               </Styledli>

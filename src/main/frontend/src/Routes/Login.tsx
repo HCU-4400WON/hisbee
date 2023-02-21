@@ -36,9 +36,12 @@ function Login() {
               style={{ boxShadow: "0 2px 6px 0 rgba(19, 18, 66, 0.15)" }}
             >
               <img src="img/google.png" className="w-[14px] mr-2" />
-              <div className="text-[14px]">
+              <a
+                href="http://localhost:8080/oauth2/authorization/google"
+                className="text-[14px]"
+              >
                 <span className="font-medium">Google</span> 계정으로 로그인
-              </div>
+              </a>
             </div>
 
             <div

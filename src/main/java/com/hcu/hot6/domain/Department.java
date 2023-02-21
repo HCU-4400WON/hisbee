@@ -1,45 +1,47 @@
 package com.hcu.hot6.domain;
 
 public enum Department {
-    // 글로벌리더십학부
-    GLS,
+    NONE,
 
-    // 국제어문학부
-    INT_STUDY,
+    글로벌리더십학부,
+//    GLS,
 
-    // 경영경제학부
-    MANAGEMENT,
+     국제어문학부,
+//    INT_STUDY,
 
-    // 법학부
-    LAW,
+     경영경제학부,
+//    MANAGEMENT,
 
-    // 커뮤니케이션학부
-    COMMUNICATION,
+     법학부,
+//    LAW,
 
-    // 상담심리사회복지학부
-    COUNSELING,
+     커뮤니케이션학부,
+//    COMMUNICATION,
 
-    // 생명과학부
-    LIFE_SCIENCE,
+     상담심리사회복지학부,
+//    COUNSELING,
 
-    // 공간환경시스템공학부
-    SPATIAL_ENV,
+     생명과학부,
+//    LIFE_SCIENCE,
 
-    // 전산전자공학부
-    CSEE,
+     공간환경시스템공학부,
+//    SPATIAL_ENV,
 
-    // 콘텐츠융합디자인학부
-    CCD,
+     전산전자공학부,
+//    CSEE,
 
-    // 기계제어공학부
-    MCE,
+     콘텐츠융합디자인학부,
+//    CCD,
 
-    // ICT 창업학부
-    ICT,
+     기계제어공학부,
+//    MCE,
 
-    // 창의융합교육원
-    CCE,
+     ICT창업학부,
+//    ICT,
 
-    // AI 융합교육원
-    AI
+     창의융합교육원,
+//    CCE,
+
+     AI융합교육원,
+//    AI
 }

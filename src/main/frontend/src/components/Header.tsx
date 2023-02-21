@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import tw from "tailwind-styled-components";
 
 const Nav = tw.nav`
@@ -5,8 +6,9 @@ flex
 
 justify-center
 items-center 
-mx-5 
 border-b-2 
+
+px-[20px]
 
 lg:justify-between
 
@@ -24,12 +26,19 @@ const NavButton = tw.button`
  sm:text-xl
 `;
 
-const LogoNav = tw(NavButton)`
+const Logo = tw.img`
     font-bold
-    text-2xl
+    w-[200px]
     hidden 
-
     lg:flex
+    
+    bg-white 
+    text-lg
+    text-black 
+  py-2 
+  hover:text-purple-500
+  
+ sm:text-xl
 `;
 const NavFlexBox = tw.div`
     flex
@@ -46,11 +55,19 @@ function Header() {
   return (
     <>
       <Nav>
-        <LogoNav>LoGo</LogoNav>
+        <Link to="/">
+          <Logo src="/img/logo.png" />
+        </Link>
         <NavCenterBox>
-          <NavButton>모집글</NavButton>
-          <NavButton>인재풀</NavButton>
-          <NavButton>채팅</NavButton>
+          <Link to="post">
+            <NavButton>모집글</NavButton>
+          </Link>
+          <Link to="person">
+            <NavButton>인재풀</NavButton>
+          </Link>
+          <Link to="profile">
+            <NavButton>프로필</NavButton>
+          </Link>
           <svg
             className="w-6 mx-10 hover:fill-purple-500"
             xmlns="http://www.w3.org/2000/svg"
@@ -59,9 +76,14 @@ function Header() {
             <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
           </svg>
         </NavCenterBox>
+
         <NavRightBox className="">
-          <NavButton>Login</NavButton>
-          <NavButton>Sign up</NavButton>
+          <Link to="login">
+            <NavButton>Login</NavButton>
+          </Link>
+          <Link to="oauth2/redirect">
+            <NavButton>Sign up</NavButton>
+          </Link>
         </NavRightBox>
       </Nav>
     </>
