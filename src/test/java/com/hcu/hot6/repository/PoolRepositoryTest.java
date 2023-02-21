@@ -81,7 +81,7 @@ class PoolRepositoryTest {
                     .nickname("username")
                     .department(Department.전산전자공학부)
                     .position(Position.개발자)
-                    .g드rade("1")
+                    .grade("1")
                     .isPublic(true)
                     .build());
             em.persist(member);

@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -85,6 +86,7 @@ public class PostApiTest {
      */
     @DisplayName("모집글 생성: 멘토링")
     @Test
+    @Rollback(value = false)
     public void createMentoring() throws Exception {
         // 1L를 PK로 가지는 유저가 있는 상태에서 테스트. -> 통과
         PostCreationRequest request = PostCreationRequest.builder()
@@ -92,9 +94,9 @@ public class PostApiTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0))
-                .projectStart(LocalDateTime.of(2023, 3, 10, 0, 0, 0))
-                .projectEnd(LocalDateTime.of(2023, 7, 2, 0, 0, 0))
+                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
+                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
                 .maxMentor(1)
                 .maxMentee(2)
                 .build();
@@ -138,9 +140,9 @@ public class PostApiTest {
                 // .title("title") # missing title
                 .content("content")
                 .contact("contact")
-                .postEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0))
-                .projectStart(LocalDateTime.of(2023, 3, 10, 0, 0, 0))
-                .projectEnd(LocalDateTime.of(2023, 7, 2, 0, 0, 0))
+                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
+                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
                 .maxMentor(1)
                 .maxMentee(2)
                 .build();
@@ -167,9 +169,9 @@ public class PostApiTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0))
-                .projectStart(LocalDateTime.of(2023, 3, 10, 0, 0, 0))
-                .projectEnd(LocalDateTime.of(2022, 7, 2, 0, 0, 0))
+                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
+                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2022, 7, 2, 0, 0, 0)))
                 .maxMentor(1)
                 .maxMentee(2)
                 .build();
@@ -200,9 +202,9 @@ public class PostApiTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0))
-                .projectStart(LocalDateTime.of(2023, 3, 10, 0, 0, 0))
-                .projectEnd(LocalDateTime.of(2023, 7, 2, 0, 0, 0))
+                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
+                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
                 .maxMentor(-1)
                 .maxMentee(2)
                 .build();
@@ -229,9 +231,9 @@ public class PostApiTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0))
-                .projectStart(LocalDateTime.of(2023, 3, 10, 0, 0, 0))
-                .projectEnd(LocalDateTime.of(2023, 7, 2, 0, 0, 0))
+                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
+                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
                 .maxMentor(2)
                 .maxMentee(2)
                 .build();
@@ -259,9 +261,9 @@ public class PostApiTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0))
-                .projectStart(LocalDateTime.of(2023, 3, 10, 0, 0, 0))
-                .projectEnd(LocalDateTime.of(2023, 7, 2, 0, 0, 0))
+                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
+                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
                 .maxMentor(2)
                 .maxMentee(2)
                 .build();
@@ -293,9 +295,9 @@ public class PostApiTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0))
-                .projectStart(LocalDateTime.of(2023, 3, 10, 0, 0, 0))
-                .projectEnd(LocalDateTime.of(2023, 7, 2, 0, 0, 0))
+                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
+                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
                 .maxMentor(2)
                 .maxMentee(2)
                 .build();

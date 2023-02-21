@@ -12,6 +12,8 @@ import lombok.experimental.SuperBuilder;
 import net.minidev.json.annotate.JsonIgnore;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -78,9 +80,9 @@ public abstract class Post {
         this.content = request.getContent();
         this.contact = request.getContact();
         this.period = Period.ByPeriodBuilder()
-                .postEnd(request.getPostEnd())
-                .projectStart(request.getProjectStart())
-                .projectEnd(request.getProjectEnd())
+                .postEnd(LocalDateTime.ofInstant(request.getPostEnd().toInstant(), ZoneId.systemDefault()))
+                .projectStart(LocalDateTime.ofInstant(request.getProjectStart().toInstant(), ZoneId.systemDefault()))
+                .projectEnd(LocalDateTime.ofInstant(request.getProjectEnd().toInstant(), ZoneId.systemDefault()))
                 .build();
         this.total = total;
         registerAuthor(author);
@@ -96,9 +98,9 @@ public abstract class Post {
         this.title = request.getTitle();
         this.content = request.getContent();
         this.contact = request.getContact();
-        this.period.setPostEnd(request.getPostEnd());
-        this.period.setProjectStart(request.getProjectStart());
-        this.period.setProjectEnd(request.getProjectEnd());
+        this.period.setPostEnd(LocalDateTime.ofInstant(request.getPostEnd().toInstant(), ZoneId.systemDefault()));
+        this.period.setProjectStart(LocalDateTime.ofInstant(request.getProjectStart().toInstant(), ZoneId.systemDefault()));
+        this.period.setProjectEnd(LocalDateTime.ofInstant(request.getProjectEnd().toInstant(), ZoneId.systemDefault()));
         this.total = total;
         this.currTotal = currTotal;
         this.isCompleted = total == currTotal;

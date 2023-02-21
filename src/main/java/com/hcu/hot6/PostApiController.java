@@ -1,5 +1,7 @@
 package com.hcu.hot6;
 
+import com.hcu.hot6.domain.Post;
+import com.hcu.hot6.domain.SearchInfo;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostCreationResponse;
@@ -11,6 +13,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -56,5 +60,22 @@ public class PostApiController {
             @PathVariable Long postId,
             @RequestBody PostUpdateRequest request) {
         return ResponseEntity.ok(postService.updatePost(postId, request));
+    }
+
+    /**
+     * 모집글 필터링 전체 조회
+     * */
+    @GetMapping("/posts")
+    public ResponseEntity<List<Post>> readFilteredPost(@RequestParam int page, @RequestParam(required = false) String search, @RequestParam String order, @RequestParam(required = false) String type, @RequestParam(required = false) String position, @RequestParam(required = false) boolean pay, @RequestParam int limit){
+        SearchInfo searchInfo = SearchInfo.builder()
+                .page(page)
+                .search(search)
+                .order(order)
+                .position(position)
+                .type(type)
+                .pay(pay)
+                .limit(limit)
+                .build();
+        return ResponseEntity.ok(postService.readFilteredPost(searchInfo));
     }
 }
