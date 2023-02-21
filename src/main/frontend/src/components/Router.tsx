@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Main from "Routes/Main";
 import Post from "Routes/Post";
 import Header from "components/Header";
-import Login from "Routes/Login";
+import Login from "components/LoginModal";
 import SignUp from "Routes/SignUp";
 import Person from "Routes/Person";
 import PostAddForm from "Routes/PostAddForm";

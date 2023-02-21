@@ -3,6 +3,8 @@ import { motion, useAnimation, useForceUpdate } from "framer-motion";
 import tw from "tailwind-styled-components";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useSetRecoilState } from "recoil";
+import { isLoginModalState } from "./atom";
 
 const Nav = tw.nav`
 flex 
@@ -145,6 +147,11 @@ function Header() {
       toggleSearch();
     }
   };
+
+  const onClick = () => {
+    setIsLoginModal(true);
+  };
+  const setIsLoginModal = useSetRecoilState(isLoginModalState);
   return (
     <>
       <Nav>
@@ -221,9 +228,9 @@ function Header() {
               ></motion.i>
             </button>
           </SearchBox>
-          <Link to="login">
-            <NavButton>Login</NavButton>
-          </Link>
+          {/* <Link to="login"> */}
+          <NavButton onClick={onClick}>Login</NavButton>
+          {/* </Link> */}
           <Link to="oauth2/redirect">
             <NavButton>Sign up</NavButton>
           </Link>

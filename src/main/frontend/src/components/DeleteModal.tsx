@@ -1,8 +1,22 @@
-const onClick = (event: any) => {
-  console.log(event.currentTarget.id);
-};
+import { memberDelete } from "api";
+import { useNavigate } from "react-router";
+import { useSetRecoilState } from "recoil";
+import { isDeleteModalState } from "./atom";
 
-function DeletePopup() {
+function DeleteModal() {
+  const navigate = useNavigate();
+
+  const setIsDeleteModal = useSetRecoilState(isDeleteModalState);
+
+  const onClick = (event: any) => {
+    if (event.currentTarget.id === "yes") {
+      memberDelete();
+      navigate("/");
+    } else if (event.currentTarget.id === "no") {
+      setIsDeleteModal(false);
+    }
+  };
+
   return (
     <div>
       <div
@@ -53,4 +67,4 @@ function DeletePopup() {
   );
 }
 
-export default DeletePopup;
+export default DeleteModal;

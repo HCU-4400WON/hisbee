@@ -1,6 +1,9 @@
 import { fakeUsers } from "api";
+import { isLoginModalState } from "components/atom";
 import React, { useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import tw from "tailwind-styled-components";
+import Login from "../components/LoginModal";
 
 const Item = tw.div`
  h-[170px] 
@@ -73,6 +76,7 @@ function Person() {
   };
 
   const Users = fakeUsers;
+
   return (
     <div className="flex w-screen ">
       <StyledSidebar>

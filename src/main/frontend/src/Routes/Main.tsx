@@ -1,8 +1,11 @@
 import { posts } from "api";
+import { isLoginModalState } from "components/atom";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import tw from "tailwind-styled-components";
 import { runInThisContext } from "vm";
+import Login from "../components/LoginModal";
 
 const titles = [
   "🔥 요즘 핫한 모집글",
@@ -47,6 +50,7 @@ h-[210px]
 min-w-[330px]
 rounded-md
 overflow-hidden
+z-0
 `;
 
 const PostImage = tw.div`
@@ -181,8 +185,13 @@ function Main() {
   console.log(indexs);
 
   const [leaving, setLeaving] = useState(false);
+
+  const isLoginModal = useRecoilValue(isLoginModalState);
+
   return (
     <>
+      {isLoginModal ? <Login /> : null}
+
       <Banner src="/img/mainBannerReal.png"></Banner>
       {titles.map((title, idx) => (
         <PostCategory className="mb-[350px]">
