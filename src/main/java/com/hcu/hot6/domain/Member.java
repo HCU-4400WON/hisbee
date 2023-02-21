@@ -12,6 +12,7 @@ import net.minidev.json.annotate.JsonIgnore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -85,16 +86,24 @@ public class Member {
     }
 
     public void update(MemberRequest form) {
+        // 기본 정보
         this.nickname = form.getNickname();
         this.isPublic = form.getIsPublic();
 
+        // 인재풀 등록시 필수 공개 정보
         this.department = form.getDepartment();
         this.position = form.getPosition();
-        this.bio = form.getBio();
         this.grade = form.getGrade();
         this.contact = form.getContact();
-        this.club = String.join(",", form.getClub());
-        this.externalLinks = String.join(",", form.getExternalLinks());
+
+        // 선택 정보
+        this.bio = form.getBio();
+        this.club = String.join(",", Optional.ofNullable(
+                form.getClub()
+        ).orElse(List.of()));
+        this.externalLinks = String.join(",", Optional.ofNullable(
+                form.getExternalLinks()
+        ).orElse(List.of()));
 
     }
 }
