@@ -12,9 +12,10 @@ const titles = [
 ];
 
 const Banner = tw.img`
-rounded-lg 
+
 w-screen
 bg-gradient-to-r from-gray-200 to-gray-500
+mt-[40px]
 mb-[150px]
 `;
 
@@ -182,7 +183,7 @@ function Main() {
   const [leaving, setLeaving] = useState(false);
   return (
     <>
-      <Banner src="/img/mainBanner.png"></Banner>
+      <Banner src="/img/mainBannerReal.png"></Banner>
       {titles.map((title, idx) => (
         <PostCategory className="mb-[350px]">
           <TitleRow>

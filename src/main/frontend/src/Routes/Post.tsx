@@ -239,7 +239,7 @@ bg-gray-200"
         src="/img/banner.png"
         width="97%"
       ></img> */}
-      <Banner src="/img/postBanner.png"></Banner>
+      <Banner src="/img/postBannerReal.png"></Banner>
       <FilterRow>
         <FilterTitle>CATEGORY</FilterTitle>
         <FilterButtonBox>

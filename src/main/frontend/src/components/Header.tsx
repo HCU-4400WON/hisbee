@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 
 const Nav = tw.nav`
 flex 
-
 justify-center
 items-center 
 border-b-2 
@@ -19,14 +18,14 @@ lg:justify-between
 
 const NavButton = tw.button`
  bg-white 
- text-lg
+ text-[15px]
  text-black 
  py-2 
  hover:text-purple-500
  mx-8
 
  sm:mx-10
- sm:text-xl
+ sm:text-[18px]
 `;
 
 const Logo = tw(motion.img)`
@@ -75,6 +74,11 @@ const LogoVairants = {
     },
   },
 };
+
+const SearchInput = tw(motion.input)`
+w-full border h-full border-gray-400 rounded-full origin-right px-[45px]
+focus:outline-0
+`;
 
 // const SearchVariants = {
 //   initial: {
@@ -179,7 +183,7 @@ function Header() {
             >
               <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
             </motion.svg>
-            <motion.input
+            <SearchInput
               type="text"
               {...register("search", {
                 required: true,
@@ -189,13 +193,12 @@ function Header() {
                 },
               })}
               maxLength={15}
-              className="w-full border h-full border-gray-400 rounded-full origin-right px-[45px]"
               animate={searchAnimate}
               // variants={SearchVariants}
               initial={{ scaleX: 0 }}
               transition={{ duration: 0.5, type: "tween" }}
               placeholder="원하는 글을 검색해보세요!"
-            ></motion.input>
+            ></SearchInput>
 
             <button form="searchForm" className="absolute right-[10px]">
               <motion.i
