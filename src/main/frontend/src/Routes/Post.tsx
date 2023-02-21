@@ -74,6 +74,7 @@ h-[210px]
 min-w-[330px]
 rounded-md
 overflow-hidden
+mb-[80px]
 `;
 
 const PostImage = tw.div`

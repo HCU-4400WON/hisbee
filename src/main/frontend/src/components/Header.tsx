@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { motion, useAnimation, useForceUpdate } from "framer-motion";
 import tw from "tailwind-styled-components";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
 const Nav = tw.nav`
@@ -89,7 +89,7 @@ focus:outline-0
 // };
 
 function Header() {
-  const [isSearch, setIsSearch] = useState(false);
+  const [isSearch, setIsSearch] = useState(true);
 
   const searchAnimate = useAnimation();
   const sendAnimate = useAnimation();
@@ -122,7 +122,7 @@ function Header() {
         scale: 1,
       });
       SearchIconAnimate.start({
-        x: "-260px",
+        x: "-265px",
       });
     }
     if (!isSearch) document.getElementsByTagName("input")[0].focus();
@@ -138,6 +138,13 @@ function Header() {
     navigate("/post");
   };
   const navigate = useNavigate();
+
+  const onBlur = (e: any) => {
+    if (!e.relatedTarget) {
+      setValue("search", "");
+      toggleSearch();
+    }
+  };
   return (
     <>
       <Nav>
@@ -165,15 +172,16 @@ function Header() {
           <SearchBox
             className="flex relative"
             id="searchForm"
-            onBlur={() => {
-              setValue("search", "");
-              toggleSearch();
-            }}
+            // onBlur={() => {
+            //   setValue("search", "");
+            //   toggleSearch();
+            // }}
+            onBlur={onBlur}
             onSubmit={handleSubmit(onValid)}
           >
             <motion.svg
               className="absolute right-0 w-5 z-10 fill-gray-400 hover:fill-purple-500"
-              initial={{ x: "0px" }}
+              initial={{ x: "-265px" }}
               animate={SearchIconAnimate}
               // animate={{ x: isSearch ? "-265px" : "0px" }}
               xmlns="http://www.w3.org/2000/svg"
@@ -195,16 +203,20 @@ function Header() {
               maxLength={15}
               animate={searchAnimate}
               // variants={SearchVariants}
-              initial={{ scaleX: 0 }}
+              initial={{ scaleX: 1 }}
               transition={{ duration: 0.5, type: "tween" }}
               placeholder="원하는 글을 검색해보세요!"
             ></SearchInput>
 
-            <button form="searchForm" className="absolute right-[10px]">
+            <button
+              id="send"
+              form="searchForm"
+              className="absolute right-[10px]"
+            >
               <motion.i
                 className="fa-regular fa-paper-plane  text-gray-400"
                 animate={sendAnimate}
-                initial={{ scale: 0, opacity: 0 }}
+                initial={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.5, type: "tween" }}
               ></motion.i>
             </button>
