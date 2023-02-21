@@ -1,4 +1,4 @@
-package com.hcu.hot6.security;
+package com.hcu.hot6.config;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import jakarta.persistence.EntityManager;

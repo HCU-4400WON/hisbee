@@ -1,4 +1,4 @@
-package com.hcu.hot6.security;
+package com.hcu.hot6.config;
 
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.filter.JwtAuthorizationFilter;
