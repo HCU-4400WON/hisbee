@@ -22,10 +22,10 @@ public class MemberTest {
                 .email("22000123@handong.ac.kr")
                 .nickname("User1")
                 .isPublic(false)
-                .department(Department.ICT)
-                .position(Position.PLANNER)
+                .department(Department.ICT창업학부)
+                .position(Position.기획자)
                 .bio("안녕하세요. 저는 00학번 ICT학부 000입니다.")
-                .grade(2)
+                .grade("2학년")
                 .club("MIC")
                 .contact("010-0000-0000")
                 .externalLinks("naver.blog.000.com")
@@ -34,8 +34,8 @@ public class MemberTest {
         Assertions.assertThat(member.getEmail()).isEqualTo("22000123@handong.ac.kr");
         Assertions.assertThat(member.getNickname()).isEqualTo("User1");
         Assertions.assertThat(member.isPublic()).isEqualTo(false);
-        Assertions.assertThat(member.getDepartment()).isEqualTo(Department.ICT);
-        Assertions.assertThat(member.getPosition()).isEqualTo(Position.PLANNER);
+        Assertions.assertThat(member.getDepartment()).isEqualTo(Department.ICT창업학부);
+        Assertions.assertThat(member.getPosition()).isEqualTo(Position.기획자);
         Assertions.assertThat(member.getBio()).isEqualTo("안녕하세요. 저는 00학번 ICT학부 000입니다.");
         Assertions.assertThat(member.getGrade()).isEqualTo(2);
         Assertions.assertThat(member.getClub()).isEqualTo("MIC");
