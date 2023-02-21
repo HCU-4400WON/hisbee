@@ -1,6 +1,6 @@
 package com.hcu.hot6.config;
 
-import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +13,7 @@ public class QueryDSLConfig {
     private EntityManager entityManager;
 
     @Bean
-    public JPAQuery<?> jpaQuery() {
-        return new JPAQuery<Void>(entityManager);
+    public JPAQueryFactory jpaQueryFactory() {
+        return new JPAQueryFactory(entityManager);
     }
 }

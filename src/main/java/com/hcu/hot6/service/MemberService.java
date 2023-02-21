@@ -38,7 +38,9 @@ public class MemberService {
     }
 
     public List<Member> getMatchedProfilesWith(PoolSearchFilter filter) {
-        long offset = new Pagination(filter.getPage(), poolRepository.count(filter)).getOffset();
+        Long count = poolRepository.count(filter);
+        long offset = new Pagination(filter.getPage(), count).getOffset();
+
         return poolRepository.matchWith(filter, offset);
     }
 }
