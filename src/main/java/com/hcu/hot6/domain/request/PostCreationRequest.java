@@ -40,7 +40,6 @@ public class PostCreationRequest {
     @NotNull
     private Date postEnd;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Future
     @NotNull
     private Date projectStart;
     @DateTimeFormat(pattern = "yyyy-MM-dd")

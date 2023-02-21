@@ -4,7 +4,7 @@ import com.hcu.hot6.domain.*;
 import com.hcu.hot6.domain.filter.PoolSearchFilter;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -14,12 +14,11 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 public class PoolRepository {
-    private final JPAQuery<Member> query;
+    private final JPAQueryFactory query;
     private final QMember qMember = QMember.member;
 
     public List<Member> matchWith(PoolSearchFilter filter, long offset) {
-        return query.select(qMember)
-                .from(qMember)
+        return query.selectFrom(qMember)
                 .where(
                         eqDepartment(filter.getDepartment()),
                         eqPosition(filter.getPosition()),
