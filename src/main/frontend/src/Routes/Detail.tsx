@@ -10,9 +10,9 @@ grid-cols-2
 border-t-2 
 border-b-2 
 border-gray-300 
-h-[300px] 
+h-[200px] 
 py-[20px] 
-px-[40px]
+
 items-center
 `;
 
@@ -41,9 +41,11 @@ py-[20px]
 `;
 
 const WriteInfo = tw.p`
-font-semibold 
-text-[18px]
+
+text-[17px]
 mr-[10px]
+text-gray-400
+mb-[20px]
 `;
 
 function Detail() {
@@ -65,19 +67,33 @@ function Detail() {
     <>
       {!isLoading ? (
         <div className="flex relative justify-center flex-col">
-          <span className="absolute top-[100px] left-[80px] flex items-center">
+          <span className="absolute top-[55px] left-[80px] flex items-center">
             <i className="fa-solid fa-arrow-left mr-9 text-[23px]"></i>
-            <p className="text-[21px] font-semibold">제목</p>
           </span>
-          <span>
-            <p className="absolute top-0 left-[135px] text-[21px] top-[460px] font-semibold">
-              내용
-            </p>
-          </span>
-          <div className="mx-auto w-[1000px] border-l-2 border-gray-300 border-r-2 h-full ">
-            <header className=" mt-[80px] py-[20px] px-[40px] text-[22px] border-t-2 border-gray-300">
+          postStartWri
+          <div className="mx-auto w-[1200px]  h-full ">
+            <header className=" mt-[6px] py-[20px]  text-[22px] border-gray-300">
               {detailPost.title}
             </header>
+            <div className="flex items-center">
+              <WriteInfo className="">작성자</WriteInfo>
+              <WriteInfo className="mr-[40px] text-gray-500">
+                {detailPost.writer}
+              </WriteInfo>
+              <WriteInfo>작성일</WriteInfo>
+              <WriteInfo className="text-gray-500">
+                {new Date(detailPost.postStart).getFullYear()} /{" "}
+                {(new Date(detailPost.postStart).getMonth() + 1 + "").padStart(
+                  2,
+                  "0"
+                )}{" "}
+                /{" "}
+                {(new Date(detailPost.postStart).getDate() + "").padStart(
+                  2,
+                  "0"
+                )}
+              </WriteInfo>
+            </div>
             <Grid>
               <GridItem>
                 <ItemTitle>모집 기간</ItemTitle>
@@ -209,25 +225,6 @@ function Detail() {
               {detailPost.content}
             </div>
           </div>
-          <WriteInfoBox className="border-t-2 border-gray-300">
-            <div className="flex mx-auto w-[1000px] px-[40px]">
-              <WriteInfo className="">작성자</WriteInfo>
-              <WriteInfo className="mr-[40px]">{detailPost.writer}</WriteInfo>
-              <WriteInfo>작성일</WriteInfo>
-              <WriteInfo>
-                {new Date(detailPost.postStart).getFullYear()} /{" "}
-                {(new Date(detailPost.postStart).getMonth() + 1 + "").padStart(
-                  2,
-                  "0"
-                )}
-                /{" "}
-                {(new Date(detailPost.postStart).getDate() + "").padStart(
-                  2,
-                  "0"
-                )}
-              </WriteInfo>
-            </div>
-          </WriteInfoBox>
         </div>
       ) : (
         <div>Loading...</div>
