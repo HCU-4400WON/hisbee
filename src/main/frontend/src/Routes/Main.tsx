@@ -189,12 +189,12 @@ function Main() {
   const isLoginModal = useRecoilValue(isLoginModalState);
 
   return (
-    <>
+    <div className="mb-[440px]">
       {isLoginModal ? <Login /> : null}
 
       <Banner src="/img/mainBannerReal.png"></Banner>
       {titles.map((title, idx) => (
-        <PostCategory className="mb-[350px]">
+        <PostCategory className="mb-[400px]">
           <TitleRow>
             <Title>{title}</Title>
             <svg
@@ -384,10 +384,7 @@ function Main() {
           </div>
         </PostCategory>
       ))}
-      <div className="w-full mx-5"></div>
-      <div className="w-full mx-5"></div>
-      <div className="w-full mx-5"></div>
-    </>
+    </div>
   );
 }
 
