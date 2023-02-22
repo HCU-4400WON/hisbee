@@ -47,10 +47,14 @@ public class PostService {
         return postRepository.delete(post);
     }
 
-    public PostReadOneResponse readOnePost(Long postId) {
+    public PostReadOneResponse readOnePost(Long postId, String email) {
         Post post = postRepository.findOne(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not found."));
-        return responseOne(post);
+
+        var response = post.toResponse();
+        response.verify(email, post);
+
+        return response;
     }
 
     @Transactional

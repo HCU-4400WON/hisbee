@@ -1,10 +1,12 @@
 package com.hcu.hot6.domain;
 
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Arrays;
+
 @RequiredArgsConstructor
-@Getter
 public enum Department {
     NONE("해당없음"),
     GLS("글로벌리더십학부"),
@@ -23,4 +25,17 @@ public enum Department {
     AI("AI융합교육원");
 
     private final String name;
+
+    @JsonCreator
+    public static Department from(String property) {
+        return Arrays.stream(Department.values())
+                .filter(value -> value.getName().equals(property))
+                .findFirst()
+                .orElseThrow();
+    }
+
+    @JsonValue
+    public String getName() {
+        return name;
+    }
 }
