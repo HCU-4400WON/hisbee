@@ -8,6 +8,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Builder
@@ -34,18 +35,17 @@ public class PostCreationRequest {
     @PositiveOrZero
     private int maxDesigner;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Future
     @NotNull
-    private LocalDateTime postEnd;
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private Date postEnd;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull
+    private Date projectStart;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Future
     @NotNull
-    private LocalDateTime projectStart;
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @Future
-    @NotNull
-    private LocalDateTime projectEnd;
+    private Date projectEnd;
 
     private boolean hasPay;
 

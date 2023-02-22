@@ -159,10 +159,10 @@ class MemberControllerTest {
                         .nickname("username")
                         .isPublic(true)
                         .bio("bio")
-                        .grade("1")
+                        .grade("1학년")
                         .contact("contact")
-                        .department(Department.CSEE)
-                        .position(Position.DEVELOPER)
+                        .department(Department.전산전자공학부)
+                        .position(Position.개발자)
                         .club("club")
                         .externalLinks("link")
                         .posts(new ArrayList<>())
@@ -184,8 +184,8 @@ class MemberControllerTest {
 
         // then
         assertThat(res.getEmail()).isEqualTo(TEST_EMAIL);
-        assertThat(res.getDepartment()).isEqualTo(Department.CSEE);
-        assertThat(res.getPosition()).isEqualTo(Position.DEVELOPER);
+        assertThat(res.getDepartment()).isEqualTo(Department.전산전자공학부);
+        assertThat(res.getPosition()).isEqualTo(Position.개발자);
     }
 
     @Test
@@ -197,10 +197,10 @@ class MemberControllerTest {
                         .nickname("username")
                         .isPublic(true)
                         .bio("bio")
-                        .grade("1")
+                        .grade("1학년")
                         .contact("contact")
-                        .department(Department.CSEE)
-                        .position(Position.DEVELOPER)
+                        .department(Department.전산전자공학부)
+                        .position(Position.개발자)
                         .club("club")
                         .externalLinks("link")
                         .posts(List.of(Project.builder()
@@ -239,8 +239,8 @@ class MemberControllerTest {
 
         // then
         assertThat(res.getEmail()).isEqualTo(TEST_EMAIL);
-        assertThat(res.getDepartment()).isEqualTo(Department.CSEE);
-        assertThat(res.getPosition()).isEqualTo(Position.DEVELOPER);
+        assertThat(res.getDepartment()).isEqualTo(Department.전산전자공학부);
+        assertThat(res.getPosition()).isEqualTo(Position.개발자);
 
         assertThat(res.getPosts().size()).isEqualTo(1);
         assertThat(res.getPosts().get(0).getMaxDeveloper()).isEqualTo(3);
@@ -262,8 +262,8 @@ class MemberControllerTest {
                         .bio("bio")
                         .grade("1")
                         .contact("contact")
-                        .department(Department.CSEE)
-                        .position(Position.DEVELOPER)
+                        .department(Department.전산전자공학부)
+                        .position(Position.개발자)
                         .club("club")
                         .externalLinks("link")
                         .posts(List.of(Project.builder()
