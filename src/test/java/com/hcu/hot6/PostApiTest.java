@@ -255,7 +255,7 @@ public class PostApiTest {
     @DisplayName("모집글 상세 보기")
     @Test
     @WithMockUser
-    public void 모집글_상세_보기() throws Exception {
+    public void 모집글_상세_보기_소유자_아님() throws Exception {
         PostCreationRequest request = PostCreationRequest.builder()
                 .dtype("M")
                 .title("title")
@@ -283,6 +283,43 @@ public class PostApiTest {
         assertThat(response.getContent()).isEqualTo("content");
         assertThat(response.getMaxMentor()).isEqualTo(2);
         assertThat(response.getPostEnd()).isEqualTo("2023-03-02T00:00");
+        assertThat(response.isVerified()).isFalse();
+    }
+
+    @DisplayName("모집글 상세 보기")
+    @Test
+    public void 모집글_상세_보기_소유자_확인() throws Exception {
+        PostCreationRequest request = PostCreationRequest.builder()
+                .dtype("M")
+                .title("title")
+                .content("content")
+                .contact("contact")
+                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
+                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
+                .maxMentor(2)
+                .maxMentee(2)
+                .build();
+
+        postService.createPost(request, TEST_EMAIL);
+
+        MvcResult result = mockMvc
+                .perform(get("/posts/{postId}", 1)
+                        .with(oauth2Login()
+                                .attributes(attr -> attr
+                                        .put("sub", TEST_EMAIL))))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        PostReadOneResponse response = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                PostReadOneResponse.class);
+
+        assertThat(response.getContent()).isEqualTo("content");
+        assertThat(response.getMaxMentor()).isEqualTo(2);
+        assertThat(response.getPostEnd()).isEqualTo("2023-03-02T00:00");
+        assertThat(response.isVerified()).isTrue();
     }
 
     // === UPDATE === //

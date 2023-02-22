@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +103,7 @@ class MemberControllerTest {
         // then
         MemberResponse result =
                 objectMapper.readValue(mvcResult.getResponse()
-                        .getContentAsString(), MemberResponse.class);
+                        .getContentAsString(StandardCharsets.UTF_8), MemberResponse.class);
 
         assertThat(result.getNickname()).isEqualTo("username");
         assertThat(result.getIsPublic()).isEqualTo(false);
@@ -161,8 +162,8 @@ class MemberControllerTest {
                         .bio("bio")
                         .grade("1학년")
                         .contact("contact")
-                        .department(Department.전산전자공학부)
-                        .position(Position.개발자)
+                        .department(Department.CSEE)
+                        .position(Position.DEVELOPER)
                         .club("club")
                         .externalLinks("link")
                         .posts(new ArrayList<>())
@@ -180,12 +181,12 @@ class MemberControllerTest {
                 .andReturn();
 
         MemberProfileResponse res = objectMapper.readValue(mvcResult.getResponse()
-                .getContentAsString(), MemberProfileResponse.class);
+                .getContentAsString(StandardCharsets.UTF_8), MemberProfileResponse.class);
 
         // then
         assertThat(res.getEmail()).isEqualTo(TEST_EMAIL);
-        assertThat(res.getDepartment()).isEqualTo(Department.전산전자공학부);
-        assertThat(res.getPosition()).isEqualTo(Position.개발자);
+        assertThat(res.getDepartment()).isEqualTo(Department.CSEE);
+        assertThat(res.getPosition()).isEqualTo(Position.DEVELOPER);
     }
 
     @Test
@@ -199,8 +200,8 @@ class MemberControllerTest {
                         .bio("bio")
                         .grade("1학년")
                         .contact("contact")
-                        .department(Department.전산전자공학부)
-                        .position(Position.개발자)
+                        .department(Department.CSEE)
+                        .position(Position.DEVELOPER)
                         .club("club")
                         .externalLinks("link")
                         .posts(List.of(Project.builder()
@@ -235,12 +236,12 @@ class MemberControllerTest {
                 .andReturn();
 
         MemberProfileResponse res = objectMapper.readValue(mvcResult.getResponse()
-                .getContentAsString(), MemberProfileResponse.class);
+                .getContentAsString(StandardCharsets.UTF_8), MemberProfileResponse.class);
 
         // then
         assertThat(res.getEmail()).isEqualTo(TEST_EMAIL);
-        assertThat(res.getDepartment()).isEqualTo(Department.전산전자공학부);
-        assertThat(res.getPosition()).isEqualTo(Position.개발자);
+        assertThat(res.getDepartment()).isEqualTo(Department.CSEE);
+        assertThat(res.getPosition()).isEqualTo(Position.DEVELOPER);
 
         assertThat(res.getPosts().size()).isEqualTo(1);
         assertThat(res.getPosts().get(0).getMaxDeveloper()).isEqualTo(3);
@@ -262,8 +263,8 @@ class MemberControllerTest {
                         .bio("bio")
                         .grade("1")
                         .contact("contact")
-                        .department(Department.전산전자공학부)
-                        .position(Position.개발자)
+                        .department(Department.CSEE)
+                        .position(Position.DEVELOPER)
                         .club("club")
                         .externalLinks("link")
                         .posts(List.of(Project.builder()
@@ -301,7 +302,7 @@ class MemberControllerTest {
                 .andReturn();
 
         MemberProfileResponse res = objectMapper.readValue(mvcResult.getResponse()
-                .getContentAsString(), MemberProfileResponse.class);
+                .getContentAsString(StandardCharsets.UTF_8), MemberProfileResponse.class);
 
         // then
         assertThat(res.getNickname()).isEqualTo("modified");
@@ -326,6 +327,6 @@ class MemberControllerTest {
                 .andReturn();
         // then
         assertThat(mvcResult.getResponse()
-                .getContentAsString()).isEqualTo(TEST_EMAIL);
+                .getContentAsString(StandardCharsets.UTF_8)).isEqualTo(TEST_EMAIL);
     }
 }
