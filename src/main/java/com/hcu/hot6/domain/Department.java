@@ -1,47 +1,26 @@
 package com.hcu.hot6.domain;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter
 public enum Department {
-    NONE,
+    NONE("해당없음"),
+    GLS("글로벌리더십학부"),
+    INT_STUDY("국제어문학부"),
+    MANAGEMENT("경영경제학부"),
+    LAW("법학부"),
+    COMMUNICATION("커뮤니케이션학부"),
+    COUNSELING("상담심리사회복지학부"),
+    LIFE_SCIENCE("생명과학부"),
+    SPATIAL_ENV("공간환경시스템공학부"),
+    CSEE("전산전자공학부"),
+    CCD("콘텐츠융합디자인학부"),
+    MCE("기계제어공학부"),
+    ICT("ICT창업학부"),
+    CCE("창의융합교육원"),
+    AI("AI융합교육원");
 
-    글로벌리더십학부,
-//    GLS,
-
-     국제어문학부,
-//    INT_STUDY,
-
-     경영경제학부,
-//    MANAGEMENT,
-
-     법학부,
-//    LAW,
-
-     커뮤니케이션학부,
-//    COMMUNICATION,
-
-     상담심리사회복지학부,
-//    COUNSELING,
-
-     생명과학부,
-//    LIFE_SCIENCE,
-
-     공간환경시스템공학부,
-//    SPATIAL_ENV,
-
-     전산전자공학부,
-//    CSEE,
-
-     콘텐츠융합디자인학부,
-//    CCD,
-
-     기계제어공학부,
-//    MCE,
-
-     ICT창업학부,
-//    ICT,
-
-     창의융합교육원,
-//    CCE,
-
-     AI융합교육원,
-//    AI
+    private final String name;
 }
