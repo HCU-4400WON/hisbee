@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -20,10 +21,10 @@ public class PostReadOneResponse {
     private String title;
     private String content;
     private String contact;
-    private LocalDateTime postStart;
-    private LocalDateTime postEnd;
-    private LocalDateTime projectStart;
-    private LocalDateTime projectEnd;
+    private Date postStart;
+    private Date postEnd;
+    private Date projectStart;
+    private Date projectEnd;
     private String writer;
 
     private int maxDeveloper;
@@ -49,10 +50,10 @@ public class PostReadOneResponse {
         this.content = post.getContent();
         this.contact = post.getContact();
         this.writer = post.getAuthor().getNickname();
-        this.postStart = post.getPeriod().getPostStart();
-        this.postEnd = post.getPeriod().getPostEnd();
-        this.projectStart = post.getPeriod().getProjectStart();
-        this.projectEnd = post.getPeriod().getProjectEnd();
+        this.postStart = java.sql.Timestamp.valueOf(post.getPeriod().getPostStart());
+        this.postEnd = java.sql.Timestamp.valueOf(post.getPeriod().getPostEnd());
+        this.projectStart = java.sql.Timestamp.valueOf(post.getPeriod().getProjectStart());
+        this.projectEnd = java.sql.Timestamp.valueOf(post.getPeriod().getProjectEnd());
 
         switch (dtype) {
             case "P" -> {

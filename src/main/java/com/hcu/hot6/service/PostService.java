@@ -12,6 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -70,10 +74,10 @@ public class PostService {
         response.setTitle(post.getTitle());
         response.setContent(post.getContent());
         response.setContact(post.getContact());
-        response.setPostStart(post.getPeriod().getPostStart());
-        response.setPostEnd(post.getPeriod().getPostEnd());
-        response.setProjectStart(post.getPeriod().getProjectStart());
-        response.setProjectEnd(post.getPeriod().getProjectEnd());
+        response.setPostStart(Date.from(post.getPeriod().getPostStart().atZone(ZoneId.systemDefault()).toInstant()));
+        response.setPostEnd(Date.from(post.getPeriod().getPostEnd().atZone(ZoneId.systemDefault()).toInstant()));
+        response.setProjectStart(Date.from(post.getPeriod().getProjectStart().atZone(ZoneId.systemDefault()).toInstant()));
+        response.setProjectEnd(Date.from(post.getPeriod().getProjectEnd().atZone(ZoneId.systemDefault()).toInstant()));
         response.setWriter(post.getAuthor().getNickname());
 
         if (post.getDtype().compareTo("M") == 0) {
@@ -105,5 +109,9 @@ public class PostService {
             response.setCurrMember(study.getCurrMember());
         }
         return response;
+    }
+
+    public List<Post> readFilteredPost(SearchInfo searchInfo) {
+        return postRepository.findAll(searchInfo);
     }
 }
