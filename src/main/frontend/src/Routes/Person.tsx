@@ -1,6 +1,7 @@
-import { fakeUsers } from "api";
+import { useQuery } from "@tanstack/react-query";
+import { fakeUsers, IUser, readMembers } from "api";
 import { isLoginModalState } from "components/atom";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import tw from "tailwind-styled-components";
 import Login from "../components/LoginModal";
@@ -58,24 +59,93 @@ font-bold
 `;
 
 function Person() {
-  const [showPositions, setShowPositions] = useState(false);
-  const [showGrades, setShowGrades] = useState(false);
-  const [showDepartments, setShowDepartments] = useState(false);
+  const [showPositions, setShowPositions] = useState(true);
+  const [showGrades, setShowGrades] = useState(true);
+  const [showDepartments, setShowDepartments] = useState(true);
 
-  const onClick = (event: React.MouseEvent<SVGElement>) => {
+  const [position, setPosition] = useState<string | null>(null);
+  const [grade, setGrade] = useState<string | null>(null);
+  const [department, setDepartment] = useState<string | null>(null);
+
+  const onClick = (event: React.MouseEvent) => {
     const {
       currentTarget: { id },
     } = event;
+
     if (id === "포지션") {
       setShowPositions((prev) => !prev);
     } else if (id === "학년") {
       setShowGrades((prev) => !prev);
     } else if (id === "학부") {
       setShowDepartments((prev) => !prev);
+    } else {
+      if (
+        (
+          (event.currentTarget.parentElement as HTMLElement)
+            .parentElement as HTMLElement
+        ).id === "포지션ul"
+      ) {
+        setPosition(id);
+      } else if (
+        (
+          (event.currentTarget.parentElement as HTMLElement)
+            .parentElement as HTMLElement
+        ).id === "학년ul"
+      ) {
+        setGrade(id);
+      } else if (
+        (
+          (event.currentTarget.parentElement as HTMLElement)
+            .parentElement as HTMLElement
+        ).id === "학부ul"
+      ) {
+        setDepartment(id);
+      }
     }
   };
 
-  const Users = fakeUsers;
+  // const Users = fakeUsers;
+
+  const TOTAL_POSTS = 300;
+  const POSTS_PER_PAGE = 12;
+  const TOTAL_PAGES = Math.ceil(TOTAL_POSTS / POSTS_PER_PAGE);
+  const [nowPage, setNowPage] = useState(1);
+  const [prevPage, setPrevPage] = useState(Math.floor((nowPage - 1) / 10) * 10);
+  const [nextPage, setNextPage] = useState(Math.ceil(nowPage / 10) * 10 + 1);
+
+  const onPageClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const {
+      currentTarget: { id },
+    } = event;
+    if (id === "next") {
+      if (nextPage <= TOTAL_PAGES) setNowPage(nextPage);
+      else setNowPage(TOTAL_PAGES);
+    } else if (id === "prev") {
+      if (prevPage > 0) setNowPage(prevPage);
+      else setNowPage(1);
+    } else {
+      setNowPage(+id);
+    }
+  };
+
+  useEffect(() => {
+    setNextPage(Math.ceil(nowPage / 10) * 10 + 1);
+    setPrevPage(Math.floor((nowPage - 1) / 10) * 10);
+    console.log(prevPage, nextPage);
+  }, [nowPage]);
+
+  const {
+    data: Users,
+    isLoading,
+    refetch,
+  } = useQuery<IUser[]>(["members"], () =>
+    readMembers(nowPage, position, grade, department)
+  );
+
+  useEffect(() => {
+    refetch();
+    console.log(position, grade, department, nowPage);
+  }, [position, grade, department, nowPage]);
 
   return (
     <div className="flex w-screen ">
@@ -95,17 +165,41 @@ function Person() {
             </StyledButton>
           </StyledSpan>
           {!showPositions ? null : (
-            <Styledul>
+            <Styledul id="포지션ul">
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="포지션"
+                  id="일반"
+                  type="radio"
+                  onClick={onClick}
+                />
+                <StyledliText>일반</StyledliText>
+              </Styledli>
+              <Styledli>
+                <StyledRadio
+                  name="포지션"
+                  id="기획자"
+                  type="radio"
+                  onClick={onClick}
+                />
                 <StyledliText>기획자</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="포지션"
+                  id="개발자"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>개발자</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="포지션"
+                  id="디자이너"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>디자이너</StyledliText>
               </Styledli>
             </Styledul>
@@ -125,21 +219,41 @@ function Person() {
             </StyledButton>
           </StyledSpan>
           {!showGrades ? null : (
-            <Styledul>
+            <Styledul id="학년ul">
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학년"
+                  id="1학년"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>1학년</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학년"
+                  id="2학년"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>2학년</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학년"
+                  id="3학년"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>3학년</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학년"
+                  id="4학년"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>4학년</StyledliText>
               </Styledli>
             </Styledul>
@@ -160,53 +274,113 @@ function Person() {
           </StyledSpan>
 
           {!showDepartments ? null : (
-            <Styledul>
+            <Styledul id="학부ul">
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학부"
+                  id="글로벌리더십학부"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>글로벌리더십학부</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학부"
+                  id="국제어문학부"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>국제어문학부</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학부"
+                  id="경영경제학부"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>경영경제학부</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학부"
+                  id="법학부"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>법학부</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학부"
+                  id="커뮤니케이션학부"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>커뮤니케이션학부</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학부"
+                  id="공간환경시스템공학부"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>공간환경시스템공학부</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학부"
+                  id="기계제어공학부"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>기계제어공학부</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학부"
+                  id="콘텐츠융합디자인학부"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>콘텐츠융합디자인학부</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학부"
+                  id="생명과학부"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>생명과학부</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학부"
+                  id="전산전자공학부"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>전산전자공학부</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학부"
+                  id="상담심리사회복지학부"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>상담심리사회복지학부</StyledliText>
               </Styledli>
               <Styledli>
-                <StyledRadio type="radio" />
+                <StyledRadio
+                  name="학부"
+                  id="ICT창업학부"
+                  onClick={onClick}
+                  type="radio"
+                />
                 <StyledliText>ICT창업학부</StyledliText>
               </Styledli>
             </Styledul>
@@ -220,7 +394,7 @@ function Person() {
           src="img/personBanner2.png"
         ></img>
         <div className="grid grid-cols-4 gap-10 mx-[20px] justify-between">
-          {Users.map((user) => (
+          {Users?.map((user) => (
             <Item>
               <div
                 className={`flex border rounded-full bg-white w-[65px] h-[20px] justify-center items-center
@@ -252,6 +426,43 @@ function Person() {
               </div>
             </Item>
           ))}
+        </div>
+        <div className="flex justify-center items-center w-full h-[100px] border ">
+          <button
+            id="prev"
+            onClick={onPageClick}
+            className="w-[70px] h-[30px] "
+          >
+            prev
+          </button>
+          {/* {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            .map((e) => prevPage + e) */}
+
+          {/* // ].map()
+            //   .slice(
+            //     Math.floor((nowPage - 1) / 10) * 10,
+            //     Math.floor((nowPage - 1) / 10) * 10 + 10
+            //   ) */}
+          {Array.from({ length: TOTAL_PAGES }, (v, i) => i + 1)
+            .slice(prevPage, nextPage - 1)
+            .map((page) => (
+              <button
+                id={page + ""}
+                onClick={onPageClick}
+                className={`w-[30px] h-[30px] ${
+                  page === nowPage && "bg-gray-400"
+                } `}
+              >
+                {page}
+              </button>
+            ))}
+          <button
+            id="next"
+            onClick={onPageClick}
+            className="w-[70px] h-[30px] "
+          >
+            next
+          </button>
         </div>
       </div>
     </div>

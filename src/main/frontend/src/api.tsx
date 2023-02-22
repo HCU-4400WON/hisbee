@@ -836,3 +836,27 @@ export const memberDelete = () => {
     console.error(error);
   }
 };
+
+export const readMembers = async (
+  page: number,
+  position: string | null,
+  grade: string | null,
+  department: string | null
+) => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    const response = await axios.get(
+      `http://localhost:8080/pool?'page='${page}
+      ${position && `&position=${position}`}
+      ${department && `&department=${department}`}
+      ${grade && `&grade=${grade}`}`,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
