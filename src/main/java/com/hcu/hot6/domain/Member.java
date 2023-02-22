@@ -9,7 +9,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -42,6 +45,7 @@ public class Member {
     private String club = "";
     private String contact;
     private String externalLinks = "";
+    private boolean isRegistered = true;
 
     @ManyToMany(mappedBy = "likes")
     @JsonIgnore
@@ -69,17 +73,12 @@ public class Member {
         this.posts = posts;
     }
 
-    public Member(Map<String, Object> attributes) {
-        this.uid = (String) attributes.get("sub");
-        this.email = (String) attributes.get("email");
-        this.pictureUrl = (String) attributes.get("picture");
-    }
-
     @Builder
-    public Member(String uid, String email, String pictureUrl) {
+    public Member(String uid, String email, String pictureUrl, boolean isRegistered) {
         this.uid = uid;
         this.email = email;
         this.pictureUrl = pictureUrl;
+        this.isRegistered = isRegistered;
     }
 
     public void update(MemberRequest form) {
@@ -102,5 +101,6 @@ public class Member {
                 form.getExternalLinks()
         ).orElse(List.of(externalLinks)));
 
+        if (!this.isRegistered) this.isRegistered = true;
     }
 }

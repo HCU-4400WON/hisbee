@@ -102,11 +102,14 @@ public class SecurityConfig {
         return (request, response, authentication) -> {
             OAuth2User userinfo = (OAuth2User) authentication.getPrincipal();
             String email = userinfo.getAttribute("email");
+
             String accessToken = jwtService.generateToken(email);
+            Member member = memberRepository.findByEmail(email).orElseThrow();
 
             String targetUrl = UriComponentsBuilder.fromUriString(client)
                     .path("oauth2/redirect")
                     .queryParam("token", accessToken)
+                    .queryParam("hasRegistered", member.isRegistered())
                     .build().toUriString();
 
             redirectStrategy.sendRedirect(request, response, targetUrl);
@@ -121,7 +124,12 @@ public class SecurityConfig {
             Optional<Member> registered = memberRepository.findMemberById(oAuth2User.getName());
 
             if (registered.isEmpty()) {
-                Member member = new Member(oAuth2User.getAttributes());
+                Member member = Member.builder()
+                        .uid(oAuth2User.getAttribute("sub"))
+                        .email(oAuth2User.getAttribute("email"))
+                        .pictureUrl(oAuth2User.getAttribute("picture"))
+                        .isRegistered(false)
+                        .build();
                 memberRepository.save(member);
             }
             return oAuth2User;
