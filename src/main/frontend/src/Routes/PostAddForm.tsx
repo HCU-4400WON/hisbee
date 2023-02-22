@@ -267,7 +267,7 @@ function PostAddForm() {
   return (
     <form
       onSubmit={handleSubmit(onValid as any)}
-      className="px-[100px] py-[50px] relative"
+      className="px-[100px] py-[50px] pb-[100px] relative"
     >
       <Link to="/post">
         <div className="absolute top-[62px] left-[40px]">
@@ -685,7 +685,7 @@ function PostAddForm() {
 
       <input
         type="submit"
-        className="my-[40px] bg-[#eeeeee] rounded-full w-[120px] h-[30px] text-[15px] float-right"
+        className="my-[40px] bg-[#eeeeee] w-[120px] h-[30px] text-[16px] font-semibold float-right"
         value="올리기"
       />
     </form>
