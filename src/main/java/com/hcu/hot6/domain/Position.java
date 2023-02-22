@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Arrays;
+
 @RequiredArgsConstructor
 public enum Position {
     ORDINARY("일반"),
@@ -14,8 +16,11 @@ public enum Position {
     private final String name;
 
     @JsonCreator
-    public static Department from(String json) {
-        return Department.valueOf(json);
+    public static Department from(String property) {
+        return Arrays.stream(Department.values())
+                .filter(value -> value.getName().equals(property))
+                .findFirst()
+                .orElseThrow();
     }
 
     @JsonValue
