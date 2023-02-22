@@ -2,6 +2,7 @@ import { departments, IPost, posts } from "api";
 import { isLoginModalState } from "components/atom";
 import Login from "components/LoginModal";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import tw from "tailwind-styled-components";
 
@@ -48,9 +49,9 @@ mx-3
 
 const SortBox = tw.div`
 flex 
-justify-end 
+justify-between
 my-20 
-mx-10
+mx-[30px]
 `;
 
 const SortTitle = tw.p`
@@ -311,12 +312,19 @@ bg-gray-200"
         )}
 
         <SortBox>
-          <SortTitle>Sort by</SortTitle>
-          <SortSelect onInput={onInput}>
-            <option value="최신">최신 순</option>
-            <option value="찜">찜 많은 순</option>
-            <option value="모집인원">모집 인원 마감 임박</option>
-          </SortSelect>
+          <div className="flex items-center">
+            <SortTitle>Sort by</SortTitle>
+            <SortSelect className="vertical-center" onInput={onInput}>
+              <option value="최신">최신 순</option>
+              <option value="찜">찜 많은 순</option>
+              <option value="모집인원">모집 인원 마감 임박</option>
+            </SortSelect>
+          </div>
+          <Link to="/add">
+            <button className="text-[18px] text-white border border-black py-[5px] bg-black px-[20px] ">
+              모집글 쓰기
+            </button>
+          </Link>
         </SortBox>
 
         <PostGrid>

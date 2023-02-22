@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import { motion, useAnimation, useForceUpdate } from "framer-motion";
 import tw from "tailwind-styled-components";
 import React, { useState } from "react";
@@ -91,6 +91,10 @@ focus:outline-0
 // };
 
 function Header() {
+  const isPostURL = useMatch("/post");
+  const isPersonURL = useMatch("/person");
+  const isProfileURL = useMatch("/profile");
+
   const [isSearch, setIsSearch] = useState(true);
 
   const searchAnimate = useAnimation();
@@ -165,13 +169,19 @@ function Header() {
         </Link>
         <NavCenterBox>
           <Link to="post">
-            <NavButton>모집글</NavButton>
+            <NavButton className={`${isPostURL && "text-purple-500"} `}>
+              모집글
+            </NavButton>
           </Link>
           <Link to="person">
-            <NavButton>인재풀</NavButton>
+            <NavButton className={`${isPersonURL && "text-purple-500"} `}>
+              인재풀
+            </NavButton>
           </Link>
           <Link to="profile">
-            <NavButton>프로필</NavButton>
+            <NavButton className={`${isProfileURL && "text-purple-500"} `}>
+              프로필
+            </NavButton>
           </Link>
         </NavCenterBox>
 
