@@ -20,7 +20,7 @@ function Login() {
       <div className="fixed top-[150px] z-20 rounded-2xl w-[940px] h-[540px] bg-[#fff] flex justify-evenly">
         <div className="flex flex-col items-center justify-center w-[400px] h-full">
           <img
-            src="/img/logo.png"
+            src="/img/loginLogo.png"
             className="w-[350px]"
             // style={{
             //   // background:
@@ -29,7 +29,7 @@ function Login() {
             //     "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
             // }}
           />
-          <p className="text-[33px] font-semibold">Welcome to Dinner!</p>
+          {/* <p className="text-[33px] font-semibold">Welcome to Dinner!</p> */}
         </div>
         <div className="flex items-center w-2/5  h-full relative">
           <div>

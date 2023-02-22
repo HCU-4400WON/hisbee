@@ -452,9 +452,11 @@ bg-gray-200"
                       )}
                     </>
                   ) : post.dtype === "S" ? (
-                    <PostPersonPosition>
-                      스터디원 {post.maxMember}명
-                    </PostPersonPosition>
+                    post.maxMember !== 0 && (
+                      <PostPersonPosition>
+                        스터디원 {post.maxMember}명
+                      </PostPersonPosition>
+                    )
                   ) : (
                     <>
                       {post.maxMentor !== 0 && (
