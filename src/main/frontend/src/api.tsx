@@ -845,11 +845,25 @@ export const readMembers = async (
 ) => {
   try {
     const TOKEN = localStorage.getItem("key");
+
+    let paramPosition = "";
+    let paramDepartment = "";
+    let paramGrade = "";
+
+    if (position) {
+      paramPosition = `&position=${position}`;
+    }
+    if (department) {
+      paramDepartment = `&department=${department}`;
+    }
+    if (grade) {
+      paramGrade = `&grade=${grade}`;
+    }
+
     const response = await axios.get(
-      `http://localhost:8080/pool?'page='${page}
-      ${position && `&position=${position}`}
-      ${department && `&department=${department}`}
-      ${grade && `&grade=${grade}`}`,
+      `http://localhost:8080/pool?page=${
+        page + ""
+      }${paramPosition}${paramDepartment}${paramGrade}`,
       {
         headers: { Authorization: `Bearer ${TOKEN}` },
         withCredentials: true,

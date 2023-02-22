@@ -153,7 +153,6 @@ function SignUpOptional() {
 
   const onValid = (data: any) => {
     const newUser = {
-      nickname: "abcd",
       pictureUrl: uploadImage,
       isPublic: true,
       department: data.department,
