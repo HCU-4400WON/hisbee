@@ -35,8 +35,8 @@ class PoolRepositoryTest {
     void 모든_필터에_해당하는_결과_개수_일치() {
         PoolSearchFilter filter = PoolSearchFilter.builder()
                 .page(1)
-                .department(Department.전산전자공학부)
-                .position(Position.개발자)
+                .department(Department.CSEE)
+                .position(Position.DEVELOPER)
                 .grade("1")
                 .build();
 
@@ -49,8 +49,8 @@ class PoolRepositoryTest {
 
             member.update(MemberRequest.builder()
                     .nickname("username")
-                    .department(Department.전산전자공학부)
-                    .position(Position.개발자)
+                    .department(Department.CSEE)
+                    .position(Position.DEVELOPER)
                     .grade("1")
                     .isPublic(true)
                     .build());
@@ -64,8 +64,8 @@ class PoolRepositoryTest {
         // given
         PoolSearchFilter filter = PoolSearchFilter.builder()
                 .page(1)
-                .department(Department.전산전자공학부)
-                .position(Position.개발자)
+                .department(Department.CSEE)
+                .position(Position.DEVELOPER)
                 .grade("1")
                 .build();
         Random random = new Random();
@@ -79,8 +79,8 @@ class PoolRepositoryTest {
 
             member.update(MemberRequest.builder()
                     .nickname("username")
-                    .department(Department.전산전자공학부)
-                    .position(Position.개발자)
+                    .department(Department.CSEE)
+                    .position(Position.DEVELOPER)
                     .grade("1")
                     .isPublic(true)
                     .build());
@@ -96,8 +96,8 @@ class PoolRepositoryTest {
 
             member.update(MemberRequest.builder()
                     .nickname("username")
-                    .department(Department.전산전자공학부)
-                    .position(Position.개발자)
+                    .department(Department.CSEE)
+                    .position(Position.DEVELOPER)
                     .grade("2")
                     .isPublic(true)
                     .build());

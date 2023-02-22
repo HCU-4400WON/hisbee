@@ -161,7 +161,7 @@ public class PostTest {
                 .department(Department.ICT)
                 .position(Position.PLANNER)
                 .bio("안녕하세요. 저는 00학번 ICT학부 000입니다.")
-                .grade(2)
+                .grade("2")
                 .club("MIC")
                 .contact("010-0000-0000")
                 .externalLinks("naver.blog.000.com")
