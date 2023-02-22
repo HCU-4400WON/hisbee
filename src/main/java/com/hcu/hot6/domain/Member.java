@@ -9,9 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minidev.json.annotate.JsonIgnore;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Entity
 @Getter
@@ -41,9 +39,9 @@ public class Member {
     private String nickname;
     private String bio;
     private String grade;
-    private String club;
+    private String club = "";
     private String contact;
-    private String externalLinks;
+    private String externalLinks = "";
 
     @ManyToMany(mappedBy = "likes")
     @JsonIgnore
@@ -85,16 +83,24 @@ public class Member {
     }
 
     public void update(MemberRequest form) {
-        this.nickname = form.getNickname();
-        this.isPublic = form.getIsPublic();
+        // 기본 정보
+        this.nickname = Objects.isNull(form.getNickname()) ? nickname : form.getNickname();
+        this.isPublic = Objects.isNull(form.getIsPublic()) ? isPublic : form.getIsPublic();
 
-        this.department = form.getDepartment();
-        this.position = form.getPosition();
-        this.bio = form.getBio();
-        this.grade = form.getGrade();
-        this.contact = form.getContact();
-        this.club = String.join(",", form.getClub());
-        this.externalLinks = String.join(",", form.getExternalLinks());
+        // 인재풀 등록시 필수 공개 정보
+        this.department = Objects.isNull(form.getDepartment()) ? department : form.getDepartment();
+        this.position = Objects.isNull(form.getPosition()) ? position : form.getPosition();
+        this.grade = Objects.isNull(form.getGrade()) ? grade : form.getGrade();
+        this.contact = Objects.isNull(form.getContact()) ? contact : form.getContact();
+
+        // 선택 정보
+        this.bio = Objects.isNull(form.getBio()) ? bio : form.getBio();
+        this.club = String.join(",", Optional.ofNullable(
+                form.getClub()
+        ).orElse(List.of(club)));
+        this.externalLinks = String.join(",", Optional.ofNullable(
+                form.getExternalLinks()
+        ).orElse(List.of(externalLinks)));
 
     }
 }
