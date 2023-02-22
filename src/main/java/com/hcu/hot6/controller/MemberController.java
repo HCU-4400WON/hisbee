@@ -45,7 +45,7 @@ public class MemberController {
 
     @PutMapping("/users/me")
     public ResponseEntity<MemberProfileResponse> modifyProfile(@AuthenticationPrincipal OAuth2User user,
-                                                               @RequestBody @Valid MemberRequest form) {
+                                                               @RequestBody MemberRequest form) {
         Member member = memberService.updateMember(user.getName(), form);
         return ResponseEntity.ok(new MemberProfileResponse(member));
     }
