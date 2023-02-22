@@ -1,10 +1,10 @@
 package com.hcu.hot6.domain;
 
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Getter
 public enum Position {
     ORDINARY("일반"),
     PLANNER("기획자"),
@@ -12,4 +12,14 @@ public enum Position {
     DEVELOPER("개발자");
 
     private final String name;
+
+    @JsonCreator
+    public static Department from(String json) {
+        return Department.valueOf(json);
+    }
+
+    @JsonValue
+    public String getName() {
+        return name;
+    }
 }
