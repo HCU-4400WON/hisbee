@@ -62,10 +62,11 @@ const PositionBox = tw.div`
   focus:bg-red
   `;
 
-const PositionGradientBox = tw.span`
+const PositionGradientBox = tw.img`
+bg-[#eeeeee]
 rounded-full 
-w-[80px] 
-h-[80px]
+w-[70px] 
+h-[70px]
 `;
 
 const Info = tw.label`
@@ -152,7 +153,6 @@ function SignUpOptional() {
 
   const onValid = (data: any) => {
     const newUser = {
-      nickname: "abcd",
       pictureUrl: uploadImage,
       isPublic: true,
       department: data.department,
@@ -255,10 +255,11 @@ function SignUpOptional() {
                   onClick={onClick}
                 >
                   <PositionGradientBox
-                    style={{
-                      background:
-                        "radial-gradient(closest-side,#3aea31 , white)",
-                    }}
+                    src="/img/position1.png"
+                    // style={{
+                    //   background:
+                    //     "radial-gradient(closest-side,#3aea31 , white)",
+                    // }}
                   ></PositionGradientBox>
                   <p>일반</p>
                 </PositionBox>
@@ -270,10 +271,11 @@ function SignUpOptional() {
                   onClick={onClick}
                 >
                   <PositionGradientBox
-                    style={{
-                      background:
-                        "radial-gradient(closest-side,#7b87e7 , white)",
-                    }}
+                    src="/img/position2.png"
+                    // style={{
+                    //   background:
+                    //     "radial-gradient(closest-side,#7b87e7 , white)",
+                    // }}
                   ></PositionGradientBox>
                   <p>기획자</p>
                 </PositionBox>
@@ -285,10 +287,12 @@ function SignUpOptional() {
                   onClick={onClick}
                 >
                   <PositionGradientBox
-                    style={{
-                      background:
-                        "radial-gradient(closest-side,#e3a3ff , white)",
-                    }}
+                    src="/img/position3.png"
+                    // style={{
+                    //   background:
+
+                    //     "radial-gradient(closest-side,#e3a3ff , white)",
+                    // }}
                   ></PositionGradientBox>
                   <p>디자이너</p>
                 </PositionBox>
@@ -300,10 +304,11 @@ function SignUpOptional() {
                   onClick={onClick}
                 >
                   <PositionGradientBox
-                    style={{
-                      background:
-                        "radial-gradient(closest-side,#87879e , white)",
-                    }}
+                    src="/img/position4.png"
+                    // style={{
+                    //   background:
+                    //     "radial-gradient(closest-side,#87879e , white)",
+                    // }}
                   ></PositionGradientBox>
                   <p>개발자</p>
                 </PositionBox>

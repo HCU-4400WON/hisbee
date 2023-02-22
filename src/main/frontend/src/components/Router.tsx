@@ -2,13 +2,15 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Main from "Routes/Main";
 import Post from "Routes/Post";
 import Header from "components/Header";
-import Login from "Routes/Login";
+import Login from "components/LoginModal";
 import SignUp from "Routes/SignUp";
 import Person from "Routes/Person";
 import PostAddForm from "Routes/PostAddForm";
 import Detail from "Routes/Detail";
 import Profile from "Routes/Profile";
 import SignUpOptional from "Routes/SignUpOptional";
+import LoadingAnimation from "./LoadingAnimation";
+import Slider from "./Slider";
 
 function Router() {
   return (
@@ -27,6 +29,8 @@ function Router() {
           path="oauth2/redirect/optional"
           element={<SignUpOptional />}
         ></Route>
+        <Route path="/loading" element={<LoadingAnimation />}></Route>
+        <Route path="/slider" element={<Slider />}></Route>
       </Routes>
     </BrowserRouter>
   );

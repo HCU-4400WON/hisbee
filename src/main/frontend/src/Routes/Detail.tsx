@@ -54,7 +54,7 @@ function Detail() {
   );
 
   console.log("Debug ", data);
-  console.log(typeof data?.postStart);
+  console.log("!!", new Date(data?.postStart as any));
   const detailPost: IPost = data as any;
 
   // const detailPost = posts[+(id as any)];
@@ -82,15 +82,33 @@ function Detail() {
               <GridItem>
                 <ItemTitle>모집 기간</ItemTitle>
                 <ItemText>
-                  {detailPost.postStart.getFullYear()} /{" "}
-                  {(detailPost.postStart.getMonth() + 1 + "").padStart(2, "0")}{" "}
-                  / {(detailPost.postStart.getDate() + "").padStart(2, "0")}
+                  {new Date(detailPost.postStart).getFullYear()} /{" "}
+                  {(
+                    new Date(detailPost.postStart).getMonth() +
+                    1 +
+                    ""
+                  ).padStart(2, "0")}
+                  /{" "}
+                  {(new Date(detailPost.postStart).getDate() + "").padStart(
+                    2,
+                    "0"
+                  )}
                 </ItemText>
                 <ItemText className=" mx-[10px]">~</ItemText>
                 <ItemText>
-                  {detailPost.postEnd.getFullYear()} /{" "}
-                  {(detailPost.postEnd.getMonth() + 1 + "").padStart(2, "0")} /{" "}
-                  {(detailPost.postEnd.getDate() + "").padStart(2, "0")}
+                  <ItemText>
+                    {new Date(detailPost.postEnd).getFullYear()} /{" "}
+                    {(
+                      new Date(detailPost.postEnd).getMonth() +
+                      1 +
+                      ""
+                    ).padStart(2, "0")}
+                    /{" "}
+                    {(new Date(detailPost.postEnd).getDate() + "").padStart(
+                      2,
+                      "0"
+                    )}
+                  </ItemText>
                 </ItemText>
               </GridItem>
               <GridItem>
@@ -147,18 +165,31 @@ function Detail() {
               <GridItem>
                 <ItemTitle>프로젝트 기간</ItemTitle>
                 <ItemText>
-                  {detailPost.projectStart.getFullYear()} /{" "}
-                  {(detailPost.projectStart.getMonth() + 1 + "").padStart(
+                  {new Date(detailPost.projectStart).getFullYear()} /{" "}
+                  {(
+                    new Date(detailPost.projectStart).getMonth() +
+                    1 +
+                    ""
+                  ).padStart(2, "0")}
+                  /{" "}
+                  {(new Date(detailPost.projectStart).getDate() + "").padStart(
                     2,
                     "0"
-                  )}{" "}
-                  / {(detailPost.projectStart.getDate() + "").padStart(2, "0")}
+                  )}
                 </ItemText>
                 <ItemText className=" mx-[10px]">~</ItemText>
                 <ItemText>
-                  {detailPost.projectEnd.getFullYear()} /{" "}
-                  {(detailPost.projectEnd.getMonth() + 1 + "").padStart(2, "0")}{" "}
-                  / {(detailPost.projectEnd.getDate() + "").padStart(2, "0")}
+                  {new Date(detailPost.projectEnd).getFullYear()} /{" "}
+                  {(
+                    new Date(detailPost.projectEnd).getMonth() +
+                    1 +
+                    ""
+                  ).padStart(2, "0")}
+                  /{" "}
+                  {(new Date(detailPost.projectEnd).getDate() + "").padStart(
+                    2,
+                    "0"
+                  )}
                 </ItemText>
               </GridItem>
               <GridItem>
@@ -184,9 +215,16 @@ function Detail() {
               <WriteInfo className="mr-[40px]">{detailPost.writer}</WriteInfo>
               <WriteInfo>작성일</WriteInfo>
               <WriteInfo>
-                {detailPost.postStart.getFullYear()} /{" "}
-                {(detailPost.postStart.getMonth() + 1 + "").padStart(2, "0")} /{" "}
-                {(detailPost.postStart.getDate() + "").padStart(2, "0")}
+                {new Date(detailPost.postStart).getFullYear()} /{" "}
+                {(new Date(detailPost.postStart).getMonth() + 1 + "").padStart(
+                  2,
+                  "0"
+                )}
+                /{" "}
+                {(new Date(detailPost.postStart).getDate() + "").padStart(
+                  2,
+                  "0"
+                )}
               </WriteInfo>
             </div>
           </WriteInfoBox>

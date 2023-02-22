@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 import tw from "tailwind-styled-components";
 
 const StyledUl = tw.ul`
@@ -55,7 +56,7 @@ border-t-2
 border-gray-300
 align-center 
 py-[30px]
-mt-[30px]
+mt-[20px]
 mb-[40px]
 `;
 
@@ -266,9 +267,39 @@ function PostAddForm() {
   return (
     <form
       onSubmit={handleSubmit(onValid as any)}
-      className="px-[100px] py-[50px]"
+      className="px-[100px] py-[50px] relative"
     >
-      <p className="w-full text-[30px] font-normal">모집글 작성하기</p>
+      <Link to="/post">
+        <div className="absolute top-[62px] left-[40px]">
+          <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
+        </div>
+      </Link>
+      <div className="flex justify-between items-center">
+        <p className="w-full text-[30px] font-normal">모집글 작성하기</p>
+        <div className="flex h-[40px] items-end">
+          <div
+            className="w-[20px] h-[20px]"
+            style={{
+              backgroundImage:
+                "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
+            }}
+          />
+          <div
+            className="w-[20px] h-[20px]"
+            style={{
+              backgroundImage:
+                "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
+            }}
+          />
+          <div
+            className="w-[20px] h-[20px]"
+            style={{
+              backgroundImage:
+                "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
+            }}
+          />
+        </div>
+      </div>
       <FieldContainer>
         <FieldRow>
           <FieldBox>
@@ -523,7 +554,7 @@ function PostAddForm() {
           <FieldBox>
             <StyledFieldTitle htmlFor="contact">연락 수단</StyledFieldTitle>
             <input
-              className="bg-[#eeeeee]"
+              className="bg-[#eeeeee] px-[10px]"
               id="contact"
               type="text"
               {...register("contact", {
@@ -545,48 +576,51 @@ function PostAddForm() {
               )}
             </AnimatePresence>
           </FieldBox>
-          <FieldBox>
-            <StyledFieldTitle>보수 유무</StyledFieldTitle>
 
-            <StyledUl>
-              <Styledli>
-                <StyledInput
-                  id="yes"
-                  {...register("pay", {
-                    required: "보수 유무는 필수 항목입니다.",
-                  })}
-                  type="radio"
-                  value="yes"
-                />
-                <StyledInputName htmlFor="yes">Yes</StyledInputName>
-              </Styledli>
-              <Styledli>
-                <StyledInput
-                  id="no"
-                  {...register("pay", {
-                    required: "필수 항목입니다.",
-                  })}
-                  type="radio"
-                  value="no"
-                />
-                <StyledInputName htmlFor="no">No</StyledInputName>
-              </Styledli>
-            </StyledUl>
+          {cat === "" || cat === "study" ? null : (
+            <FieldBox>
+              <StyledFieldTitle>보수 유무</StyledFieldTitle>
 
-            <AnimatePresence>
-              {(formState.errors.pay?.message as string) && (
-                <motion.div
-                  variants={ValidationVariant}
-                  className="text-xs my-auto"
-                  initial="hidden"
-                  animate="showing"
-                  exit="exit"
-                >
-                  * {formState.errors.pay?.message as string}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </FieldBox>
+              <StyledUl>
+                <Styledli>
+                  <StyledInput
+                    id="yes"
+                    {...register("pay", {
+                      required: "보수 유무는 필수 항목입니다.",
+                    })}
+                    type="radio"
+                    value="yes"
+                  />
+                  <StyledInputName htmlFor="yes">Yes</StyledInputName>
+                </Styledli>
+                <Styledli>
+                  <StyledInput
+                    id="no"
+                    {...register("pay", {
+                      required: "필수 항목입니다.",
+                    })}
+                    type="radio"
+                    value="no"
+                  />
+                  <StyledInputName htmlFor="no">No</StyledInputName>
+                </Styledli>
+              </StyledUl>
+
+              <AnimatePresence>
+                {(formState.errors.pay?.message as string) && (
+                  <motion.div
+                    variants={ValidationVariant}
+                    className="text-xs my-auto"
+                    initial="hidden"
+                    animate="showing"
+                    exit="exit"
+                  >
+                    * {formState.errors.pay?.message as string}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </FieldBox>
+          )}
         </FieldRow>
       </FieldContainer>
 
@@ -603,7 +637,7 @@ function PostAddForm() {
           })}
           id="title"
           type="text"
-          className="w-full bg-[#eeeeee] h-[40px]"
+          className="w-full bg-[#eeeeee] h-[40px] px-[10px]"
         />
         <AnimatePresence>
           {(formState.errors.title?.message as string) && (
@@ -632,7 +666,7 @@ function PostAddForm() {
             },
           })}
           id="content"
-          className="w-full bg-[#eeeeee] h-[345px]"
+          className="w-full bg-[#eeeeee] h-[345px] px-[10px] py-[10px]"
         />
         <AnimatePresence>
           {(formState.errors.content?.message as string) && (

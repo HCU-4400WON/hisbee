@@ -150,13 +150,14 @@ function SignUp() {
   }
   const onValid = (submitData: IOnValid) => {
     const newMember: ImemberSignup = {
-      nickname: submitData?.nickname,
+      nickname: submitData.nickname,
       isPublic: false,
     };
+    console.log(newMember);
     memberSignUp(newMember);
     navigate("/oauth2/redirect/optional");
   };
-  // console.log(formState.errors);
+  // console.log(f);
 
   //
 
