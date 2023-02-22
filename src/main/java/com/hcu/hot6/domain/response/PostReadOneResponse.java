@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -42,6 +41,7 @@ public class PostReadOneResponse {
     private int currMentor;
     private int currMentee;
     private boolean hasPay;
+    private boolean isVerified;
 
     public PostReadOneResponse(Post post) {
         this.dtype = post.getDtype();
@@ -83,6 +83,10 @@ public class PostReadOneResponse {
                 this.currMentee = mentoring.getCurrMentee();
             }
         }
+    }
+
+    public void verify(String email, Post post) {
+        this.isVerified = email.equals(post.getAuthor().getEmail());
     }
 
     //Todo: isCompleted를 반환할 것인지 상의 -> 반환 한다면 tag 형식으로 표시하면 좋을 것 같음.

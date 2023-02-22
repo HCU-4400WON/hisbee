@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -48,8 +49,10 @@ public class PostApiController {
      * 모집글 정보 상세조회(READ)
      */
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<PostReadOneResponse> readOnePost(@PathVariable Long postId) {
-        return ResponseEntity.ok(postService.readOnePost(postId));
+    public ResponseEntity<PostReadOneResponse> readOnePost(@PathVariable Long postId,
+                                                           @AuthenticationPrincipal OAuth2User user) {
+        String email = Objects.isNull(user) ? "" : user.getName();
+        return ResponseEntity.ok(postService.readOnePost(postId, email));
     }
 
     /**
