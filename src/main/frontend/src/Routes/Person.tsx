@@ -106,7 +106,7 @@ function Person() {
 
   // const Users = fakeUsers;
 
-  const TOTAL_POSTS = 300;
+  const TOTAL_POSTS = 200;
   const POSTS_PER_PAGE = 12;
   const TOTAL_PAGES = Math.ceil(TOTAL_POSTS / POSTS_PER_PAGE);
   const [nowPage, setNowPage] = useState(1);
