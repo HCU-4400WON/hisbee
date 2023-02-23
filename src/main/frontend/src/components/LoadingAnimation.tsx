@@ -10,20 +10,31 @@ const BoxVariants = {
   end: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2,
+      staggerChildren: 0.08,
     },
   },
 };
 
 const AlphabetVariants = {
+  // start: {
+  //   y: -5,
+  // },
+  // end: {
+  //   y: [-5, 5, -5],
+  //   transition: {
+  //     repeat: Infinity,
+  //     repeatDelay: 2,
+  //   },
+  // },
+
   start: {
-    y: -5,
+    opacity: 0,
   },
   end: {
-    y: [-5, 5, -5],
+    opacity: 1,
     transition: {
       repeat: Infinity,
-      repeatDelay: 2,
+      repeatDelay: 1,
     },
   },
 };
@@ -37,64 +48,91 @@ function LoadingAnimation() {
         animate="end"
         className="fixed  w-[300px] h-[300px] rounded-2xl flex items-center justify-center"
       >
-        <motion.span className="text-[30px]" variants={AlphabetVariants}>
+        <motion.span
+          className="text-[30px] font-medium italic"
+          variants={AlphabetVariants}
+        >
           L
         </motion.span>
 
-        <motion.span className="text-[30px]" variants={AlphabetVariants}>
+        <motion.span
+          className="text-[30px] font-medium italic"
+          variants={AlphabetVariants}
+        >
           O
         </motion.span>
 
-        <motion.span className="text-[30px]" variants={AlphabetVariants}>
+        <motion.span
+          className="text-[30px] font-medium italic"
+          variants={AlphabetVariants}
+        >
           A
         </motion.span>
 
         <motion.span
-          className="text-[30px] text-purple-500"
+          className="text-[30px] text-purple-500 font-medium italic"
           variants={AlphabetVariants}
         >
           D
         </motion.span>
         <motion.span
-          className="text-[30px] text-pink-500"
+          className="text-[30px] text-pink-500 font-medium italic"
           variants={AlphabetVariants}
         >
           N
         </motion.span>
         <motion.span
-          className="text-[30px] text-gray-500"
+          className="text-[30px] text-gray-500 font-medium italic"
           variants={AlphabetVariants}
         >
           E
         </motion.span>
         <motion.span
-          className="text-[30px] text-yellow-500"
+          className="text-[30px] text-yellow-500 font-medium italic"
           variants={AlphabetVariants}
         >
           R
         </motion.span>
 
-        <motion.span className="text-[30px]" variants={AlphabetVariants}>
+        <motion.span
+          className="text-[30px] font-medium italic"
+          variants={AlphabetVariants}
+        >
           I
         </motion.span>
 
-        <motion.span className="text-[30px]" variants={AlphabetVariants}>
+        <motion.span
+          className="text-[30px] font-medium italic"
+          variants={AlphabetVariants}
+        >
           N
         </motion.span>
 
-        <motion.span className="text-[30px]" variants={AlphabetVariants}>
+        <motion.span
+          className="text-[30px] font-medium italic"
+          variants={AlphabetVariants}
+        >
           G
         </motion.span>
 
-        <motion.span className="text-[30px]" variants={AlphabetVariants}>
+        <motion.span
+          className="text-[30px] font-medium italic"
+          variants={AlphabetVariants}
+        >
           .
         </motion.span>
 
-        <motion.span className="text-[30px]" variants={AlphabetVariants}>
+        <motion.span
+          className="text-[30px] font-medium italic"
+          variants={AlphabetVariants}
+        >
           .
         </motion.span>
 
-        <motion.span className="text-[30px]" variants={AlphabetVariants}>
+        <motion.span
+          className="text-[30px] font-medium italic"
+          variants={AlphabetVariants}
+        >
           .
         </motion.span>
       </motion.div>
