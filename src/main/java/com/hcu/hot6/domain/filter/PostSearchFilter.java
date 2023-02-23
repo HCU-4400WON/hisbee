@@ -1,4 +1,4 @@
-package com.hcu.hot6.domain;
+package com.hcu.hot6.domain.filter;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class SearchInfo {
+public class PostSearchFilter {
 
     @NotNull
     private int page;

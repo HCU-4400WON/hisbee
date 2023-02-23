@@ -1,7 +1,7 @@
 package com.hcu.hot6.repository;
 
 import com.hcu.hot6.domain.Post;
-import com.hcu.hot6.domain.SearchInfo;
+import com.hcu.hot6.domain.filter.PostSearchFilter;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class PostRepository {
         return Optional.ofNullable(em.find(Post.class, postId));
     }
 
-    public List<Post> findAll(SearchInfo searchInfo) {
+    public List<Post> findAll(PostSearchFilter searchInfo) {
         //language=JPAQL
         String jpql = "select p From Post p";
         boolean isFirstCondition = true;

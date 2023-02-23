@@ -2,7 +2,7 @@ package com.hcu.hot6;
 
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.Post;
-import com.hcu.hot6.domain.SearchInfo;
+import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.MemberResponse;
@@ -73,7 +73,7 @@ public class PostApiController {
      */
     @GetMapping("/posts")
     public ResponseEntity<List<Post>> readFilteredPost(@RequestParam int page, @RequestParam(required = false) String search, @RequestParam String order, @RequestParam(required = false) String type, @RequestParam(required = false) String position, @RequestParam(required = false) boolean pay, @RequestParam int limit) {
-        SearchInfo searchInfo = SearchInfo.builder()
+        PostSearchFilter searchInfo = PostSearchFilter.builder()
                 .page(page)
                 .search(search)
                 .order(order)

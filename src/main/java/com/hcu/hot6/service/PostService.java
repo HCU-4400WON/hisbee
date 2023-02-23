@@ -1,6 +1,7 @@
 package com.hcu.hot6.service;
 
 import com.hcu.hot6.domain.*;
+import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostCreationResponse;
@@ -115,7 +116,7 @@ public class PostService {
         return response;
     }
 
-    public List<Post> readFilteredPost(SearchInfo searchInfo) {
+    public List<Post> readFilteredPost(PostSearchFilter searchInfo) {
         return postRepository.findAll(searchInfo);
     }
 
