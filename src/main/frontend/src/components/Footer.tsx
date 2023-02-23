@@ -7,9 +7,9 @@ function Footer() {
     <div className="w-full h-[150px] pr-[50px] flex justify-between items-center mt-[150px]">
       <div className="flex justify-start items-end">
         <img src="/img/logo.png" className="w-[250px]" />
-        <caption className="text-[15px] font-semibold text-gray-500">
+        <span className="text-[12px] font-semibold text-gray-500">
           <strong>ⓒ</strong> 2022 Team.Hot6 All rights reserved
-        </caption>
+        </span>
       </div>
 
       <div className="flex justify-between w-[400px] items-center relative">

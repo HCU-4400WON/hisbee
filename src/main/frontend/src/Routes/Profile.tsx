@@ -491,13 +491,24 @@ function Profile() {
                     </ProfileInfoContent>
                   </ProfileInfoRow>
                   <div className="w-full">
-                    <button
-                      id="modify"
-                      onClick={onClick}
-                      className="bg-[#fff] w-[120px] h-[32px] border shadow  rounded-full float-right"
-                    >
-                      {nowModifying ? "제출하기" : "수정하기"}
-                    </button>
+                    {nowModifying ? (
+                      <button
+                        type="button"
+                        id="modify"
+                        onClick={onClick}
+                        className="bg-[#fff] w-[120px] h-[32px] border shadow  rounded-full float-right"
+                      >
+                        제출하기
+                      </button>
+                    ) : (
+                      <button
+                        id="modify"
+                        onClick={onClick}
+                        className="bg-[#fff] w-[120px] h-[32px] border shadow  rounded-full float-right"
+                      >
+                        수정하기
+                      </button>
+                    )}
                   </div>
                 </div>
               </ProfileBanner>

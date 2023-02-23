@@ -641,7 +641,7 @@ function PostAddForm() {
         <input
           {...register("title", {
             minLength: {
-              value: 5,
+              value: 3,
               message: "제목이 너무 짧습니다.",
             },
           })}
