@@ -229,6 +229,7 @@ export interface IPost {
   currMentee: number;
   hasPay: boolean;
   varified?: boolean;
+  isLiked?: boolean;
 
   // period: number;
   // total: number;
@@ -871,6 +872,32 @@ export const readMembers = async (
       }
     );
     return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const addLikePost = (id: number) => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    const response = axios.post(`http://localhost:8080/${id}/likes`, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const deleteLikePost = (id: number) => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    const response = axios.delete(`http://localhost:8080/${id}/likes`, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    return response;
   } catch (error) {
     console.error(error);
   }

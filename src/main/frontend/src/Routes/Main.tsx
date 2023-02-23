@@ -1,7 +1,8 @@
-import { posts } from "api";
+import { MutationFunction, useMutation } from "@tanstack/react-query";
+import { addLikePost, deleteLikePost, posts } from "api";
 import { isLoginModalState } from "components/atom";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import tw from "tailwind-styled-components";
 import { runInThisContext } from "vm";
@@ -161,6 +162,43 @@ const postsVariants = {
 };
 
 function Main() {
+  const addLikeMutate = useMutation(
+    ["addLikePost" as string],
+
+    (postId: number) => addLikePost(postId) as any,
+
+    {
+      onSuccess: () => {
+        // refetch Post
+      },
+
+      onError: () => {
+        console.log("좋아요 추가 기능이 작동하지 않습니다.");
+      },
+    }
+  );
+
+  const deleteLikeMutate = useMutation(
+    ["deleteLikePost" as string],
+
+    (postId: number) => deleteLikePost(postId) as any,
+
+    {
+      onSuccess: () => {
+        // refetch Post
+      },
+
+      onError: () => {
+        console.log("좋아요 추가 기능이 작동하지 않습니다.");
+      },
+    }
+  );
+
+  const onLikeClick = (postId: number, isLiked: boolean) => {
+    if (!isLiked) addLikeMutate.mutate(postId);
+    else deleteLikeMutate.mutate(postId);
+  };
+
   const [indexs, setIndexs] = useState([0, 0, 0, 0]);
 
   const increaseIndex = (idx: number) => {
@@ -244,7 +282,12 @@ function Main() {
                               : "멘토링"}
                           </PostCategoryLabel>
                         </PostCategorySpan>
-                        <HeartIcon className="fa-regular fa-heart"></HeartIcon>
+                        <HeartIcon
+                          onClick={() =>
+                            onLikeClick(post.id, true /*post.isLiked*/)
+                          }
+                          className="fa-regular fa-heart"
+                        ></HeartIcon>
                         {/* <svg
                   width="15px"
                   xmlns="http://www.w3.org/2000/svg"
