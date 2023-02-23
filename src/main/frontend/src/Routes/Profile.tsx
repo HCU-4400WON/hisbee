@@ -5,6 +5,7 @@ import DeletePopup from "components/DeleteModal";
 
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useLocation } from "react-router";
 import { Navigate, useNavigate } from "react-router";
 import { useRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
@@ -37,7 +38,7 @@ min-w-[150px]
 text-[#757575]
 `;
 
-const ProfileInfoContent = tw.p`
+const ProfileInfoContent = tw.span`
 `;
 
 const ProfileBanner = tw.form`
@@ -160,13 +161,22 @@ font-medium
 `;
 
 function Profile() {
+  const location = useLocation();
+  console.log(location);
+
   const { isLoading, data, refetch } = useQuery<IUser>(
     ["User"],
     memberProfile,
     {
       onSuccess: (data) => {
         // 성공시 호출
-        setLinks([...(data?.externalLinks as string[])]);
+        if (!location.state) {
+          setLinks([...(data?.externalLinks as string[])]);
+        } else {
+          data = location.state.user;
+          setLinks([...(location.state.user?.externalLinks as string[])]);
+          console.log("!");
+        }
       },
     }
   );
@@ -491,24 +501,25 @@ function Profile() {
                     </ProfileInfoContent>
                   </ProfileInfoRow>
                   <div className="w-full">
-                    {nowModifying ? (
-                      <button
-                        type="button"
-                        id="modify"
-                        onClick={onClick}
-                        className="bg-[#fff] w-[120px] h-[32px] border shadow  rounded-full float-right"
-                      >
-                        제출하기
-                      </button>
-                    ) : (
-                      <button
-                        id="modify"
-                        onClick={onClick}
-                        className="bg-[#fff] w-[120px] h-[32px] border shadow  rounded-full float-right"
-                      >
-                        수정하기
-                      </button>
-                    )}
+                    {!location.state &&
+                      (nowModifying ? (
+                        <button
+                          type="button"
+                          id="modify"
+                          onClick={onClick}
+                          className="bg-[#fff] w-[120px] h-[32px] border shadow  rounded-full float-right"
+                        >
+                          제출하기
+                        </button>
+                      ) : (
+                        <button
+                          id="modify"
+                          onClick={onClick}
+                          className="bg-[#fff] w-[120px] h-[32px] border shadow  rounded-full float-right"
+                        >
+                          수정하기
+                        </button>
+                      ))}
                   </div>
                 </div>
               </ProfileBanner>
@@ -896,15 +907,16 @@ function Profile() {
                   </button>
                 </div>
               </div> */}
-
-              <button
-                onClick={onClick}
-                id="delete"
-                className="float-right mb-[40px] rounded-full border-2 border-red-500 text-red-500 w-[130px] h-[30px] "
-              >
-                {" "}
-                탈퇴하기{" "}
-              </button>
+              {!location.state && (
+                <button
+                  onClick={onClick}
+                  id="delete"
+                  className="float-right mb-[40px] rounded-full border-2 border-red-500 text-red-500 w-[130px] h-[30px] "
+                >
+                  {" "}
+                  탈퇴하기{" "}
+                </button>
+              )}
             </div>
           </div>
         </>

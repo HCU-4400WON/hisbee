@@ -30,12 +30,12 @@ const AlphabetVariants = {
 
 function LoadingAnimation() {
   return (
-    <motion.div className="opacity-50 w-full h-screen flex justify-center items-center">
+    <motion.div className="opacity-50 w-full h-[700px] flex justify-center items-center">
       <motion.div
         variants={BoxVariants}
         initial="start"
         animate="end"
-        className=" w-[300px] h-[300px] rounded-2xl flex items-center justify-center"
+        className="fixed  w-[300px] h-[300px] rounded-2xl flex items-center justify-center"
       >
         <motion.span className="text-[30px]" variants={AlphabetVariants}>
           L
