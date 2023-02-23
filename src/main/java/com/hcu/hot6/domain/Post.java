@@ -94,6 +94,22 @@ public abstract class Post {
         author.getPosts().add(this);
     }
 
+    public void addBookmark(Member member) {
+        if (this.likes.contains(member)) {
+            throw new IllegalArgumentException("Already liked the post.");
+        }
+        this.likes.add(member);
+        member.getLikes().add(this);
+    }
+
+    public void delBookmark(Member member) {
+        if (!this.likes.contains(member)) {
+            throw new IllegalArgumentException("No match member found: " + member);
+        }
+        this.likes.remove(member);
+        member.getLikes().remove(this);
+    }
+
     protected void updatePost(PostUpdateRequest request, int total, int currTotal) {
         this.title = request.getTitle();
         this.content = request.getContent();

@@ -66,11 +66,13 @@ public class PostReadOneResponse {
                 this.currDesigner = project.getCurrDesigner();
                 this.currDeveloper = project.getCurrDeveloper();
                 this.currPlanner = project.getCurrPlanner();
+
+                this.hasPay = project.isHasPay();
             }
             case "S" -> {
                 Study study = (Study) post;
 
-                this.maxDesigner = study.getMaxMember();
+                this.maxMember = study.getMaxMember();
                 this.currMember = study.getCurrMember();
             }
             case "M" -> {
@@ -81,6 +83,8 @@ public class PostReadOneResponse {
 
                 this.currMentor = mentoring.getCurrMentor();
                 this.currMentee = mentoring.getCurrMentee();
+
+                this.hasPay = mentoring.isHasPay();
             }
         }
     }

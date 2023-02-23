@@ -118,4 +118,24 @@ public class PostService {
     public List<Post> readFilteredPost(SearchInfo searchInfo) {
         return postRepository.findAll(searchInfo);
     }
+
+    @Transactional
+    public List<Member> addBookmark(Long postId, String name) {
+        Member member = memberRepository.findByEmail(name).orElseThrow();
+        Post post = postRepository.findOne(postId)
+                .orElseThrow();
+
+        post.addBookmark(member);
+        return post.getLikes();
+    }
+
+    @Transactional
+    public List<Member> delBookmark(Long postId, String name) {
+        Member member = memberRepository.findByEmail(name).orElseThrow();
+        Post post = postRepository.findOne(postId)
+                .orElseThrow();
+
+        post.delBookmark(member);
+        return post.getLikes();
+    }
 }

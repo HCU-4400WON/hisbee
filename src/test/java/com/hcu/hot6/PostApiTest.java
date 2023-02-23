@@ -2,7 +2,9 @@ package com.hcu.hot6;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcu.hot6.domain.Member;
+import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.request.PostCreationRequest;
+import com.hcu.hot6.domain.response.MemberResponse;
 import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
 import com.hcu.hot6.repository.MemberRepository;
@@ -17,14 +19,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
@@ -70,13 +73,30 @@ public class PostApiTest {
 
     @PostConstruct
     void memberSetup() {
-        Member member = Member.builder()
+        Member member1 = Member.builder()
                 .uid("1")
                 .email(TEST_EMAIL)
                 .pictureUrl("picture")
                 .build();
 
-        memberRepository.save(member);
+        Member member2 = Member.builder()
+                .uid("2")
+                .email("lifeIsGood@test.com")
+                .pictureUrl("picture")
+                .build();
+
+        member1.update(MemberRequest.builder()
+                .nickname("member1")
+                .isPublic(false)
+                .build());
+
+        member2.update(MemberRequest.builder()
+                .nickname("member2")
+                .isPublic(false)
+                .build());
+
+        memberRepository.save(member1);
+        memberRepository.save(member2);
     }
 
     // ==== CREATE ==== //
@@ -86,7 +106,6 @@ public class PostApiTest {
      */
     @DisplayName("모집글 생성: 멘토링")
     @Test
-    @Rollback(value = false)
     public void createMentoring() throws Exception {
         // 1L를 PK로 가지는 유저가 있는 상태에서 테스트. -> 통과
         PostCreationRequest request = PostCreationRequest.builder()
@@ -355,5 +374,72 @@ public class PostApiTest {
                 PostReadOneResponse.class);
 
         assertThat(response.getTitle()).isEqualTo("modified");
+    }
+
+    @Test
+    public void 찜_추가() throws Exception {
+        // given
+        postService.createPost(PostCreationRequest.builder()
+                .dtype("M")
+                .title("title")
+                .content("content")
+                .contact("contact")
+                .postEnd(Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .projectStart(Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
+                .projectEnd(Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
+                .maxMentor(1)
+                .maxMentee(2)
+                .build(), TEST_EMAIL);
+
+        // when
+        MvcResult mvcResult = mockMvc
+                .perform(post("/posts/{postId}/likes", 1)
+                        .with(oauth2Login()
+                                .attributes(attr -> attr
+                                        .put("sub", "lifeIsGood@test.com"))))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        // then
+        List<MemberResponse> results = List.of(objectMapper.readValue(mvcResult.getResponse()
+                .getContentAsString(), MemberResponse[].class));
+
+        assertThat(results.size()).isEqualTo(1);
+        assertThat(results.get(0).getNickname()).isEqualTo("member2");
+    }
+
+    @Test
+    public void 찜_삭제() throws Exception {
+        // given
+        postService.createPost(PostCreationRequest.builder()
+                .dtype("M")
+                .title("title")
+                .content("content")
+                .contact("contact")
+                .postEnd(Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .projectStart(Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
+                .projectEnd(Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
+                .maxMentor(1)
+                .maxMentee(2)
+                .build(), TEST_EMAIL);
+
+        postService.addBookmark(1L, "lifeIsGood@test.com");
+
+        // when
+        MvcResult mvcResult = mockMvc
+                .perform(delete("/posts/{postId}/likes", 1)
+                        .with(oauth2Login()
+                                .attributes(attr -> attr
+                                        .put("sub", "lifeIsGood@test.com"))))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        // then
+        List<MemberResponse> results = List.of(objectMapper.readValue(mvcResult.getResponse()
+                .getContentAsString(), MemberResponse[].class));
+
+        assertThat(results.size()).isEqualTo(0);
     }
 }
