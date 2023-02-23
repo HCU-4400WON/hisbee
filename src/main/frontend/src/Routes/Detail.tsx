@@ -96,11 +96,12 @@ const ValidationVariant = {
 function Detail() {
   const { id } = useParams();
 
-  const { isLoading, data, refetch } = useQuery<IPost>(
+  const { isLoading, data, refetch, isSuccess } = useQuery<IPost>(
     ["PostInfo", id],
     () => readOnePost(+(id as any)),
     {
       onSuccess: (data) => {
+        setValue("varified", data.varified);
         console.log("debug", data);
         setValue("dtype", data.dtype);
         setValue("mentor", data.maxMentor + "");
@@ -370,33 +371,38 @@ function Detail() {
                     {getValues("postStart")}
                   </WriteInfo>
                 </WriteInfoBox>
-                <div className="flex items-center w-[100px] justify-between">
-                  {isModifying ? (
-                    <button
-                      id="modify"
-                      type="button"
-                      onClick={onModifyClick}
-                      className="w-[70px]   text-gray-500 rounded-full"
-                    >
-                      <i className="fa-solid fa-check text-[30px] text-green-600"></i>
-                    </button>
-                  ) : (
-                    <button
-                      id="modify"
-                      onClick={onBtnClick}
-                      className="w-[70px]   text-gray-500 rounded-full"
-                    >
-                      <i className="fa-regular fa-pen-to-square text-[30px]"></i>
-                    </button>
-                  )}
 
-                  <button
-                    id="delete"
-                    onClick={onBtnClick}
-                    className="w-[70px]  text-red-400  rounded-full"
-                  >
-                    <i className="fa-regular fa-trash-can text-[30px]"></i>
-                  </button>
+                <div className="flex items-center w-[100px] justify-between">
+                  {register("varified") && (
+                    <>
+                      {isModifying ? (
+                        <button
+                          id="modify"
+                          type="button"
+                          onClick={onModifyClick}
+                          className="w-[70px] text-gray-500 rounded-full"
+                        >
+                          <i className="fa-solid fa-check text-[30px] text-green-600"></i>
+                        </button>
+                      ) : (
+                        <button
+                          id="modify"
+                          onClick={onBtnClick}
+                          className="w-[70px]   text-gray-500 rounded-full"
+                        >
+                          <i className="fa-regular fa-pen-to-square text-[30px]"></i>
+                        </button>
+                      )}
+
+                      <button
+                        id="delete"
+                        onClick={onBtnClick}
+                        className="w-[70px]  text-red-400  rounded-full"
+                      >
+                        <i className="fa-regular fa-trash-can text-[30px]"></i>
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
               <Grid>
@@ -475,6 +481,15 @@ function Detail() {
                         {data?.dtype === "P" ? (
                           <>
                             <Styledli>
+                              <label htmlFor="developer">개발자</label>
+                              <StyledInputNumber
+                                {...register("developer")}
+                                min="0"
+                                id="developer"
+                                type="number"
+                              />
+                            </Styledli>
+                            <Styledli>
                               <label htmlFor="planner">기획자</label>
                               <StyledInputNumber
                                 {...register("planner", {
@@ -491,15 +506,6 @@ function Detail() {
                                 {...register("designer")}
                                 min="0"
                                 id="designer"
-                                type="number"
-                              />
-                            </Styledli>
-                            <Styledli>
-                              <label htmlFor="developer">개발자</label>
-                              <StyledInputNumber
-                                {...register("developer")}
-                                min="0"
-                                id="developer"
                                 type="number"
                               />
                             </Styledli>

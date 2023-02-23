@@ -228,6 +228,7 @@ export interface IPost {
   currMentor: number;
   currMentee: number;
   hasPay: boolean;
+  varified?: boolean;
 
   // period: number;
   // total: number;
