@@ -9,3 +9,8 @@ export const isLoginModalState = atom({
   key: "isLoginModal",
   default: false,
 });
+
+export const isPostDeleteModalState = atom({
+  key: "isPostDeleteModal",
+  default: false,
+});

@@ -11,6 +11,7 @@ import Profile from "Routes/Profile";
 import SignUpOptional from "Routes/SignUpOptional";
 import LoadingAnimation from "./LoadingAnimation";
 import Slider from "./Slider";
+import Footer from "./Footer";
 
 function Router() {
   return (
@@ -31,7 +32,9 @@ function Router() {
         ></Route>
         <Route path="/loading" element={<LoadingAnimation />}></Route>
         <Route path="/slider" element={<Slider />}></Route>
+        <Route path="/footer" element={<Footer />}></Route>
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }

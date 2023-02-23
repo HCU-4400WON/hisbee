@@ -124,18 +124,18 @@ interface IMentoring {
 }
 
 interface IData {
-  mentor: number;
-  mentee: number;
-  member: number;
+  mentor: string;
+  mentee: string;
+  member: string;
   category: string;
   projectStart: string;
   projectEnd: string;
   postStart: string;
   postEnd: string;
   contact: string;
-  developer: number;
-  planner: number;
-  designer: number;
+  developer: string;
+  planner: string;
+  designer: string;
   pay: string;
   title: string;
   content: string;
@@ -190,14 +190,17 @@ function PostAddForm() {
 
     if (data.projectStart >= data.projectEnd) {
       setError("projectEnd", { message: "마감일이 이릅니다." });
+      return;
     }
     if (data.postStart >= data.postEnd) {
       setError("postEnd", { message: "마감일이 이릅니다." });
+      return;
     }
 
     if (data.category === "study") {
-      if (data.member === 0) {
+      if (data.member === "0") {
         setError("member", { message: "0보다 커야 합니다." });
+        return;
       }
 
       const newPost: IStudy = {
@@ -205,7 +208,7 @@ function PostAddForm() {
         title: data.title,
         content: data.content,
         contact: data.contact,
-        maxMember: data.member,
+        maxMember: +data.member,
         // postStart: new Date(data.postStart),
         postStart: new Date("2023-02-17"),
         postEnd: new Date(data.postEnd),
@@ -217,8 +220,9 @@ function PostAddForm() {
 
       navigate("../post");
     } else if (data.category === "mentoring") {
-      if (data.mentor + data.mentee === 0) {
+      if (Number(data.mentor) + Number(data.mentee) === 0) {
         setError("mentor", { message: "0보다 커야 합니다." });
+        return;
       }
 
       const newPost: IMentoring = {
@@ -226,8 +230,8 @@ function PostAddForm() {
         title: data.title,
         content: data.content,
         contact: data.contact,
-        maxMentor: data.mentor,
-        maxMentee: data.mentee,
+        maxMentor: +data.mentor,
+        maxMentee: +data.mentee,
         postStart: new Date(data.postStart),
         postEnd: new Date(data.postEnd),
         projectStart: new Date(data.projectStart),
@@ -238,8 +242,14 @@ function PostAddForm() {
       createMentoring(newPost);
       navigate("../post");
     } else {
-      if (data.developer + data.planner + data.designer === 0) {
+      if (
+        Number(data.developer) +
+          Number(data.planner) +
+          Number(data.designer) ===
+        0
+      ) {
         setError("planner", { message: "0보다 커야 합니다." });
+        return;
       }
 
       const newPost: IProject = {
@@ -247,9 +257,9 @@ function PostAddForm() {
         title: data.title,
         content: data.content,
         contact: data.contact,
-        maxDeveloper: data.developer,
-        maxPlanner: data.planner,
-        maxDesigner: data.designer,
+        maxDeveloper: +data.developer,
+        maxPlanner: +data.planner,
+        maxDesigner: +data.designer,
         postStart: new Date(data.postStart),
         postEnd: new Date(data.postEnd),
         projectStart: new Date(data.projectStart),
@@ -267,7 +277,7 @@ function PostAddForm() {
   return (
     <form
       onSubmit={handleSubmit(onValid as any)}
-      className="px-[100px] py-[50px] relative"
+      className="px-[100px] py-[50px] pb-[100px] relative"
     >
       <Link to="/post">
         <div className="absolute top-[62px] left-[40px]">
@@ -631,7 +641,7 @@ function PostAddForm() {
         <input
           {...register("title", {
             minLength: {
-              value: 5,
+              value: 3,
               message: "제목이 너무 짧습니다.",
             },
           })}
@@ -685,7 +695,7 @@ function PostAddForm() {
 
       <input
         type="submit"
-        className="my-[40px] bg-[#eeeeee] rounded-full w-[120px] h-[30px] text-[15px] float-right"
+        className="my-[40px] bg-[#eeeeee] w-[120px] h-[30px] text-[16px] font-semibold float-right"
         value="올리기"
       />
     </form>

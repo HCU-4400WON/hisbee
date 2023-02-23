@@ -68,7 +68,7 @@ grid
 grid-cols-1
 sm:grid-cols-2
 xl:grid-cols-4
-pb-[100px]
+
 `;
 
 const PostItem = tw.div`
