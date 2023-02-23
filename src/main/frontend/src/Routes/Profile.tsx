@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { IUser, memberDelete, memberProfile, memberUpdate, posts } from "api";
 import { isDeleteModalState } from "components/atom";
 import DeletePopup from "components/DeleteModal";
+import LoadingAnimation from "components/LoadingAnimation";
 
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -276,7 +277,7 @@ function Profile() {
   return (
     <>
       {isLoading ? (
-        "loading..."
+        <LoadingAnimation />
       ) : (
         <>
           {isDeleteModal ? <DeletePopup /> : null}
