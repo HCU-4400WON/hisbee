@@ -135,13 +135,6 @@ const ValidationVariant = {
 };
 
 function SignUp() {
-  const location = useLocation();
-  console.log(location);
-  const keyword = new URLSearchParams(location.search);
-  console.log(keyword.get("token"));
-
-  localStorage.setItem("key", keyword.get("token") as any);
-
   const navigate = useNavigate();
   const { register, handleSubmit, formState } = useForm();
 

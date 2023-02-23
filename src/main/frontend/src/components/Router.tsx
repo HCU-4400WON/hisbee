@@ -12,6 +12,7 @@ import SignUpOptional from "Routes/SignUpOptional";
 import LoadingAnimation from "./LoadingAnimation";
 import Slider from "./Slider";
 import Footer from "./Footer";
+import BlankPage from "Routes/BlankPage";
 
 function Router() {
   return (
@@ -23,7 +24,8 @@ function Router() {
         <Route path="post/:id" element={<Detail />}></Route>
         <Route path="add" element={<PostAddForm />}></Route>
         <Route path="login" element={<Login />}></Route>
-        <Route path="oauth2/redirect" element={<SignUp />}></Route>
+        <Route path="oauth2/redirect" element={<BlankPage />}></Route>
+        <Route path="signUp" element={<SignUp />}></Route>
         <Route path="person" element={<Person />}></Route>
         <Route path="profile" element={<Profile />}></Route>
         <Route

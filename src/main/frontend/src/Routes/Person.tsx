@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fakeUsers, IUser, readMembers } from "api";
 import { isLoginModalState } from "components/atom";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import tw from "tailwind-styled-components";
 import Login from "../components/LoginModal";
@@ -395,9 +396,15 @@ function Person() {
         ></img>
         <div className="grid grid-cols-4 gap-10 mx-[20px] justify-between">
           {Users?.map((user) => (
-            <Item>
-              <div
-                className={`flex border rounded-full bg-white w-[65px] h-[20px] justify-center items-center
+            <Link
+              to="/profile"
+              state={{
+                user,
+              }}
+            >
+              <Item>
+                <div
+                  className={`flex border rounded-full bg-white w-[65px] h-[20px] justify-center items-center
               ${
                 user?.position === "디자이너"
                   ? "border-[#d0a5fe] text-[#d0a5fe]"
@@ -406,25 +413,26 @@ function Person() {
                   : "border-[#9797aa] text-[#9797aa]"
               }
               `}
-              >
-                <p className="text-[12px] font-bold">{user?.position}</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <img
-                  src="img/user.png"
-                  className="rounded-full w-[60px] h-[60px]"
-                />
-                <p className="text-[16px] mt-[7px] font-semibold">
-                  {user?.nickname}
-                </p>
-                <p className="text-[12px] mt-[3px] text-[#aaaaaa]">
-                  {user?.department}
-                </p>
-                <p className="text-[12px] mt-[3px] text-[#aaaaaa]">
-                  {user.grade}
-                </p>
-              </div>
-            </Item>
+                >
+                  <p className="text-[12px] font-bold">{user?.position}</p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <img
+                    src="img/user.png"
+                    className="rounded-full w-[60px] h-[60px]"
+                  />
+                  <p className="text-[16px] mt-[7px] font-semibold">
+                    {user?.nickname}
+                  </p>
+                  <p className="text-[12px] mt-[3px] text-[#aaaaaa]">
+                    {user?.department}
+                  </p>
+                  <p className="text-[12px] mt-[3px] text-[#aaaaaa]">
+                    {user.grade}
+                  </p>
+                </div>
+              </Item>
+            </Link>
           ))}
         </div>
         <div className="flex justify-center items-center w-full h-[100px] border ">
