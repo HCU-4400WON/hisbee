@@ -97,10 +97,11 @@ function Detail() {
   const { id } = useParams();
 
   const { isLoading, data, refetch } = useQuery<IPost>(
-    ["detailPost", id],
+    ["PostInfo", id],
     () => readOnePost(+(id as any)),
     {
       onSuccess: (data) => {
+        console.log("debug", data);
         setValue("dtype", data.dtype);
         setValue("mentor", data.maxMentor + "");
         setValue("mentee", data.maxMentee + "");
@@ -126,6 +127,16 @@ function Detail() {
             ""
           ).padStart(2, "0")}-${(
             new Date(data.projectEnd).getDate() + ""
+          ).padStart(2, "0")}`
+        );
+        setValue(
+          "postStart",
+          `${new Date(data.postStart).getFullYear()}-${(
+            new Date(data.postStart).getMonth() +
+            1 +
+            ""
+          ).padStart(2, "0")}-${(
+            new Date(data.postStart).getDate() + ""
           ).padStart(2, "0")}`
         );
         setValue(
@@ -157,29 +168,29 @@ function Detail() {
     getFieldState,
   } = useForm({
     mode: "onSubmit",
-    defaultValues: {
-      mentor: "0",
-      mentee: "0",
-      member: "0",
-      dtype: "",
-      projectStart: "",
-      projectEnd: "",
-      postStart:
-        new Date().getFullYear() +
-        "" +
-        "-" +
-        (new Date().getMonth() + 1 + "").padStart(2, "0") +
-        "-" +
-        (new Date().getDate() + "").padStart(2, "0"),
-      postEnd: "",
-      contact: "",
-      developer: "0",
-      planner: "0",
-      designer: "0",
-      pay: "",
-      title: "",
-      content: "",
-    },
+    // defaultValues: {
+    //   mentor: "0",
+    //   mentee: "0",
+    //   member: "0",
+    //   dtype: "",
+    //   projectStart: "",
+    //   projectEnd: "",
+    //   postStart:
+    //     new Date().getFullYear() +
+    //     "" +
+    //     "-" +
+    //     (new Date().getMonth() + 1 + "").padStart(2, "0") +
+    //     "-" +
+    //     (new Date().getDate() + "").padStart(2, "0"),
+    //   postEnd: "",
+    //   contact: "",
+    //   developer: "0",
+    //   planner: "0",
+    //   designer: "0",
+    //   pay: "",
+    //   title: "",
+    //   content: "",
+    // },
   });
 
   interface IData {
@@ -202,11 +213,11 @@ function Detail() {
 
   // console.log("Debug ", data);
   // console.log("!!", new Date(data?.postStart as any));
-  const detailPost: IPost = data as any;
+  // const data?: IPost = data as any;
 
-  // const detailPost = posts[+(id as any)];
+  // const data? = posts[+(id as any)];
 
-  // console.log(detailPost);
+  // console.log(data?);
 
   const [isPostDeleteModal, setIsPostDeleteModal] = useRecoilState(
     isPostDeleteModalState
@@ -227,14 +238,14 @@ function Detail() {
   const [isModifying, setIsModifying] = useState(false);
 
   const onModifyClick = () => {
-    const data = {};
+    // const data = {};
     //  모집 인원 부분 모집 유형에 따라 변하도록
     //  state useForm으로 채우기
     //  마지막 refetch... validation... api...
 
     setIsModifying(false);
 
-    // updatePost(detailPost.id, data);
+    // updatePost(data?.id, data);
   };
 
   const navigate = useNavigate();
@@ -292,12 +303,12 @@ function Detail() {
       postStart: new Date(data.postStart),
       postEnd: new Date(data.postEnd),
       contact: data.contact,
-      pay: data.pay,
+      hasPay: data.pay === "Yes" ? true : false,
       title: data.title,
       content: data.content,
     };
     if (id) {
-      console.log(newData);
+      console.log(newData, "new");
       await updatePost(+id, newData);
       refetch();
     }
@@ -309,7 +320,7 @@ function Detail() {
     <>
       {!isLoading ? (
         <>
-          {isPostDeleteModal && <PostDeleteModal postId={detailPost.id} />}
+          {isPostDeleteModal && <PostDeleteModal postId={data?.id} />}
           <div className="flex relative">
             <span className="w-[140px] py-[62px]  border-gray-300  flex justify-end">
               <Link to="/post" className=" mr-[40px] h-[30px]">
@@ -317,7 +328,10 @@ function Detail() {
               </Link>
             </span>
 
-            <form onSubmit={handleSubmit(onValid)} className="min-w-[1200px] ">
+            <form
+              onSubmit={handleSubmit(onValid as any)}
+              className="min-w-[1200px] "
+            >
               <header className="pt-[50px] text-[30px] ">
                 {isModifying ? (
                   <input
@@ -331,7 +345,7 @@ function Detail() {
                     })}
                   />
                 ) : (
-                  <>{detailPost.title}</>
+                  <>{data?.title}</>
                 )}
               </header>
 
@@ -339,21 +353,21 @@ function Detail() {
                 <WriteInfoBox className="flex items-center">
                   <WriteInfo className="">작성자</WriteInfo>
                   <WriteInfo className="mr-[40px] text-gray-500">
-                    {detailPost.writer}
+                    {data?.writer}
                   </WriteInfo>
                   <WriteInfo>작성일</WriteInfo>
                   <WriteInfo className="text-gray-500">
-                    {new Date(detailPost.postStart).getFullYear()} /{" "}
-                    {(
-                      new Date(detailPost.postStart).getMonth() +
-                      1 +
-                      ""
-                    ).padStart(2, "0")}{" "}
-                    /{" "}
-                    {(new Date(detailPost.postStart).getDate() + "").padStart(
+                    {/* {data?.postStart.getFullYear()} /{" "}
+                    {(data?.postStart.getMonth() + 1) + "").padStart(
                       2,
                       "0"
-                    )}
+                    )}{" "}
+                    /{" "}
+                    {(new Date(data?.postStart).getDate() + "").padStart(
+                      2,
+                      "0"
+                    )} */}
+                    {getValues("postStart")}
                   </WriteInfo>
                 </WriteInfoBox>
                 <div className="flex items-center w-[100px] justify-between">
@@ -390,17 +404,17 @@ function Detail() {
                   <ItemTitle>모집 기간</ItemTitle>
                   <ItemText>
                     <>
-                      {new Date(detailPost.postStart).getFullYear()} /{" "}
-                      {(
-                        new Date(detailPost.postStart).getMonth() +
-                        1 +
-                        ""
-                      ).padStart(2, "0")}{" "}
-                      /{" "}
-                      {(new Date(detailPost.postStart).getDate() + "").padStart(
+                      {/* {new Date(data?.postStart).getFullYear()} /{" "}
+                      {(new Date(data?.postStart).getMonth() + 1 + "").padStart(
                         2,
                         "0"
-                      )}
+                      )}{" "}
+                      /{" "}
+                      {(new Date(data?.postStart).getDate() + "").padStart(
+                        2,
+                        "0"
+                      )} */}
+                      {getValues("postStart")}
                     </>
                   </ItemText>
                   <ItemText className=" mx-[10px]">~</ItemText>
@@ -412,28 +426,30 @@ function Detail() {
                           {...register("postEnd", {
                             required: "필수 항목입니다.",
                           })}
-                          defaultValue={`${new Date(
-                            detailPost.postEnd
-                          ).getFullYear()}-${(
-                            new Date(detailPost.postEnd).getMonth() +
-                            1 +
-                            ""
-                          ).padStart(2, "0")}-${(
-                            new Date(detailPost.postEnd).getDate() + ""
-                          ).padStart(2, "0")}`}
+                          // defaultValue={`${new Date(
+                          //   data?.postEnd
+                          // ).getFullYear()}-${(
+                          //   new Date(data?.postEnd).getMonth() +
+                          //   1 +
+                          //   ""
+                          // ).padStart(2, "0")}-${(
+                          //   new Date(data?.postEnd).getDate() + ""
+                          // ).padStart(2, "0")}`}
                         ></input>
                       ) : (
                         <>
-                          {new Date(detailPost.postEnd).getFullYear()} /{" "}
+                          {/* {new Date(data?.postEnd).getFullYear()} /{" "}
                           {(
-                            new Date(detailPost.postEnd).getMonth() +
+                            new Date(data?.postEnd).getMonth() +
                             1 +
                             ""
                           ).padStart(2, "0")}{" "}
                           /{" "}
-                          {(
-                            new Date(detailPost.postEnd).getDate() + ""
-                          ).padStart(2, "0")}
+                          {(new Date(data?.postEnd).getDate() + "").padStart(
+                            2,
+                            "0"
+                          )} */}
+                          {getValues("postEnd")}
                         </>
                       )}
                     </ItemText>
@@ -443,9 +459,9 @@ function Detail() {
                   <ItemTitle>모집 유형</ItemTitle>
 
                   <ItemText>
-                    {detailPost.dtype === "P"
+                    {data?.dtype === "P"
                       ? "프로젝트"
-                      : detailPost.dtype === "S"
+                      : data?.dtype === "S"
                       ? "스터디"
                       : "멘토링"}
                   </ItemText>
@@ -544,7 +560,9 @@ function Detail() {
                             <Styledli>
                               <label htmlFor="member">스터디원</label>
                               <StyledInputNumber
-                                {...register("member")}
+                                {...register("member", {
+                                  required: "필수 사항입니다.",
+                                })}
                                 min="0"
                                 id="member"
                                 type="number"
@@ -570,42 +588,36 @@ function Detail() {
                     </>
                   ) : (
                     <>
-                      {detailPost.dtype === "P" ? (
+                      {data?.dtype === "P" ? (
                         <>
-                          {detailPost.maxDeveloper !== 0 && (
+                          {data?.maxDeveloper !== 0 && (
                             <ItemText>
-                              개발자 {detailPost.maxDeveloper}명 &nbsp;
+                              개발자 {data?.maxDeveloper}명 &nbsp;
                             </ItemText>
                           )}
-                          {detailPost.maxPlanner !== 0 && (
+                          {data?.maxPlanner !== 0 && (
                             <ItemText>
-                              기획자 {detailPost.maxPlanner}명 &nbsp;
+                              기획자 {data?.maxPlanner}명 &nbsp;
                             </ItemText>
                           )}
-                          {detailPost.maxDesigner !== 0 && (
-                            <ItemText>
-                              디자이너 {detailPost.maxDesigner}명
-                            </ItemText>
+                          {data?.maxDesigner !== 0 && (
+                            <ItemText>디자이너 {data?.maxDesigner}명</ItemText>
                           )}
                         </>
-                      ) : detailPost.dtype === "M" ? (
+                      ) : data?.dtype === "M" ? (
                         <>
-                          {detailPost.maxMentor !== 0 && (
-                            <ItemText>
-                              멘토 {detailPost.maxMentor}명 &nbsp;
-                            </ItemText>
+                          {data?.maxMentor !== 0 && (
+                            <ItemText>멘토 {data?.maxMentor}명 &nbsp;</ItemText>
                           )}
-                          {detailPost.maxMentee !== 0 && (
-                            <ItemText>
-                              멘티 {detailPost.maxMentee}명 &nbsp;
-                            </ItemText>
+                          {data?.maxMentee !== 0 && (
+                            <ItemText>멘티 {data?.maxMentee}명 &nbsp;</ItemText>
                           )}
                         </>
                       ) : (
                         <>
-                          {detailPost.maxMember === 0 && (
+                          {data?.maxMember !== 0 && (
                             <ItemText>
-                              스터디원 {detailPost.maxMember}명&nbsp;
+                              스터디원 {data?.maxMember}명&nbsp;
                             </ItemText>
                           )}
                         </>
@@ -622,28 +634,30 @@ function Detail() {
                         {...register("projectStart", {
                           required: "필수 항목입니다.",
                         })}
-                        defaultValue={`${new Date(
-                          detailPost.projectStart
-                        ).getFullYear()}-${(
-                          new Date(detailPost.projectStart).getMonth() +
-                          1 +
-                          ""
-                        ).padStart(2, "0")}-${(
-                          new Date(detailPost.projectStart).getDate() + ""
-                        ).padStart(2, "0")}`}
+                        // defaultValue={`${new Date(
+                        //   data?.projectStart
+                        // ).getFullYear()}-${(
+                        //   new Date(data?.projectStart).getMonth() +
+                        //   1 +
+                        //   ""
+                        // ).padStart(2, "0")}-${(
+                        //   new Date(data?.projectStart).getDate() + ""
+                        // ).padStart(2, "0")}`}
                       ></input>
                     ) : (
                       <>
-                        {new Date(detailPost.projectStart).getFullYear()} /{" "}
+                        {/* {new Date(data?.projectStart).getFullYear()} /{" "}
                         {(
-                          new Date(detailPost.projectStart).getMonth() +
+                          new Date(data?.projectStart).getMonth() +
                           1 +
                           ""
                         ).padStart(2, "0")}{" "}
                         /{" "}
-                        {(
-                          new Date(detailPost.projectStart).getDate() + ""
-                        ).padStart(2, "0")}
+                        {(new Date(data?.projectStart).getDate() + "").padStart(
+                          2,
+                          "0"
+                        )} */}
+                        {getValues("projectStart")}
                       </>
                     )}
                   </ItemText>
@@ -655,35 +669,37 @@ function Detail() {
                         {...register("projectEnd", {
                           required: "필수 항목입니다.",
                         })}
-                        defaultValue={`${new Date(
-                          detailPost.projectEnd
-                        ).getFullYear()}-${(
-                          new Date(detailPost.projectEnd).getMonth() +
-                          1 +
-                          ""
-                        ).padStart(2, "0")}-${(
-                          new Date(detailPost.projectEnd).getDate() + ""
-                        ).padStart(2, "0")}`}
+                        // defaultValue={`${new Date(
+                        //   data?.projectEnd
+                        // ).getFullYear()}-${(
+                        //   new Date(data?.projectEnd).getMonth() +
+                        //   1 +
+                        //   ""
+                        // ).padStart(2, "0")}-${(
+                        //   new Date(data?.projectEnd).getDate() + ""
+                        // ).padStart(2, "0")}`}
                       ></input>
                     ) : (
                       <>
-                        {new Date(detailPost.projectEnd).getFullYear()} /{" "}
+                        {/* {new Date(data?.projectEnd).getFullYear()} /{" "}
                         {(
-                          new Date(detailPost.projectEnd).getMonth() +
+                          new Date(data?.projectEnd).getMonth() +
                           1 +
                           ""
                         ).padStart(2, "0")}{" "}
                         /{" "}
-                        {(
-                          new Date(detailPost.projectEnd).getDate() + ""
-                        ).padStart(2, "0")}
+                        {(new Date(data?.projectEnd).getDate() + "").padStart(
+                          2,
+                          "0"
+                        )} */}
+                        {getValues("projectEnd")}
                       </>
                     )}
                   </ItemText>
                 </GridItem>
                 <GridItem>
                   <ItemTitle>보수 유무</ItemTitle>
-                  {detailPost.dtype === "S" ? (
+                  {data?.dtype === "S" ? (
                     <ItemText>No</ItemText>
                   ) : isModifying ? (
                     <div>
@@ -714,7 +730,7 @@ function Detail() {
                     </div>
                   ) : (
                     <>
-                      {detailPost.hasPay ? (
+                      {data?.hasPay ? (
                         <ItemText>Yes</ItemText>
                       ) : (
                         <ItemText>No</ItemText>
@@ -734,7 +750,7 @@ function Detail() {
                         className=" w-full h-[30px] bg-[#eeeeee] px-[15px]"
                       ></input>
                     ) : (
-                      <>{detailPost.contact}</>
+                      <>{data?.contact}</>
                     )}
                   </ItemText>
                 </GridItem>
@@ -751,7 +767,7 @@ function Detail() {
                     className="min-h-[500px] w-full p-[15px] bg-[#eeeeee]"
                   ></textarea>
                 ) : (
-                  <>{detailPost.content}</>
+                  <>{data?.content}</>
                 )}
               </div>
               {isModifying && (
