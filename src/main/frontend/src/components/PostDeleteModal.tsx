@@ -2,6 +2,19 @@ import { deletePost, memberDelete } from "api";
 import { useNavigate } from "react-router";
 import { useSetRecoilState } from "recoil";
 import { isDeleteModalState, isPostDeleteModalState } from "./atom";
+import { motion } from "framer-motion";
+const LayoutVariant = {
+  hidden: {
+    opacity: 0,
+    // backGroundColor: "rgba(0,0,0,0.5)",
+  },
+  showing: {
+    opacity: 1,
+  },
+  exit: {
+    opacity: 0,
+  },
+};
 
 function PostDeleteModal({ postId }: any) {
   const navigate = useNavigate();
@@ -19,11 +32,15 @@ function PostDeleteModal({ postId }: any) {
 
   return (
     <div>
-      <div
+      <motion.div
         onClick={onClick}
+        variants={LayoutVariant}
+        initial="hidden"
+        animate="showing"
+        exit="exit"
         id="no"
-        className="z-10 bg-[rgba(0,0,0,0.2)] fixed top-0 left-0 w-full h-screen opacity-100"
-      ></div>
+        className="z-10 bg-[rgba(0,0,0,0.5)] fixed top-0 left-0 w-full h-screen opacity-100"
+      ></motion.div>
       <div className="fixed z-20 flex justify-center mt-[150px] w-full h-screen">
         <div className="w-[1000px] bg-[white] h-[330px] py-[30px] px-[30px] rounded-3xl flex flex-col justify-between">
           <span className="flex justify-end">

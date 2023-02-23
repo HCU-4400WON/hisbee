@@ -23,11 +23,13 @@ const NavButton = tw.button`
  text-[15px]
  text-black 
  py-2 
- hover:text-purple-500
+ 
+ font-semibold
+ 
  mx-8
-
+hover:text-purple-400
  sm:mx-10
- sm:text-[18px]
+ sm:text-[16px]
 `;
 
 const Logo = tw(motion.img)`
@@ -143,6 +145,7 @@ function Header() {
     setValue("search", "");
     navigate("/post");
   };
+
   const navigate = useNavigate();
 
   const onBlur = (e: any) => {
@@ -168,18 +171,95 @@ function Header() {
           />
         </Link>
         <NavCenterBox>
-          <Link to="post">
-            <NavButton className={`${isPostURL && "text-purple-500"} `}>
+          <Link to="post" className="relative">
+            {isPostURL && (
+              <>
+                <div
+                  className="absolute w-[11px] h-[11px] right-7 top-[-2px]"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
+                  }}
+                />
+                <div
+                  className="absolute w-[10px] h-[10px] right-11 top-[-5px]"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
+                  }}
+                />
+                <div
+                  className="absolute w-[10px] h-[10px] right-3 top-2"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
+                  }}
+                />
+              </>
+            )}
+            {/* text-purple-500 */}
+            <NavButton className={`${isPostURL && "text-purple-400"} `}>
               모집글
             </NavButton>
           </Link>
-          <Link to="person">
-            <NavButton className={`${isPersonURL && "text-purple-500"} `}>
+
+          <Link to="person" className="relative">
+            {isPersonURL && (
+              <>
+                <div
+                  className="absolute w-[11px] h-[11px] right-7 top-[-2px]"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
+                  }}
+                />
+                <div
+                  className="absolute w-[10px] h-[10px] right-11 top-[-5px]"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
+                  }}
+                />
+                <div
+                  className="absolute w-[10px] h-[10px] right-3 top-2"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
+                  }}
+                />
+              </>
+            )}
+            <NavButton className={`${isPersonURL && "text-purple-400"} `}>
               인재풀
             </NavButton>
           </Link>
-          <Link to="profile">
-            <NavButton className={`${isProfileURL && "text-purple-500"} `}>
+          <Link to="profile" className="relative">
+            {isProfileURL && (
+              <>
+                <div
+                  className="absolute w-[11px] h-[11px] right-7 top-[-2px]"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
+                  }}
+                />
+                <div
+                  className="absolute w-[10px] h-[10px] right-11 top-[-5px]"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
+                  }}
+                />
+                <div
+                  className="absolute w-[10px] h-[10px] right-3 top-2"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
+                  }}
+                />
+              </>
+            )}
+            <NavButton className={`${isProfileURL && "text-purple-400"} `}>
               프로필
             </NavButton>
           </Link>

@@ -1,5 +1,19 @@
 import { isLoginModalState } from "components/atom";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { motion, AnimatePresence } from "framer-motion";
+
+const LayoutVariant = {
+  hidden: {
+    opacity: 0,
+    // backGroundColor: "rgba(0,0,0,0.5)",
+  },
+  showing: {
+    opacity: 1,
+  },
+  exit: {
+    opacity: 0,
+  },
+};
 
 function Login() {
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
@@ -12,11 +26,16 @@ function Login() {
 
   return (
     <div className="flex justify-center">
-      <div
+      <motion.div
+        variants={LayoutVariant}
+        initial="hidden"
+        animate="showing"
+        exit="exit"
         onClick={onClick}
         id="no"
-        className="fixed z-10 bg-[rgba(0,0,0,0.5)] top-0 left-0 w-full h-screen opacity-100"
-      ></div>
+        className="fixed z-10 bg-[rgba(0,0,0,0.5)] top-0 left-0 w-full h-screen"
+      ></motion.div>
+
       <div className="fixed top-[150px] z-20 rounded-2xl w-[940px] h-[540px] bg-[#fff] flex justify-evenly">
         <div className="flex flex-col items-center justify-center w-[400px] h-full">
           <img
@@ -62,12 +81,12 @@ function Login() {
             </div>
 
             {/* <div
-              className="border-1-[#eff0f6] w-[310px] h-[34.6px] flex items-center rounded-full text-[14px] px-5 "
-              style={{ boxShadow: "0 2px 6px 0 rgba(19, 18, 66, 0.15)" }}
-            >
-              계정이 없으십니까? &nbsp;
-              <span className="font-bold"> 회원가입 하기</span>
-            </div> */}
+            className="border-1-[#eff0f6] w-[310px] h-[34.6px] flex items-center rounded-full text-[14px] px-5 "
+            style={{ boxShadow: "0 2px 6px 0 rgba(19, 18, 66, 0.15)" }}
+          >
+            계정이 없으십니까? &nbsp;
+            <span className="font-bold"> 회원가입 하기</span>
+          </div> */}
           </div>
         </div>
       </div>
