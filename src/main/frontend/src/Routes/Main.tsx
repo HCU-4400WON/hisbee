@@ -2,7 +2,7 @@ import { MutationFunction, useMutation } from "@tanstack/react-query";
 import { addLikePost, deleteLikePost, posts } from "api";
 import { isLoginModalState } from "components/atom";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import tw from "tailwind-styled-components";
 import { runInThisContext } from "vm";
@@ -42,6 +42,7 @@ font-bold
 
 const PostGrid = tw(motion.div)`
 flex justify-between w-full
+
 `;
 
 //justify-self-center
@@ -52,6 +53,7 @@ min-w-[330px]
 rounded-md
 overflow-hidden
 z-0
+
 `;
 
 const PostImage = tw.div`
@@ -143,25 +145,71 @@ const OFFSET = 4;
 const NUM_POSTS = 8;
 const CARD_SIZE = 330;
 
+interface IwindowSize {
+  width: number;
+  height: number;
+}
+
+interface IProps {
+  windowSize: IwindowSize;
+  leaving: boolean;
+}
+
 const postsVariants = {
-  hidden: {
-    x: 1500,
-    opacity: 1,
-    y: 0,
-  },
+  hidden: ({ windowSize }: IProps) => ({
+    x: windowSize.width,
+  }),
   showing: {
     x: 0,
-    opacity: 1,
-    y: 0,
+    transition: {
+      duration: 2,
+    },
   },
-  exit: {
-    x: -1500,
-    opacity: 1,
-    y: 0,
-  },
+  exit: (windowSize: any) => ({
+    x: -windowSize.windowSize.width,
+    transition: {
+      duration: 2,
+    },
+  }),
+  hover: ({ leaving }: IProps) => ({
+    scale: leaving ? 1 : 1.1,
+    // opacity: 0.4,
+    // zIndex: 1,
+    transition: {
+      delay: 0.1,
+      duration: 0.1,
+
+      type: "tween",
+    },
+  }),
 };
 
 function Main() {
+  // resize되는 화면 크기 구하기
+
+  const [windowSize, setWindowSize] = useState<{
+    width: number | undefined;
+    height: number | undefined;
+  }>({
+    width: undefined,
+    height: undefined,
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const addLikeMutate = useMutation(
     ["addLikePost" as string],
 
@@ -256,11 +304,14 @@ function Main() {
                   // .slice(0, 4)
                   .map((post, index) => (
                     <PostItem
+                      custom={{ windowSize, leaving }}
                       variants={postsVariants}
                       initial="hidden"
                       animate="showing"
                       exit="exit"
-                      transition={{ duration: 2 }}
+                      whileHover="hover"
+                      // transition={{ duration: 2 }}
+                      // transition={{ type: "tween" }}
                       key={post.id}
                       style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
                     >

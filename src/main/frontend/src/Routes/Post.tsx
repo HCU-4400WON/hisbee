@@ -69,6 +69,7 @@ grid-cols-1
 sm:grid-cols-2
 xl:grid-cols-4
 
+
 `;
 
 const PostItem = tw.div`
@@ -79,6 +80,7 @@ min-w-[330px]
 rounded-md
 overflow-hidden
 mb-[80px]
+hover:scale-105
 `;
 
 const PostImage = tw.div`
