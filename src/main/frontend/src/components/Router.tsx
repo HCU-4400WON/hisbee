@@ -35,6 +35,7 @@ function Router() {
         <Route path="/loading" element={<LoadingAnimation />}></Route>
         <Route path="/slider" element={<Slider />}></Route>
         <Route path="/footer" element={<Footer />}></Route>
+        <Route path="*" element={<Main />}></Route>
       </Routes>
       <Footer />
     </BrowserRouter>

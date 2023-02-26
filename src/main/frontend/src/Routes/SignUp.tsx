@@ -1,17 +1,20 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ImemberSignup, memberSignUp } from "api";
+import { isExtraSignupModalState, isSignupModalState } from "components/atom";
+import LoadingAnimation from "components/LoadingAnimation";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 
 const Container = tw.div`
-h-screen
 flex 
 justify-center 
-bg-[#bababa]
+
+
 `;
 
 const SignUpCard = tw.form`
@@ -141,14 +144,31 @@ function SignUp() {
   interface IOnValid {
     nickname: string;
   }
+
+  const { mutate: signupMemberMutate, isLoading: signupMemberLoading } =
+    useMutation(
+      ["signupMember" as string],
+
+      (newMember: ImemberSignup) => memberSignUp(newMember) as any,
+
+      {
+        onError: () => {
+          console.log("유저 회원 가입이 작동하지 않습니다.");
+        },
+      }
+    );
+
   const onValid = (submitData: IOnValid) => {
     const newMember: ImemberSignup = {
       nickname: submitData.nickname,
       isPublic: false,
     };
     console.log(newMember);
-    memberSignUp(newMember);
-    navigate("/oauth2/redirect/optional");
+    // memberSignUp(newMember);
+    signupMemberMutate(newMember);
+    // navigate("/oauth2/redirect/optional");
+    setIsSignupModal(false);
+    setIsExtraSignupModal(true);
   };
   // console.log(f);
 
@@ -160,44 +180,76 @@ function SignUp() {
     }
   };
 
+  const setIsSignupModal = useSetRecoilState(isSignupModalState);
+  const setIsExtraSignupModal = useSetRecoilState(isExtraSignupModalState);
+
+  const LayoutVariant = {
+    hidden: {
+      opacity: 0,
+      // backGroundColor: "rgba(0,0,0,0.5)",
+    },
+    showing: {
+      opacity: 1,
+    },
+    exit: {
+      opacity: 0,
+    },
+  };
+
   return (
-    <Container>
-      <SignUpCard onSubmit={handleSubmit(onValid as any)}>
-        <Title>Sign Up</Title>
+    <>
+      {signupMemberLoading ? (
+        <LoadingAnimation />
+      ) : (
+        <Container className="w-[1470px]">
+          <motion.div
+            variants={LayoutVariant}
+            initial="hidden"
+            animate="showing"
+            exit="exit"
+            id="no"
+            className="fixed z-10 bg-[rgba(0,0,0,0.5)] top-0 left-0 w-full h-screen"
+          ></motion.div>
+          <div className="fixed z-20 my-[-30px]">
+            <SignUpCard onSubmit={handleSubmit(onValid as any)}>
+              <Title>Sign Up</Title>
 
-        <SubTitle className="">필수정보 입력하기</SubTitle>
+              <SubTitle className="">필수정보 입력하기</SubTitle>
 
-        <InfoBox className=" relative flex w-full ">
-          <Info>닉네임</Info>
-          {/* 중복 검사 추가 필요 */}
-          {/* 랜덤 생성기 있으면 좋을 듯 */}
-          <InfoInput
-            onKeyPress={onKeyPress}
-            {...register("nickname", { required: "필수 항목입니다." })}
-            className="w-full"
-          />
-          <AnimatePresence>
-            {(formState.errors.nickname?.message as string) && (
-              <motion.div
-                variants={ValidationVariant}
-                className="absolute top-[100px] mt-[10px]"
-                initial="hidden"
-                animate="showing"
-                exit="exit"
-              >
-                * {formState.errors.nickname?.message as string}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </InfoBox>
+              <InfoBox className=" relative flex w-full ">
+                <Info>닉네임</Info>
+                {/* 중복 검사 추가 필요 */}
+                {/* 랜덤 생성기 있으면 좋을 듯 */}
+                <InfoInput
+                  onKeyPress={onKeyPress}
+                  {...register("nickname", { required: "필수 항목입니다." })}
+                  className="w-full"
+                />
+                <AnimatePresence>
+                  {(formState.errors.nickname?.message as string) && (
+                    <motion.div
+                      variants={ValidationVariant}
+                      className="absolute top-[100px] mt-[10px]"
+                      initial="hidden"
+                      animate="showing"
+                      exit="exit"
+                    >
+                      * {formState.errors.nickname?.message as string}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </InfoBox>
 
-        <InfoBox className="flex w-full flex-row mt-[40px] justify-end">
-          {/* <Link to="/oauth2/redirect/optional"> */}
-          <SubmitButton className="">제출하기</SubmitButton>
-          {/* </Link> */}
-        </InfoBox>
-      </SignUpCard>
-    </Container>
+              <InfoBox className="flex w-full flex-row mt-[40px] justify-end">
+                {/* <Link to="/oauth2/redirect/optional"> */}
+                <SubmitButton className="">제출하기</SubmitButton>
+                {/* </Link> */}
+              </InfoBox>
+            </SignUpCard>
+          </div>
+        </Container>
+      )}
+    </>
   );
 }
 

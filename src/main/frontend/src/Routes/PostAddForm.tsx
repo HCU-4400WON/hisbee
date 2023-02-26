@@ -1,5 +1,7 @@
+import { useMutation } from "@tanstack/react-query";
 import { createMentoring, createProject, createStudy, IPost } from "api";
 import axios from "axios";
+import LoadingAnimation from "components/LoadingAnimation";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -185,6 +187,42 @@ function PostAddForm() {
     setCat(e.currentTarget.value);
   };
 
+  const { mutate: studyMutate, isLoading: studyMutateLoading } = useMutation(
+    ["createStudyMutate" as string],
+
+    (newPost: IStudy) => createStudy(newPost) as any,
+
+    {
+      onError: () => {
+        console.log("새로운 스터디 생성이 작동하지 않습니다.");
+      },
+    }
+  );
+  const { mutate: mentoringMutate, isLoading: mentoringMutateLoading } =
+    useMutation(
+      ["createMentoringMutate" as string],
+
+      (newPost: IMentoring) => createMentoring(newPost) as any,
+
+      {
+        onError: () => {
+          console.log("새로운 멘토링 생성이 작동하지 않습니다.");
+        },
+      }
+    );
+  const { mutate: projectMutate, isLoading: projectMutateLoading } =
+    useMutation(
+      ["createProjectMutate" as string],
+
+      (newPost: IProject) => createProject(newPost) as any,
+
+      {
+        onError: () => {
+          console.log("새로운 프로젝트 생성이 작동하지 않습니다.");
+        },
+      }
+    );
+
   const onValid = (data: IData) => {
     console.log(data);
 
@@ -216,7 +254,7 @@ function PostAddForm() {
         projectEnd: new Date(data.projectEnd),
       };
 
-      createStudy(newPost);
+      studyMutate(newPost);
 
       navigate("../post");
     } else if (data.category === "mentoring") {
@@ -239,7 +277,7 @@ function PostAddForm() {
         hasPay: data.pay === "yes" ? true : false,
       };
 
-      createMentoring(newPost);
+      mentoringMutate(newPost);
       navigate("../post");
     } else {
       if (
@@ -267,7 +305,7 @@ function PostAddForm() {
         hasPay: data.pay === "yes" ? true : false,
       };
 
-      createProject(newPost);
+      projectMutate(newPost);
       navigate("../post");
     }
   };
@@ -275,173 +313,93 @@ function PostAddForm() {
   console.log(getValues().category);
 
   return (
-    <form
-      onSubmit={handleSubmit(onValid as any)}
-      className="px-[100px] py-[50px] pb-[100px] relative"
-    >
-      <Link to="/post">
-        <div className="absolute top-[62px] left-[40px]">
-          <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
-        </div>
-      </Link>
-      <div className="flex justify-between items-center">
-        <p className="w-full text-[30px] font-normal">모집글 작성하기</p>
-        <div className="flex h-[40px] items-end">
-          <div
-            className="w-[20px] h-[20px]"
-            style={{
-              backgroundImage:
-                "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
-            }}
-          />
-          <div
-            className="w-[20px] h-[20px]"
-            style={{
-              backgroundImage:
-                "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
-            }}
-          />
-          <div
-            className="w-[20px] h-[20px]"
-            style={{
-              backgroundImage:
-                "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
-            }}
-          />
-        </div>
-      </div>
-      <FieldContainer>
-        <FieldRow>
-          <FieldBox>
-            <StyledFieldTitle>모집유형</StyledFieldTitle>
-            <StyledUl>
-              <Styledli>
-                <StyledInput
-                  id="study"
-                  type="radio"
-                  {...register("category", {
-                    required: "필수 항목입니다.",
-                  })}
-                  value="study"
-                  onClick={onClick}
-                />
-                <StyledInputName htmlFor="study">스터디</StyledInputName>
-              </Styledli>
-              <Styledli>
-                <StyledInput
-                  id="mentoring"
-                  type="radio"
-                  {...register("category", {
-                    required: "필수 항목입니다.",
-                  })}
-                  value="mentoring"
-                  onClick={onClick}
-                />
-                <StyledInputName htmlFor="mentoring">멘토링</StyledInputName>
-              </Styledli>
-              <Styledli>
-                <StyledInput
-                  id="project"
-                  type="radio"
-                  {...register("category", {
-                    required: "필수 항목입니다.",
-                  })}
-                  value="project"
-                  onClick={onClick}
-                />
-                <StyledInputName htmlFor="project">프로젝트</StyledInputName>
-              </Styledli>
-
-              <AnimatePresence>
-                {(formState.errors.category?.message as string) && (
-                  <motion.li
-                    variants={ValidationVariant}
-                    className="text-xs my-auto"
-                    initial="hidden"
-                    animate="showing"
-                    exit="exit"
-                  >
-                    *{formState.errors.category?.message as string}
-                  </motion.li>
-                )}
-              </AnimatePresence>
-            </StyledUl>
-          </FieldBox>
-
-          <FieldBox>
-            <StyledFieldTitle>모집인원</StyledFieldTitle>
-            <StyledUl>
-              {cat === "project" ? (
-                <>
+    <>
+      {studyMutateLoading || projectMutateLoading || mentoringMutateLoading ? (
+        <LoadingAnimation />
+      ) : (
+        <form
+          onSubmit={handleSubmit(onValid as any)}
+          className=" w-[1470px] px-[100px] py-[50px] pb-[100px] relative"
+        >
+          <Link to="/post">
+            <div className="absolute top-[62px] left-[40px]">
+              <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
+            </div>
+          </Link>
+          <div className="flex justify-between items-center">
+            <p className="w-full text-[30px] font-normal">모집글 작성하기</p>
+            <div className="flex h-[40px] items-end">
+              <div
+                className="w-[20px] h-[20px]"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
+                }}
+              />
+              <div
+                className="w-[20px] h-[20px]"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
+                }}
+              />
+              <div
+                className="w-[20px] h-[20px]"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
+                }}
+              />
+            </div>
+          </div>
+          <FieldContainer>
+            <FieldRow>
+              <FieldBox>
+                <StyledFieldTitle>모집유형</StyledFieldTitle>
+                <StyledUl>
                   <Styledli>
-                    <label htmlFor="planner">기획자</label>
-                    <StyledInputNumber
-                      {...register("planner", {
-                        required: "필수 사항 입니다.",
+                    <StyledInput
+                      id="study"
+                      type="radio"
+                      {...register("category", {
+                        required: "필수 항목입니다.",
                       })}
-                      min="0"
-                      id="planner"
-                      type="number"
+                      value="study"
+                      onClick={onClick}
                     />
+                    <StyledInputName htmlFor="study">스터디</StyledInputName>
                   </Styledli>
                   <Styledli>
-                    <label htmlFor="designer">디자이너</label>
-                    <StyledInputNumber
-                      {...register("designer")}
-                      min="0"
-                      id="designer"
-                      type="number"
-                    />
-                  </Styledli>
-                  <Styledli>
-                    <label htmlFor="developer">개발자</label>
-                    <StyledInputNumber
-                      {...register("developer")}
-                      min="0"
-                      id="developer"
-                      type="number"
-                    />
-                  </Styledli>
-
-                  <AnimatePresence>
-                    {(formState.errors.planner?.message as any) && (
-                      <motion.li
-                        variants={ValidationVariant}
-                        className="text-xs my-auto"
-                        initial="hidden"
-                        animate="showing"
-                        exit="exit"
-                      >
-                        * {formState.errors.planner?.message as any}
-                      </motion.li>
-                    )}
-                  </AnimatePresence>
-                </>
-              ) : cat === "mentoring" ? (
-                <>
-                  <Styledli>
-                    <label htmlFor="mentor">멘토</label>
-                    <StyledInputNumber
-                      {...register("mentor", {
-                        required: "필수 사항 입니다.",
+                    <StyledInput
+                      id="mentoring"
+                      type="radio"
+                      {...register("category", {
+                        required: "필수 항목입니다.",
                       })}
-                      min="0"
-                      id="mentor"
-                      type="number"
+                      value="mentoring"
+                      onClick={onClick}
                     />
+                    <StyledInputName htmlFor="mentoring">
+                      멘토링
+                    </StyledInputName>
                   </Styledli>
                   <Styledli>
-                    <label htmlFor="mentee">멘티</label>
-                    <StyledInputNumber
-                      {...register("mentee")}
-                      min="0"
-                      id="mentee"
-                      type="number"
+                    <StyledInput
+                      id="project"
+                      type="radio"
+                      {...register("category", {
+                        required: "필수 항목입니다.",
+                      })}
+                      value="project"
+                      onClick={onClick}
                     />
+                    <StyledInputName htmlFor="project">
+                      프로젝트
+                    </StyledInputName>
                   </Styledli>
 
                   <AnimatePresence>
-                    {(formState.errors.mentor?.message as any) && (
+                    {(formState.errors.category?.message as string) && (
                       <motion.li
                         variants={ValidationVariant}
                         className="text-xs my-auto"
@@ -449,256 +407,346 @@ function PostAddForm() {
                         animate="showing"
                         exit="exit"
                       >
-                        * {formState.errors.mentor?.message as any}
+                        *{formState.errors.category?.message as string}
                       </motion.li>
                     )}
                   </AnimatePresence>
-                </>
-              ) : cat === "study" ? (
-                <>
-                  <Styledli>
-                    <label htmlFor="member">스터디원</label>
-                    <StyledInputNumber
-                      {...register("member")}
-                      min="0"
-                      id="member"
-                      type="number"
-                    />
-                  </Styledli>
+                </StyledUl>
+              </FieldBox>
 
-                  <AnimatePresence>
-                    {(formState.errors.member?.message as any) && (
-                      <motion.li
-                        variants={ValidationVariant}
-                        className="text-xs my-auto"
-                        initial="hidden"
-                        animate="showing"
-                        exit="exit"
-                      >
-                        * {formState.errors.member?.message as any}
-                      </motion.li>
-                    )}
-                  </AnimatePresence>
-                </>
-              ) : null}
-            </StyledUl>
-          </FieldBox>
-        </FieldRow>
+              <FieldBox>
+                <StyledFieldTitle>모집인원</StyledFieldTitle>
+                <StyledUl>
+                  {cat === "project" ? (
+                    <>
+                      <Styledli>
+                        <label htmlFor="planner">기획자</label>
+                        <StyledInputNumber
+                          {...register("planner", {
+                            required: "필수 사항 입니다.",
+                          })}
+                          min="0"
+                          id="planner"
+                          type="number"
+                        />
+                      </Styledli>
+                      <Styledli>
+                        <label htmlFor="designer">디자이너</label>
+                        <StyledInputNumber
+                          {...register("designer")}
+                          min="0"
+                          id="designer"
+                          type="number"
+                        />
+                      </Styledli>
+                      <Styledli>
+                        <label htmlFor="developer">개발자</label>
+                        <StyledInputNumber
+                          {...register("developer")}
+                          min="0"
+                          id="developer"
+                          type="number"
+                        />
+                      </Styledli>
 
-        <FieldRow className=" relative my-[30px]">
-          <FieldBox>
-            <StyledFieldTitle htmlFor="projectStart">
-              프로젝트 기간
-            </StyledFieldTitle>
+                      <AnimatePresence>
+                        {(formState.errors.planner?.message as any) && (
+                          <motion.li
+                            variants={ValidationVariant}
+                            className="text-xs my-auto"
+                            initial="hidden"
+                            animate="showing"
+                            exit="exit"
+                          >
+                            * {formState.errors.planner?.message as any}
+                          </motion.li>
+                        )}
+                      </AnimatePresence>
+                    </>
+                  ) : cat === "mentoring" ? (
+                    <>
+                      <Styledli>
+                        <label htmlFor="mentor">멘토</label>
+                        <StyledInputNumber
+                          {...register("mentor", {
+                            required: "필수 사항 입니다.",
+                          })}
+                          min="0"
+                          id="mentor"
+                          type="number"
+                        />
+                      </Styledli>
+                      <Styledli>
+                        <label htmlFor="mentee">멘티</label>
+                        <StyledInputNumber
+                          {...register("mentee")}
+                          min="0"
+                          id="mentee"
+                          type="number"
+                        />
+                      </Styledli>
 
-            {/* <div className="flex"> */}
-            <input
-              id="projectStart"
-              {...register("projectStart", {
-                required: "필수 항목입니다.",
-              })}
-              type="date"
-            />
-            <StyledSpan>~</StyledSpan>
-            <input
-              {...register("projectEnd", {
-                required: "필수 항목입니다.",
-              })}
-              type="date"
-            />
-            {/* </div> */}
-            <AnimatePresence>
-              {((formState.errors.projectStart?.message as string) ||
-                (formState.errors.projectEnd?.message as string)) && (
-                <motion.div
-                  variants={ValidationVariant}
-                  className="text-xs my-auto mx-5"
-                  initial="hidden"
-                  animate="showing"
-                  exit="exit"
-                >
-                  *{" "}
-                  {(formState.errors.projectStart?.message as string) ||
-                    (formState.errors.projectEnd?.message as string)}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </FieldBox>
-          <FieldBox>
-            <StyledFieldTitle htmlFor="postEnd">모집 기간</StyledFieldTitle>
+                      <AnimatePresence>
+                        {(formState.errors.mentor?.message as any) && (
+                          <motion.li
+                            variants={ValidationVariant}
+                            className="text-xs my-auto"
+                            initial="hidden"
+                            animate="showing"
+                            exit="exit"
+                          >
+                            * {formState.errors.mentor?.message as any}
+                          </motion.li>
+                        )}
+                      </AnimatePresence>
+                    </>
+                  ) : cat === "study" ? (
+                    <>
+                      <Styledli>
+                        <label htmlFor="member">스터디원</label>
+                        <StyledInputNumber
+                          {...register("member")}
+                          min="0"
+                          id="member"
+                          type="number"
+                        />
+                      </Styledli>
 
-            {/* <input
+                      <AnimatePresence>
+                        {(formState.errors.member?.message as any) && (
+                          <motion.li
+                            variants={ValidationVariant}
+                            className="text-xs my-auto"
+                            initial="hidden"
+                            animate="showing"
+                            exit="exit"
+                          >
+                            * {formState.errors.member?.message as any}
+                          </motion.li>
+                        )}
+                      </AnimatePresence>
+                    </>
+                  ) : null}
+                </StyledUl>
+              </FieldBox>
+            </FieldRow>
+
+            <FieldRow className=" relative my-[30px]">
+              <FieldBox>
+                <StyledFieldTitle htmlFor="projectStart">
+                  프로젝트 기간
+                </StyledFieldTitle>
+
+                {/* <div className="flex"> */}
+                <input
+                  id="projectStart"
+                  {...register("projectStart", {
+                    required: "필수 항목입니다.",
+                  })}
+                  type="date"
+                />
+                <StyledSpan>~</StyledSpan>
+                <input
+                  {...register("projectEnd", {
+                    required: "필수 항목입니다.",
+                  })}
+                  type="date"
+                />
+                {/* </div> */}
+                <AnimatePresence>
+                  {((formState.errors.projectStart?.message as string) ||
+                    (formState.errors.projectEnd?.message as string)) && (
+                    <motion.div
+                      variants={ValidationVariant}
+                      className="text-xs my-auto mx-5"
+                      initial="hidden"
+                      animate="showing"
+                      exit="exit"
+                    >
+                      *{" "}
+                      {(formState.errors.projectStart?.message as string) ||
+                        (formState.errors.projectEnd?.message as string)}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </FieldBox>
+              <FieldBox>
+                <StyledFieldTitle htmlFor="postEnd">모집 기간</StyledFieldTitle>
+
+                {/* <input
               id="postStart"
               {...register("postStart", {
                 required: "필수 항목입니다.",
               })}
               type="date"
             /> */}
-            <span>{formState.defaultValues?.postStart}</span>
-            <StyledSpan>~</StyledSpan>
-            <input
-              className="w-[150px] "
-              {...register("postEnd", {
-                required: "필수 항목입니다.",
-              })}
-              type="date"
-            />
+                <span>{formState.defaultValues?.postStart}</span>
+                <StyledSpan>~</StyledSpan>
+                <input
+                  className="w-[150px] "
+                  {...register("postEnd", {
+                    required: "필수 항목입니다.",
+                  })}
+                  type="date"
+                />
 
-            <AnimatePresence>
-              {(formState.errors.postEnd?.message as string) && (
-                <motion.div
-                  variants={ValidationVariant}
-                  className="text-xs my-auto mx-5"
-                  initial="hidden"
-                  animate="showing"
-                  exit="exit"
-                >
-                  * {formState.errors.postEnd?.message as string}
-                </motion.div>
+                <AnimatePresence>
+                  {(formState.errors.postEnd?.message as string) && (
+                    <motion.div
+                      variants={ValidationVariant}
+                      className="text-xs my-auto mx-5"
+                      initial="hidden"
+                      animate="showing"
+                      exit="exit"
+                    >
+                      * {formState.errors.postEnd?.message as string}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </FieldBox>
+            </FieldRow>
+
+            <FieldRow>
+              <FieldBox>
+                <StyledFieldTitle htmlFor="contact">연락 수단</StyledFieldTitle>
+                <input
+                  className="bg-[#eeeeee] px-[10px]"
+                  id="contact"
+                  type="text"
+                  {...register("contact", {
+                    required: "필수 항목입니다.",
+                  })}
+                />
+
+                <AnimatePresence>
+                  {(formState.errors.contact?.message as string) && (
+                    <motion.div
+                      variants={ValidationVariant}
+                      className="text-xs my-auto mx-5"
+                      initial="hidden"
+                      animate="showing"
+                      exit="exit"
+                    >
+                      * {formState.errors.contact?.message as string}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </FieldBox>
+
+              {cat === "" || cat === "study" ? null : (
+                <FieldBox>
+                  <StyledFieldTitle>보수 유무</StyledFieldTitle>
+
+                  <StyledUl>
+                    <Styledli>
+                      <StyledInput
+                        id="yes"
+                        {...register("pay", {
+                          required: "보수 유무는 필수 항목입니다.",
+                        })}
+                        type="radio"
+                        value="yes"
+                      />
+                      <StyledInputName htmlFor="yes">Yes</StyledInputName>
+                    </Styledli>
+                    <Styledli>
+                      <StyledInput
+                        id="no"
+                        {...register("pay", {
+                          required: "필수 항목입니다.",
+                        })}
+                        type="radio"
+                        value="no"
+                      />
+                      <StyledInputName htmlFor="no">No</StyledInputName>
+                    </Styledli>
+                  </StyledUl>
+
+                  <AnimatePresence>
+                    {(formState.errors.pay?.message as string) && (
+                      <motion.div
+                        variants={ValidationVariant}
+                        className="text-xs my-auto"
+                        initial="hidden"
+                        animate="showing"
+                        exit="exit"
+                      >
+                        * {formState.errors.pay?.message as string}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </FieldBox>
               )}
-            </AnimatePresence>
-          </FieldBox>
-        </FieldRow>
+            </FieldRow>
+          </FieldContainer>
 
-        <FieldRow>
-          <FieldBox>
-            <StyledFieldTitle htmlFor="contact">연락 수단</StyledFieldTitle>
+          <div className="flex mb-[40px] relative">
+            <label htmlFor="title" className="w-[130px] text-[20px] my-auto">
+              제목
+            </label>
             <input
-              className="bg-[#eeeeee] px-[10px]"
-              id="contact"
+              {...register("title", {
+                minLength: {
+                  value: 3,
+                  message: "제목이 너무 짧습니다.",
+                },
+              })}
+              id="title"
               type="text"
-              {...register("contact", {
-                required: "필수 항목입니다.",
-              })}
+              className="w-full bg-[#eeeeee] h-[40px] px-[10px]"
             />
-
             <AnimatePresence>
-              {(formState.errors.contact?.message as string) && (
+              {(formState.errors.title?.message as string) && (
                 <motion.div
                   variants={ValidationVariant}
-                  className="text-xs my-auto mx-5"
+                  className="absolute text-xs my-auto mx-5 bottom-[-20px] left-[100px]"
                   initial="hidden"
                   animate="showing"
                   exit="exit"
                 >
-                  * {formState.errors.contact?.message as string}
+                  * {formState.errors.title?.message as string}
                 </motion.div>
               )}
             </AnimatePresence>
-          </FieldBox>
+          </div>
 
-          {cat === "" || cat === "study" ? null : (
-            <FieldBox>
-              <StyledFieldTitle>보수 유무</StyledFieldTitle>
+          <div className="flex relative">
+            <label htmlFor="content" className="w-[130px] text-[20px]">
+              내용
+            </label>
+            <textarea
+              {...register("content", {
+                minLength: {
+                  value: 5,
+                  message: "내용이 너무 짧습니다.",
+                },
+              })}
+              id="content"
+              className="w-full bg-[#eeeeee] h-[345px] px-[10px] py-[10px]"
+            />
+            <AnimatePresence>
+              {(formState.errors.content?.message as string) && (
+                <motion.div
+                  variants={ValidationVariant}
+                  className="absolute text-xs my-auto mx-5 bottom-[-20px] left-[100px]"
+                  initial="hidden"
+                  animate="showing"
+                  exit="exit"
+                >
+                  * {formState.errors.content?.message as string}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
-              <StyledUl>
-                <Styledli>
-                  <StyledInput
-                    id="yes"
-                    {...register("pay", {
-                      required: "보수 유무는 필수 항목입니다.",
-                    })}
-                    type="radio"
-                    value="yes"
-                  />
-                  <StyledInputName htmlFor="yes">Yes</StyledInputName>
-                </Styledli>
-                <Styledli>
-                  <StyledInput
-                    id="no"
-                    {...register("pay", {
-                      required: "필수 항목입니다.",
-                    })}
-                    type="radio"
-                    value="no"
-                  />
-                  <StyledInputName htmlFor="no">No</StyledInputName>
-                </Styledli>
-              </StyledUl>
-
-              <AnimatePresence>
-                {(formState.errors.pay?.message as string) && (
-                  <motion.div
-                    variants={ValidationVariant}
-                    className="text-xs my-auto"
-                    initial="hidden"
-                    animate="showing"
-                    exit="exit"
-                  >
-                    * {formState.errors.pay?.message as string}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </FieldBox>
-          )}
-        </FieldRow>
-      </FieldContainer>
-
-      <div className="flex mb-[40px] relative">
-        <label htmlFor="title" className="w-[130px] text-[20px] my-auto">
-          제목
-        </label>
-        <input
-          {...register("title", {
-            minLength: {
-              value: 3,
-              message: "제목이 너무 짧습니다.",
-            },
-          })}
-          id="title"
-          type="text"
-          className="w-full bg-[#eeeeee] h-[40px] px-[10px]"
-        />
-        <AnimatePresence>
-          {(formState.errors.title?.message as string) && (
-            <motion.div
-              variants={ValidationVariant}
-              className="absolute text-xs my-auto mx-5 bottom-[-20px] left-[100px]"
-              initial="hidden"
-              animate="showing"
-              exit="exit"
-            >
-              * {formState.errors.title?.message as string}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      <div className="flex relative">
-        <label htmlFor="content" className="w-[130px] text-[20px]">
-          내용
-        </label>
-        <textarea
-          {...register("content", {
-            minLength: {
-              value: 5,
-              message: "내용이 너무 짧습니다.",
-            },
-          })}
-          id="content"
-          className="w-full bg-[#eeeeee] h-[345px] px-[10px] py-[10px]"
-        />
-        <AnimatePresence>
-          {(formState.errors.content?.message as string) && (
-            <motion.div
-              variants={ValidationVariant}
-              className="absolute text-xs my-auto mx-5 bottom-[-20px] left-[100px]"
-              initial="hidden"
-              animate="showing"
-              exit="exit"
-            >
-              * {formState.errors.content?.message as string}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      <input
-        type="submit"
-        className="my-[40px] bg-[#eeeeee] w-[120px] h-[30px] text-[16px] font-semibold float-right"
-        value="올리기"
-      />
-    </form>
+          <input
+            type="submit"
+            className="my-[40px] bg-[#eeeeee] w-[120px] h-[30px] text-[16px] font-semibold float-right"
+            value="올리기"
+          />
+        </form>
+      )}
+    </>
   );
 }
 

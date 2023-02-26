@@ -1,6 +1,7 @@
 import { departments, IPost, posts } from "api";
 import { isLoginModalState } from "components/atom";
 import Login from "components/LoginModal";
+import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useRecoilValue } from "recoil";
@@ -51,7 +52,8 @@ const SortBox = tw.div`
 flex 
 justify-between
 my-20 
-mx-[30px]
+px-9
+
 `;
 
 const SortTitle = tw.p`
@@ -65,20 +67,21 @@ const SortSelect = tw.select`
 
 const PostGrid = tw.div`
 grid
-grid-cols-1
-sm:grid-cols-2
-xl:grid-cols-4
-
+grid-cols-4
+gap-x-10
+px-9
 `;
+// sm:grid-cols-2
+// xl:grid-cols-4
 
-const PostItem = tw.div`
+const PostItem = tw(motion.div)`
 relative
-justify-self-center
 h-[210px] 
 min-w-[330px]
 rounded-md
 overflow-hidden
 mb-[80px]
+
 `;
 
 const PostImage = tw.div`
@@ -164,7 +167,8 @@ text-gray-500
 font-medium
 `;
 
-const Container = tw.div``;
+const Container = tw.div`
+w-[1470px]`;
 
 function Post() {
   const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
@@ -330,6 +334,8 @@ bg-gray-200"
         <PostGrid>
           {posts.map((post, index) => (
             <PostItem
+              // initial={{ scale: 1 }}
+              whileHover={{ scale: 1.08 }}
               key={index}
               style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
             >
@@ -343,7 +349,15 @@ bg-gray-200"
                 }`}
               >
                 <PostCategorySpan>
-                  <PostCategoryLabel>
+                  <PostCategoryLabel
+                    className={`${
+                      post.dtype === "P"
+                        ? "text-purple-400"
+                        : post.dtype === "S"
+                        ? "text-gray-400"
+                        : "text-blue-400"
+                    } `}
+                  >
                     {post.dtype === "P"
                       ? "프로젝트"
                       : post.dtype === "S"

@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import tw from "tailwind-styled-components";
 import Login from "../components/LoginModal";
+import "./button.css";
 
 const Item = tw.div`
  h-[170px] 
@@ -35,11 +36,12 @@ justify-between
 `;
 
 const StyledSubTitle = tw.p`
+mb-[10px]
 text-[20px] 
 font-bold
 `;
 const StyledButton = tw.svg`
-w-[16px]
+w-[20px]
 `;
 
 const Styledli = tw.li`
@@ -54,9 +56,10 @@ const StyledRadio = tw.input`
 mr-3
 `;
 
-const StyledliText = tw.p`
+const StyledliText = tw.label`
 text-[15px]
 font-bold
+hover:text-blue-700
 
 `;
 
@@ -102,6 +105,31 @@ function Person() {
         ).id === "학부ul"
       ) {
         setDepartment(id);
+      }
+    }
+
+    if (id === "reset") {
+      if (position) {
+        (document.querySelector(`#${position}`) as HTMLInputElement).checked =
+          false;
+        setPosition(null);
+      }
+
+      if (grade) {
+        (
+          document
+            .querySelectorAll("#학년ul li")
+            [Number(grade ? grade?.slice(0, 1) : 1) - 1].querySelector(
+              "input"
+            ) as HTMLInputElement
+        ).checked = false;
+        setGrade(null);
+      }
+
+      if (department) {
+        (document.querySelector(`#${department}`) as HTMLInputElement).checked =
+          false;
+        setDepartment(null);
       }
     }
   };
@@ -156,7 +184,17 @@ function Person() {
       ) : (
         <div className="flex w-screen ">
           <StyledSidebar>
-            <p className="text-[25px] font-bold">Filter</p>
+            <div className="flex justify-between items-center">
+              <p className="text-[30px] font-bold mb-[20px]">Filter</p>
+            </div>
+            <button
+              onClick={onClick}
+              id="reset"
+              className="flex mt-[10px] float-right text-[13px] items-center border-2 border-blue-700 text-blue-800 rounded-md p-[3px] hover:opacity-70 hover:scale-110"
+            >
+              <i className="fa-solid fa-arrow-rotate-left"></i>
+            </button>
+
             <StyledFilterItem>
               <StyledSpan>
                 <StyledSubTitle>포지션</StyledSubTitle>
@@ -172,41 +210,42 @@ function Person() {
               </StyledSpan>
               {!showPositions ? null : (
                 <Styledul id="포지션ul">
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="포지션"
                       id="일반"
                       type="radio"
                       onClick={onClick}
                     />
-                    <StyledliText>일반</StyledliText>
+                    <StyledliText htmlFor="일반">일반</StyledliText>
                   </Styledli>
-                  <Styledli>
+
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="포지션"
                       id="기획자"
                       type="radio"
                       onClick={onClick}
                     />
-                    <StyledliText>기획자</StyledliText>
+                    <StyledliText htmlFor="기획자">기획자</StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="포지션"
                       id="개발자"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>개발자</StyledliText>
+                    <StyledliText htmlFor="개발자">개발자</StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="포지션"
                       id="디자이너"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>디자이너</StyledliText>
+                    <StyledliText htmlFor="디자이너">디자이너</StyledliText>
                   </Styledli>
                 </Styledul>
               )}
@@ -226,41 +265,41 @@ function Person() {
               </StyledSpan>
               {!showGrades ? null : (
                 <Styledul id="학년ul">
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학년"
                       id="1학년"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>1학년</StyledliText>
+                    <StyledliText htmlFor="1학년">1학년</StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학년"
                       id="2학년"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>2학년</StyledliText>
+                    <StyledliText htmlFor="2학년">2학년</StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학년"
                       id="3학년"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>3학년</StyledliText>
+                    <StyledliText htmlFor="3학년">3학년</StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학년"
                       id="4학년"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>4학년</StyledliText>
+                    <StyledliText htmlFor="4학년">4학년</StyledliText>
                   </Styledli>
                 </Styledul>
               )}
@@ -281,113 +320,133 @@ function Person() {
 
               {!showDepartments ? null : (
                 <Styledul id="학부ul">
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학부"
                       id="글로벌리더십학부"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>글로벌리더십학부</StyledliText>
+                    <StyledliText htmlFor="글로벌리더십학부">
+                      글로벌리더십학부
+                    </StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학부"
                       id="국제어문학부"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>국제어문학부</StyledliText>
+                    <StyledliText htmlFor="국제어문학부">
+                      국제어문학부
+                    </StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학부"
                       id="경영경제학부"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>경영경제학부</StyledliText>
+                    <StyledliText htmlFor="경영경제학부">
+                      경영경제학부
+                    </StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학부"
                       id="법학부"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>법학부</StyledliText>
+                    <StyledliText htmlFor="법학부">법학부</StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학부"
                       id="커뮤니케이션학부"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>커뮤니케이션학부</StyledliText>
+                    <StyledliText htmlFor="커뮤니케이션학부">
+                      커뮤니케이션학부
+                    </StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학부"
                       id="공간환경시스템공학부"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>공간환경시스템공학부</StyledliText>
+                    <StyledliText htmlFor="공간환경시스템공학부">
+                      공간환경시스템공학부
+                    </StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학부"
                       id="기계제어공학부"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>기계제어공학부</StyledliText>
+                    <StyledliText htmlFor="기계제어공학부">
+                      기계제어공학부
+                    </StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학부"
                       id="콘텐츠융합디자인학부"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>콘텐츠융합디자인학부</StyledliText>
+                    <StyledliText htmlFor="콘텐츠융합디자인학부">
+                      콘텐츠융합디자인학부
+                    </StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학부"
                       id="생명과학부"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>생명과학부</StyledliText>
+                    <StyledliText htmlFor="생명과학부">생명과학부</StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학부"
                       id="전산전자공학부"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>전산전자공학부</StyledliText>
+                    <StyledliText htmlFor="전산전자공학부">
+                      전산전자공학부
+                    </StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학부"
                       id="상담심리사회복지학부"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>상담심리사회복지학부</StyledliText>
+                    <StyledliText htmlFor="상담심리사회복지학부">
+                      상담심리사회복지학부
+                    </StyledliText>
                   </Styledli>
-                  <Styledli>
+                  <Styledli className="checks etrans">
                     <StyledRadio
                       name="학부"
                       id="ICT창업학부"
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText>ICT창업학부</StyledliText>
+                    <StyledliText htmlFor="ICT창업학부">
+                      ICT창업학부
+                    </StyledliText>
                   </Styledli>
                 </Styledul>
               )}
@@ -462,7 +521,7 @@ function Person() {
                   <button
                     id={page + ""}
                     onClick={onPageClick}
-                    className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold
+                    className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold hover:opacity-70
                      ${page === nowPage && "opacity-30"} `}
                   >
                     {page}
