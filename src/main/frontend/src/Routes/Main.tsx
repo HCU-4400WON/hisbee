@@ -1,12 +1,18 @@
 import { MutationFunction, useMutation } from "@tanstack/react-query";
 import { addLikePost, deleteLikePost, posts } from "api";
-import { isLoginModalState } from "components/atom";
+import {
+  isExtraSignupModalState,
+  isLoginModalState,
+  isSignupModalState,
+} from "components/atom";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import tw from "tailwind-styled-components";
 import { runInThisContext } from "vm";
 import Login from "../components/LoginModal";
+import SignUp from "./SignUp";
+import SignUpOptional from "./SignUpOptional";
 
 const titles = [
   "🔥 요즘 핫한 모집글",
@@ -172,11 +178,11 @@ const postsVariants = {
     },
   }),
   hover: ({ leaving }: IProps) => ({
-    scale: leaving ? 1 : 1.1,
+    scale: leaving ? 1 : 1.05,
     // opacity: 0.4,
     // zIndex: 1,
     transition: {
-      delay: 0.1,
+      // delay: 0.1,
       duration: 0.1,
 
       type: "tween",
@@ -274,10 +280,14 @@ function Main() {
 
   const isLoginModal = useRecoilValue(isLoginModalState);
 
+  const isSignupModal = useRecoilValue(isSignupModalState);
+  const isExtraSignupModal = useRecoilValue(isExtraSignupModalState);
+
   return (
     <div className="mb-[440px]">
       {isLoginModal ? <Login /> : null}
-
+      {isSignupModal ? <SignUp /> : null}
+      {isExtraSignupModal ? <SignUpOptional /> : null}
       <Banner src="/img/mainBannerReal.png"></Banner>
       {titles.map((title, idx) => (
         <PostCategory className="mb-[400px]">

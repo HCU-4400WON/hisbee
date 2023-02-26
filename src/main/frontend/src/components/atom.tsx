@@ -14,3 +14,13 @@ export const isPostDeleteModalState = atom({
   key: "isPostDeleteModal",
   default: false,
 });
+
+export const isSignupModalState = atom({
+  key: "isSignupModatState",
+  default: false,
+});
+
+export const isExtraSignupModalState = atom({
+  key: "isExtraSignupModalState",
+  default: false,
+});

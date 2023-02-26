@@ -9,6 +9,7 @@ import { isPostDeleteModalState } from "components/atom";
 import PostDeleteModal from "components/PostDeleteModal";
 import { useForm } from "react-hook-form";
 import { AnimatePresence, motion } from "framer-motion";
+import LoadingAnimation from "components/LoadingAnimation";
 
 const StyledUl = tw.ul`
 flex
@@ -319,7 +320,9 @@ function Detail() {
 
   return (
     <>
-      {!isLoading ? (
+      {isLoading ? (
+        <LoadingAnimation />
+      ) : (
         <>
           {isPostDeleteModal && <PostDeleteModal postId={data?.id} />}
           <div className="flex relative">
@@ -790,8 +793,6 @@ function Detail() {
             <div className=" border-gray-300 w-[140px]"></div>
           </div>
         </>
-      ) : (
-        <div>Loading...</div>
       )}
     </>
   );

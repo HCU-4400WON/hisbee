@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { IUser, memberDelete, memberProfile, memberUpdate, posts } from "api";
 import { isDeleteModalState } from "components/atom";
 import DeletePopup from "components/DeleteModal";
@@ -165,22 +165,22 @@ function Profile() {
   const location = useLocation();
   console.log(location);
 
-  const { isLoading, data, refetch } = useQuery<IUser>(
-    ["User"],
-    memberProfile,
-    {
-      onSuccess: (data) => {
-        // 성공시 호출
-        if (!location.state) {
-          setLinks([...(data?.externalLinks as string[])]);
-        } else {
-          data = location.state.user;
-          setLinks([...(location.state.user?.externalLinks as string[])]);
-          console.log("!");
-        }
-      },
-    }
-  );
+  const {
+    isLoading: getUserLoading,
+    data,
+    refetch,
+  } = useQuery<IUser>(["User"], memberProfile, {
+    onSuccess: (data) => {
+      // 성공시 호출
+      if (!location.state) {
+        setLinks([...(data?.externalLinks as string[])]);
+      } else {
+        data = location.state.user;
+        setLinks([...(location.state.user?.externalLinks as string[])]);
+        console.log("!");
+      }
+    },
+  });
 
   const [nowModifying, setNowModifying] = useState(false);
 
@@ -192,12 +192,26 @@ function Profile() {
     } else if (event.currentTarget.id === "delete") {
       setIsDeleteModal(true);
     } else if (event.currentTarget.id === "yes") {
-      memberDelete();
+      console.log("debug");
+      deleteMemberMutate();
       navigate("/");
     } else if (event.currentTarget.id === "no") {
       setIsDeleteModal(false);
     }
   };
+
+  const { mutate: deleteMemberMutate, isLoading: deleteMemberLoading } =
+    useMutation(
+      ["deleteMember" as string],
+
+      () => memberDelete() as any,
+
+      {
+        onError: () => {
+          console.log("유저 삭제가 작동하지 않습니다.");
+        },
+      }
+    );
 
   const { register, handleSubmit } = useForm();
 
@@ -276,7 +290,7 @@ function Profile() {
 
   return (
     <>
-      {isLoading ? (
+      {getUserLoading || deleteMemberLoading ? (
         <LoadingAnimation />
       ) : (
         <>

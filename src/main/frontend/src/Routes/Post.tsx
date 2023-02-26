@@ -1,6 +1,7 @@
 import { departments, IPost, posts } from "api";
 import { isLoginModalState } from "components/atom";
 import Login from "components/LoginModal";
+import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useRecoilValue } from "recoil";
@@ -51,7 +52,8 @@ const SortBox = tw.div`
 flex 
 justify-between
 my-20 
-mx-[30px]
+px-9
+
 `;
 
 const SortTitle = tw.p`
@@ -68,19 +70,19 @@ grid
 grid-cols-1
 sm:grid-cols-2
 xl:grid-cols-4
-
+gap-x-10
+px-9
 
 `;
 
-const PostItem = tw.div`
+const PostItem = tw(motion.div)`
 relative
-justify-self-center
 h-[210px] 
 min-w-[330px]
 rounded-md
 overflow-hidden
 mb-[80px]
-hover:scale-105
+
 `;
 
 const PostImage = tw.div`
@@ -332,6 +334,8 @@ bg-gray-200"
         <PostGrid>
           {posts.map((post, index) => (
             <PostItem
+              // initial={{ scale: 1 }}
+              whileHover={{ scale: 1.08 }}
               key={index}
               style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
             >
