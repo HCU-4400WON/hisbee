@@ -319,7 +319,7 @@ function PostAddForm() {
       ) : (
         <form
           onSubmit={handleSubmit(onValid as any)}
-          className="px-[100px] py-[50px] pb-[100px] relative"
+          className=" w-[1470px] px-[100px] py-[50px] pb-[100px] relative"
         >
           <Link to="/post">
             <div className="absolute top-[62px] left-[40px]">

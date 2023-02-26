@@ -1,4 +1,7 @@
 import { atom } from "recoil";
+import { recoilPersist } from "recoil-persist";
+
+const { persistAtom } = recoilPersist();
 
 export const isDeleteModalState = atom({
   key: "isDeleteModal",
@@ -23,4 +26,10 @@ export const isSignupModalState = atom({
 export const isExtraSignupModalState = atom({
   key: "isExtraSignupModalState",
   default: false,
+});
+
+export const isLoginState = atom({
+  key: "isLoginState",
+  default: false,
+  effects_UNSTABLE: [persistAtom],
 });

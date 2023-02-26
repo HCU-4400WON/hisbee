@@ -1,4 +1,4 @@
-import { isSignupModalState } from "components/atom";
+import { isLoginState, isSignupModalState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
@@ -8,6 +8,9 @@ function BlankPage() {
   const location = useLocation();
   const keyword = new URLSearchParams(location.search);
   const setIsSignupModal = useSetRecoilState(isSignupModalState);
+
+  const setIsLogin = useSetRecoilState(isLoginState);
+  setIsLogin(true);
 
   localStorage.setItem("key", keyword.get("token") as any);
 

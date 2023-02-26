@@ -201,7 +201,7 @@ function SignUp() {
       {signupMemberLoading ? (
         <LoadingAnimation />
       ) : (
-        <Container>
+        <Container className="w-[1470px]">
           <motion.div
             variants={LayoutVariant}
             initial="hidden"
@@ -210,7 +210,7 @@ function SignUp() {
             id="no"
             className="fixed z-10 bg-[rgba(0,0,0,0.5)] top-0 left-0 w-full h-screen"
           ></motion.div>
-          <div className="fixed z-20 my-[50px]">
+          <div className="fixed z-20 my-[-30px]">
             <SignUpCard onSubmit={handleSubmit(onValid as any)}>
               <Title>Sign Up</Title>
 

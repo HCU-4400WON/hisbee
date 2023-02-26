@@ -3,8 +3,9 @@ import { motion, useAnimation, useForceUpdate } from "framer-motion";
 import tw from "tailwind-styled-components";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoginModalState } from "./atom";
+import { isLoginState } from "./atom";
 
 const Nav = tw.nav`
 flex 
@@ -93,6 +94,8 @@ focus:outline-0
 // };
 
 function Header() {
+  const [isLogin, setIsLogin] = useRecoilState(isLoginState);
+
   const isPostURL = useMatch("/post");
   const isPersonURL = useMatch("/person");
   const isProfileURL = useMatch("/profile");
@@ -155,13 +158,21 @@ function Header() {
     }
   };
 
-  const onClick = () => {
-    setIsLoginModal(true);
+  const onClick = (event: any) => {
+    if (event.currentTarget.id === "logout") {
+      console.log(isLogin);
+      setIsLogin(false);
+      navigate("/");
+      alert("로그아웃 되었습니다.");
+    } else {
+      setIsLoginModal(true);
+      navigate("/");
+    }
   };
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
   return (
     <>
-      <Nav>
+      <Nav className="w-[1470px]">
         <Link to="/">
           <Logo
             src="/img/logo.png"
@@ -176,6 +187,7 @@ function Header() {
               <>
                 <div
                   className="absolute w-[11px] h-[11px] right-7 top-[-2px]"
+                  // className="absolute w-[10px] h-[10px] left-11 top-[-2px]"
                   style={{
                     backgroundImage:
                       "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
@@ -183,6 +195,7 @@ function Header() {
                 />
                 <div
                   className="absolute w-[10px] h-[10px] right-11 top-[-5px]"
+                  // className="absolute w-[12px] h-[13px] right-0 left-0 mx-auto top-[-5px]"
                   style={{
                     backgroundImage:
                       "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
@@ -190,6 +203,7 @@ function Header() {
                 />
                 <div
                   className="absolute w-[10px] h-[10px] right-3 top-2"
+                  // className="absolute w-[10px] h-[10px] right-11 top-[-2px]"
                   style={{
                     backgroundImage:
                       "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
@@ -319,7 +333,14 @@ function Header() {
             </button>
           </SearchBox>
           {/* <Link to="login"> */}
-          <NavButton onClick={onClick}>Login</NavButton>
+          {!isLogin ? (
+            <NavButton onClick={onClick}>Login</NavButton>
+          ) : (
+            <NavButton id="logout" onClick={onClick}>
+              Logout
+            </NavButton>
+          )}
+
           {/* </Link> */}
           <Link to="oauth2/redirect">
             <NavButton>Sign up</NavButton>

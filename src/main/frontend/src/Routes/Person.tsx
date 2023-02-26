@@ -59,6 +59,7 @@ mr-3
 const StyledliText = tw.label`
 text-[15px]
 font-bold
+hover:text-blue-700
 
 `;
 
@@ -189,7 +190,7 @@ function Person() {
             <button
               onClick={onClick}
               id="reset"
-              className="flex mt-[10px] float-right text-[13px] items-center border-2 border-blue-700 text-blue-700 rounded-md p-[3px]"
+              className="flex mt-[10px] float-right text-[13px] items-center border-2 border-blue-700 text-blue-800 rounded-md p-[3px] hover:opacity-70 hover:scale-110"
             >
               <i className="fa-solid fa-arrow-rotate-left"></i>
             </button>
@@ -520,7 +521,7 @@ function Person() {
                   <button
                     id={page + ""}
                     onClick={onPageClick}
-                    className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold
+                    className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold hover:opacity-70
                      ${page === nowPage && "opacity-30"} `}
                   >
                     {page}

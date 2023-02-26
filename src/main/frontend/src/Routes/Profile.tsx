@@ -1,21 +1,27 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { IUser, memberDelete, memberProfile, memberUpdate, posts } from "api";
-import { isDeleteModalState } from "components/atom";
+import { isDeleteModalState, isLoginState } from "components/atom";
 import DeletePopup from "components/DeleteModal";
 import LoadingAnimation from "components/LoadingAnimation";
+import { motion } from "framer-motion";
 
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation } from "react-router";
 import { Navigate, useNavigate } from "react-router";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 
 const Sidebar = tw.div`
 min-w-[250px] pl-[30px]
 border-r-2
-border-gray-300
+border-gray-200
+border-b-2
 min-h-screen
+flex
+flex-col
+items-start
+
 `;
 
 const SidebarTitle = tw.p`
@@ -24,19 +30,33 @@ text-[33px]
 font-medium
 `;
 
-const SidebarItemText = tw.div`
+const SidebarItemText = tw.button`
 text-[17px]
 mb-[20px]
+hover:scale-110
+hover:text-gray-400
 `;
 
 const ProfileInfoRow = tw.div`
     flex
     my-[10px]
     h-auto
+    items-center
 `;
+
+const ProfileInfoBox = tw.div`
+flex items-center w-[180px]
+`;
+
 const ProfileInfoTitle = tw.p`
 min-w-[150px] 
-text-[#757575]
+text-gray-500
+font-medium
+`;
+
+const ProfileInfoIcon = tw.i`
+text-gray-600
+mr-2
 `;
 
 const ProfileInfoContent = tw.span`
@@ -53,8 +73,13 @@ flex
 `;
 
 const PostGrid = tw.div`
+min-w-[700px]
+gap-20
+p-10
 flex
-
+white
+whitespace-nowrap
+overflow-scroll
 justify-between
 mt-[40px]
 mb-[80px]
@@ -69,7 +94,7 @@ mb-[80px]
 // pb-[100px]
 // `;
 
-const PostItem = tw.div`
+const PostItem = tw(motion.div)`
 relative
 justify-self-center
 h-[210px] 
@@ -191,12 +216,6 @@ function Profile() {
       setNowModifying((prev) => !prev);
     } else if (event.currentTarget.id === "delete") {
       setIsDeleteModal(true);
-    } else if (event.currentTarget.id === "yes") {
-      console.log("debug");
-      deleteMemberMutate();
-      navigate("/");
-    } else if (event.currentTarget.id === "no") {
-      setIsDeleteModal(false);
     }
   };
 
@@ -207,6 +226,7 @@ function Profile() {
       () => memberDelete() as any,
 
       {
+        onSuccess: () => {},
         onError: () => {
           console.log("유저 삭제가 작동하지 않습니다.");
         },
@@ -243,7 +263,7 @@ function Profile() {
     console.log(newData);
 
     const newUser = {
-      nickname: "abcd",
+      // nickname: "abcd",
       pictureUrl: "/img/user.png",
       isPublic: true,
       department: newData.department,
@@ -259,7 +279,7 @@ function Profile() {
     refetch();
   };
 
-  const onSidebarClick = (event: React.MouseEvent<HTMLDivElement>) => {
+  const onSidebarClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const {
       currentTarget: { id },
     } = event;
@@ -295,12 +315,13 @@ function Profile() {
       ) : (
         <>
           {isDeleteModal ? <DeletePopup /> : null}
-          <div className="flex">
+          <div className="flex w-[1470px]">
             <Sidebar>
               <SidebarTitle>My profile</SidebarTitle>
               <SidebarItemText onClick={onSidebarClick} id="1">
                 프로필 정보
               </SidebarItemText>
+
               <SidebarItemText onClick={onSidebarClick} id="2">
                 내가 쓴 모집글
               </SidebarItemText>
@@ -311,7 +332,7 @@ function Profile() {
                 탈퇴하기
               </SidebarItemText>
             </Sidebar>
-            <div className="px-[50px] w-full">
+            <div className="px-[50px] w-[1220px] border-b-2 border-gray-300">
               <ProfileBanner
                 id="profileInfo"
                 onSubmit={handleSubmit(onValid as any)}
@@ -327,7 +348,10 @@ function Profile() {
                 </div>
                 <div className="w-full pl-[70px] text-[17px] flex flex-col justify-between">
                   <ProfileInfoRow>
-                    <ProfileInfoTitle>학부</ProfileInfoTitle>
+                    <ProfileInfoBox>
+                      <ProfileInfoIcon className="fa-solid fa-graduation-cap"></ProfileInfoIcon>
+                      <ProfileInfoTitle>학부</ProfileInfoTitle>
+                    </ProfileInfoBox>
                     {nowModifying ? (
                       <select
                         defaultValue={data?.department}
@@ -356,8 +380,10 @@ function Profile() {
                     )}
                   </ProfileInfoRow>
                   <ProfileInfoRow>
-                    <ProfileInfoTitle>포지션</ProfileInfoTitle>
-
+                    <ProfileInfoBox>
+                      <ProfileInfoIcon className="fa-solid fa-wand-magic-sparkles"></ProfileInfoIcon>
+                      <ProfileInfoTitle>포지션</ProfileInfoTitle>
+                    </ProfileInfoBox>
                     {nowModifying ? (
                       <select
                         defaultValue={data?.position}
@@ -374,7 +400,10 @@ function Profile() {
                     )}
                   </ProfileInfoRow>
                   <ProfileInfoRow>
-                    <ProfileInfoTitle>학년</ProfileInfoTitle>
+                    <ProfileInfoBox>
+                      <ProfileInfoIcon className="fa-solid fa-stairs"></ProfileInfoIcon>
+                      <ProfileInfoTitle>학년</ProfileInfoTitle>
+                    </ProfileInfoBox>
                     {nowModifying ? (
                       <select
                         defaultValue={data?.grade}
@@ -392,7 +421,11 @@ function Profile() {
                   </ProfileInfoRow>
 
                   <ProfileInfoRow>
-                    <ProfileInfoTitle>연락수단</ProfileInfoTitle>
+                    <ProfileInfoBox>
+                      <ProfileInfoIcon className="fa-regular fa-id-card"></ProfileInfoIcon>
+
+                      <ProfileInfoTitle>연락수단</ProfileInfoTitle>
+                    </ProfileInfoBox>
                     <ProfileInfoContent>
                       {nowModifying ? (
                         <input
@@ -407,8 +440,14 @@ function Profile() {
                     </ProfileInfoContent>
                   </ProfileInfoRow>
 
-                  <ProfileInfoRow>
-                    <ProfileInfoTitle>동아리 / 학회</ProfileInfoTitle>
+                  <ProfileInfoRow className="items-start">
+                    <ProfileInfoBox>
+                      <ProfileInfoIcon className="fa-solid fa-circle-nodes mt-2"></ProfileInfoIcon>
+
+                      <ProfileInfoTitle className="mt-1">
+                        동아리 / 학회
+                      </ProfileInfoTitle>
+                    </ProfileInfoBox>
 
                     {nowModifying ? (
                       <div className="flex flex-col ">
@@ -456,7 +495,12 @@ function Profile() {
                   </ProfileInfoRow>
 
                   <ProfileInfoRow className=" items-start mb-0">
-                    <ProfileInfoTitle>외부링크</ProfileInfoTitle>
+                    <ProfileInfoBox>
+                      <ProfileInfoIcon className="fa-solid fa-link mt-2"></ProfileInfoIcon>
+                      <ProfileInfoTitle className="mt-1">
+                        외부링크
+                      </ProfileInfoTitle>
+                    </ProfileInfoBox>
 
                     {nowModifying ? (
                       <div>
@@ -501,8 +545,15 @@ function Profile() {
                       </div>
                     )}
                   </ProfileInfoRow>
-                  <ProfileInfoRow className="relative">
-                    <ProfileInfoTitle>자기소개</ProfileInfoTitle>
+                  <ProfileInfoRow
+                    className={`${nowModifying && "mt-[20px]"} items-start`}
+                  >
+                    <ProfileInfoBox>
+                      <ProfileInfoIcon className="fa-solid fa-rocket mt-2"></ProfileInfoIcon>
+                      <ProfileInfoTitle className="mt-1">
+                        자기소개
+                      </ProfileInfoTitle>
+                    </ProfileInfoBox>
                     <ProfileInfoContent>
                       {nowModifying ? (
                         <textarea
@@ -518,14 +569,23 @@ function Profile() {
                   <div className="w-full">
                     {!location.state &&
                       (nowModifying ? (
-                        <button
-                          type="button"
-                          id="modify"
-                          onClick={onClick}
-                          className="bg-[#fff] w-[120px] h-[32px] border shadow  rounded-full float-right"
-                        >
-                          제출하기
-                        </button>
+                        <>
+                          <button
+                            type="button"
+                            id="modify"
+                            onClick={onClick}
+                            className="bg-[#fff] w-[120px] h-[32px] border-2 shadow  rounded-full float-right text-gray-500 border-gray-400"
+                          >
+                            제출하기
+                          </button>
+                          <button
+                            onClick={() => setNowModifying(false)}
+                            className="mr-[10px] float-right mb-[40px] rounded-full border-2 border-red-500 text-red-500 w-[120px] bg-white h-[32px] "
+                          >
+                            {" "}
+                            취소하기{" "}
+                          </button>
+                        </>
                       ) : (
                         <button
                           id="modify"
@@ -539,13 +599,15 @@ function Profile() {
                 </div>
               </ProfileBanner>
 
-              <span className="mt-[40px] text-[20px] font-medium">
-                내가 쓴 모집글
+              <span className="mt-[40px] text-[20px] font-medium flex items-center">
+                <i className="fa-solid fa-pencil mr-2"> </i>
+                <p className="font-bold">내가 쓴 모집글</p>
               </span>
 
               <PostGrid id="myPost">
-                {posts.slice(0, 3).map((post, index) => (
+                {posts.slice(0, 4).map((post, index) => (
                   <PostItem
+                    whileHover={{ scale: 1.08 }}
                     key={index}
                     style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
                   >
@@ -559,7 +621,15 @@ function Profile() {
                       }`}
                     >
                       <PostCategorySpan>
-                        <PostCategoryLabel>
+                        <PostCategoryLabel
+                          className={`${
+                            post.dtype === "P"
+                              ? "text-purple-400"
+                              : post.dtype === "S"
+                              ? "text-gray-400"
+                              : "text-blue-400"
+                          } `}
+                        >
                           {post.dtype === "P"
                             ? "프로젝트"
                             : post.dtype === "S"
@@ -704,13 +774,15 @@ function Profile() {
                 ))}
               </PostGrid>
 
-              <span className="mt-[40px] text-[20px] font-medium">
-                찜한 모집글
+              <span className="mt-[40px] text-[20px] font-medium flex items-center">
+                <i className="fa-solid fa-heart text-red-600 mr-2"></i>
+                <p className="font-bold">찜한 모집글</p>
               </span>
 
               <PostGrid id="zzim">
                 {posts.slice(3, 6).map((post, index) => (
                   <PostItem
+                    whileHover={{ scale: 1.08 }}
                     key={index}
                     style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
                   >
@@ -724,7 +796,15 @@ function Profile() {
                       }`}
                     >
                       <PostCategorySpan>
-                        <PostCategoryLabel>
+                        <PostCategoryLabel
+                          className={`${
+                            post.dtype === "P"
+                              ? "text-purple-400"
+                              : post.dtype === "S"
+                              ? "text-gray-400"
+                              : "text-blue-400"
+                          } `}
+                        >
                           {post.dtype === "P"
                             ? "프로젝트"
                             : post.dtype === "S"

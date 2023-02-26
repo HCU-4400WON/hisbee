@@ -238,7 +238,7 @@ function SignUpOptional() {
       {updateMemberLoading ? (
         <LoadingAnimation />
       ) : (
-        <Container className="relative">
+        <Container className="relative w-[1470px]">
           <motion.div
             variants={LayoutVariant}
             initial="hidden"

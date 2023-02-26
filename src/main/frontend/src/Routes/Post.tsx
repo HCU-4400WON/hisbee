@@ -67,13 +67,12 @@ const SortSelect = tw.select`
 
 const PostGrid = tw.div`
 grid
-grid-cols-1
-sm:grid-cols-2
-xl:grid-cols-4
+grid-cols-4
 gap-x-10
 px-9
-
 `;
+// sm:grid-cols-2
+// xl:grid-cols-4
 
 const PostItem = tw(motion.div)`
 relative
@@ -168,7 +167,8 @@ text-gray-500
 font-medium
 `;
 
-const Container = tw.div``;
+const Container = tw.div`
+w-[1470px]`;
 
 function Post() {
   const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
@@ -349,7 +349,15 @@ bg-gray-200"
                 }`}
               >
                 <PostCategorySpan>
-                  <PostCategoryLabel>
+                  <PostCategoryLabel
+                    className={`${
+                      post.dtype === "P"
+                        ? "text-purple-400"
+                        : post.dtype === "S"
+                        ? "text-gray-400"
+                        : "text-blue-400"
+                    } `}
+                  >
                     {post.dtype === "P"
                       ? "프로젝트"
                       : post.dtype === "S"

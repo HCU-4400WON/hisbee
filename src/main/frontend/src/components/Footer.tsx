@@ -26,10 +26,10 @@ const FooterVariant = {
 function Footer() {
   const [isTeamModal, setIsTeamModal] = useState(false);
   return (
-    <div className="w-full h-[150px] pr-[50px] flex justify-between items-center mt-[150px]">
+    <div className="w-[1470px] h-[150px] pr-[50px] flex justify-between items-center mt-[150px]">
       <div className="flex justify-start items-end">
         <img src="/img/logo.png" className="w-[250px]" />
-        <span className="text-[12px] font-semibold text-gray-500">
+        <span className="text-[12px] pb-[6px] font-semibold text-gray-500">
           <strong>ⓒ</strong> 2022 Team.Hot6 All rights reserved
         </span>
       </div>

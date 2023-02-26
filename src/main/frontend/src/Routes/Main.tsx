@@ -80,7 +80,7 @@ p-[15px]
 `;
 
 const PostCategorySpan = tw.span`
-text-[#185ee4]
+
 bg-[#fff]
 h-[25px]
 border
@@ -94,6 +94,7 @@ justify-center
 `;
 
 const PostCategoryLabel = tw.label`
+
 `;
 
 const HeartIcon = tw.i`
@@ -284,11 +285,11 @@ function Main() {
   const isExtraSignupModal = useRecoilValue(isExtraSignupModalState);
 
   return (
-    <div className="mb-[440px]">
+    <div className="mb-[440px] w-[1470px] ">
       {isLoginModal ? <Login /> : null}
       {isSignupModal ? <SignUp /> : null}
       {isExtraSignupModal ? <SignUpOptional /> : null}
-      <Banner src="/img/mainBannerReal.png"></Banner>
+      <Banner src="/img/mainBannerReal.png" className="w-[1470px]"></Banner>
       {titles.map((title, idx) => (
         <PostCategory className="mb-[400px]">
           <TitleRow>
@@ -335,7 +336,15 @@ function Main() {
                         }`}
                       >
                         <PostCategorySpan>
-                          <PostCategoryLabel>
+                          <PostCategoryLabel
+                            className={`${
+                              post.dtype === "P"
+                                ? "text-purple-400"
+                                : post.dtype === "S"
+                                ? "text-gray-400"
+                                : "text-blue-400"
+                            } `}
+                          >
                             {post.dtype === "P"
                               ? "프로젝트"
                               : post.dtype === "S"

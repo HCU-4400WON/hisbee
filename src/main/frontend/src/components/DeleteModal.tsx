@@ -1,7 +1,7 @@
 import { memberDelete } from "api";
 import { useNavigate } from "react-router";
 import { useSetRecoilState } from "recoil";
-import { isDeleteModalState } from "./atom";
+import { isDeleteModalState, isLoginState } from "./atom";
 import { motion, AnimatePresence } from "framer-motion";
 const LayoutVariant = {
   hidden: {
@@ -21,9 +21,12 @@ function DeleteModal() {
 
   const setIsDeleteModal = useSetRecoilState(isDeleteModalState);
 
+  const setIsLogin = useSetRecoilState(isLoginState);
+
   const onClick = (event: any) => {
     if (event.currentTarget.id === "yes") {
       memberDelete();
+      setIsLogin(false);
       navigate("/");
     } else if (event.currentTarget.id === "no") {
       setIsDeleteModal(false);
