@@ -2,14 +2,12 @@ package com.hcu.hot6.domain;
 
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
-import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.jetbrains.annotations.NotNull;
 
 @Entity
 @Getter
@@ -18,18 +16,14 @@ import org.jetbrains.annotations.NotNull;
 @DiscriminatorValue("P")
 public class Project extends Post {
 
-    @NotNull
     private int maxDeveloper;
-    @NotNull
     private int maxPlanner;
-    @NotNull
     private int maxDesigner;
 
-    private int currDeveloper = 0;
-    private int currPlanner = 0;
-    private int currDesigner = 0;
+    private int currDeveloper;
+    private int currPlanner;
+    private int currDesigner;
 
-    @NotNull
     private boolean hasPay;
 
     public Project(PostCreationRequest request, Member author) {

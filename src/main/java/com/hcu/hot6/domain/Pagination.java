@@ -9,7 +9,7 @@ public class Pagination {
     public final static long LIMIT = 12;
     private final static int PAGE_OFFSET = 5;
 
-    public Pagination(int page, Long total) {
+    public Pagination(int page, long total) {
         this.curr = page;
         this.total = total;
         this.pageEnd = min(
@@ -21,7 +21,7 @@ public class Pagination {
     }
 
     private final int curr;
-    private final Long total;
+    private final long total;
 
     private final int pageBegin;
     private final int pageEnd;
