@@ -40,9 +40,12 @@ public class PostReadOneResponse {
     private int maxMentee;
     private int currMentor;
     private int currMentee;
+
     private boolean hasPay;
     private boolean isVerified;
     private boolean hasLiked;
+
+    private int nLiked;
 
     public PostReadOneResponse(Post post, String email) {
         this.dtype = post.getDtype();
@@ -59,6 +62,8 @@ public class PostReadOneResponse {
         this.isVerified = email.equals(post.getAuthor().getEmail());
         this.hasLiked = post.getLikes().stream()
                 .anyMatch(member -> email.equals(member.getEmail()));
+
+        this.nLiked = post.getLikes().size();
 
         switch (dtype) {
             case "P" -> {
