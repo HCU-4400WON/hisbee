@@ -624,7 +624,8 @@ function PostAddForm() {
                   {...register("contact", {
                     required: "필수 항목입니다.",
                   })}
-                  placeholder="Ex) 전화 번호 , 이메일 , 카톡 아이디 등"
+                  placeholder="ex) 전화 번호 , 이메일 , 카톡 아이디 등"
+                  maxLength={30}
                 />
 
                 <AnimatePresence>
@@ -707,7 +708,8 @@ function PostAddForm() {
               id="title"
               type="text"
               className="w-full bg-[#eeeeee] h-[40px] px-[10px] "
-              placeholder="3~30글자 제한"
+              placeholder="3~30글자 제한 (짧은 제목 권장)"
+              maxLength={30}
             />
             <AnimatePresence>
               {(formState.errors.title?.message as string) && (

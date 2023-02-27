@@ -1011,6 +1011,7 @@ function Detail() {
                           placeholder="ex) 전화 번호 , 이메일 , 카톡 아이디 등"
                           type="text"
                           className=" w-[350px] h-[30px] bg-[#eeeeee] px-[15px] text-[17px]"
+                          maxLength={30}
                         ></input>
                         <AnimatePresence>
                           {(formState.errors.contact?.message as string) && (

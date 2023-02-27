@@ -505,6 +505,10 @@ function Profile() {
                             type="text"
                             {...register("contact", {
                               required: "필수 사항 입니다",
+                              maxLength: {
+                                value: 30,
+                                message: "너무 깁니다.",
+                              },
                             })}
                             placeholder="Ex) 전화 번호 , 이메일 , 카톡 아이디 등"
                           />
@@ -544,6 +548,7 @@ function Profile() {
                           className="border-2 h-[35px] px-2 mb-[10px] rounded-lg w-[400px]"
                           placeholder="최대 2개"
                           type="text"
+                          maxLength={20}
                         />
 
                         <input
@@ -551,6 +556,7 @@ function Profile() {
                           className="border-2 h-[35px] px-2 rounded-lg w-[400px]"
                           placeholder="최대 2개"
                           type="text"
+                          maxLength={20}
                         />
                       </div>
                     ) : (
@@ -596,6 +602,7 @@ function Profile() {
                             value={externalLink}
                             onChange={onChange}
                             placeholder="ex) github or Linked-In"
+                            maxLength={30}
                           />
                           <i
                             onClick={onClickPlus}
@@ -646,6 +653,7 @@ function Profile() {
                           {...register("bio")}
                           className="border-2 p-2 rounded-lg w-[400px] h-[100px]"
                           placeholder="자유롭게 작성 해주세요 !"
+                          maxLength={150}
                         ></textarea>
                       ) : (
                         <ProfileInfoContent>{data?.bio}</ProfileInfoContent>

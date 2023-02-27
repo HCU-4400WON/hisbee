@@ -229,6 +229,7 @@ function SignUp() {
                       message: "10자 이하만 가능합니다",
                     },
                   })}
+                  placeholder="10자 내외"
                   className="w-full"
                 />
                 <AnimatePresence>
