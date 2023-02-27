@@ -687,28 +687,28 @@ function Detail() {
                     <>
                       {data?.dtype === "P" ? (
                         <>
-                          {data?.currDeveloper !== 0 && (
+                          {data?.maxDeveloper !== 0 && (
                             <ItemText>
                               개발자 {data?.currDeveloper}명 &nbsp;
                             </ItemText>
                           )}
-                          {data?.currPlanner !== 0 && (
+                          {data?.maxPlanner !== 0 && (
                             <ItemText>
                               기획자 {data?.currPlanner}명 &nbsp;
                             </ItemText>
                           )}
-                          {data?.currDesigner !== 0 && (
+                          {data?.maxDesigner !== 0 && (
                             <ItemText>디자이너 {data?.currDesigner}명</ItemText>
                           )}
                         </>
                       ) : data?.dtype === "M" ? (
                         <>
-                          {data?.currMentor !== 0 && (
+                          {data?.maxMentor !== 0 && (
                             <ItemText>
                               멘토 {data?.currMentor}명 &nbsp;
                             </ItemText>
                           )}
-                          {data?.currMentee !== 0 && (
+                          {data?.maxMentee !== 0 && (
                             <ItemText>
                               멘티 {data?.currMentee}명 &nbsp;
                             </ItemText>
@@ -716,7 +716,7 @@ function Detail() {
                         </>
                       ) : (
                         <>
-                          {data?.currMember !== 0 && (
+                          {data?.maxMember !== 0 && (
                             <ItemText>
                               스터디원 {data?.currMember}명&nbsp;
                             </ItemText>
