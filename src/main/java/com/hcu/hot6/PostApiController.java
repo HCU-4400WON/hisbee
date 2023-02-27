@@ -1,8 +1,10 @@
 package com.hcu.hot6;
 
 import com.hcu.hot6.domain.Member;
-import com.hcu.hot6.domain.Post;
-import com.hcu.hot6.domain.SearchInfo;
+import com.hcu.hot6.domain.enums.OrderBy;
+import com.hcu.hot6.domain.enums.PostType;
+import com.hcu.hot6.domain.enums.PostTypeDetails;
+import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.MemberResponse;
@@ -21,7 +23,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class PostApiController {
 
@@ -72,17 +73,31 @@ public class PostApiController {
      * 모집글 필터링 전체 조회
      */
     @GetMapping("/posts")
-    public ResponseEntity<List<Post>> readFilteredPost(@RequestParam int page, @RequestParam(required = false) String search, @RequestParam String order, @RequestParam(required = false) String type, @RequestParam(required = false) String position, @RequestParam(required = false) boolean pay, @RequestParam int limit) {
-        SearchInfo searchInfo = SearchInfo.builder()
+    public ResponseEntity<List<PostReadOneResponse>> readFilteredPost(@RequestParam(required = false) Integer page,
+                                                                      @RequestParam(required = false) String search,
+                                                                      @RequestParam(required = false, value = "order") OrderBy orderBy,
+                                                                      @RequestParam(required = false) PostType type,
+                                                                      @RequestParam(required = false) PostTypeDetails position,
+                                                                      @RequestParam(required = false, value = "pay") Boolean hasPay,
+                                                                      @RequestParam(required = false) Integer limit) {
+        PostSearchFilter filter = PostSearchFilter.builder()
                 .page(page)
                 .search(search)
-                .order(order)
-                .position(position)
+                .orderBy(orderBy)
                 .type(type)
-                .pay(pay)
+                .typeDetails(position)
+                .hasPay(hasPay)
                 .limit(limit)
                 .build();
-        return ResponseEntity.ok(postService.readFilteredPost(searchInfo));
+
+        if (filter.isNotValid()) {
+            throw new IllegalArgumentException();
+        }
+
+        return ResponseEntity.ok(postService.readFilteredPost(filter)
+                .stream()
+                .map(PostReadOneResponse::new)
+                .toList());
     }
 
     @PostMapping("/posts/{postId}/likes")

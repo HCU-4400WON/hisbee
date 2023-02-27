@@ -8,7 +8,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.jetbrains.annotations.NotNull;
 
 @Entity
 @Getter
@@ -17,10 +16,9 @@ import org.jetbrains.annotations.NotNull;
 @DiscriminatorValue("S")
 public class Study extends Post {
 
-    @NotNull
     private int maxMember;
 
-    private int currMember = 0;
+    private int currMember;
 
     public Study(PostCreationRequest request, Member author) {
         super(request, author, request.getMaxMember());
