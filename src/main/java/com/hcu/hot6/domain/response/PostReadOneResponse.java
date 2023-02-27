@@ -42,6 +42,7 @@ public class PostReadOneResponse {
     private int currMentee;
     private boolean hasPay;
     private boolean isVerified;
+    private boolean hasLiked;
 
     public PostReadOneResponse(Post post) {
         this.dtype = post.getDtype();
@@ -89,8 +90,13 @@ public class PostReadOneResponse {
         }
     }
 
-    public void verify(String email, Post post) {
+    public void setVerified(String email, Post post) {
         this.isVerified = email.equals(post.getAuthor().getEmail());
+    }
+
+    public void setLiked(String email, Post post) {
+        this.hasLiked = post.getLikes().stream()
+                .anyMatch(member -> email.equals(member.getEmail()));
     }
 
     //Todo: isCompleted를 반환할 것인지 상의 -> 반환 한다면 tag 형식으로 표시하면 좋을 것 같음.
