@@ -52,11 +52,7 @@ public class PostService {
     public PostReadOneResponse readOnePost(Long postId, String email) {
         Post post = postRepository.findOne(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not found."));
-
-        var response = post.toResponse();
-        response.verify(email, post);
-
-        return response;
+        return post.toResponse(email);
     }
 
     @Transactional
@@ -128,22 +124,22 @@ public class PostService {
     }
 
     @Transactional
-    public List<Member> addBookmark(Long postId, String name) {
+    public PostReadOneResponse addBookmark(Long postId, String name) {
         Member member = memberRepository.findByEmail(name).orElseThrow();
         Post post = postRepository.findOne(postId)
-                .orElseThrow();
+                .orElseThrow()
+                .addBookmark(member);
 
-        post.addBookmark(member);
-        return post.getLikes();
+        return post.toResponse(name);
     }
 
     @Transactional
-    public List<Member> delBookmark(Long postId, String name) {
-        Member member = memberRepository.findByEmail(name).orElseThrow();
+    public PostReadOneResponse delBookmark(Long postId, String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow();
         Post post = postRepository.findOne(postId)
-                .orElseThrow();
+                .orElseThrow()
+                .delBookmark(member);
 
-        post.delBookmark(member);
-        return post.getLikes();
+        return post.toResponse(email);
     }
 }

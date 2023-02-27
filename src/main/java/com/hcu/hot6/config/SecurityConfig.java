@@ -58,7 +58,7 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/posts**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo

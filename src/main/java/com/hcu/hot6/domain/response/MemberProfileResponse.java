@@ -3,7 +3,6 @@ package com.hcu.hot6.domain.response;
 import com.hcu.hot6.domain.Department;
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.Position;
-import com.hcu.hot6.domain.Post;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -31,11 +30,11 @@ public class MemberProfileResponse {
 
         this.likes = member.getLikes()
                 .stream()
-                .map(Post::toResponse)
+                .map(post -> post.toResponse(email))
                 .collect(Collectors.toList());
         this.posts = member.getPosts()
                 .stream()
-                .map(Post::toResponse)
+                .map(post -> post.toResponse(email))
                 .collect(Collectors.toList());
     }
 
