@@ -1,13 +1,11 @@
 package com.hcu.hot6;
 
-import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.enums.OrderBy;
 import com.hcu.hot6.domain.enums.PostType;
 import com.hcu.hot6.domain.enums.PostTypeDetails;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
-import com.hcu.hot6.domain.response.MemberResponse;
 import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
 import com.hcu.hot6.service.PostService;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -103,20 +100,14 @@ public class PostApiController {
     }
 
     @PostMapping("/posts/{postId}/likes")
-    public ResponseEntity<List<MemberResponse>> doBookmark(@PathVariable Long postId,
-                                                           @AuthenticationPrincipal OAuth2User user) {
-        List<Member> members = postService.addBookmark(postId, user.getName());
-        return ResponseEntity.ok(members.stream()
-                .map(MemberResponse::new)
-                .collect(Collectors.toList()));
+    public ResponseEntity<PostReadOneResponse> doBookmark(@PathVariable Long postId,
+                                                          @AuthenticationPrincipal OAuth2User user) {
+        return ResponseEntity.ok(postService.addBookmark(postId, user.getName()));
     }
 
     @DeleteMapping("/posts/{postId}/likes")
-    public ResponseEntity<List<MemberResponse>> undoBookmark(@PathVariable Long postId,
-                                                             @AuthenticationPrincipal OAuth2User user) {
-        List<Member> members = postService.delBookmark(postId, user.getName());
-        return ResponseEntity.ok(members.stream()
-                .map(MemberResponse::new)
-                .collect(Collectors.toList()));
+    public ResponseEntity<PostReadOneResponse> undoBookmark(@PathVariable Long postId,
+                                                            @AuthenticationPrincipal OAuth2User user) {
+        return ResponseEntity.ok(postService.delBookmark(postId, user.getName()));
     }
 }
