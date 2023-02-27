@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -116,8 +117,14 @@ public class PostService {
         return response;
     }
 
-    public List<Post> readFilteredPost(PostSearchFilter searchInfo) {
-        return postRepository.findAll(searchInfo);
+    public List<Post> readFilteredPost(PostSearchFilter filter) {
+        if (Objects.isNull(filter.getPage())) {
+            return postRepository.findAll(filter);
+        }
+        Long count = postRepository.count(filter);
+        var pagination = new Pagination(filter.getPage(), count);
+
+        return postRepository.findAll(filter, pagination.getOffset());
     }
 
     @Transactional

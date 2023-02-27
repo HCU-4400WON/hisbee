@@ -1,14 +1,23 @@
 package com.hcu.hot6.repository;
 
-import com.hcu.hot6.domain.Post;
+import com.hcu.hot6.domain.*;
+import com.hcu.hot6.domain.enums.OrderBy;
+import com.hcu.hot6.domain.enums.PostType;
+import com.hcu.hot6.domain.enums.PostTypeDetails;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.types.NullExpression;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -16,8 +25,13 @@ import java.util.Optional;
 public class PostRepository {
 
     private final EntityManager em;
+    private final JPAQueryFactory query;
+    private final QPost post = QPost.post;
+    private final QProject project = QProject.project;
+    private final QMentoring mentoring = QMentoring.mentoring;
+    private final QStudy study = QStudy.study;
 
-    public void save(Post post){
+    public void save(Post post) {
         em.persist(post);
     }
 
@@ -30,70 +44,138 @@ public class PostRepository {
         return Optional.ofNullable(em.find(Post.class, postId));
     }
 
-    public List<Post> findAll(PostSearchFilter searchInfo) {
-        //language=JPAQL
-        String jpql = "select p From Post p";
-        boolean isFirstCondition = true;
+    public List<Post> findAll(PostSearchFilter filter, long offset) {
+        var entityPath = getEntityPath(filter.getType());
 
-        // 모집글 유형 검색
-        if (searchInfo.getType() != null) {
-            if (isFirstCondition) {
-                jpql += " where";
-                isFirstCondition = false;
-            } else {
-                jpql += " and";
-            }
-            jpql += " p.dtype = :dtype";
-        }
-
-        // 포지션 별 검색
-
-        // 페이 유무 검색
-        if (searchInfo.getType().compareTo("P") == 0|| searchInfo.getType().compareTo("M") == 0) {
-            if (isFirstCondition) {
-                jpql += " where";
-                isFirstCondition = false;
-            } else {
-                jpql += " and";
-            }
-
-            jpql += " p.hasPay = :hasPay";
-        }
-
-
-        // 키워드 검색
-        if (StringUtils.hasText(searchInfo.getSearch())) {
-            if (isFirstCondition) {
-                jpql += " where";
-                isFirstCondition = false;
-            } else {
-                jpql += " and";
-            }
-            jpql += " p.title like :title";
-        }
-
-        // 정렬 검색
-        if (searchInfo.getOrder() != null) {
-            // 최신순 검색
-            if(searchInfo.getOrder().compareTo("recent") == 0) jpql += " order by p.postStart desc";
-        }
-
-        TypedQuery<Post> query = em.createQuery(jpql, Post.class)
-                .setFirstResult((searchInfo.getPage() - 1) * searchInfo.getLimit())
-                .setMaxResults(searchInfo.getLimit());
-
-        if (searchInfo.getType() != null) {
-            query = query.setParameter("dtype", searchInfo.getType());
-        }
-        if (StringUtils.hasText(searchInfo.getSearch())) {
-            query = query.setParameter("title", searchInfo.getSearch());
-        }
-        if (searchInfo.getType().compareTo("P") == 0|| searchInfo.getType().compareTo("M") == 0) {
-            query = query.setParameter("hasPay", searchInfo.isPay());
-        }
-        return query.getResultList();
-
+        return query.selectFrom(post)
+                .join(entityPath)
+                .where(
+                        eqType(filter.getType()),
+                        eqSearch(filter.getSearch()),
+                        eqPosition(filter.getTypeDetails()),
+                        eqPay(filter.getType(), filter.getHasPay())
+                )
+                .offset(offset)
+                .limit(Pagination.LIMIT)
+                .orderBy(orderCond(filter.getOrderBy()))
+                .fetch();
     }
 
+    public List<Post> findAll(PostSearchFilter filter) {
+        var entityPath = getEntityPath(filter.getType());
 
+        return query.selectFrom(post)
+                .join(entityPath)
+                .where(
+                        eqType(filter.getType()),
+                        eqSearch(filter.getSearch()),
+                        eqPosition(filter.getTypeDetails()),
+                        eqPay(filter.getType(), filter.getHasPay())
+                )
+                .orderBy(orderCond(filter.getOrderBy()))
+                .fetch();
+    }
+
+    public Long count(PostSearchFilter filter) {
+        var entityPath = getEntityPath(filter.getType());
+
+        return query.select(post.count())
+                .from(post)
+                .join(entityPath)
+                .where(
+                        eqType(filter.getType()),
+                        eqSearch(filter.getSearch()),
+                        eqPosition(filter.getTypeDetails()),
+                        eqPay(filter.getType(), filter.getHasPay())
+                )
+                .fetchOne();
+    }
+
+    private EntityPath<?> getEntityPath(PostType type) {
+        if (Objects.isNull(type)) return post;
+
+        switch (type) {
+            case PROJECT -> {
+                return project;
+            }
+            case STUDY -> {
+                return study;
+            }
+            case MENTORING -> {
+                return mentoring;
+            }
+        }
+        return post;
+    }
+
+    private BooleanExpression eqType(PostType type) {
+        return (Objects.isNull(type)) ? null : post.dtype.eq(type.getAbbr());
+    }
+
+    private BooleanExpression eqSearch(String keyword) {
+        return (Strings.isBlank(keyword)) ? null : post.title.contains(keyword);
+    }
+
+    private BooleanExpression eqPosition(PostTypeDetails position) {
+        if (Objects.isNull(position)) return null;
+
+        switch (position) {
+            case PLANNER -> {
+                return project.maxPlanner.gt(0);
+            }
+            case DESIGNER -> {
+                return project.maxDesigner.gt(0);
+            }
+            case DEVELOPER -> {
+                return project.maxDeveloper.gt(0);
+            }
+            case MENTOR -> {
+                return mentoring.maxMentor.gt(0);
+            }
+            case MENTEE -> {
+                return mentoring.maxMentee.gt(0);
+            }
+            case MEMBER -> {
+                return study.maxMember.gt(0);
+            }
+        }
+        return null;
+    }
+
+    private BooleanExpression eqPay(PostType type, Boolean hasPay) {
+        if (Objects.isNull(hasPay)) return null;
+
+        switch (type) {
+            case PROJECT -> {
+                return project.hasPay.eq(hasPay);
+            }
+            case MENTORING -> {
+                return mentoring.hasPay.eq(hasPay);
+            }
+            case STUDY -> {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    private OrderSpecifier<?> orderCond(OrderBy orderBy) {
+        switch (orderBy) {
+            case RECENT -> {
+                return post.period.postStart.desc();
+            }
+            case LIKES -> {
+                return post.likes.size().desc();
+            }
+            case MEMBER -> {
+                return post.remaining.asc();
+            }
+            case END -> {
+                return post.period.projectEnd.asc();
+            }
+        }
+        return new OrderSpecifier<>(
+                Order.ASC,
+                new NullExpression<>(OrderBy.class));
+    }
 }
