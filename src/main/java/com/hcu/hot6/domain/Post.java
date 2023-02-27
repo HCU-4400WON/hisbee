@@ -43,8 +43,9 @@ public abstract class Post {
     private Period period;
 
     private int total;
-    private int currTotal = 0;
-    private boolean isCompleted = false;
+    private int currTotal;
+    private int remaining;
+    private boolean isCompleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
@@ -119,6 +120,7 @@ public abstract class Post {
         this.period.setProjectEnd(LocalDateTime.ofInstant(request.getProjectEnd().toInstant(), ZoneId.systemDefault()));
         this.total = total;
         this.currTotal = currTotal;
+        this.remaining = total - currTotal;
         this.isCompleted = total == currTotal;
     }
 

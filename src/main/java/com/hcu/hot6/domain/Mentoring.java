@@ -8,7 +8,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.jetbrains.annotations.NotNull;
 
 @Entity
 @Getter
@@ -17,15 +16,12 @@ import org.jetbrains.annotations.NotNull;
 @DiscriminatorValue("M")
 public class Mentoring extends Post {
 
-    @NotNull
     private int maxMentor;
-    @NotNull
     private int maxMentee;
 
-    private int currMentor = 0;
-    private int currMentee = 0;
+    private int currMentor;
+    private int currMentee;
 
-    @NotNull
     private boolean hasPay;
 
     public Mentoring(PostCreationRequest request, Member author) {
