@@ -79,7 +79,9 @@ public class PostApiController {
                                                                       @RequestParam(required = false) PostType type,
                                                                       @RequestParam(required = false) PostTypeDetails position,
                                                                       @RequestParam(required = false, value = "pay") Boolean hasPay,
-                                                                      @RequestParam(required = false) Integer limit) {
+                                                                      @RequestParam(required = false) Integer limit,
+                                                                      @AuthenticationPrincipal OAuth2User user) {
+        String email = (Objects.isNull(user)) ? "" : user.getName();
         PostSearchFilter filter = PostSearchFilter.builder()
                 .page(page)
                 .search(search)
@@ -96,7 +98,7 @@ public class PostApiController {
 
         return ResponseEntity.ok(postService.readFilteredPost(filter)
                 .stream()
-                .map(PostReadOneResponse::new)
+                .map(post -> post.toResponse(email))
                 .toList());
     }
 

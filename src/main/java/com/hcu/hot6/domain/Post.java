@@ -124,7 +124,7 @@ public abstract class Post {
         this.isCompleted = total == currTotal;
     }
 
-    public PostReadOneResponse toResponse() {
-        return new PostReadOneResponse(this);
+    public PostReadOneResponse toResponse(String email) {
+        return new PostReadOneResponse(this, email);
     }
 }

@@ -52,11 +52,7 @@ public class PostService {
     public PostReadOneResponse readOnePost(Long postId, String email) {
         Post post = postRepository.findOne(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not found."));
-        var response = post.toResponse();
-
-        response.setVerified(email, post);
-        response.setLiked(email, post);
-        return response;
+        return post.toResponse(email);
     }
 
     @Transactional
