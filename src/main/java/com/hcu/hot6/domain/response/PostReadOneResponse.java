@@ -40,10 +40,14 @@ public class PostReadOneResponse {
     private int maxMentee;
     private int currMentor;
     private int currMentee;
+
     private boolean hasPay;
     private boolean isVerified;
+    private boolean hasLiked;
 
-    public PostReadOneResponse(Post post) {
+    private int nLiked;
+
+    public PostReadOneResponse(Post post, String email) {
         this.dtype = post.getDtype();
         this.id = post.getId();
         this.title = post.getTitle();
@@ -54,6 +58,12 @@ public class PostReadOneResponse {
         this.postEnd = java.sql.Timestamp.valueOf(post.getPeriod().getPostEnd());
         this.projectStart = java.sql.Timestamp.valueOf(post.getPeriod().getProjectStart());
         this.projectEnd = java.sql.Timestamp.valueOf(post.getPeriod().getProjectEnd());
+
+        this.isVerified = email.equals(post.getAuthor().getEmail());
+        this.hasLiked = post.getLikes().stream()
+                .anyMatch(member -> email.equals(member.getEmail()));
+
+        this.nLiked = post.getLikes().size();
 
         switch (dtype) {
             case "P" -> {
@@ -87,10 +97,6 @@ public class PostReadOneResponse {
                 this.hasPay = mentoring.isHasPay();
             }
         }
-    }
-
-    public void verify(String email, Post post) {
-        this.isVerified = email.equals(post.getAuthor().getEmail());
     }
 
     //Todo: isCompleted를 반환할 것인지 상의 -> 반환 한다면 tag 형식으로 표시하면 좋을 것 같음.
