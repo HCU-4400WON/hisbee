@@ -70,14 +70,14 @@ public class PostReadOneResponse {
             case "S" -> {
                 Study study = (Study) post;
 
-                this.maxDesigner = study.getMaxMember();
+                this.maxMember = study.getMaxMember();
                 this.currMember = study.getCurrMember();
             }
             case "M" -> {
                 Mentoring mentoring = (Mentoring) post;
 
                 this.maxMentor = mentoring.getMaxMentor();
-                this.maxMentee = mentoring.getCurrMentee();
+                this.maxMentee = mentoring.getMaxMentee();
 
                 this.currMentor = mentoring.getCurrMentor();
                 this.currMentee = mentoring.getCurrMentee();
