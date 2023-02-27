@@ -357,7 +357,9 @@ function Main() {
                             onLikeClick(post.id, true /*post.isLiked*/)
                           }
                           className="fa-regular fa-heart"
-                        ></HeartIcon>
+                        >
+                          {/* {post.likenum} */}
+                        </HeartIcon>
                         {/* <svg
                   width="15px"
                   xmlns="http://www.w3.org/2000/svg"

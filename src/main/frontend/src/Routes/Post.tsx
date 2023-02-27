@@ -240,6 +240,35 @@ function Post() {
   console.log(windowPx, "px");
 
   const isLoginModal = useRecoilValue(isLoginModalState);
+
+  const TOTAL_POSTS = 200;
+  const POSTS_PER_PAGE = 12;
+  const TOTAL_PAGES = Math.ceil(TOTAL_POSTS / POSTS_PER_PAGE);
+  const [nowPage, setNowPage] = useState(1);
+  const [prevPage, setPrevPage] = useState(Math.floor((nowPage - 1) / 10) * 10);
+  const [nextPage, setNextPage] = useState(Math.ceil(nowPage / 10) * 10 + 1);
+
+  const onPageClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const {
+      currentTarget: { id },
+    } = event;
+    if (id === "next") {
+      if (nextPage <= TOTAL_PAGES) setNowPage(nextPage);
+      else setNowPage(TOTAL_PAGES);
+    } else if (id === "prev") {
+      if (prevPage > 0) setNowPage(prevPage);
+      else setNowPage(1);
+    } else {
+      setNowPage(+id);
+    }
+  };
+
+  useEffect(() => {
+    setNextPage(Math.ceil(nowPage / 10) * 10 + 1);
+    setPrevPage(Math.floor((nowPage - 1) / 10) * 10);
+    console.log(prevPage, nextPage);
+  }, [nowPage]);
+
   return (
     <>
       {isLoginModal ? <Login /> : null}
@@ -365,7 +394,9 @@ bg-gray-200"
                       : "멘토링"}
                   </PostCategoryLabel>
                 </PostCategorySpan>
-                <HeartIcon className="fa-regular fa-heart"></HeartIcon>
+                <HeartIcon className="fa-regular fa-heart">
+                  {/* {post.likenum} */}
+                </HeartIcon>
                 {/* <svg
                 width="15px"
                 xmlns="http://www.w3.org/2000/svg"
@@ -498,6 +529,43 @@ bg-gray-200"
             </PostItem>
           ))}
         </PostGrid>
+
+        <div className="flex justify-center items-center w-full h-[100px]  ">
+          <button
+            id="prev"
+            onClick={onPageClick}
+            className="w-[70px] h-[30px] flex justify-center items-center "
+          >
+            <i className="fa-solid fa-circle-left text-[30px]"></i>
+          </button>
+          {/* {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          .map((e) => prevPage + e) */}
+
+          {/* // ].map()
+          //   .slice(
+          //     Math.floor((nowPage - 1) / 10) * 10,
+          //     Math.floor((nowPage - 1) / 10) * 10 + 10
+          //   ) */}
+          {Array.from({ length: TOTAL_PAGES }, (v, i) => i + 1)
+            .slice(prevPage, nextPage - 1)
+            .map((page) => (
+              <button
+                id={page + ""}
+                onClick={onPageClick}
+                className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold hover:opacity-70
+                     ${page === nowPage && "opacity-30"} `}
+              >
+                {page}
+              </button>
+            ))}
+          <button
+            id="next"
+            onClick={onPageClick}
+            className="w-[70px] h-[30px] flex justify-center items-center"
+          >
+            <i className="fa-solid fa-circle-right text-[30px]"></i>
+          </button>
+        </div>
       </Container>
     </>
   );

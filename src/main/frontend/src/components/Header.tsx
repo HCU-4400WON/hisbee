@@ -163,6 +163,7 @@ function Header() {
       console.log(isLogin);
       setIsLogin(false);
       navigate("/");
+      localStorage.removeItem("key");
       alert("로그아웃 되었습니다.");
     } else {
       setIsLoginModal(true);

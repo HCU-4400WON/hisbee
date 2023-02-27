@@ -215,6 +215,7 @@ function Profile() {
     refetch,
   } = useQuery<IUser>(["User"], memberProfile, {
     onSuccess: (data) => {
+      console.log("Fetch!!!");
       setValue("nickname", data.nickname);
       setValue("department", data.department);
       setValue("position", data.position);
@@ -310,7 +311,7 @@ function Profile() {
 
     await memberUpdate(newUser);
     setNowModifying(false);
-    refetch();
+    // refetch();
   };
 
   const onSidebarClick = (event: React.MouseEvent<HTMLButtonElement>) => {

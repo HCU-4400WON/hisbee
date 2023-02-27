@@ -221,8 +221,9 @@ export interface IPost {
   currDeveloper: number;
   currPlanner: number;
   currDesigner: number;
-  maxMember: number;
+
   currMember: number;
+  maxMember: number;
   maxMentor: number;
   maxMentee: number;
   currMentor: number;
@@ -879,10 +880,10 @@ export const readMembers = async (
   }
 };
 
-export const addLikePost = (id: number) => {
+export const addLikePost = (postId: number) => {
   try {
     const TOKEN = localStorage.getItem("key");
-    const response = axios.post(`http://localhost:8080/${id}/likes`, {
+    const response = axios.post(`http://localhost:8080/posts/${postId}/likes`, {
       headers: { Authorization: `Bearer ${TOKEN}` },
       withCredentials: true,
     });
@@ -892,13 +893,16 @@ export const addLikePost = (id: number) => {
   }
 };
 
-export const deleteLikePost = (id: number) => {
+export const deleteLikePost = (postId: number) => {
   try {
     const TOKEN = localStorage.getItem("key");
-    const response = axios.delete(`http://localhost:8080/${id}/likes`, {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
+    const response = axios.delete(
+      `http://localhost:8080/posts/${postId}/likes`,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+        withCredentials: true,
+      }
+    );
     return response;
   } catch (error) {
     console.error(error);
