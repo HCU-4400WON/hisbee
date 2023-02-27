@@ -762,6 +762,7 @@ export const deletePost = (id: number) => {
 
 export const updatePost = (id: number, data: any) => {
   try {
+    console.log("DD", data);
     const TOKEN = localStorage.getItem("key");
     // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
     const response = axios.put(`http://localhost:8080/posts/${id}`, data, {

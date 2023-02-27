@@ -224,7 +224,7 @@ function SignUp() {
                   onKeyPress={onKeyPress}
                   {...register("nickname", {
                     required: "필수 항목입니다.",
-                    minLength: {
+                    maxLength: {
                       value: 10,
                       message: "10자 이하만 가능합니다",
                     },
