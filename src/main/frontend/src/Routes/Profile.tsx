@@ -3,7 +3,7 @@ import { IUser, memberDelete, memberProfile, memberUpdate, posts } from "api";
 import { isDeleteModalState, isLoginState } from "components/atom";
 import DeletePopup from "components/DeleteModal";
 import LoadingAnimation from "components/LoadingAnimation";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -27,12 +27,13 @@ items-start
 const SidebarTitle = tw.p`
 py-[40px] 
 text-[33px] 
-font-medium
+font-semibold
 `;
 
 const SidebarItemText = tw.button`
 text-[17px]
 mb-[20px]
+font-semibold
 hover:scale-110
 hover:text-gray-400
 `;
@@ -186,6 +187,24 @@ text-gray-500
 font-medium
 `;
 
+const ValidationVariant = {
+  hidden: {
+    y: -10,
+    color: "red",
+    opacity: 0,
+  },
+
+  showing: {
+    y: 0,
+    opacity: 1,
+  },
+
+  exit: {
+    y: 10,
+    opacity: 0,
+  },
+};
+
 function Profile() {
   const location = useLocation();
   console.log(location);
@@ -196,6 +215,16 @@ function Profile() {
     refetch,
   } = useQuery<IUser>(["User"], memberProfile, {
     onSuccess: (data) => {
+      setValue("nickname", data.nickname);
+      setValue("department", data.department);
+      setValue("position", data.position);
+      setValue("contact", data.contact);
+      setValue("club1", data.club?.at(0));
+      setValue("club2", data.club?.at(1));
+      setValue("bio", data.bio);
+
+      // setValue("imageURl" , data)
+
       // 성공시 호출
       if (!location.state) {
         setLinks([...(data?.externalLinks as string[])]);
@@ -211,7 +240,8 @@ function Profile() {
 
   const navigate = useNavigate();
 
-  const onClick = (event: any) => {
+  const onClick = (event: React.FormEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     if (event.currentTarget.id === "modify") {
       setNowModifying((prev) => !prev);
     } else if (event.currentTarget.id === "delete") {
@@ -233,7 +263,7 @@ function Profile() {
       }
     );
 
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formState, setValue } = useForm();
 
   const [Links, setLinks] = useState<string[]>([]);
   const [externalLink, setExternalLink] = useState<string>("");
@@ -250,6 +280,7 @@ function Profile() {
   };
 
   interface Idata {
+    nickname: string;
     department: string;
     position: string;
     grade: string;
@@ -260,10 +291,12 @@ function Profile() {
   }
 
   const onValid = async (newData: Idata) => {
+    console.log(formState.errors);
     console.log(newData);
+    console.log("de");
 
     const newUser = {
-      // nickname: "abcd",
+      nickname: newData.nickname,
       pictureUrl: "/img/user.png",
       isPublic: true,
       department: newData.department,
@@ -276,6 +309,7 @@ function Profile() {
     };
 
     await memberUpdate(newUser);
+    setNowModifying(false);
     refetch();
   };
 
@@ -342,9 +376,49 @@ function Profile() {
                     src="img/user.png"
                     className="w-[100%] h-[120px] rounded-full"
                   />
-                  <p className="pt-[20px] text-[18px] font-medium">
-                    {data?.nickname}
-                  </p>
+                  {nowModifying ? (
+                    <div className="flex flex-col justify-start items-center">
+                      <input
+                        type="text"
+                        placeholder="닉네임"
+                        {...register("nickname", {
+                          required: "필수 사항 입니다",
+                          maxLength: {
+                            value: 10,
+                            message: "10자 이하만 가능합니다",
+                          },
+                        })}
+                        className="mt-[20px] text-[17px] px-[10px] w-[150px] "
+                      />
+
+                      <AnimatePresence>
+                        {(formState.errors.nickname?.message as string) && (
+                          <motion.span
+                            variants={ValidationVariant}
+                            className="text-xs my-auto mt-2"
+                            initial="hidden"
+                            animate="showing"
+                            exit="exit"
+                          >
+                            * {formState.errors.nickname?.message as string}
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center w-[150px] mt-[20px]">
+                      {/* <span className="flex items-center ">
+                        <i className="fa-solid fa-user text-gray-600  w-[18px] mr-[2px]"></i>
+                        <p className="mr-[10px] text-gray-500 font-semibold">
+                          닉네임
+                        </p>
+                      </span> */}
+
+                      <span className=" text-[17px] font-semibold">
+                        {data?.nickname}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="w-full pl-[70px] text-[17px] flex flex-col justify-between">
                   <ProfileInfoRow>
@@ -354,7 +428,6 @@ function Profile() {
                     </ProfileInfoBox>
                     {nowModifying ? (
                       <select
-                        defaultValue={data?.department}
                         className="border-2 h-[35px] px-2 rounded-lg"
                         {...register("department")}
                       >
@@ -386,7 +459,6 @@ function Profile() {
                     </ProfileInfoBox>
                     {nowModifying ? (
                       <select
-                        defaultValue={data?.position}
                         className="border-2 h-[35px] px-2 rounded-lg"
                         {...register("position")}
                       >
@@ -406,7 +478,6 @@ function Profile() {
                     </ProfileInfoBox>
                     {nowModifying ? (
                       <select
-                        defaultValue={data?.grade}
                         className="border-2 h-[35px] px-2 rounded-lg"
                         {...register("grade")}
                       >
@@ -428,12 +499,29 @@ function Profile() {
                     </ProfileInfoBox>
                     <ProfileInfoContent>
                       {nowModifying ? (
-                        <input
-                          {...register("contact")}
-                          className="border-2 h-[35px] px-2 rounded-lg w-[400px]"
-                          defaultValue={data?.contact}
-                          type="text"
-                        />
+                        <div>
+                          <input
+                            className="border-2 h-[35px] px-2 rounded-lg w-[400px]"
+                            type="text"
+                            {...register("contact", {
+                              required: "필수 사항 입니다",
+                            })}
+                            placeholder="Ex) 전화 번호 , 이메일 , 카톡 아이디 등"
+                          />
+                          <AnimatePresence>
+                            {(formState.errors.contact?.message as string) && (
+                              <motion.span
+                                variants={ValidationVariant}
+                                className="text-xs ml-3"
+                                initial="hidden"
+                                animate="showing"
+                                exit="exit"
+                              >
+                                * {formState.errors.contact?.message as string}
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
+                        </div>
                       ) : (
                         <ProfileInfoContent>{data?.contact}</ProfileInfoContent>
                       )}
@@ -454,7 +542,6 @@ function Profile() {
                         <input
                           {...register(`club1`)}
                           className="border-2 h-[35px] px-2 mb-[10px] rounded-lg w-[400px]"
-                          defaultValue={data?.club?.at(0)}
                           placeholder="최대 2개"
                           type="text"
                         />
@@ -462,7 +549,6 @@ function Profile() {
                         <input
                           {...register(`club2`)}
                           className="border-2 h-[35px] px-2 rounded-lg w-[400px]"
-                          defaultValue={data?.club?.at(1)}
                           placeholder="최대 2개"
                           type="text"
                         />
@@ -558,8 +644,8 @@ function Profile() {
                       {nowModifying ? (
                         <textarea
                           {...register("bio")}
-                          className="border-2 px-2 rounded-lg w-[400px] h-[100px]"
-                          defaultValue={data?.bio}
+                          className="border-2 p-2 rounded-lg w-[400px] h-[100px]"
+                          placeholder="자유롭게 작성 해주세요 !"
                         ></textarea>
                       ) : (
                         <ProfileInfoContent>{data?.bio}</ProfileInfoContent>
@@ -571,9 +657,7 @@ function Profile() {
                       (nowModifying ? (
                         <>
                           <button
-                            type="button"
                             id="modify"
-                            onClick={onClick}
                             className="bg-[#fff] w-[120px] h-[32px] border-2 shadow  rounded-full float-right text-gray-500 border-gray-400"
                           >
                             제출하기
@@ -587,13 +671,15 @@ function Profile() {
                           </button>
                         </>
                       ) : (
-                        <button
-                          id="modify"
-                          onClick={onClick}
-                          className="bg-[#fff] w-[120px] h-[32px] border shadow  rounded-full float-right"
-                        >
-                          수정하기
-                        </button>
+                        <>
+                          <button
+                            id="modify"
+                            onClick={onClick}
+                            className="bg-[#fff] w-[120px] h-[32px] border-2 shadow  rounded-full float-right text-gray-500 border-gray-400"
+                          >
+                            수정하기
+                          </button>
+                        </>
                       ))}
                   </div>
                 </div>
@@ -655,8 +741,8 @@ function Profile() {
                     <PostMainPart>
                       {/* secondRow */}
                       <PostTitle className="text-lg font-semibold">
-                        {post.title.length > 20
-                          ? post.title.slice(0, 20) + "..."
+                        {post.title.length > 16
+                          ? post.title.slice(0, 16) + " ..."
                           : post.title}
                       </PostTitle>
 
@@ -830,8 +916,8 @@ function Profile() {
                     <PostMainPart>
                       {/* secondRow */}
                       <PostTitle className="text-lg font-semibold">
-                        {post.title.length > 20
-                          ? post.title.slice(0, 20) + "..."
+                        {post.title.length > 16
+                          ? post.title.slice(0, 16) + " ..."
                           : post.title}
                       </PostTitle>
 

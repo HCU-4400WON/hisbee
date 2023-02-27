@@ -375,8 +375,8 @@ function Main() {
                       <PostMainPart>
                         {/* secondRow */}
                         <PostTitle className="text-lg font-semibold">
-                          {post.title.length > 20
-                            ? post.title.slice(0, 20) + "..."
+                          {post.title.length > 16
+                            ? post.title.slice(0, 16) + "..."
                             : post.title}
                         </PostTitle>
 

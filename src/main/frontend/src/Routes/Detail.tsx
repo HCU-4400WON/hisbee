@@ -157,6 +157,11 @@ function Detail() {
         setValue("content", data.content);
         setValue("title", data.title);
       },
+      onError: () => {
+        console.log("존재하지 않는 게시물입니다.");
+        alert("존재하지 않는 게시물입니다.");
+        navigate("/post");
+      },
     }
   );
   const {
@@ -225,7 +230,8 @@ function Detail() {
     isPostDeleteModalState
   );
 
-  const onBtnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onBtnClick = (event: React.FormEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     const {
       currentTarget: { id },
     } = event;
@@ -233,6 +239,7 @@ function Detail() {
     if (id === "delete") {
       setIsPostDeleteModal(true);
     } else if (id === "modify") {
+      console.log("!");
       setIsModifying(true);
     }
   };
@@ -252,7 +259,7 @@ function Detail() {
 
   const navigate = useNavigate();
   const onValid = async (data: IData) => {
-    console.log(data);
+    // console.log(data);
 
     if (data.projectStart >= data.projectEnd) {
       setError("projectEnd", { message: "마감일이 이릅니다." });
@@ -283,6 +290,9 @@ function Detail() {
         setError("planner", { message: "0보다 커야 합니다." });
         return;
       }
+
+      console.log("제출되었습니다.");
+      setIsModifying(true);
     }
 
     const newData: any = {
@@ -336,18 +346,39 @@ function Detail() {
               onSubmit={handleSubmit(onValid as any)}
               className="min-w-[1200px] "
             >
-              <header className="pt-[50px] text-[30px] ">
+              <header className="pt-[55px] text-[20px] ">
                 {isModifying ? (
-                  <input
-                    type="text"
-                    className="w-[400px] h-[40px] px-[15px] bg-[#eeeeee]"
-                    {...register("title", {
-                      minLength: {
-                        value: 3,
-                        message: "제목이 너무 짧습니다.",
-                      },
-                    })}
-                  />
+                  <>
+                    <input
+                      type="text"
+                      className="w-[400px] h-[40px] px-[15px] bg-[#eeeeee]"
+                      {...register("title", {
+                        required: "필수 항목 입니다",
+                        minLength: {
+                          value: 3,
+                          message: "제목이 너무 짧습니다",
+                        },
+                        maxLength: {
+                          value: 30,
+                          message: "제목이 너무 깁니다",
+                        },
+                      })}
+                      placeholder="3~30자 이내"
+                    />
+                    <AnimatePresence>
+                      {(formState.errors.title?.message as string) && (
+                        <motion.div
+                          variants={ValidationVariant}
+                          className="absolute text-xs my-auto mx-5 bottom-[-20px] left-[100px]"
+                          initial="hidden"
+                          animate="showing"
+                          exit="exit"
+                        >
+                          * {formState.errors.title?.message as string}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </>
                 ) : (
                   <>{data?.title}</>
                 )}
@@ -381,8 +412,6 @@ function Detail() {
                       {isModifying ? (
                         <button
                           id="modify"
-                          type="button"
-                          onClick={onModifyClick}
                           className="w-[70px] text-gray-500 rounded-full"
                         >
                           <i className="fa-solid fa-check text-[30px] text-green-600"></i>
@@ -391,7 +420,7 @@ function Detail() {
                         <button
                           id="modify"
                           onClick={onBtnClick}
-                          className="w-[70px]   text-gray-500 rounded-full"
+                          className="w-[70px] text-gray-500 rounded-full"
                         >
                           <i className="fa-regular fa-pen-to-square text-[30px]"></i>
                         </button>
@@ -426,12 +455,13 @@ function Detail() {
                       {getValues("postStart")}
                     </>
                   </ItemText>
-                  <ItemText className=" mx-[10px]">~</ItemText>
+                  <ItemText className=" ml-[20px] mr-[10px]">~</ItemText>
                   <ItemText>
                     <ItemText>
                       {isModifying ? (
                         <input
                           type="date"
+                          className="px-[10px]"
                           {...register("postEnd", {
                             required: "필수 항목입니다.",
                           })}
@@ -640,6 +670,7 @@ function Detail() {
                     {isModifying ? (
                       <input
                         type="date"
+                        className="px-[10px]"
                         {...register("projectStart", {
                           required: "필수 항목입니다.",
                         })}
@@ -675,6 +706,7 @@ function Detail() {
                     {isModifying ? (
                       <input
                         type="date"
+                        className="px-[10px]"
                         {...register("projectEnd", {
                           required: "필수 항목입니다.",
                         })}
@@ -755,6 +787,7 @@ function Detail() {
                         {...register("contact", {
                           required: "필수 항목입니다.",
                         })}
+                        placeholder="Ex) 전화 번호 , 이메일 , 카톡 아이디 등"
                         type="text"
                         className=" w-full h-[30px] bg-[#eeeeee] px-[15px]"
                       ></input>
@@ -774,17 +807,14 @@ function Detail() {
                       },
                     })}
                     className="min-h-[500px] w-full p-[15px] bg-[#eeeeee]"
+                    placeholder="자유롭게 작성 해주세요 !"
                   ></textarea>
                 ) : (
                   <>{data?.content}</>
                 )}
               </div>
               {isModifying && (
-                <button
-                  type="button"
-                  onClick={onModifyClick}
-                  className=" w-[130px] h-[30px] text-white bg-black mt-[30px] mb-[10px] float-right"
-                >
+                <button className=" w-[130px] h-[30px] text-white bg-black mt-[30px] mb-[10px] float-right">
                   수정하기
                 </button>
               )}
