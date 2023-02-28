@@ -1,4 +1,10 @@
-import { MutationFunction, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  MutationFunction,
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { addLikePost, deleteLikePost, IPost, readPosts } from "api";
 import {
   isExtraSignupModalState,
@@ -99,7 +105,7 @@ const PostCategoryLabel = tw.label`
 
 `;
 
-const HeartIcon = tw.i`
+const HeartIcon = tw(motion.i)`
 `;
 
 const PostMainPart = tw.div`
@@ -251,11 +257,6 @@ function Main() {
     }
   );
 
-  const onLikeClick = (postId: number, isLiked: boolean) => {
-    if (!isLiked) addLikeMutate.mutate(postId);
-    else deleteLikeMutate.mutate(postId);
-  };
-
   const [indexs, setIndexs] = useState([0, 0, 0, 0]);
 
   const increaseIndex = (idx: number) => {
@@ -321,30 +322,37 @@ function Main() {
 
   const { mutate: likeAddMutate, isLoading: isLikeAddLoading } = useMutation(
     ["likeAddMutate" as string],
-    (postId: number) => addLikePost(postId) as any
+    (postId: number) => addLikePost(postId) as any,
+    {
+      onSuccess: () => {
+        refetch();
+      },
+    }
   );
 
   const { mutate: likeDeleteMutate, isLoading: isLikeDeleteLoading } =
     useMutation(
-      ["likeAddMutate" as string],
-      (postId: number) => deleteLikePost(postId) as any
+      ["likeDeleteMutate" as string],
+      (postId: number) => deleteLikePost(postId) as any,
+      {
+        onSuccess: () => {
+          refetch();
+        },
+      }
     );
 
-  const onHeartClick = (postId: number, hasLiked: boolean, idx: number) => {
+  const refetch = () => {
+    likesRefetch();
+    recentRefetch();
+    memberRefetch();
+    endRefetch();
+  };
+
+  const onHeartClick = async (postId: number, hasLiked: boolean) => {
     if (hasLiked) {
       likeDeleteMutate(postId);
     } else {
       likeAddMutate(postId);
-    }
-
-    if (idx === 0) {
-      likesRefetch();
-    } else if (idx === 1) {
-      recentRefetch();
-    } else if (idx === 2) {
-      memberRefetch();
-    } else if (idx === 3) {
-      endRefetch();
     }
   };
 
@@ -423,15 +431,27 @@ function Main() {
                                   : "멘토링"}
                               </PostCategoryLabel>
                             </PostCategorySpan>
-                            <HeartIcon
-                              onClick={() =>
-                                onHeartClick(post?.id, post?.hasLiked, idx)
-                              }
-                              className="fa-regular fa-heart"
-                            >
-                              {/* {post?.likenum} */}
-                              {post?.nlike}
-                            </HeartIcon>
+                            <div>
+                              <HeartIcon
+                                whileHover={{ scale: [1, 1.3, 1, 1.3, 1] }}
+                                whileTap={{ y: [0, -30, 0] }}
+                                onClick={() =>
+                                  onHeartClick(
+                                    post.id,
+                                    post.hasLiked as boolean
+                                  )
+                                }
+                                className={`${
+                                  post.hasLiked
+                                    ? "fa-solid fa-heart text-red-600"
+                                    : "fa-regular fa-heart"
+                                }`}
+                              >
+                                {/* {post.likenum} */}
+                              </HeartIcon>
+                              &nbsp; {post?.nliked}
+                            </div>
+
                             {/* <svg
                   width="15px"
                   xmlns="http://www.w3.org/2000/svg"

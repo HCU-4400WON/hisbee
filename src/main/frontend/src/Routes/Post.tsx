@@ -1,5 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { createMentoring, departments, IPost, readPosts } from "api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  addLikePost,
+  createMentoring,
+  deleteLikePost,
+  departments,
+  IPost,
+  readPosts,
+} from "api";
 import { isLoginModalState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
 import Login from "components/LoginModal";
@@ -121,7 +128,7 @@ justify-center
 const PostCategoryLabel = tw.label`
 `;
 
-const HeartIcon = tw.i`
+const HeartIcon = tw(motion.i)`
 `;
 
 const PostMainPart = tw.div`
@@ -275,11 +282,11 @@ function Post() {
     setNextPage(Math.ceil(nowPage / 10) * 10 + 1);
     setPrevPage(Math.floor((nowPage - 1) / 10) * 10);
     console.log(prevPage, nextPage);
-    refetch();
+    // refetch();
   }, [nowPage]);
 
   useEffect(() => {
-    refetch();
+    // refetch();
   }, [search, order, filterCategory, filterPosition, filterPay]);
 
   // [사이에 필터링을 추가하기]
@@ -290,6 +297,7 @@ function Post() {
   } = useQuery<IPost[]>(
     [
       "PostsPostFiltered",
+
       [nowPage, search, order, filterCategory, filterPosition, filterPay],
     ],
     () =>
@@ -301,8 +309,42 @@ function Post() {
         filterPosition === "" ? null : filterPosition,
         filterPay === "" ? null : filterPay,
         null
-      )
+      ),
+    {
+      onSuccess: () => {
+        console.log("Fetched!");
+      },
+    }
   );
+
+  const { mutate: likeAddMutate, isLoading: isLikeAddLoading } = useMutation(
+    ["likeAddMutate" as string],
+    (postId: number) => addLikePost(postId) as any,
+    {
+      onSuccess: () => {
+        refetch();
+      },
+    }
+  );
+
+  const { mutate: likeDeleteMutate, isLoading: isLikeDeleteLoading } =
+    useMutation(
+      ["likeDeleteMutate" as string],
+      (postId: number) => deleteLikePost(postId) as any,
+      {
+        onSuccess: () => {
+          refetch();
+        },
+      }
+    );
+
+  const onHeartClick = async (postId: number, hasLiked: boolean) => {
+    if (hasLiked) {
+      likeDeleteMutate(postId);
+    } else {
+      likeAddMutate(postId);
+    }
+  };
 
   return (
     <>
@@ -408,43 +450,56 @@ function Post() {
 
             <PostGrid>
               {(posts as IPost[]).map((post, index) => (
-                <Link to={`/post/${post.id}`}>
-                  <PostItem
-                    // initial={{ scale: 1 }}
-                    whileHover={{ scale: 1.08 }}
-                    key={index}
-                    style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
+                <PostItem
+                  // initial={{ scale: 1 }}
+                  whileHover={{ scale: 1.08 }}
+                  key={index}
+                  style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
+                >
+                  <PostContentFirstRow
+                    className={`${
+                      post.dtype === "P"
+                        ? "bg-[#e0c3f8]"
+                        : post.dtype === "S"
+                        ? "bg-[#c7c7c7]"
+                        : "bg-[#bdc9f2]"
+                    }`}
                   >
-                    <PostContentFirstRow
-                      className={`${
-                        post.dtype === "P"
-                          ? "bg-[#e0c3f8]"
-                          : post.dtype === "S"
-                          ? "bg-[#c7c7c7]"
-                          : "bg-[#bdc9f2]"
-                      }`}
-                    >
-                      <PostCategorySpan>
-                        <PostCategoryLabel
-                          className={`${
-                            post.dtype === "P"
-                              ? "text-purple-400"
-                              : post.dtype === "S"
-                              ? "text-gray-400"
-                              : "text-blue-400"
-                          } `}
-                        >
-                          {post.dtype === "P"
-                            ? "프로젝트"
+                    <PostCategorySpan>
+                      <PostCategoryLabel
+                        className={`${
+                          post.dtype === "P"
+                            ? "text-purple-400"
                             : post.dtype === "S"
-                            ? "스터디"
-                            : "멘토링"}
-                        </PostCategoryLabel>
-                      </PostCategorySpan>
-                      <HeartIcon className="fa-regular fa-heart">
+                            ? "text-gray-400"
+                            : "text-blue-400"
+                        } `}
+                      >
+                        {post.dtype === "P"
+                          ? "프로젝트"
+                          : post.dtype === "S"
+                          ? "스터디"
+                          : "멘토링"}
+                      </PostCategoryLabel>
+                    </PostCategorySpan>
+                    <div>
+                      <HeartIcon
+                        whileHover={{ scale: [1, 1.3, 1, 1.3, 1] }}
+                        whileTap={{ y: [0, -30, 0] }}
+                        onClick={() =>
+                          onHeartClick(post.id, post.hasLiked as boolean)
+                        }
+                        className={`${
+                          post.hasLiked
+                            ? "fa-solid fa-heart text-red-600"
+                            : "fa-regular fa-heart"
+                        }`}
+                      >
                         {/* {post.likenum} */}
                       </HeartIcon>
-                      {/* <svg
+                      &nbsp; {post?.nliked}
+                    </div>
+                    {/* <svg
                 width="15px"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 512 512"
@@ -454,10 +509,10 @@ function Post() {
                   d="M244 84L255.1 96L267.1 84.02C300.6 51.37 347 36.51 392.6 44.1C461.5 55.58 512 115.2 512 185.1V190.9C512 232.4 494.8 272.1 464.4 300.4L283.7 469.1C276.2 476.1 266.3 480 256 480C245.7 480 235.8 476.1 228.3 469.1L47.59 300.4C17.23 272.1 0 232.4 0 190.9V185.1C0 115.2 50.52 55.58 119.4 44.1C164.1 36.51 211.4 51.37 244 84C243.1 84 244 84.01 244 84L244 84zM255.1 163.9L210.1 117.1C188.4 96.28 157.6 86.4 127.3 91.44C81.55 99.07 48 138.7 48 185.1V190.9C48 219.1 59.71 246.1 80.34 265.3L256 429.3L431.7 265.3C452.3 246.1 464 219.1 464 190.9V185.1C464 138.7 430.4 99.07 384.7 91.44C354.4 86.4 323.6 96.28 301.9 117.1L255.1 163.9z"
                 />
               </svg> */}
-                      {/* <p className="mx-5 my-1 text-sm font-bold">개발자</p>
+                    {/* <p className="mx-5 my-1 text-sm font-bold">개발자</p>
        <p className="text-sm text-blue-500">{post.total}명 모집</p> */}
-                    </PostContentFirstRow>
-
+                  </PostContentFirstRow>
+                  <Link to={`/post/${post.id}`}>
                     <PostMainPart>
                       {/* secondRow */}
                       <PostTitle className="text-lg font-semibold">
@@ -576,8 +631,8 @@ function Post() {
                         )}
                       </PostPerson>
                     </PostMainPart>
-                  </PostItem>
-                </Link>
+                  </Link>
+                </PostItem>
               ))}
             </PostGrid>
 

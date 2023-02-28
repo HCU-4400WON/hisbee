@@ -231,7 +231,7 @@ export interface IPost {
   hasPay: boolean;
   varified?: boolean;
   hasLiked?: boolean;
-  nlike?: number;
+  nliked?: number;
 
   // period: number;
   // total: number;
@@ -940,10 +940,14 @@ export const readMembers = async (
 export const addLikePost = (postId: number) => {
   try {
     const TOKEN = localStorage.getItem("key");
-    const response = axios.post(`http://localhost:8080/posts/${postId}/likes`, {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
+    const response = axios.post(
+      `http://localhost:8080/posts/${postId}/likes`,
+      postId,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+        withCredentials: true,
+      }
+    );
     return response;
   } catch (error) {
     console.error(error);
