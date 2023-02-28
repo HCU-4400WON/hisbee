@@ -230,7 +230,8 @@ export interface IPost {
   currMentee: number;
   hasPay: boolean;
   varified?: boolean;
-  isLiked?: boolean;
+  hasLiked?: boolean;
+  nlike?: number;
 
   // period: number;
   // total: number;
@@ -687,6 +688,62 @@ export enum positions {
 // }
 
 //api
+
+export const readPosts = async (
+  page: string | null,
+  search: string | null,
+  order: string | null,
+  type: string | null,
+  position: string | null,
+  pay: string | null,
+  limit: string | null
+) => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+
+    let paramPage = "";
+    let paramSearch = "";
+    let paramOrder = "";
+    let paramType = "";
+    let paramPosition = "";
+    let paramPay = "";
+    let paramLimit = "";
+
+    if (page) {
+      paramPage = `&page=${page}`;
+    }
+    if (search) {
+      paramSearch = `&search=${search}`;
+    }
+    if (order) {
+      paramOrder = `&order=${order}`;
+    }
+    if (type) {
+      paramType = `&type=${type}`;
+    }
+    if (position) {
+      paramPosition = `&position=${position}`;
+    }
+    if (pay) {
+      if (pay === "yes") paramPay = `&pay=yes`;
+      else if (pay === "no") paramPay = `&pay=no`;
+    }
+    if (limit) {
+      paramLimit = `&limit=${limit}`;
+    }
+
+    const response = await axios.get(
+      `http://localhost:8080/posts?${paramPage}${paramSearch}${paramOrder}${paramType}${paramPosition}${paramPay}${paramLimit}`,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export const readOnePost = async (id: number) => {
   try {

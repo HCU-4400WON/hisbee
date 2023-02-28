@@ -169,7 +169,7 @@ function Detail() {
       onError: () => {
         console.log("존재하지 않는 게시물입니다.");
         alert("존재하지 않는 게시물입니다.");
-        navigate("/post");
+        navigate(-1);
       },
     }
   );
@@ -375,9 +375,12 @@ function Detail() {
           {isPostDeleteModal && <PostDeleteModal postId={data?.id} />}
           <div className=" w-[1470px] flex">
             <span className="min-w-[100px] py-[62px]  border-gray-300  flex justify-end">
-              <Link to="/post" className=" mr-[40px] h-[30px]">
+              <button
+                onClick={() => navigate(-1)}
+                className=" mr-[40px] h-[30px]"
+              >
                 <i className="fa-solid fa-arrow-left  text-[23px]"></i>
-              </Link>
+              </button>
             </span>
 
             <form onSubmit={handleSubmit(onValid as any)} className="w-full ">
@@ -427,17 +430,17 @@ function Detail() {
                   </WriteInfo>
                   <WriteInfo>작성일</WriteInfo>
                   <WriteInfo className="text-gray-500">
-                    {/* {data?.postStart.getFullYear()} /{" "}
-                    {(data?.postStart.getMonth() + 1) + "").padStart(
-                      2,
-                      "0"
-                    )}{" "}
+                    {new Date(data?.postStart as Date).getFullYear()} /{" "}
+                    {(
+                      new Date(data?.postStart as Date).getMonth() +
+                      1 +
+                      ""
+                    ).padStart(2, "0")}{" "}
                     /{" "}
-                    {(new Date(data?.postStart).getDate() + "").padStart(
-                      2,
-                      "0"
-                    )} */}
-                    {getValues("postStart")}
+                    {(
+                      new Date(data?.postStart as Date).getDate() + ""
+                    ).padStart(2, "0")}
+                    {/* {getValues("postStart")} */}
                   </WriteInfo>
                 </WriteInfoBox>
 
@@ -477,17 +480,17 @@ function Detail() {
                   <ItemTitle>모집 기간</ItemTitle>
                   <ItemText className="text-[18px]">
                     <>
-                      {/* {new Date(data?.postStart).getFullYear()} /{" "}
-                      {(new Date(data?.postStart).getMonth() + 1 + "").padStart(
-                        2,
-                        "0"
-                      )}{" "}
+                      {new Date(data?.postStart as Date).getFullYear()} /{" "}
+                      {(
+                        new Date(data?.postStart as Date).getMonth() +
+                        1 +
+                        ""
+                      ).padStart(2, "0")}{" "}
                       /{" "}
-                      {(new Date(data?.postStart).getDate() + "").padStart(
-                        2,
-                        "0"
-                      )} */}
-                      {getValues("postStart")}
+                      {(
+                        new Date(data?.postStart as Date).getDate() + ""
+                      ).padStart(2, "0")}
+                      {/* {getValues("postStart")} */}
                     </>
                   </ItemText>
                   <ItemText className="mx-[10px] ml-[20px]">~</ItemText>
@@ -527,18 +530,17 @@ function Detail() {
                         </div>
                       ) : (
                         <>
-                          {/* {new Date(data?.postEnd).getFullYear()} /{" "}
+                          {new Date(data?.postEnd as Date).getFullYear()} /{" "}
                           {(
-                            new Date(data?.postEnd).getMonth() +
+                            new Date(data?.postEnd as Date).getMonth() +
                             1 +
                             ""
                           ).padStart(2, "0")}{" "}
                           /{" "}
-                          {(new Date(data?.postEnd).getDate() + "").padStart(
-                            2,
-                            "0"
-                          )} */}
-                          {getValues("postEnd")}
+                          {(
+                            new Date(data?.postEnd as Date).getDate() + ""
+                          ).padStart(2, "0")}
+                          {/* {getValues("postEnd")} */}
                         </>
                       )}
                     </ItemText>
@@ -748,18 +750,18 @@ function Detail() {
                       ></input>
                     ) : (
                       <>
-                        {/* {new Date(data?.projectStart).getFullYear()} /{" "}
+                        {new Date(data?.projectStart as Date).getFullYear()} /{" "}
                         {(
-                          new Date(data?.projectStart).getMonth() +
+                          new Date(data?.projectStart as Date).getMonth() +
                           1 +
                           ""
                         ).padStart(2, "0")}{" "}
                         /{" "}
-                        {(new Date(data?.projectStart).getDate() + "").padStart(
-                          2,
-                          "0"
-                        )} */}
-                        {getValues("projectStart")}
+                        {(
+                          new Date(data?.projectStart as Date).getDate() + ""
+                        ).padStart(2, "0")}
+                        {/* {getValues("projectStart")}
+                         */}
                       </>
                     )}
                   </ItemText>
@@ -807,18 +809,17 @@ function Detail() {
                       </div>
                     ) : (
                       <>
-                        {/* {new Date(data?.projectEnd).getFullYear()} /{" "}
+                        {new Date(data?.projectEnd as Date).getFullYear()} /{" "}
                         {(
-                          new Date(data?.projectEnd).getMonth() +
+                          new Date(data?.projectEnd as Date).getMonth() +
                           1 +
                           ""
                         ).padStart(2, "0")}{" "}
                         /{" "}
-                        {(new Date(data?.projectEnd).getDate() + "").padStart(
-                          2,
-                          "0"
-                        )} */}
-                        {getValues("projectEnd")}
+                        {(
+                          new Date(data?.projectEnd as Date).getDate() + ""
+                        ).padStart(2, "0")}
+                        {/* {getValues("projectEnd")} */}
                       </>
                     )}
                   </ItemText>

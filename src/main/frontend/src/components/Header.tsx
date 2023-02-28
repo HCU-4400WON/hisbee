@@ -143,10 +143,13 @@ function Header() {
 
   const { register, handleSubmit, formState, setValue } = useForm();
 
-  const onValid = (data: any) => {
+  interface IValid {
+    data: string;
+  }
+  const onValid = (data: IValid) => {
     console.log(data);
     setValue("search", "");
-    navigate("/post");
+    navigate("/post", { state: data });
   };
 
   const navigate = useNavigate();
@@ -289,7 +292,7 @@ function Header() {
             //   toggleSearch();
             // }}
             onBlur={onBlur}
-            onSubmit={handleSubmit(onValid)}
+            onSubmit={handleSubmit(onValid as any)}
           >
             <motion.svg
               className="absolute right-0 w-5 z-10 fill-gray-400 hover:fill-purple-500"
