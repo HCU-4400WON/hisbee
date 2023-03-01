@@ -7,6 +7,7 @@ import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostCreationResponse;
+import com.hcu.hot6.domain.response.PostFilterResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
 import com.hcu.hot6.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -70,14 +70,14 @@ public class PostApiController {
      * 모집글 필터링 전체 조회
      */
     @GetMapping("/posts")
-    public ResponseEntity<List<PostReadOneResponse>> readFilteredPost(@RequestParam(required = false) Integer page,
-                                                                      @RequestParam(required = false) String search,
-                                                                      @RequestParam(required = false, value = "order") OrderBy orderBy,
-                                                                      @RequestParam(required = false) PostType type,
-                                                                      @RequestParam(required = false) PostTypeDetails position,
-                                                                      @RequestParam(required = false, value = "pay") Boolean hasPay,
-                                                                      @RequestParam(required = false) Integer limit,
-                                                                      @AuthenticationPrincipal OAuth2User user) {
+    public ResponseEntity<PostFilterResponse> readFilteredPost(@RequestParam(required = false) Integer page,
+                                                               @RequestParam(required = false) String search,
+                                                               @RequestParam(required = false, value = "order") OrderBy orderBy,
+                                                               @RequestParam(required = false) PostType type,
+                                                               @RequestParam(required = false) PostTypeDetails position,
+                                                               @RequestParam(required = false, value = "pay") Boolean hasPay,
+                                                               @RequestParam(required = false) Integer limit,
+                                                               @AuthenticationPrincipal OAuth2User user) {
         String email = (Objects.isNull(user)) ? "" : user.getName();
         PostSearchFilter filter = PostSearchFilter.builder()
                 .page(page)
@@ -93,10 +93,7 @@ public class PostApiController {
             throw new IllegalArgumentException();
         }
 
-        return ResponseEntity.ok(postService.readFilteredPost(filter)
-                .stream()
-                .map(post -> post.toResponse(email))
-                .toList());
+        return ResponseEntity.ok(postService.readFilteredPost(filter, email));
     }
 
     @PostMapping("/posts/{postId}/likes")

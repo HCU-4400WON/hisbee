@@ -16,7 +16,7 @@ public class Pagination {
                 (int) (Math.ceil((double) curr / PAGE_OFFSET) * PAGE_OFFSET),
                 (int) Math.ceil((double) total / LIMIT)
         );
-        this.pageBegin = pageEnd - (PAGE_OFFSET - 1);
+        this.pageBegin = Math.max(1, pageEnd - (PAGE_OFFSET - 1));
         this.offset = (page - 1) * LIMIT;
     }
 
