@@ -1,10 +1,21 @@
-import { departments, IPost, posts } from "api";
-import { isLoginModalState } from "components/atom";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  addLikePost,
+  createMentoring,
+  deleteLikePost,
+  departments,
+  IPost,
+  readPosts,
+} from "api";
+import { AxiosError, AxiosResponse } from "axios";
+import { isLoginModalState, isLoginState } from "components/atom";
+import LoadingAnimation from "components/LoadingAnimation";
 import Login from "components/LoginModal";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
+import { useLocation, useMatch, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 
 const Banner = tw.img`
@@ -118,7 +129,7 @@ justify-center
 const PostCategoryLabel = tw.label`
 `;
 
-const HeartIcon = tw.i`
+const HeartIcon = tw(motion.i)`
 `;
 
 const PostMainPart = tw.div`
@@ -171,7 +182,12 @@ const Container = tw.div`
 w-[1470px]`;
 
 function Post() {
+  const location = useLocation();
+  const search = location.state ? location.state.search : null;
+
+  const [order, setOrder] = useState<string | null>(null);
   const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
+    setOrder(event.currentTarget.value);
     console.log(event.currentTarget.value);
   };
 
@@ -222,151 +238,289 @@ function Post() {
   //   project: ["true", "false"],
   // };
 
-  const categories: string[] = ["스터디", "멘토링", "프로젝트"];
+  const categories: string[] = ["study", "mentoring", "project"];
 
   const positions: IFiltering = {
-    스터디: ["맴버"],
-    멘토링: ["멘토", "멘티"],
-    프로젝트: ["기획자", "개발자", "디자이너"],
+    study: ["member"],
+    mentoring: ["mentor", "mentee"],
+    project: ["planner", "developer", "designer"],
   };
 
   const pays: IFiltering = {
-    // 스터디: [],
-    멘토링: ["있음", "없음"],
-    프로젝트: ["있음", "없음"],
+    // study: [],
+    mentoring: ["yes", "no"],
+    project: ["yes", "no"],
   };
 
   const windowPx = window.innerWidth;
   console.log(windowPx, "px");
 
   const isLoginModal = useRecoilValue(isLoginModalState);
+
+  const TOTAL_POSTS = 200;
+  const POSTS_PER_PAGE = 12;
+  const TOTAL_PAGES = Math.ceil(TOTAL_POSTS / POSTS_PER_PAGE);
+  const [nowPage, setNowPage] = useState(1);
+  const [prevPage, setPrevPage] = useState(Math.floor((nowPage - 1) / 10) * 10);
+  const [nextPage, setNextPage] = useState(Math.ceil(nowPage / 10) * 10 + 1);
+
+  const onPageClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const {
+      currentTarget: { id },
+    } = event;
+    if (id === "next") {
+      if (nextPage <= TOTAL_PAGES) setNowPage(nextPage);
+      else setNowPage(TOTAL_PAGES);
+    } else if (id === "prev") {
+      if (prevPage > 0) setNowPage(prevPage);
+      else setNowPage(1);
+    } else {
+      setNowPage(+id);
+    }
+  };
+
+  useEffect(() => {
+    setNextPage(Math.ceil(nowPage / 10) * 10 + 1);
+    setPrevPage(Math.floor((nowPage - 1) / 10) * 10);
+    console.log(prevPage, nextPage);
+    // refetch();
+  }, [nowPage]);
+
+  useEffect(() => {
+    // refetch();
+  }, [search, order, filterCategory, filterPosition, filterPay]);
+
+  // [사이에 필터링을 추가하기]
+  const {
+    data: posts,
+    isLoading,
+    refetch,
+  } = useQuery<IPost[]>(
+    [
+      "PostsPostFiltered",
+
+      [nowPage, search, order, filterCategory, filterPosition, filterPay],
+    ],
+    () =>
+      readPosts(
+        nowPage + "",
+        search,
+        order,
+        filterCategory === "" ? null : filterCategory,
+        filterPosition === "" ? null : filterPosition,
+        filterPay === "" ? null : filterPay,
+        null
+      ),
+    {
+      onSuccess: () => {
+        console.log("Fetched!");
+      },
+    }
+  );
+  const setIsLogin = useSetRecoilState(isLoginState);
+  const setIsLoginModal = useSetRecoilState(isLoginModalState);
+
+  const { mutate: likeAddMutate, isLoading: isLikeAddLoading } = useMutation(
+    ["likeAddMutatePostPage" as string],
+    (postId: number) => addLikePost(postId) as any,
+    {
+      onSuccess: () => {
+        refetch();
+      },
+      onError: (error) => {
+        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+          alert("로그인이 필요합니다.");
+          if (localStorage.getItem("key")) localStorage.removeItem("key");
+          setIsLoginModal(true);
+          setIsLogin(false);
+        }
+      },
+    }
+  );
+
+  const { mutate: likeDeleteMutate, isLoading: isLikeDeleteLoading } =
+    useMutation(
+      ["likeDeleteMutatePostPage" as string],
+      (postId: number) => deleteLikePost(postId) as any,
+      {
+        onSuccess: () => {
+          refetch();
+        },
+        onError: (error) => {
+          if (
+            ((error as AxiosError).response as AxiosResponse).status === 401
+          ) {
+            alert("로그인이 필요합니다.");
+            if (localStorage.getItem("key")) localStorage.removeItem("key");
+            setIsLoginModal(true);
+            setIsLogin(false);
+          }
+        },
+      }
+    );
+
+  const onHeartClick = async (postId: number, hasLiked: boolean) => {
+    if (hasLiked) {
+      likeDeleteMutate(postId);
+    } else {
+      likeAddMutate(postId);
+    }
+  };
+
   return (
     <>
-      {isLoginModal ? <Login /> : null}
-      <Container>
-        {/* <img
-        className="h-60 
-mt-5 
-mx-5 
-bg-gray-200"
-        src="/img/banner.png"
-        width="97%"
-      ></img> */}
-        <Banner src="/img/postBannerReal.png"></Banner>
-        <FilterRow>
-          <FilterTitle>CATEGORY</FilterTitle>
-          <FilterButtonBox>
-            {categories.map((category) => (
-              <Button
-                key={category}
-                id="category"
-                name={category}
-                onClick={onClick}
-                className={`${
-                  category === filterCategory &&
-                  "border-black bg-black text-white"
-                }`}
-              >
-                {category}
-              </Button>
-            ))}
-          </FilterButtonBox>
-        </FilterRow>
-        {filterCategory === "" ? null : (
-          <FilterRow>
-            <FilterTitle>POSITION</FilterTitle>
-            <FilterButtonBox>
-              {positions[filterCategory].map((position) => (
-                <Button
-                  id="position"
-                  name={position}
-                  key={position}
-                  onClick={onClick}
-                  className={`${
-                    position === filterPosition &&
-                    "border-black bg-black text-white"
-                  }`}
+      {isLoading ? (
+        <LoadingAnimation />
+      ) : (
+        <>
+          {isLoginModal ? <Login /> : null}
+          <Container>
+            <Banner src="/img/postBannerReal.png"></Banner>
+            <FilterRow>
+              <FilterTitle>CATEGORY</FilterTitle>
+              <FilterButtonBox>
+                {categories.map((category) => (
+                  <Button
+                    key={category}
+                    id="category"
+                    name={category}
+                    onClick={onClick}
+                    className={`${
+                      category === filterCategory &&
+                      "border-black bg-black text-white"
+                    }`}
+                  >
+                    {category === "study"
+                      ? "스터디"
+                      : category === "mentoring"
+                      ? "멘토링"
+                      : "프로젝트"}
+                  </Button>
+                ))}
+              </FilterButtonBox>
+            </FilterRow>
+            {filterCategory === "" ? null : (
+              <FilterRow>
+                <FilterTitle>POSITION</FilterTitle>
+                <FilterButtonBox>
+                  {positions[filterCategory].map((position) => (
+                    <Button
+                      id="position"
+                      name={position}
+                      key={position}
+                      onClick={onClick}
+                      className={`${
+                        position === filterPosition &&
+                        "border-black bg-black text-white"
+                      }`}
+                    >
+                      {position === "member"
+                        ? "맴버"
+                        : position === "mentor"
+                        ? "멘토"
+                        : position === "mentee"
+                        ? "멘티"
+                        : position === "planner"
+                        ? "기획자"
+                        : position === "developer"
+                        ? "개발자"
+                        : "디자인"}
+                    </Button>
+                  ))}
+                </FilterButtonBox>
+              </FilterRow>
+            )}
+
+            {filterCategory === "" || filterCategory === "study" ? null : (
+              <FilterRow>
+                <FilterTitle>PAY</FilterTitle>
+                <FilterButtonBox>
+                  {pays[filterCategory].map((pay) => (
+                    <Button
+                      id="pay"
+                      name={pay}
+                      key={pay}
+                      onClick={onClick}
+                      className={`${
+                        pay === filterPay && "border-black bg-black text-white"
+                      }`}
+                    >
+                      {pay === "yes" ? "있음" : "없음"}
+                    </Button>
+                  ))}
+                </FilterButtonBox>
+              </FilterRow>
+            )}
+
+            <SortBox>
+              <div className="flex items-center">
+                <SortTitle>Sort by</SortTitle>
+                <SortSelect className="vertical-center" onInput={onInput}>
+                  <option value="recent">최신 순</option>
+                  <option value="likes">찜 많은 순</option>
+                  <option value="member">모집 인원 마감 임박</option>
+                  <option value="end">모집마감 임박순</option>
+                </SortSelect>
+              </div>
+              <Link to="/add">
+                <button className="text-[18px] text-white border border-black py-[5px] bg-black px-[20px] ">
+                  모집글 쓰기
+                </button>
+              </Link>
+            </SortBox>
+
+            <PostGrid>
+              {(posts as IPost[]).map((post, index) => (
+                <PostItem
+                  // initial={{ scale: 1 }}
+                  whileHover={{ scale: 1.08 }}
+                  key={index}
+                  style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
                 >
-                  {position}
-                </Button>
-              ))}
-            </FilterButtonBox>
-          </FilterRow>
-        )}
-
-        {filterCategory === "" || filterCategory === "스터디" ? null : (
-          <FilterRow>
-            <FilterTitle>PAY</FilterTitle>
-            <FilterButtonBox>
-              {pays[filterCategory].map((pay) => (
-                <Button
-                  id="pay"
-                  name={pay}
-                  key={pay}
-                  onClick={onClick}
-                  className={`${
-                    pay === filterPay && "border-black bg-black text-white"
-                  }`}
-                >
-                  {pay}
-                </Button>
-              ))}
-            </FilterButtonBox>
-          </FilterRow>
-        )}
-
-        <SortBox>
-          <div className="flex items-center">
-            <SortTitle>Sort by</SortTitle>
-            <SortSelect className="vertical-center" onInput={onInput}>
-              <option value="최신">최신 순</option>
-              <option value="찜">찜 많은 순</option>
-              <option value="모집인원">모집 인원 마감 임박</option>
-            </SortSelect>
-          </div>
-          <Link to="/add">
-            <button className="text-[18px] text-white border border-black py-[5px] bg-black px-[20px] ">
-              모집글 쓰기
-            </button>
-          </Link>
-        </SortBox>
-
-        <PostGrid>
-          {posts.map((post, index) => (
-            <PostItem
-              // initial={{ scale: 1 }}
-              whileHover={{ scale: 1.08 }}
-              key={index}
-              style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
-            >
-              <PostContentFirstRow
-                className={`${
-                  post.dtype === "P"
-                    ? "bg-[#e0c3f8]"
-                    : post.dtype === "S"
-                    ? "bg-[#c7c7c7]"
-                    : "bg-[#bdc9f2]"
-                }`}
-              >
-                <PostCategorySpan>
-                  <PostCategoryLabel
+                  <PostContentFirstRow
                     className={`${
                       post.dtype === "P"
-                        ? "text-purple-400"
+                        ? "bg-[#e0c3f8]"
                         : post.dtype === "S"
-                        ? "text-gray-400"
-                        : "text-blue-400"
-                    } `}
+                        ? "bg-[#c7c7c7]"
+                        : "bg-[#bdc9f2]"
+                    }`}
                   >
-                    {post.dtype === "P"
-                      ? "프로젝트"
-                      : post.dtype === "S"
-                      ? "스터디"
-                      : "멘토링"}
-                  </PostCategoryLabel>
-                </PostCategorySpan>
-                <HeartIcon className="fa-regular fa-heart"></HeartIcon>
-                {/* <svg
+                    <PostCategorySpan>
+                      <PostCategoryLabel
+                        className={`${
+                          post.dtype === "P"
+                            ? "text-purple-400"
+                            : post.dtype === "S"
+                            ? "text-gray-400"
+                            : "text-blue-400"
+                        } `}
+                      >
+                        {post.dtype === "P"
+                          ? "프로젝트"
+                          : post.dtype === "S"
+                          ? "스터디"
+                          : "멘토링"}
+                      </PostCategoryLabel>
+                    </PostCategorySpan>
+                    <div>
+                      <HeartIcon
+                        whileHover={{ scale: [1, 1.3, 1, 1.3, 1] }}
+                        whileTap={{ y: [0, -30, 0] }}
+                        onClick={() =>
+                          onHeartClick(post.id, post.hasLiked as boolean)
+                        }
+                        className={`${
+                          post.hasLiked
+                            ? "fa-solid fa-heart text-red-600"
+                            : "fa-regular fa-heart"
+                        }`}
+                      >
+                        {/* {post.likenum} */}
+                      </HeartIcon>
+                      &nbsp; {post?.nliked}
+                    </div>
+                    {/* <svg
                 width="15px"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 512 512"
@@ -376,129 +530,172 @@ bg-gray-200"
                   d="M244 84L255.1 96L267.1 84.02C300.6 51.37 347 36.51 392.6 44.1C461.5 55.58 512 115.2 512 185.1V190.9C512 232.4 494.8 272.1 464.4 300.4L283.7 469.1C276.2 476.1 266.3 480 256 480C245.7 480 235.8 476.1 228.3 469.1L47.59 300.4C17.23 272.1 0 232.4 0 190.9V185.1C0 115.2 50.52 55.58 119.4 44.1C164.1 36.51 211.4 51.37 244 84C243.1 84 244 84.01 244 84L244 84zM255.1 163.9L210.1 117.1C188.4 96.28 157.6 86.4 127.3 91.44C81.55 99.07 48 138.7 48 185.1V190.9C48 219.1 59.71 246.1 80.34 265.3L256 429.3L431.7 265.3C452.3 246.1 464 219.1 464 190.9V185.1C464 138.7 430.4 99.07 384.7 91.44C354.4 86.4 323.6 96.28 301.9 117.1L255.1 163.9z"
                 />
               </svg> */}
-                {/* <p className="mx-5 my-1 text-sm font-bold">개발자</p>
+                    {/* <p className="mx-5 my-1 text-sm font-bold">개발자</p>
        <p className="text-sm text-blue-500">{post.total}명 모집</p> */}
-              </PostContentFirstRow>
+                  </PostContentFirstRow>
+                  <Link to={`/post/${post.id}`}>
+                    <PostMainPart>
+                      {/* secondRow */}
+                      <PostTitle className="text-lg font-semibold">
+                        {post.title.length > 16
+                          ? post.title.slice(0, 16) + " ..."
+                          : post.title}
+                      </PostTitle>
 
-              <PostMainPart>
-                {/* secondRow */}
-                <PostTitle className="text-lg font-semibold">
-                  {post.title.length > 20
-                    ? post.title.slice(0, 20) + "..."
-                    : post.title}
-                </PostTitle>
+                      {/* ThirdRow */}
+                      <PostDate>
+                        {(new Date(post.projectEnd).getTime() -
+                          new Date(post.projectStart).getTime()) /
+                          (1000 * 24 * 60 * 60) >=
+                        365 ? (
+                          <PostDatePlan>
+                            {Math.floor(
+                              (new Date(post.projectEnd).getTime() -
+                                new Date(post.projectStart).getTime()) /
+                                (1000 * 24 * 60 * 60 * 365)
+                            )}
+                            {""}년 플랜
+                          </PostDatePlan>
+                        ) : (new Date(post.projectEnd).getTime() -
+                            new Date(post.projectStart).getTime()) /
+                            (1000 * 24 * 60 * 60) >=
+                          30 ? (
+                          <PostDatePlan>
+                            {Math.floor(
+                              (new Date(post.projectEnd).getTime() -
+                                new Date(post.projectStart).getTime()) /
+                                (1000 * 24 * 60 * 60 * 30)
+                            )}
+                            {""}달 플랜
+                          </PostDatePlan>
+                        ) : (new Date(post.projectEnd).getTime() -
+                            new Date(post.projectStart).getTime()) /
+                            (1000 * 24 * 60 * 60) >=
+                          7 ? (
+                          <PostDatePlan>
+                            {Math.floor(
+                              (new Date(post.projectEnd).getTime() -
+                                new Date(post.projectStart).getTime()) /
+                                (1000 * 24 * 60 * 60 * 7)
+                            )}
+                            {""}주 플랜
+                          </PostDatePlan>
+                        ) : (
+                          <PostDatePlan>
+                            {Math.floor(
+                              (new Date(post.projectEnd).getTime() -
+                                new Date(post.projectStart).getTime()) /
+                                (1000 * 24 * 60 * 60)
+                            )}
+                            {""}일 플랜
+                          </PostDatePlan>
+                        )}
+                        <p className="mx-[7px] pb-0.5">|</p>
+                        <PostDateStart>
+                          {" "}
+                          {new Date(post.projectStart).getMonth()}월{" "}
+                          {new Date(post.projectStart).getDate()}일 시작
+                        </PostDateStart>
+                      </PostDate>
 
-                {/* ThirdRow */}
-                <PostDate>
-                  {(post.projectEnd.getTime() - post.projectStart.getTime()) /
-                    (1000 * 24 * 60 * 60) >=
-                  365 ? (
-                    <PostDatePlan>
-                      {Math.floor(
-                        (post.projectEnd.getTime() -
-                          post.projectStart.getTime()) /
-                          (1000 * 24 * 60 * 60 * 365)
-                      )}
-                      {""}년 플랜
-                    </PostDatePlan>
-                  ) : (post.projectEnd.getTime() -
-                      post.projectStart.getTime()) /
-                      (1000 * 24 * 60 * 60) >=
-                    30 ? (
-                    <PostDatePlan>
-                      {Math.floor(
-                        (post.projectEnd.getTime() -
-                          post.projectStart.getTime()) /
-                          (1000 * 24 * 60 * 60 * 30)
-                      )}
-                      {""}달 플랜
-                    </PostDatePlan>
-                  ) : (post.projectEnd.getTime() -
-                      post.projectStart.getTime()) /
-                      (1000 * 24 * 60 * 60) >=
-                    7 ? (
-                    <PostDatePlan>
-                      {Math.floor(
-                        (post.projectEnd.getTime() -
-                          post.projectStart.getTime()) /
-                          (1000 * 24 * 60 * 60 * 7)
-                      )}
-                      {""}주 플랜
-                    </PostDatePlan>
-                  ) : (
-                    <PostDatePlan>
-                      {Math.floor(
-                        (post.projectEnd.getTime() -
-                          post.projectStart.getTime()) /
-                          (1000 * 24 * 60 * 60)
-                      )}
-                      {""}일 플랜
-                    </PostDatePlan>
-                  )}
-                  <p className="mx-[7px] pb-0.5">|</p>
-                  <PostDateStart>
-                    {" "}
-                    {post.projectStart.getMonth()}월{" "}
-                    {post.projectStart.getDate()}일 시작
-                  </PostDateStart>
-                </PostDate>
+                      {/* lastRow */}
+                      <PostPerson>
+                        <PostPersonTotal>
+                          {post.dtype === "P"
+                            ? post.maxDesigner +
+                              post.maxDeveloper +
+                              post.maxPlanner
+                            : post.dtype === "S"
+                            ? post.maxMember
+                            : post.maxMentee + post.maxMentor}
+                          명 모집
+                        </PostPersonTotal>
 
-                {/* lastRow */}
-                <PostPerson>
-                  <PostPersonTotal>
-                    {post.dtype === "P"
-                      ? post.maxDesigner + post.maxDeveloper + post.maxPlanner
-                      : post.dtype === "S"
-                      ? post.maxMember
-                      : post.maxMentee + post.maxMentor}
-                    명 모집
-                  </PostPersonTotal>
+                        {post.dtype === "P" ? (
+                          <>
+                            {post.maxDeveloper !== 0 && (
+                              <PostPersonPosition>
+                                개발자 {post.maxDeveloper}명
+                              </PostPersonPosition>
+                            )}
+                            {post.maxPlanner !== 0 && (
+                              <PostPersonPosition>
+                                기획자 {post.maxPlanner}명
+                              </PostPersonPosition>
+                            )}
 
-                  {post.dtype === "P" ? (
-                    <>
-                      {post.maxDeveloper !== 0 && (
-                        <PostPersonPosition>
-                          개발자 {post.maxDeveloper}명
-                        </PostPersonPosition>
-                      )}
-                      {post.maxPlanner !== 0 && (
-                        <PostPersonPosition>
-                          기획자 {post.maxPlanner}명
-                        </PostPersonPosition>
-                      )}
+                            {post.maxDesigner !== 0 && (
+                              <PostPersonPosition>
+                                디자이너 {post.maxDesigner}명
+                              </PostPersonPosition>
+                            )}
+                          </>
+                        ) : post.dtype === "S" ? (
+                          post.maxMember !== 0 && (
+                            <PostPersonPosition>
+                              스터디원 {post.maxMember}명
+                            </PostPersonPosition>
+                          )
+                        ) : (
+                          <>
+                            {post.maxMentor !== 0 && (
+                              <PostPersonPosition>
+                                멘토 {post.maxMentor}명
+                              </PostPersonPosition>
+                            )}
+                            {post.maxMentee !== 0 && (
+                              <PostPersonPosition>
+                                멘티 {post.maxMentee}명
+                              </PostPersonPosition>
+                            )}
+                          </>
+                        )}
+                      </PostPerson>
+                    </PostMainPart>
+                  </Link>
+                </PostItem>
+              ))}
+            </PostGrid>
 
-                      {post.maxDesigner !== 0 && (
-                        <PostPersonPosition>
-                          디자이너 {post.maxDesigner}명
-                        </PostPersonPosition>
-                      )}
-                    </>
-                  ) : post.dtype === "S" ? (
-                    post.maxMember !== 0 && (
-                      <PostPersonPosition>
-                        스터디원 {post.maxMember}명
-                      </PostPersonPosition>
-                    )
-                  ) : (
-                    <>
-                      {post.maxMentor !== 0 && (
-                        <PostPersonPosition>
-                          멘토 {post.maxMentor}명
-                        </PostPersonPosition>
-                      )}
-                      {post.maxMentee !== 0 && (
-                        <PostPersonPosition>
-                          멘티 {post.maxMentee}명
-                        </PostPersonPosition>
-                      )}
-                    </>
-                  )}
-                </PostPerson>
-              </PostMainPart>
-            </PostItem>
-          ))}
-        </PostGrid>
-      </Container>
+            <div className="flex justify-center items-center w-full h-[100px]  ">
+              <button
+                id="prev"
+                onClick={onPageClick}
+                className="w-[70px] h-[30px] flex justify-center items-center "
+              >
+                <i className="fa-solid fa-circle-left text-[30px]"></i>
+              </button>
+              {/* {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          .map((e) => prevPage + e) */}
+
+              {/* // ].map()
+          //   .slice(
+          //     Math.floor((nowPage - 1) / 10) * 10,
+          //     Math.floor((nowPage - 1) / 10) * 10 + 10
+          //   ) */}
+              {Array.from({ length: TOTAL_PAGES }, (v, i) => i + 1)
+                .slice(prevPage, nextPage - 1)
+                .map((page) => (
+                  <button
+                    id={page + ""}
+                    onClick={onPageClick}
+                    className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold hover:opacity-70
+                     ${page === nowPage && "opacity-30"} `}
+                  >
+                    {page}
+                  </button>
+                ))}
+              <button
+                id="next"
+                onClick={onPageClick}
+                className="w-[70px] h-[30px] flex justify-center items-center"
+              >
+                <i className="fa-solid fa-circle-right text-[30px]"></i>
+              </button>
+            </div>
+          </Container>
+        </>
+      )}
     </>
   );
 }

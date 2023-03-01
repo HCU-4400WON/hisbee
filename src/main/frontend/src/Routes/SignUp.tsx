@@ -222,7 +222,14 @@ function SignUp() {
                 {/* 랜덤 생성기 있으면 좋을 듯 */}
                 <InfoInput
                   onKeyPress={onKeyPress}
-                  {...register("nickname", { required: "필수 항목입니다." })}
+                  {...register("nickname", {
+                    required: "필수 항목입니다.",
+                    maxLength: {
+                      value: 10,
+                      message: "10자 이하만 가능합니다",
+                    },
+                  })}
+                  placeholder="10자 내외"
                   className="w-full"
                 />
                 <AnimatePresence>

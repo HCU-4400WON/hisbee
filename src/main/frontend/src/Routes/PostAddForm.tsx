@@ -1,17 +1,19 @@
 import { useMutation } from "@tanstack/react-query";
 import { createMentoring, createProject, createStudy, IPost } from "api";
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { isLoginModalState, isLoginState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
+import "./date.css";
 
 const StyledUl = tw.ul`
 flex
-
 
 `;
 
@@ -21,18 +23,22 @@ const Styledli = tw.li`
 `;
 
 const StyledInput = tw.input`
+
 mr-[10px]
+
 `;
+//accent-gray-500
 
 const StyledInputName = tw.label`
 mr-[20px]
 `;
 const StyledInputNumber = tw.input`
-  w-[30px]
-  border-b-2
-  border-gray-300
-  mx-[20px]
-  text-center
+w-[40px]
+border-b-2
+border-gray-300
+mx-[20px]
+text-center
+
 
 
 `;
@@ -180,6 +186,9 @@ function PostAddForm() {
     },
   });
 
+  const setIsLogin = useSetRecoilState(isLoginState);
+  const setIsLoginModal = useSetRecoilState(isLoginModalState);
+
   const navigate = useNavigate();
   const [cat, setCat] = useState("");
 
@@ -193,8 +202,14 @@ function PostAddForm() {
     (newPost: IStudy) => createStudy(newPost) as any,
 
     {
-      onError: () => {
-        console.log("새로운 스터디 생성이 작동하지 않습니다.");
+      onError: (error) => {
+        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+          alert("로그인이 필요합니다.");
+          setIsLoginModal(true);
+          setIsLogin(false);
+          if (localStorage.getItem("key")) localStorage.removeItem("key");
+          navigate("/");
+        }
       },
     }
   );
@@ -205,8 +220,16 @@ function PostAddForm() {
       (newPost: IMentoring) => createMentoring(newPost) as any,
 
       {
-        onError: () => {
-          console.log("새로운 멘토링 생성이 작동하지 않습니다.");
+        onError: (error) => {
+          if (
+            ((error as AxiosError).response as AxiosResponse).status === 401
+          ) {
+            alert("로그인이 필요합니다.");
+            setIsLoginModal(true);
+            setIsLogin(false);
+            if (localStorage.getItem("key")) localStorage.removeItem("key");
+            navigate("/");
+          }
         },
       }
     );
@@ -217,8 +240,16 @@ function PostAddForm() {
       (newPost: IProject) => createProject(newPost) as any,
 
       {
-        onError: () => {
-          console.log("새로운 프로젝트 생성이 작동하지 않습니다.");
+        onError: (error) => {
+          if (
+            ((error as AxiosError).response as AxiosResponse).status === 401
+          ) {
+            alert("로그인이 필요합니다.");
+            setIsLoginModal(true);
+            setIsLogin(false);
+            if (localStorage.getItem("key")) localStorage.removeItem("key");
+            navigate("/");
+          }
         },
       }
     );
@@ -544,6 +575,7 @@ function PostAddForm() {
                     required: "필수 항목입니다.",
                   })}
                   type="date"
+                  className=" px-[10px]"
                 />
                 <StyledSpan>~</StyledSpan>
                 <input
@@ -551,6 +583,7 @@ function PostAddForm() {
                     required: "필수 항목입니다.",
                   })}
                   type="date"
+                  className=" px-[10px]"
                 />
                 {/* </div> */}
                 <AnimatePresence>
@@ -580,10 +613,12 @@ function PostAddForm() {
               })}
               type="date"
             /> */}
-                <span>{formState.defaultValues?.postStart}</span>
+                <span className=" font-medium">
+                  {formState.defaultValues?.postStart}
+                </span>
                 <StyledSpan>~</StyledSpan>
                 <input
-                  className="w-[150px] "
+                  className="w-[150px]  px-[10px]"
                   {...register("postEnd", {
                     required: "필수 항목입니다.",
                   })}
@@ -610,12 +645,14 @@ function PostAddForm() {
               <FieldBox>
                 <StyledFieldTitle htmlFor="contact">연락 수단</StyledFieldTitle>
                 <input
-                  className="bg-[#eeeeee] px-[10px]"
+                  className="border-b-2 border-black py-[5px] px-[10px] w-[270px] focus:outline-0"
                   id="contact"
                   type="text"
                   {...register("contact", {
                     required: "필수 항목입니다.",
                   })}
+                  placeholder="ex) 전화 번호 , 이메일 , 카톡 아이디 등"
+                  maxLength={30}
                 />
 
                 <AnimatePresence>
@@ -690,10 +727,16 @@ function PostAddForm() {
                   value: 3,
                   message: "제목이 너무 짧습니다.",
                 },
+                maxLength: {
+                  value: 30,
+                  message: "제목이 너무 깁니다.",
+                },
               })}
               id="title"
               type="text"
-              className="w-full bg-[#eeeeee] h-[40px] px-[10px]"
+              className="w-full bg-[#eeeeee] h-[40px] px-[10px] "
+              placeholder="3~30글자 제한 (짧은 제목 권장)"
+              maxLength={30}
             />
             <AnimatePresence>
               {(formState.errors.title?.message as string) && (
@@ -722,7 +765,8 @@ function PostAddForm() {
                 },
               })}
               id="content"
-              className="w-full bg-[#eeeeee] h-[345px] px-[10px] py-[10px]"
+              className="w-full bg-[#eeeeee] h-[345px] px-[10px] py-[10px] "
+              placeholder="자유롭게 작성 해주세요 !"
             />
             <AnimatePresence>
               {(formState.errors.content?.message as string) && (

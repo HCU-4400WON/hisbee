@@ -8,7 +8,7 @@ import { Navigate, useLocation, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 const Container = tw.div`
 
@@ -131,6 +131,24 @@ bg-[#eeeeee]
 rounded-full
 `;
 
+const ValidationVariant = {
+  hidden: {
+    y: -10,
+    color: "red",
+    opacity: 0,
+  },
+
+  showing: {
+    y: 0,
+    opacity: 1,
+  },
+
+  exit: {
+    y: 10,
+    opacity: 0,
+  },
+};
+
 function SignUpOptional() {
   const LayoutVariant = {
     hidden: {
@@ -160,7 +178,7 @@ function SignUpOptional() {
   };
   const { register, handleSubmit, formState } = useForm();
 
-  const [positionId, setPositionId] = useState("");
+  const [positionId, setPositionId] = useState("일반");
   const onClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setPositionId(event.currentTarget.id);
   };
@@ -395,11 +413,12 @@ function SignUpOptional() {
             </FlexRequiredBox>
 
             <IntroduceBox>
-              <Info className="my-[25px]">자기소개</Info>
+              <Info className="mt-[40px]">자기소개</Info>
               <IntroduceArea
                 className="p-[20px]"
                 {...register("bio")}
                 placeholder="자유롭게 작성해주세요!"
+                maxLength={100}
               />
             </IntroduceBox>
 
@@ -410,6 +429,7 @@ function SignUpOptional() {
                   onKeyPress={onKeyPress}
                   {...register("club1")}
                   placeholder="선택 사항입니다"
+                  maxLength={20}
                 />
               </InfoBox>
               <InfoBox>
@@ -418,17 +438,40 @@ function SignUpOptional() {
                   onKeyPress={onKeyPress}
                   {...register("club2")}
                   placeholder="최대 2개 작성 가능합니다"
+                  maxLength={20}
                 />
               </InfoBox>
             </FlexRowBox>
             <FlexRowBox className="justify-between">
-              <InfoBox>
-                <Info className="my-[25px]">연락수단</Info>
+              <InfoBox className=" h-[150px]">
+                <Info className=" flex items-center my-[25px]">
+                  <p>연락수단</p>
+                </Info>
                 <InfoInput
                   onKeyPress={onKeyPress}
-                  {...register("contact")}
+                  {...register("contact", {
+                    required: "필수 사항입니다.",
+                    maxLength: {
+                      value: 30,
+                      message: "너무 깁니다.",
+                    },
+                  })}
                   placeholder="ex) email or phone"
                 />
+
+                <AnimatePresence>
+                  {(formState.errors.contact?.message as string) && (
+                    <motion.div
+                      variants={ValidationVariant}
+                      className=" text-[13px] mt-2"
+                      initial="hidden"
+                      animate="showing"
+                      exit="exit"
+                    >
+                      * {formState.errors.contact?.message as string}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </InfoBox>
               <InfoBox>
                 <Info className="my-[25px]">외부링크</Info>
@@ -439,6 +482,7 @@ function SignUpOptional() {
                     value={externalLink}
                     onChange={onChange}
                     placeholder="ex) github or Linked-In"
+                    maxLength={30}
                   />
                   <i
                     onClick={onClickPlus}

@@ -1,14 +1,29 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { IUser, memberDelete, memberProfile, memberUpdate, posts } from "api";
-import { isDeleteModalState, isLoginState } from "components/atom";
+import {
+  addLikePost,
+  deleteLikePost,
+  IPost,
+  IUser,
+  memberDelete,
+  memberProfile,
+  memberUpdate,
+  posts,
+} from "api";
+import { AxiosError, AxiosResponse } from "axios";
+import {
+  isDeleteModalState,
+  isLoginModalState,
+  isLoginState,
+} from "components/atom";
 import DeletePopup from "components/DeleteModal";
 import LoadingAnimation from "components/LoadingAnimation";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useLocation } from "react-router";
+import { useLocation, useMatch } from "react-router";
 import { Navigate, useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 
@@ -27,12 +42,13 @@ items-start
 const SidebarTitle = tw.p`
 py-[40px] 
 text-[33px] 
-font-medium
+font-semibold
 `;
 
 const SidebarItemText = tw.button`
 text-[17px]
 mb-[20px]
+font-semibold
 hover:scale-110
 hover:text-gray-400
 `;
@@ -137,7 +153,7 @@ justify-center
 const PostCategoryLabel = tw.label`
 `;
 
-const HeartIcon = tw.i`
+const HeartIcon = tw(motion.i)`
 `;
 
 const PostMainPart = tw.div`
@@ -186,6 +202,24 @@ text-gray-500
 font-medium
 `;
 
+const ValidationVariant = {
+  hidden: {
+    y: -10,
+    color: "red",
+    opacity: 0,
+  },
+
+  showing: {
+    y: 0,
+    opacity: 1,
+  },
+
+  exit: {
+    y: 10,
+    opacity: 0,
+  },
+};
+
 function Profile() {
   const location = useLocation();
   console.log(location);
@@ -196,6 +230,17 @@ function Profile() {
     refetch,
   } = useQuery<IUser>(["User"], memberProfile, {
     onSuccess: (data) => {
+      console.log("Fetch!!!");
+      setValue("nickname", data.nickname);
+      setValue("department", data.department);
+      setValue("position", data.position);
+      setValue("contact", data.contact);
+      setValue("club1", data.club?.at(0));
+      setValue("club2", data.club?.at(1));
+      setValue("bio", data.bio);
+
+      // setValue("imageURl" , data)
+
       // 성공시 호출
       if (!location.state) {
         setLinks([...(data?.externalLinks as string[])]);
@@ -205,13 +250,23 @@ function Profile() {
         console.log("!");
       }
     },
+    onError: (error) => {
+      if (((error as AxiosError).response as AxiosResponse).status === 401) {
+        alert("로그인이 필요합니다.");
+        setIsLoginModal(true);
+        setIsLogin(false);
+        if (localStorage.getItem("key")) localStorage.removeItem("key");
+        navigate("/");
+      }
+    },
   });
 
   const [nowModifying, setNowModifying] = useState(false);
 
   const navigate = useNavigate();
 
-  const onClick = (event: any) => {
+  const onClick = (event: React.FormEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     if (event.currentTarget.id === "modify") {
       setNowModifying((prev) => !prev);
     } else if (event.currentTarget.id === "delete") {
@@ -233,7 +288,7 @@ function Profile() {
       }
     );
 
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formState, setValue } = useForm();
 
   const [Links, setLinks] = useState<string[]>([]);
   const [externalLink, setExternalLink] = useState<string>("");
@@ -250,6 +305,7 @@ function Profile() {
   };
 
   interface Idata {
+    nickname: string;
     department: string;
     position: string;
     grade: string;
@@ -260,10 +316,12 @@ function Profile() {
   }
 
   const onValid = async (newData: Idata) => {
+    console.log(formState.errors);
     console.log(newData);
+    console.log("de");
 
     const newUser = {
-      // nickname: "abcd",
+      nickname: newData.nickname,
       pictureUrl: "/img/user.png",
       isPublic: true,
       department: newData.department,
@@ -276,6 +334,7 @@ function Profile() {
     };
 
     await memberUpdate(newUser);
+    setNowModifying(false);
     refetch();
   };
 
@@ -307,6 +366,59 @@ function Profile() {
   };
 
   const [isDeleteModal, setIsDeleteModal] = useRecoilState(isDeleteModalState);
+
+  const { mutate: likeAddMutate, isLoading: isLikeAddLoading } = useMutation(
+    ["likeAddMutate" as string],
+    (postId: number) => addLikePost(postId) as any,
+    {
+      onSuccess: () => {
+        refetch();
+      },
+      onError: (error) => {
+        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+          alert("로그인이 필요합니다.");
+          setIsLoginModal(true);
+          setIsLogin(false);
+          if (localStorage.getItem("key")) localStorage.removeItem("key");
+          navigate("/");
+        }
+      },
+    }
+  );
+
+  const { mutate: likeDeleteMutate, isLoading: isLikeDeleteLoading } =
+    useMutation(
+      ["likeDeleteMutate" as string],
+      (postId: number) => deleteLikePost(postId) as any,
+      {
+        onSuccess: () => {
+          refetch();
+        },
+        onError: (error) => {
+          if (
+            ((error as AxiosError).response as AxiosResponse).status === 401
+          ) {
+            alert("로그인이 필요합니다.");
+            setIsLoginModal(true);
+            setIsLogin(false);
+            if (localStorage.getItem("key")) localStorage.removeItem("key");
+            navigate("/");
+          }
+        },
+      }
+    );
+
+  const onHeartClick = async (postId: number, hasLiked: boolean) => {
+    if (hasLiked) {
+      likeDeleteMutate(postId);
+    } else {
+      likeAddMutate(postId);
+    }
+  };
+
+  const matchProfile = useMatch("/profile");
+  const setIsLogin = useSetRecoilState(isLoginState);
+  const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
   return (
     <>
@@ -342,9 +454,49 @@ function Profile() {
                     src="img/user.png"
                     className="w-[100%] h-[120px] rounded-full"
                   />
-                  <p className="pt-[20px] text-[18px] font-medium">
-                    {data?.nickname}
-                  </p>
+                  {nowModifying ? (
+                    <div className="flex flex-col justify-start items-center">
+                      <input
+                        type="text"
+                        placeholder="닉네임"
+                        {...register("nickname", {
+                          required: "필수 사항 입니다",
+                          maxLength: {
+                            value: 10,
+                            message: "10자 이하만 가능합니다",
+                          },
+                        })}
+                        className="mt-[20px] text-[17px] px-[10px] w-[150px] "
+                      />
+
+                      <AnimatePresence>
+                        {(formState.errors.nickname?.message as string) && (
+                          <motion.span
+                            variants={ValidationVariant}
+                            className="text-xs my-auto mt-2"
+                            initial="hidden"
+                            animate="showing"
+                            exit="exit"
+                          >
+                            * {formState.errors.nickname?.message as string}
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center w-[150px] mt-[20px]">
+                      {/* <span className="flex items-center ">
+                        <i className="fa-solid fa-user text-gray-600  w-[18px] mr-[2px]"></i>
+                        <p className="mr-[10px] text-gray-500 font-semibold">
+                          닉네임
+                        </p>
+                      </span> */}
+
+                      <span className=" text-[17px] font-semibold">
+                        {data?.nickname}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="w-full pl-[70px] text-[17px] flex flex-col justify-between">
                   <ProfileInfoRow>
@@ -354,7 +506,6 @@ function Profile() {
                     </ProfileInfoBox>
                     {nowModifying ? (
                       <select
-                        defaultValue={data?.department}
                         className="border-2 h-[35px] px-2 rounded-lg"
                         {...register("department")}
                       >
@@ -386,7 +537,6 @@ function Profile() {
                     </ProfileInfoBox>
                     {nowModifying ? (
                       <select
-                        defaultValue={data?.position}
                         className="border-2 h-[35px] px-2 rounded-lg"
                         {...register("position")}
                       >
@@ -406,7 +556,6 @@ function Profile() {
                     </ProfileInfoBox>
                     {nowModifying ? (
                       <select
-                        defaultValue={data?.grade}
                         className="border-2 h-[35px] px-2 rounded-lg"
                         {...register("grade")}
                       >
@@ -428,12 +577,33 @@ function Profile() {
                     </ProfileInfoBox>
                     <ProfileInfoContent>
                       {nowModifying ? (
-                        <input
-                          {...register("contact")}
-                          className="border-2 h-[35px] px-2 rounded-lg w-[400px]"
-                          defaultValue={data?.contact}
-                          type="text"
-                        />
+                        <div>
+                          <input
+                            className="border-2 h-[35px] px-2 rounded-lg w-[400px]"
+                            type="text"
+                            {...register("contact", {
+                              required: "필수 사항 입니다",
+                              maxLength: {
+                                value: 30,
+                                message: "너무 깁니다.",
+                              },
+                            })}
+                            placeholder="Ex) 전화 번호 , 이메일 , 카톡 아이디 등"
+                          />
+                          <AnimatePresence>
+                            {(formState.errors.contact?.message as string) && (
+                              <motion.span
+                                variants={ValidationVariant}
+                                className="text-xs ml-3"
+                                initial="hidden"
+                                animate="showing"
+                                exit="exit"
+                              >
+                                * {formState.errors.contact?.message as string}
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
+                        </div>
                       ) : (
                         <ProfileInfoContent>{data?.contact}</ProfileInfoContent>
                       )}
@@ -454,17 +624,17 @@ function Profile() {
                         <input
                           {...register(`club1`)}
                           className="border-2 h-[35px] px-2 mb-[10px] rounded-lg w-[400px]"
-                          defaultValue={data?.club?.at(0)}
                           placeholder="최대 2개"
                           type="text"
+                          maxLength={20}
                         />
 
                         <input
                           {...register(`club2`)}
                           className="border-2 h-[35px] px-2 rounded-lg w-[400px]"
-                          defaultValue={data?.club?.at(1)}
                           placeholder="최대 2개"
                           type="text"
+                          maxLength={20}
                         />
                       </div>
                     ) : (
@@ -510,6 +680,7 @@ function Profile() {
                             value={externalLink}
                             onChange={onChange}
                             placeholder="ex) github or Linked-In"
+                            maxLength={30}
                           />
                           <i
                             onClick={onClickPlus}
@@ -558,8 +729,9 @@ function Profile() {
                       {nowModifying ? (
                         <textarea
                           {...register("bio")}
-                          className="border-2 px-2 rounded-lg w-[400px] h-[100px]"
-                          defaultValue={data?.bio}
+                          className="border-2 p-2 rounded-lg w-[400px] h-[100px]"
+                          placeholder="자유롭게 작성 해주세요 !"
+                          maxLength={150}
                         ></textarea>
                       ) : (
                         <ProfileInfoContent>{data?.bio}</ProfileInfoContent>
@@ -571,9 +743,7 @@ function Profile() {
                       (nowModifying ? (
                         <>
                           <button
-                            type="button"
                             id="modify"
-                            onClick={onClick}
                             className="bg-[#fff] w-[120px] h-[32px] border-2 shadow  rounded-full float-right text-gray-500 border-gray-400"
                           >
                             제출하기
@@ -587,13 +757,15 @@ function Profile() {
                           </button>
                         </>
                       ) : (
-                        <button
-                          id="modify"
-                          onClick={onClick}
-                          className="bg-[#fff] w-[120px] h-[32px] border shadow  rounded-full float-right"
-                        >
-                          수정하기
-                        </button>
+                        <>
+                          <button
+                            id="modify"
+                            onClick={onClick}
+                            className="bg-[#fff] w-[120px] h-[32px] border-2 shadow  rounded-full float-right text-gray-500 border-gray-400"
+                          >
+                            수정하기
+                          </button>
+                        </>
                       ))}
                   </div>
                 </div>
@@ -605,8 +777,9 @@ function Profile() {
               </span>
 
               <PostGrid id="myPost">
-                {posts.slice(0, 4).map((post, index) => (
+                {(data?.posts as IPost[]).map((post, index) => (
                   <PostItem
+                    // initial={{ scale: 1 }}
                     whileHover={{ scale: 1.08 }}
                     key={index}
                     style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
@@ -637,139 +810,157 @@ function Profile() {
                             : "멘토링"}
                         </PostCategoryLabel>
                       </PostCategorySpan>
-                      <HeartIcon className="fa-regular fa-heart"></HeartIcon>
+
+                      <div>
+                        <HeartIcon
+                          whileHover={{ scale: [1, 1.3, 1, 1.3, 1] }}
+                          whileTap={{ y: [0, -30, 0] }}
+                          onClick={() =>
+                            onHeartClick(post.id, post.hasLiked as boolean)
+                          }
+                          className={`${
+                            post.hasLiked
+                              ? "fa-solid fa-heart text-red-600"
+                              : "fa-regular fa-heart"
+                          }`}
+                        >
+                          {/* {post.likenum} */}
+                        </HeartIcon>
+                        &nbsp; {post?.nliked}
+                      </div>
                       {/* <svg
-                  width="15px"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                >
-                  <path
-                    stroke="1"
-                    d="M244 84L255.1 96L267.1 84.02C300.6 51.37 347 36.51 392.6 44.1C461.5 55.58 512 115.2 512 185.1V190.9C512 232.4 494.8 272.1 464.4 300.4L283.7 469.1C276.2 476.1 266.3 480 256 480C245.7 480 235.8 476.1 228.3 469.1L47.59 300.4C17.23 272.1 0 232.4 0 190.9V185.1C0 115.2 50.52 55.58 119.4 44.1C164.1 36.51 211.4 51.37 244 84C243.1 84 244 84.01 244 84L244 84zM255.1 163.9L210.1 117.1C188.4 96.28 157.6 86.4 127.3 91.44C81.55 99.07 48 138.7 48 185.1V190.9C48 219.1 59.71 246.1 80.34 265.3L256 429.3L431.7 265.3C452.3 246.1 464 219.1 464 190.9V185.1C464 138.7 430.4 99.07 384.7 91.44C354.4 86.4 323.6 96.28 301.9 117.1L255.1 163.9z"
-                  />
-                </svg> */}
+                width="15px"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+              >
+                <path
+                  stroke="1"
+                  d="M244 84L255.1 96L267.1 84.02C300.6 51.37 347 36.51 392.6 44.1C461.5 55.58 512 115.2 512 185.1V190.9C512 232.4 494.8 272.1 464.4 300.4L283.7 469.1C276.2 476.1 266.3 480 256 480C245.7 480 235.8 476.1 228.3 469.1L47.59 300.4C17.23 272.1 0 232.4 0 190.9V185.1C0 115.2 50.52 55.58 119.4 44.1C164.1 36.51 211.4 51.37 244 84C243.1 84 244 84.01 244 84L244 84zM255.1 163.9L210.1 117.1C188.4 96.28 157.6 86.4 127.3 91.44C81.55 99.07 48 138.7 48 185.1V190.9C48 219.1 59.71 246.1 80.34 265.3L256 429.3L431.7 265.3C452.3 246.1 464 219.1 464 190.9V185.1C464 138.7 430.4 99.07 384.7 91.44C354.4 86.4 323.6 96.28 301.9 117.1L255.1 163.9z"
+                />
+              </svg> */}
                       {/* <p className="mx-5 my-1 text-sm font-bold">개발자</p>
-         <p className="text-sm text-blue-500">{post.total}명 모집</p> */}
+       <p className="text-sm text-blue-500">{post.total}명 모집</p> */}
                     </PostContentFirstRow>
+                    <Link to={`/post/${post.id}`}>
+                      <PostMainPart>
+                        {/* secondRow */}
+                        <PostTitle className="text-lg font-semibold">
+                          {post.title.length > 16
+                            ? post.title.slice(0, 16) + " ..."
+                            : post.title}
+                        </PostTitle>
 
-                    <PostMainPart>
-                      {/* secondRow */}
-                      <PostTitle className="text-lg font-semibold">
-                        {post.title.length > 20
-                          ? post.title.slice(0, 20) + "..."
-                          : post.title}
-                      </PostTitle>
-
-                      {/* ThirdRow */}
-                      <PostDate>
-                        {(post.projectEnd.getTime() -
-                          post.projectStart.getTime()) /
-                          (1000 * 24 * 60 * 60) >=
-                        365 ? (
-                          <PostDatePlan>
-                            {Math.floor(
-                              (post.projectEnd.getTime() -
-                                post.projectStart.getTime()) /
-                                (1000 * 24 * 60 * 60 * 365)
-                            )}
-                            {""}년 플랜
-                          </PostDatePlan>
-                        ) : (post.projectEnd.getTime() -
-                            post.projectStart.getTime()) /
+                        {/* ThirdRow */}
+                        <PostDate>
+                          {(new Date(post.projectEnd).getTime() -
+                            new Date(post.projectStart).getTime()) /
                             (1000 * 24 * 60 * 60) >=
-                          30 ? (
-                          <PostDatePlan>
-                            {Math.floor(
-                              (post.projectEnd.getTime() -
-                                post.projectStart.getTime()) /
-                                (1000 * 24 * 60 * 60 * 30)
-                            )}
-                            {""}달 플랜
-                          </PostDatePlan>
-                        ) : (post.projectEnd.getTime() -
-                            post.projectStart.getTime()) /
-                            (1000 * 24 * 60 * 60) >=
-                          7 ? (
-                          <PostDatePlan>
-                            {Math.floor(
-                              (post.projectEnd.getTime() -
-                                post.projectStart.getTime()) /
-                                (1000 * 24 * 60 * 60 * 7)
-                            )}
-                            {""}주 플랜
-                          </PostDatePlan>
-                        ) : (
-                          <PostDatePlan>
-                            {Math.floor(
-                              (post.projectEnd.getTime() -
-                                post.projectStart.getTime()) /
-                                (1000 * 24 * 60 * 60)
-                            )}
-                            {""}일 플랜
-                          </PostDatePlan>
-                        )}
-                        <p className="mx-[7px] pb-0.5">|</p>
-                        <PostDateStart>
-                          {" "}
-                          {post.projectStart.getMonth()}월{" "}
-                          {post.projectStart.getDate()}일 시작
-                        </PostDateStart>
-                      </PostDate>
+                          365 ? (
+                            <PostDatePlan>
+                              {Math.floor(
+                                (new Date(post.projectEnd).getTime() -
+                                  new Date(post.projectStart).getTime()) /
+                                  (1000 * 24 * 60 * 60 * 365)
+                              )}
+                              {""}년 플랜
+                            </PostDatePlan>
+                          ) : (new Date(post.projectEnd).getTime() -
+                              new Date(post.projectStart).getTime()) /
+                              (1000 * 24 * 60 * 60) >=
+                            30 ? (
+                            <PostDatePlan>
+                              {Math.floor(
+                                (new Date(post.projectEnd).getTime() -
+                                  new Date(post.projectStart).getTime()) /
+                                  (1000 * 24 * 60 * 60 * 30)
+                              )}
+                              {""}달 플랜
+                            </PostDatePlan>
+                          ) : (new Date(post.projectEnd).getTime() -
+                              new Date(post.projectStart).getTime()) /
+                              (1000 * 24 * 60 * 60) >=
+                            7 ? (
+                            <PostDatePlan>
+                              {Math.floor(
+                                (new Date(post.projectEnd).getTime() -
+                                  new Date(post.projectStart).getTime()) /
+                                  (1000 * 24 * 60 * 60 * 7)
+                              )}
+                              {""}주 플랜
+                            </PostDatePlan>
+                          ) : (
+                            <PostDatePlan>
+                              {Math.floor(
+                                (new Date(post.projectEnd).getTime() -
+                                  new Date(post.projectStart).getTime()) /
+                                  (1000 * 24 * 60 * 60)
+                              )}
+                              {""}일 플랜
+                            </PostDatePlan>
+                          )}
+                          <p className="mx-[7px] pb-0.5">|</p>
+                          <PostDateStart>
+                            {" "}
+                            {new Date(post.projectStart).getMonth()}월{" "}
+                            {new Date(post.projectStart).getDate()}일 시작
+                          </PostDateStart>
+                        </PostDate>
 
-                      {/* lastRow */}
-                      <PostPerson>
-                        <PostPersonTotal>
-                          {post.dtype === "P"
-                            ? post.maxDesigner +
-                              post.maxDeveloper +
-                              post.maxPlanner
-                            : post.dtype === "S"
-                            ? post.maxMember
-                            : post.maxMentee + post.maxMentor}
-                          명 모집
-                        </PostPersonTotal>
+                        {/* lastRow */}
+                        <PostPerson>
+                          <PostPersonTotal>
+                            {post.dtype === "P"
+                              ? post.maxDesigner +
+                                post.maxDeveloper +
+                                post.maxPlanner
+                              : post.dtype === "S"
+                              ? post.maxMember
+                              : post.maxMentee + post.maxMentor}
+                            명 모집
+                          </PostPersonTotal>
 
-                        {post.dtype === "P" ? (
-                          <>
-                            {post.maxDeveloper !== 0 && (
-                              <PostPersonPosition>
-                                개발자 {post.maxDeveloper}명
-                              </PostPersonPosition>
-                            )}
-                            {post.maxPlanner !== 0 && (
-                              <PostPersonPosition>
-                                기획자 {post.maxPlanner}명
-                              </PostPersonPosition>
-                            )}
+                          {post.dtype === "P" ? (
+                            <>
+                              {post.maxDeveloper !== 0 && (
+                                <PostPersonPosition>
+                                  개발자 {post.maxDeveloper}명
+                                </PostPersonPosition>
+                              )}
+                              {post.maxPlanner !== 0 && (
+                                <PostPersonPosition>
+                                  기획자 {post.maxPlanner}명
+                                </PostPersonPosition>
+                              )}
 
-                            {post.maxDesigner !== 0 && (
+                              {post.maxDesigner !== 0 && (
+                                <PostPersonPosition>
+                                  디자이너 {post.maxDesigner}명
+                                </PostPersonPosition>
+                              )}
+                            </>
+                          ) : post.dtype === "S" ? (
+                            post.maxMember !== 0 && (
                               <PostPersonPosition>
-                                디자이너 {post.maxDesigner}명
+                                스터디원 {post.maxMember}명
                               </PostPersonPosition>
-                            )}
-                          </>
-                        ) : post.dtype === "S" ? (
-                          post.maxMember !== 0 && (
-                            <PostPersonPosition>
-                              스터디원 {post.maxMember}명
-                            </PostPersonPosition>
-                          )
-                        ) : (
-                          <>
-                            {post.maxMentor !== 0 && (
-                              <PostPersonPosition>
-                                멘토 {post.maxMentor}명
-                              </PostPersonPosition>
-                            )}
-                            {post.maxMentee !== 0 && (
-                              <PostPersonPosition>
-                                멘티 {post.maxMentee}명
-                              </PostPersonPosition>
-                            )}
-                          </>
-                        )}
-                      </PostPerson>
-                    </PostMainPart>
+                            )
+                          ) : (
+                            <>
+                              {post.maxMentor !== 0 && (
+                                <PostPersonPosition>
+                                  멘토 {post.maxMentor}명
+                                </PostPersonPosition>
+                              )}
+                              {post.maxMentee !== 0 && (
+                                <PostPersonPosition>
+                                  멘티 {post.maxMentee}명
+                                </PostPersonPosition>
+                              )}
+                            </>
+                          )}
+                        </PostPerson>
+                      </PostMainPart>
+                    </Link>
                   </PostItem>
                 ))}
               </PostGrid>
@@ -780,8 +971,9 @@ function Profile() {
               </span>
 
               <PostGrid id="zzim">
-                {posts.slice(3, 6).map((post, index) => (
+                {data?.likes?.map((post, index) => (
                   <PostItem
+                    // initial={{ scale: 1 }}
                     whileHover={{ scale: 1.08 }}
                     key={index}
                     style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
@@ -812,139 +1004,156 @@ function Profile() {
                             : "멘토링"}
                         </PostCategoryLabel>
                       </PostCategorySpan>
-                      <HeartIcon className="fa-regular fa-heart"></HeartIcon>
+                      <div>
+                        <HeartIcon
+                          whileHover={{ scale: [1, 1.3, 1, 1.3, 1] }}
+                          whileTap={{ y: [0, -30, 0] }}
+                          onClick={() =>
+                            onHeartClick(post.id, post.hasLiked as boolean)
+                          }
+                          className={`${
+                            post.hasLiked
+                              ? "fa-solid fa-heart text-red-600"
+                              : "fa-regular fa-heart"
+                          }`}
+                        >
+                          {/* {post.likenum} */}
+                        </HeartIcon>
+                        &nbsp; {post?.nliked}
+                      </div>
                       {/* <svg
-                  width="15px"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                >
-                  <path
-                    stroke="1"
-                    d="M244 84L255.1 96L267.1 84.02C300.6 51.37 347 36.51 392.6 44.1C461.5 55.58 512 115.2 512 185.1V190.9C512 232.4 494.8 272.1 464.4 300.4L283.7 469.1C276.2 476.1 266.3 480 256 480C245.7 480 235.8 476.1 228.3 469.1L47.59 300.4C17.23 272.1 0 232.4 0 190.9V185.1C0 115.2 50.52 55.58 119.4 44.1C164.1 36.51 211.4 51.37 244 84C243.1 84 244 84.01 244 84L244 84zM255.1 163.9L210.1 117.1C188.4 96.28 157.6 86.4 127.3 91.44C81.55 99.07 48 138.7 48 185.1V190.9C48 219.1 59.71 246.1 80.34 265.3L256 429.3L431.7 265.3C452.3 246.1 464 219.1 464 190.9V185.1C464 138.7 430.4 99.07 384.7 91.44C354.4 86.4 323.6 96.28 301.9 117.1L255.1 163.9z"
-                  />
-                </svg> */}
+                width="15px"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 512 512"
+              >
+                <path
+                  stroke="1"
+                  d="M244 84L255.1 96L267.1 84.02C300.6 51.37 347 36.51 392.6 44.1C461.5 55.58 512 115.2 512 185.1V190.9C512 232.4 494.8 272.1 464.4 300.4L283.7 469.1C276.2 476.1 266.3 480 256 480C245.7 480 235.8 476.1 228.3 469.1L47.59 300.4C17.23 272.1 0 232.4 0 190.9V185.1C0 115.2 50.52 55.58 119.4 44.1C164.1 36.51 211.4 51.37 244 84C243.1 84 244 84.01 244 84L244 84zM255.1 163.9L210.1 117.1C188.4 96.28 157.6 86.4 127.3 91.44C81.55 99.07 48 138.7 48 185.1V190.9C48 219.1 59.71 246.1 80.34 265.3L256 429.3L431.7 265.3C452.3 246.1 464 219.1 464 190.9V185.1C464 138.7 430.4 99.07 384.7 91.44C354.4 86.4 323.6 96.28 301.9 117.1L255.1 163.9z"
+                />
+              </svg> */}
                       {/* <p className="mx-5 my-1 text-sm font-bold">개발자</p>
-         <p className="text-sm text-blue-500">{post.total}명 모집</p> */}
+       <p className="text-sm text-blue-500">{post.total}명 모집</p> */}
                     </PostContentFirstRow>
+                    <Link to={`/post/${post.id}`}>
+                      <PostMainPart>
+                        {/* secondRow */}
+                        <PostTitle className="text-lg font-semibold">
+                          {post.title.length > 16
+                            ? post.title.slice(0, 16) + " ..."
+                            : post.title}
+                        </PostTitle>
 
-                    <PostMainPart>
-                      {/* secondRow */}
-                      <PostTitle className="text-lg font-semibold">
-                        {post.title.length > 20
-                          ? post.title.slice(0, 20) + "..."
-                          : post.title}
-                      </PostTitle>
-
-                      {/* ThirdRow */}
-                      <PostDate>
-                        {(post.projectEnd.getTime() -
-                          post.projectStart.getTime()) /
-                          (1000 * 24 * 60 * 60) >=
-                        365 ? (
-                          <PostDatePlan>
-                            {Math.floor(
-                              (post.projectEnd.getTime() -
-                                post.projectStart.getTime()) /
-                                (1000 * 24 * 60 * 60 * 365)
-                            )}
-                            {""}년 플랜
-                          </PostDatePlan>
-                        ) : (post.projectEnd.getTime() -
-                            post.projectStart.getTime()) /
+                        {/* ThirdRow */}
+                        <PostDate>
+                          {(new Date(post.projectEnd).getTime() -
+                            new Date(post.projectStart).getTime()) /
                             (1000 * 24 * 60 * 60) >=
-                          30 ? (
-                          <PostDatePlan>
-                            {Math.floor(
-                              (post.projectEnd.getTime() -
-                                post.projectStart.getTime()) /
-                                (1000 * 24 * 60 * 60 * 30)
-                            )}
-                            {""}달 플랜
-                          </PostDatePlan>
-                        ) : (post.projectEnd.getTime() -
-                            post.projectStart.getTime()) /
-                            (1000 * 24 * 60 * 60) >=
-                          7 ? (
-                          <PostDatePlan>
-                            {Math.floor(
-                              (post.projectEnd.getTime() -
-                                post.projectStart.getTime()) /
-                                (1000 * 24 * 60 * 60 * 7)
-                            )}
-                            {""}주 플랜
-                          </PostDatePlan>
-                        ) : (
-                          <PostDatePlan>
-                            {Math.floor(
-                              (post.projectEnd.getTime() -
-                                post.projectStart.getTime()) /
-                                (1000 * 24 * 60 * 60)
-                            )}
-                            {""}일 플랜
-                          </PostDatePlan>
-                        )}
-                        <p className="mx-[7px] pb-0.5">|</p>
-                        <PostDateStart>
-                          {" "}
-                          {post.projectStart.getMonth()}월{" "}
-                          {post.projectStart.getDate()}일 시작
-                        </PostDateStart>
-                      </PostDate>
+                          365 ? (
+                            <PostDatePlan>
+                              {Math.floor(
+                                (new Date(post.projectEnd).getTime() -
+                                  new Date(post.projectStart).getTime()) /
+                                  (1000 * 24 * 60 * 60 * 365)
+                              )}
+                              {""}년 플랜
+                            </PostDatePlan>
+                          ) : (new Date(post.projectEnd).getTime() -
+                              new Date(post.projectStart).getTime()) /
+                              (1000 * 24 * 60 * 60) >=
+                            30 ? (
+                            <PostDatePlan>
+                              {Math.floor(
+                                (new Date(post.projectEnd).getTime() -
+                                  new Date(post.projectStart).getTime()) /
+                                  (1000 * 24 * 60 * 60 * 30)
+                              )}
+                              {""}달 플랜
+                            </PostDatePlan>
+                          ) : (new Date(post.projectEnd).getTime() -
+                              new Date(post.projectStart).getTime()) /
+                              (1000 * 24 * 60 * 60) >=
+                            7 ? (
+                            <PostDatePlan>
+                              {Math.floor(
+                                (new Date(post.projectEnd).getTime() -
+                                  new Date(post.projectStart).getTime()) /
+                                  (1000 * 24 * 60 * 60 * 7)
+                              )}
+                              {""}주 플랜
+                            </PostDatePlan>
+                          ) : (
+                            <PostDatePlan>
+                              {Math.floor(
+                                (new Date(post.projectEnd).getTime() -
+                                  new Date(post.projectStart).getTime()) /
+                                  (1000 * 24 * 60 * 60)
+                              )}
+                              {""}일 플랜
+                            </PostDatePlan>
+                          )}
+                          <p className="mx-[7px] pb-0.5">|</p>
+                          <PostDateStart>
+                            {" "}
+                            {new Date(post.projectStart).getMonth()}월{" "}
+                            {new Date(post.projectStart).getDate()}일 시작
+                          </PostDateStart>
+                        </PostDate>
 
-                      {/* lastRow */}
-                      <PostPerson>
-                        <PostPersonTotal>
-                          {post.dtype === "P"
-                            ? post.maxDesigner +
-                              post.maxDeveloper +
-                              post.maxPlanner
-                            : post.dtype === "S"
-                            ? post.maxMember
-                            : post.maxMentee + post.maxMentor}
-                          명 모집
-                        </PostPersonTotal>
+                        {/* lastRow */}
+                        <PostPerson>
+                          <PostPersonTotal>
+                            {post.dtype === "P"
+                              ? post.maxDesigner +
+                                post.maxDeveloper +
+                                post.maxPlanner
+                              : post.dtype === "S"
+                              ? post.maxMember
+                              : post.maxMentee + post.maxMentor}
+                            명 모집
+                          </PostPersonTotal>
 
-                        {post.dtype === "P" ? (
-                          <>
-                            {post.maxDeveloper !== 0 && (
-                              <PostPersonPosition>
-                                개발자 {post.maxDeveloper}명
-                              </PostPersonPosition>
-                            )}
-                            {post.maxPlanner !== 0 && (
-                              <PostPersonPosition>
-                                기획자 {post.maxPlanner}명
-                              </PostPersonPosition>
-                            )}
+                          {post.dtype === "P" ? (
+                            <>
+                              {post.maxDeveloper !== 0 && (
+                                <PostPersonPosition>
+                                  개발자 {post.maxDeveloper}명
+                                </PostPersonPosition>
+                              )}
+                              {post.maxPlanner !== 0 && (
+                                <PostPersonPosition>
+                                  기획자 {post.maxPlanner}명
+                                </PostPersonPosition>
+                              )}
 
-                            {post.maxDesigner !== 0 && (
+                              {post.maxDesigner !== 0 && (
+                                <PostPersonPosition>
+                                  디자이너 {post.maxDesigner}명
+                                </PostPersonPosition>
+                              )}
+                            </>
+                          ) : post.dtype === "S" ? (
+                            post.maxMember !== 0 && (
                               <PostPersonPosition>
-                                디자이너 {post.maxDesigner}명
+                                스터디원 {post.maxMember}명
                               </PostPersonPosition>
-                            )}
-                          </>
-                        ) : post.dtype === "S" ? (
-                          post.maxMember !== 0 && (
-                            <PostPersonPosition>
-                              스터디원 {post.maxMember}명
-                            </PostPersonPosition>
-                          )
-                        ) : (
-                          <>
-                            {post.maxMentor !== 0 && (
-                              <PostPersonPosition>
-                                멘토 {post.maxMentor}명
-                              </PostPersonPosition>
-                            )}
-                            {post.maxMentee !== 0 && (
-                              <PostPersonPosition>
-                                멘티 {post.maxMentee}명
-                              </PostPersonPosition>
-                            )}
-                          </>
-                        )}
-                      </PostPerson>
-                    </PostMainPart>
+                            )
+                          ) : (
+                            <>
+                              {post.maxMentor !== 0 && (
+                                <PostPersonPosition>
+                                  멘토 {post.maxMentor}명
+                                </PostPersonPosition>
+                              )}
+                              {post.maxMentee !== 0 && (
+                                <PostPersonPosition>
+                                  멘티 {post.maxMentee}명
+                                </PostPersonPosition>
+                              )}
+                            </>
+                          )}
+                        </PostPerson>
+                      </PostMainPart>
+                    </Link>
                   </PostItem>
                 ))}
               </PostGrid>
