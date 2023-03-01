@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { EphemeralKeyInfo } from "tls";
-import axios from "axios";
+import axios, { Axios, AxiosError } from "axios";
+import { useNavigate } from "react-router";
+import { useSetRecoilState } from "recoil";
+import { isLoginState } from "components/atom";
 
 export interface IUser {
   email?: string;
@@ -764,44 +767,32 @@ export const readOnePost = async (id: number) => {
 };
 
 export const createMentoring = async (data: IMentoring) => {
-  try {
-    const TOKEN = localStorage.getItem("key");
-    const response = axios.post("http://localhost:8080/posts", data, {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
-    return response;
-  } catch (error) {
-    console.error(error);
-  }
+  const TOKEN = localStorage.getItem("key");
+  const response = axios.post("http://localhost:8080/posts", data, {
+    headers: { Authorization: `Bearer ${TOKEN}` },
+    withCredentials: true,
+  });
+  return response;
 };
 
 export const createStudy = (data: IStudy) => {
-  try {
-    const TOKEN = localStorage.getItem("key");
-    // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
-    const response = axios.post("http://localhost:8080/posts", data, {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
-    return response;
-  } catch (error) {
-    console.error(error);
-  }
+  const TOKEN = localStorage.getItem("key");
+  // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
+  const response = axios.post("http://localhost:8080/posts", data, {
+    headers: { Authorization: `Bearer ${TOKEN}` },
+    withCredentials: true,
+  });
+  return response;
 };
 
 export const createProject = async (data: IProject) => {
-  try {
-    const TOKEN = localStorage.getItem("key");
-    // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
-    const response = axios.post("http://localhost:8080/posts", data, {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
-    return response;
-  } catch (error) {
-    console.error(error);
-  }
+  const TOKEN = localStorage.getItem("key");
+  // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
+  const response = axios.post("http://localhost:8080/posts", data, {
+    headers: { Authorization: `Bearer ${TOKEN}` },
+    withCredentials: true,
+  });
+  return response;
 };
 
 export const deletePost = (id: number) => {
@@ -874,16 +865,12 @@ export const memberUpdate = (data: IUser) => {
 };
 
 export const memberProfile = async () => {
-  try {
-    const TOKEN = localStorage.getItem("key");
-    const response = await axios.get("http://localhost:8080/users/me", {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
-    return response.data;
-  } catch (error) {
-    console.error(error);
-  }
+  const TOKEN = localStorage.getItem("key");
+  const response = await axios.get("http://localhost:8080/users/me", {
+    headers: { Authorization: `Bearer ${TOKEN}` },
+    withCredentials: true,
+  });
+  return response.data;
 };
 
 export const memberDelete = () => {
@@ -905,67 +892,57 @@ export const readMembers = async (
   grade: string | null,
   department: string | null
 ) => {
-  try {
-    const TOKEN = localStorage.getItem("key");
+  const TOKEN = localStorage.getItem("key");
 
-    let paramPosition = "";
-    let paramDepartment = "";
-    let paramGrade = "";
+  let paramPosition = "";
+  let paramDepartment = "";
+  let paramGrade = "";
 
-    if (position) {
-      paramPosition = `&position=${position}`;
-    }
-    if (department) {
-      paramDepartment = `&department=${department}`;
-    }
-    if (grade) {
-      paramGrade = `&grade=${grade}`;
-    }
-
-    const response = await axios.get(
-      `http://localhost:8080/pool?page=${
-        page + ""
-      }${paramPosition}${paramDepartment}${paramGrade}`,
-      {
-        headers: { Authorization: `Bearer ${TOKEN}` },
-        withCredentials: true,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error(error);
+  if (position) {
+    paramPosition = `&position=${position}`;
   }
+  if (department) {
+    paramDepartment = `&department=${department}`;
+  }
+  if (grade) {
+    paramGrade = `&grade=${grade}`;
+  }
+
+  const response = await axios.get(
+    `http://localhost:8080/pool?page=${
+      page + ""
+    }${paramPosition}${paramDepartment}${paramGrade}`,
+    {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    }
+  );
+  return response.data;
 };
 
-export const addLikePost = (postId: number) => {
-  try {
-    const TOKEN = localStorage.getItem("key");
-    const response = axios.post(
-      `http://localhost:8080/posts/${postId}/likes`,
-      postId,
-      {
-        headers: { Authorization: `Bearer ${TOKEN}` },
-        withCredentials: true,
-      }
-    );
-    return response;
-  } catch (error) {
-    console.error(error);
-  }
+export const addLikePost = async (postId: number) => {
+  const TOKEN = localStorage.getItem("key");
+  const response = await axios.post(
+    `http://localhost:8080/posts/${postId}/likes`,
+    postId,
+    {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    }
+  );
+
+  return response;
 };
 
-export const deleteLikePost = (postId: number) => {
-  try {
-    const TOKEN = localStorage.getItem("key");
-    const response = axios.delete(
-      `http://localhost:8080/posts/${postId}/likes`,
-      {
-        headers: { Authorization: `Bearer ${TOKEN}` },
-        withCredentials: true,
-      }
-    );
-    return response;
-  } catch (error) {
-    console.error(error);
-  }
+export const deleteLikePost = async (postId: number) => {
+  const TOKEN = localStorage.getItem("key");
+  const response = await axios.delete(
+    `http://localhost:8080/posts/${postId}/likes`,
+    {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    }
+  );
+  console.log(response);
+  return response;
 };

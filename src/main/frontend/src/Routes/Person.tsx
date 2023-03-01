@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { fakeUsers, IUser, readMembers } from "api";
-import { isLoginModalState } from "components/atom";
+import { AxiosError, AxiosResponse } from "axios";
+import { isLoginModalState, isLoginState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { Link, useNavigate } from "react-router-dom";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import Login from "../components/LoginModal";
 import "./button.css";
@@ -168,9 +169,25 @@ function Person() {
     data: Users,
     isLoading,
     refetch,
-  } = useQuery<IUser[]>(["members"], () =>
-    readMembers(nowPage, position, grade, department)
+  } = useQuery<IUser[]>(
+    ["members"],
+    () => readMembers(nowPage, position, grade, department),
+    {
+      onError: (error) => {
+        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+          alert("로그인이 필요합니다.");
+          if (localStorage.getItem("key")) localStorage.removeItem("key");
+          setIsLoginModal(true);
+          setIsLogin(false);
+          navigate("/");
+        }
+      },
+    }
   );
+
+  const setIsLogin = useSetRecoilState(isLoginState);
+  const setIsLoginModal = useSetRecoilState(isLoginModalState);
+  const navigate = useNavigate();
 
   useEffect(() => {
     refetch();

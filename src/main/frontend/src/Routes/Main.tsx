@@ -6,16 +6,19 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { addLikePost, deleteLikePost, IPost, readPosts } from "api";
+import { AxiosError, AxiosResponse } from "axios";
 import {
   isExtraSignupModalState,
   isLoginModalState,
+  isLoginState,
   isSignupModalState,
 } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
+import { useMatch, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import { runInThisContext } from "vm";
 import Login from "../components/LoginModal";
@@ -327,6 +330,14 @@ function Main() {
       onSuccess: () => {
         refetch();
       },
+      onError: (error) => {
+        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+          alert("로그인이 필요합니다.");
+          if (localStorage.getItem("key")) localStorage.removeItem("key");
+          setIsLoginModal(true);
+          setIsLogin(false);
+        }
+      },
     }
   );
 
@@ -338,8 +349,22 @@ function Main() {
         onSuccess: () => {
           refetch();
         },
+
+        onError: (error) => {
+          if (
+            ((error as AxiosError).response as AxiosResponse).status === 401
+          ) {
+            alert("로그인이 필요합니다.");
+            if (localStorage.getItem("key")) localStorage.removeItem("key");
+            setIsLoginModal(true);
+            setIsLogin(false);
+          }
+        },
       }
     );
+
+  const setIsLogin = useSetRecoilState(isLoginState);
+  const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
   const refetch = () => {
     likesRefetch();

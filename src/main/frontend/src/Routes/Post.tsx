@@ -7,14 +7,15 @@ import {
   IPost,
   readPosts,
 } from "api";
-import { isLoginModalState } from "components/atom";
+import { AxiosError, AxiosResponse } from "axios";
+import { isLoginModalState, isLoginState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
 import Login from "components/LoginModal";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useMatch, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 
 const Banner = tw.img`
@@ -316,24 +317,44 @@ function Post() {
       },
     }
   );
+  const setIsLogin = useSetRecoilState(isLoginState);
+  const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
   const { mutate: likeAddMutate, isLoading: isLikeAddLoading } = useMutation(
-    ["likeAddMutate" as string],
+    ["likeAddMutatePostPage" as string],
     (postId: number) => addLikePost(postId) as any,
     {
       onSuccess: () => {
         refetch();
+      },
+      onError: (error) => {
+        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+          alert("로그인이 필요합니다.");
+          if (localStorage.getItem("key")) localStorage.removeItem("key");
+          setIsLoginModal(true);
+          setIsLogin(false);
+        }
       },
     }
   );
 
   const { mutate: likeDeleteMutate, isLoading: isLikeDeleteLoading } =
     useMutation(
-      ["likeDeleteMutate" as string],
+      ["likeDeleteMutatePostPage" as string],
       (postId: number) => deleteLikePost(postId) as any,
       {
         onSuccess: () => {
           refetch();
+        },
+        onError: (error) => {
+          if (
+            ((error as AxiosError).response as AxiosResponse).status === 401
+          ) {
+            alert("로그인이 필요합니다.");
+            if (localStorage.getItem("key")) localStorage.removeItem("key");
+            setIsLoginModal(true);
+            setIsLogin(false);
+          }
         },
       }
     );

@@ -9,14 +9,19 @@ import {
   memberUpdate,
   posts,
 } from "api";
-import { isDeleteModalState, isLoginState } from "components/atom";
+import { AxiosError, AxiosResponse } from "axios";
+import {
+  isDeleteModalState,
+  isLoginModalState,
+  isLoginState,
+} from "components/atom";
 import DeletePopup from "components/DeleteModal";
 import LoadingAnimation from "components/LoadingAnimation";
 import { AnimatePresence, motion } from "framer-motion";
 
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useLocation } from "react-router";
+import { useLocation, useMatch } from "react-router";
 import { Navigate, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -245,6 +250,15 @@ function Profile() {
         console.log("!");
       }
     },
+    onError: (error) => {
+      if (((error as AxiosError).response as AxiosResponse).status === 401) {
+        alert("로그인이 필요합니다.");
+        setIsLoginModal(true);
+        setIsLogin(false);
+        if (localStorage.getItem("key")) localStorage.removeItem("key");
+        navigate("/");
+      }
+    },
   });
 
   const [nowModifying, setNowModifying] = useState(false);
@@ -360,6 +374,15 @@ function Profile() {
       onSuccess: () => {
         refetch();
       },
+      onError: (error) => {
+        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+          alert("로그인이 필요합니다.");
+          setIsLoginModal(true);
+          setIsLogin(false);
+          if (localStorage.getItem("key")) localStorage.removeItem("key");
+          navigate("/");
+        }
+      },
     }
   );
 
@@ -371,6 +394,17 @@ function Profile() {
         onSuccess: () => {
           refetch();
         },
+        onError: (error) => {
+          if (
+            ((error as AxiosError).response as AxiosResponse).status === 401
+          ) {
+            alert("로그인이 필요합니다.");
+            setIsLoginModal(true);
+            setIsLogin(false);
+            if (localStorage.getItem("key")) localStorage.removeItem("key");
+            navigate("/");
+          }
+        },
       }
     );
 
@@ -381,6 +415,10 @@ function Profile() {
       likeAddMutate(postId);
     }
   };
+
+  const matchProfile = useMatch("/profile");
+  const setIsLogin = useSetRecoilState(isLoginState);
+  const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
   return (
     <>
