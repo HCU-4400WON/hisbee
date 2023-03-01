@@ -1,28 +1,13 @@
 package com.hcu.hot6.domain.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
+@Getter
 public class PostFilterResponse {
-
-    private String dtype;
-
-    private int maxDeveloper;
-    private int maxPlanner;
-    private int maxDesigner;
-    private int maxMember;
-    private int maxMentor;
-    private int maxMentee;
-    private int total;
-
-    private String title;
-    private Date postStart;
-    private Date projectStart;
+    private final long total;
+    private final List<PostReadOneResponse> posts;
 }

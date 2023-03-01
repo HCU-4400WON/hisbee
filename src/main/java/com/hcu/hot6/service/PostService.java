@@ -5,6 +5,7 @@ import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostCreationResponse;
+import com.hcu.hot6.domain.response.PostFilterResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.repository.PostRepository;
@@ -15,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -113,14 +113,21 @@ public class PostService {
         return response;
     }
 
-    public List<Post> readFilteredPost(PostSearchFilter filter) {
+    public PostFilterResponse readFilteredPost(PostSearchFilter filter, String email) {
         if (Objects.isNull(filter.getPage())) {
-            return postRepository.findAll(filter);
-        }
-        Long count = postRepository.count(filter);
-        var pagination = new Pagination(filter.getPage(), count);
+            var postResponseList = postRepository.findAll(filter).stream()
+                    .map(post -> post.toResponse(email))
+                    .toList();
 
-        return postRepository.findAll(filter, pagination.getOffset());
+            return new PostFilterResponse(-1, postResponseList);
+        }
+        var pagination = new Pagination(filter.getPage(), postRepository.count(filter));
+        var postResponseList = postRepository.findAll(filter, pagination.getOffset())
+                .stream()
+                .map(post -> post.toResponse(email))
+                .toList();
+
+        return new PostFilterResponse(pagination.getTotal(), postResponseList);
     }
 
     @Transactional
