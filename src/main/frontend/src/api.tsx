@@ -22,6 +22,10 @@ export interface IUser {
   likes?: IPost[];
   posts?: IPost[];
 }
+export interface IUsers {
+  total: number;
+  members: IUser[];
+}
 
 export const fakeUsers: IUser[] = [
   {
@@ -239,6 +243,10 @@ export interface IPost {
   // period: number;
   // total: number;
   // category: string;
+}
+export interface IPosts {
+  total: number;
+  posts: IPost[];
 }
 
 export const posts: IPost[] = [

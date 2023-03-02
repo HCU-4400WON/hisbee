@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fakeUsers, IUser, readMembers } from "api";
+import { fakeUsers, IUser, IUsers, readMembers } from "api";
 import { AxiosError, AxiosResponse } from "axios";
 import { isLoginModalState, isLoginState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
@@ -137,9 +137,9 @@ function Person() {
 
   // const Users = fakeUsers;
 
-  const TOTAL_POSTS = 200;
+  // const TOTAL_POSTS = 200;
   const POSTS_PER_PAGE = 12;
-  const TOTAL_PAGES = Math.ceil(TOTAL_POSTS / POSTS_PER_PAGE);
+  // const TOTAL_PAGES = Math.ceil(TOTAL_POSTS / POSTS_PER_PAGE);
   const [nowPage, setNowPage] = useState(1);
   const [prevPage, setPrevPage] = useState(Math.floor((nowPage - 1) / 10) * 10);
   const [nextPage, setNextPage] = useState(Math.ceil(nowPage / 10) * 10 + 1);
@@ -149,8 +149,9 @@ function Person() {
       currentTarget: { id },
     } = event;
     if (id === "next") {
-      if (nextPage <= TOTAL_PAGES) setNowPage(nextPage);
-      else setNowPage(TOTAL_PAGES);
+      if (nextPage <= Math.ceil((Users?.total as number) / POSTS_PER_PAGE))
+        setNowPage(nextPage);
+      else setNowPage(Math.ceil((Users?.total as number) / POSTS_PER_PAGE));
     } else if (id === "prev") {
       if (prevPage > 0) setNowPage(prevPage);
       else setNowPage(1);
@@ -169,12 +170,15 @@ function Person() {
     data: Users,
     isLoading,
     refetch,
-  } = useQuery<IUser[]>(
+  } = useQuery<IUsers>(
     ["members"],
     () => readMembers(nowPage, position, grade, department),
     {
       onError: (error) => {
-        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+        if (
+          ((error as AxiosError).response as AxiosResponse).status === 401 ||
+          ((error as AxiosError).response as AxiosResponse).status === 403
+        ) {
           alert("로그인이 필요합니다.");
           if (localStorage.getItem("key")) localStorage.removeItem("key");
           setIsLoginModal(true);
@@ -199,7 +203,7 @@ function Person() {
       {isLoading ? (
         <LoadingAnimation />
       ) : (
-        <div className="flex w-screen ">
+        <div className="flex w-screen">
           <StyledSidebar>
             <div className="flex justify-between items-center">
               <p className="text-[30px] font-bold mb-[20px]">Filter</p>
@@ -470,14 +474,14 @@ function Person() {
             </StyledFilterItem>
           </StyledSidebar>
 
-          <div className=" w-full flex flex-col">
+          <div className="w-full flex flex-col">
             <img
               className=" mb-[40px] w-[full] mx-[0px] bg-[#898989]"
               src="img/personBanner2.png"
             ></img>
-            <div className="grid grid-cols-4 gap-10 mx-[20px] justify-between">
-              {(Users?.length as number) > 0 &&
-                Users?.map((user) => (
+            <div className="grid grid-cols-4 gap-10 mx-[20px] justify-between h-full">
+              {(Users?.members.length as number) > 0 &&
+                Users?.members.map((user) => (
                   <Link
                     to="/profile"
                     state={{
@@ -519,42 +523,55 @@ ${
                   </Link>
                 ))}
             </div>
-            <div className="flex justify-center items-center w-full h-[100px]  ">
-              <button
-                id="prev"
-                onClick={onPageClick}
-                className="w-[70px] h-[30px] flex justify-center items-center "
-              >
-                <i className="fa-solid fa-circle-left text-[30px]"></i>
-              </button>
-              {/* {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-          .map((e) => prevPage + e) */}
+            {Users?.total === 0 ? (
+              <div className="flex justify-center items-center w-full h-[50px] text-[20px] ">
+                {/* <div className="flex items-center w-[300px] border-2 bg-[#eeeeee] rounded-lg h-[150px] justify-center items-center"> */}
+                <i className="fa-solid fa-triangle-exclamation text-yellow-500 ">
+                  &nbsp;
+                </i>
+                <p className="font-bold">해당하는 사람이 존재하지 않습니다.</p>
+              </div>
+            ) : (
+              <div className="flex justify-center items-center w-full h-[100px]  ">
+                <button
+                  id="prev"
+                  onClick={onPageClick}
+                  className="w-[70px] h-[30px] flex justify-center items-center "
+                >
+                  <i className="fa-solid fa-circle-left text-[30px]"></i>
+                </button>
 
-              {/* // ].map()
-          //   .slice(
-          //     Math.floor((nowPage - 1) / 10) * 10,
-          //     Math.floor((nowPage - 1) / 10) * 10 + 10
-          //   ) */}
-              {Array.from({ length: TOTAL_PAGES }, (v, i) => i + 1)
-                .slice(prevPage, nextPage - 1)
-                .map((page) => (
-                  <button
-                    id={page + ""}
-                    onClick={onPageClick}
-                    className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold hover:opacity-70
+                {Array.from(
+                  {
+                    length: Math.ceil(
+                      (Users?.total as number) / POSTS_PER_PAGE
+                    ),
+                  },
+                  (v, i) => i + 1
+                )
+                  .slice(prevPage, nextPage - 1)
+                  .map((page) => (
+                    <button
+                      id={page + ""}
+                      onClick={onPageClick}
+                      className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold hover:opacity-70
                      ${page === nowPage && "opacity-30"} `}
-                  >
-                    {page}
-                  </button>
-                ))}
-              <button
-                id="next"
-                onClick={onPageClick}
-                className="w-[70px] h-[30px] flex justify-center items-center"
-              >
-                <i className="fa-solid fa-circle-right text-[30px]"></i>
-              </button>
-            </div>
+                    >
+                      {page}
+                    </button>
+                  ))}
+                {/* </>
+              )} */}
+
+                <button
+                  id="next"
+                  onClick={onPageClick}
+                  className="w-[70px] h-[30px] flex justify-center items-center"
+                >
+                  <i className="fa-solid fa-circle-right text-[30px]"></i>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
