@@ -51,7 +51,7 @@ public class Member {
     @JsonIgnore
     private List<Post> likes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", orphanRemoval = true)
     @JsonIgnore
     private List<Post> posts = new ArrayList<>();
 

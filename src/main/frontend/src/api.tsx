@@ -946,3 +946,12 @@ export const deleteLikePost = async (postId: number) => {
   console.log(response);
   return response;
 };
+
+export const loginCheckApi = () => {
+  const TOKEN = localStorage.getItem("key");
+  const response = axios.post(`http://localhost:8080/`, {
+    headers: { Authorization: `Bearer ${TOKEN}` },
+    withCredentials: true,
+  });
+  return response;
+};

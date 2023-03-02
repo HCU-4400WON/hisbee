@@ -1,15 +1,16 @@
 import tw from "tailwind-styled-components";
 import React, { useEffect, useState } from "react";
-import { IPost, posts, readOnePost, updatePost } from "api";
-import { useQuery } from "@tanstack/react-query";
+import { IPost, loginCheckApi, posts, readOnePost, updatePost } from "api";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { isPostDeleteModalState } from "components/atom";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { isLoginState, isPostDeleteModalState } from "components/atom";
 import PostDeleteModal from "components/PostDeleteModal";
 import { useForm } from "react-hook-form";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadingAnimation from "components/LoadingAnimation";
+import { AxiosError, AxiosResponse } from "axios";
 
 const StyledUl = tw.ul`
 flex
@@ -365,6 +366,25 @@ function Detail() {
 
     setIsModifying(false);
   };
+
+  const setIsLogin = useSetRecoilState(isLoginState);
+
+  const { mutate: loginCheckMutate, isLoading: isLoginCheck } = useMutation(
+    ["loginCheckApiDetail" as string],
+    loginCheckApi,
+    {
+      onError: (error) => {
+        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+          if (localStorage.getItem("key")) localStorage.removeItem("key");
+          setIsLogin(false);
+        }
+      },
+    }
+  );
+
+  useEffect(() => {
+    loginCheckMutate();
+  }, []);
 
   return (
     <>
