@@ -9,6 +9,7 @@ import {
   addLikePost,
   deleteLikePost,
   IPost,
+  IPosts,
   loginCheckApi,
   readPosts,
 } from "api";
@@ -304,28 +305,28 @@ function Main() {
     data: postslikes,
     isLoading: isLikesLoading,
     refetch: likesRefetch,
-  } = useQuery<IPost[]>(["PostsMainFiltered", ["likes", LIMIT]], () =>
+  } = useQuery<IPosts>(["PostsMainFiltered", ["likes", LIMIT]], () =>
     readPosts(null, null, ORDER[0], null, null, null, LIMIT + "")
   );
   const {
     data: postsrecent,
     isLoading: isRecentLoading,
     refetch: recentRefetch,
-  } = useQuery<IPost[]>(["PostsMainFiltered", ["recent", LIMIT]], () =>
+  } = useQuery<IPosts>(["PostsMainFiltered", ["recent", LIMIT]], () =>
     readPosts(null, null, ORDER[1], null, null, null, LIMIT + "")
   );
   const {
     data: postsmember,
     isLoading: isMemberLoading,
     refetch: memberRefetch,
-  } = useQuery<IPost[]>(["PostsMainFiltered", ["member", LIMIT]], () =>
+  } = useQuery<IPosts>(["PostsMainFiltered", ["member", LIMIT]], () =>
     readPosts(null, null, ORDER[2], null, null, null, LIMIT + "")
   );
   const {
     data: postsend,
     isLoading: isEndLoading,
     refetch: endRefetch,
-  } = useQuery<IPost[]>(["PostsMainFiltered", ["end", LIMIT]], () =>
+  } = useQuery<IPosts>(["PostsMainFiltered", ["end", LIMIT]], () =>
     readPosts(null, null, ORDER[3], null, null, null, LIMIT + "")
   );
 
@@ -416,7 +417,7 @@ function Main() {
           <Banner src="/img/mainBannerReal.png" className="w-[1470px]"></Banner>
 
           {[postslikes, postsrecent, postsmember, postsend]?.map(
-            (posts?: IPost[], idx?: any) => (
+            (posts?: IPosts, idx?: any) => (
               // (posts?.length as number) > 0 && (
               <PostCategory className="mb-[400px]">
                 <TitleRow>
@@ -431,7 +432,7 @@ function Main() {
                   </svg>
                 </TitleRow>
 
-                {(posts?.length as number) > 0 && (
+                {(posts?.posts.length as number) > 0 ? (
                   <div className="relative mx-4">
                     <AnimatePresence
                       initial={false}
@@ -440,7 +441,7 @@ function Main() {
                       <PostGrid key={indexs[idx]} className="absolute">
                         {/* // .slice(0, 4) */}
 
-                        {posts
+                        {posts?.posts
                           ?.slice(
                             indexs[idx] * OFFSET,
                             indexs[idx] * OFFSET + OFFSET
@@ -667,6 +668,14 @@ function Main() {
                           ))}
                       </PostGrid>
                     </AnimatePresence>
+                  </div>
+                ) : (
+                  <div className="flex justify-center items-center w-full h-[50px] text-[20px] ">
+                    {/* <div className="flex items-center w-[300px] border-2 bg-[#eeeeee] rounded-lg h-[150px] justify-center items-center"> */}
+                    <i className="fa-solid fa-triangle-exclamation text-yellow-500 ">
+                      &nbsp;
+                    </i>
+                    <p className="font-bold">게시물이 존재하지 않습니다.</p>
                   </div>
                 )}
               </PostCategory>

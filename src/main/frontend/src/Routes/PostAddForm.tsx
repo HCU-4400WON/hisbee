@@ -293,7 +293,8 @@ function PostAddForm() {
 
       studyMutate(newPost);
 
-      navigate("../post");
+      // navigate("/");
+      window.location.replace("/post");
     } else if (data.category === "mentoring") {
       if (Number(data.mentor) + Number(data.mentee) === 0) {
         setError("mentor", { message: "0보다 커야 합니다." });
@@ -315,7 +316,7 @@ function PostAddForm() {
       };
 
       mentoringMutate(newPost);
-      navigate("../post");
+      window.location.replace("/post");
     } else {
       if (
         Number(data.developer) +
@@ -343,7 +344,7 @@ function PostAddForm() {
       };
 
       projectMutate(newPost);
-      navigate("../post");
+      window.location.replace("/post");
     }
   };
 
