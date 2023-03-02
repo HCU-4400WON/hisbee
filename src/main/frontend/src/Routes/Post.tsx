@@ -1,10 +1,12 @@
-import { departments, IPost, posts } from "api";
-import { isLoginModalState } from "components/atom";
+import { useMutation } from "@tanstack/react-query";
+import { departments, IPost, loginCheckApi, posts } from "api";
+import { AxiosError, AxiosResponse } from "axios";
+import { isLoginModalState, isLoginState } from "components/atom";
 import Login from "components/LoginModal";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 
 const Banner = tw.img`
@@ -240,6 +242,26 @@ function Post() {
   console.log(windowPx, "px");
 
   const isLoginModal = useRecoilValue(isLoginModalState);
+
+  const setIsLogin = useSetRecoilState(isLoginState);
+
+  const { mutate: loginCheckMutate, isLoading: isLoginCheck } = useMutation(
+    ["loginCheckApiPost" as string],
+    loginCheckApi,
+    {
+      onError: (error) => {
+        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+          if (localStorage.getItem("key")) localStorage.removeItem("key");
+          setIsLogin(false);
+        }
+      },
+    }
+  );
+
+  useEffect(() => {
+    loginCheckMutate();
+  }, []);
+
   return (
     <>
       {isLoginModal ? <Login /> : null}

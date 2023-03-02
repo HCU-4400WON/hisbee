@@ -162,8 +162,9 @@ function Header() {
     if (event.currentTarget.id === "logout") {
       console.log(isLogin);
       setIsLogin(false);
-      navigate("/");
+      localStorage.removeItem("key");
       alert("로그아웃 되었습니다.");
+      navigate("/");
     } else {
       setIsLoginModal(true);
       navigate("/");
