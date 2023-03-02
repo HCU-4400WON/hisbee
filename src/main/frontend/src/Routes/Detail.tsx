@@ -383,7 +383,7 @@ function Detail() {
   );
 
   useEffect(() => {
-    loginCheckMutate();
+    // loginCheckMutate();
   }, []);
 
   return (

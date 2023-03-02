@@ -366,7 +366,7 @@ function PostAddForm() {
   );
 
   useEffect(() => {
-    loginCheckMutate();
+    // loginCheckMutate();
   }, []);
 
   return (

@@ -1,8 +1,15 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import LoadingAnimation from "components/LoadingAnimation";
-import {addLikePost,
+import {
+  addLikePost,
   createMentoring,
-  deleteLikePost, departments, IPost, loginCheckApi, posts, readPosts } from "api";
+  deleteLikePost,
+  departments,
+  IPost,
+  loginCheckApi,
+  posts,
+  readPosts,
+} from "api";
 import { AxiosError, AxiosResponse } from "axios";
 import { isLoginModalState, isLoginState } from "components/atom";
 import Login from "components/LoginModal";
@@ -177,7 +184,6 @@ const Container = tw.div`
 w-[1470px]`;
 
 function Post() {
-
   const location = useLocation();
   const search = location.state ? location.state.search : null;
 
@@ -329,9 +335,9 @@ function Post() {
           if (localStorage.getItem("key")) localStorage.removeItem("key");
           setIsLoginModal(true);
         }
-      }
+      },
     }
-  )
+  );
 
   const { mutate: loginCheckMutate, isLoading: isLoginCheck } = useMutation(
     ["loginCheckApiPost" as string],
@@ -375,7 +381,7 @@ function Post() {
     }
   };
   useEffect(() => {
-    loginCheckMutate();
+    // loginCheckMutate();
   }, []);
 
   return (
@@ -710,5 +716,5 @@ function Post() {
     </>
   );
 }
-      
+
 export default Post;
