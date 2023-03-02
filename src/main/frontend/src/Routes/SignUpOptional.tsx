@@ -2,13 +2,22 @@ import { useMutation } from "@tanstack/react-query";
 import { IUser, memberUpdate } from "api";
 import { isExtraSignupModalState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
-import React, { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Navigate, useLocation, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import { AnimatePresence, motion } from "framer-motion";
+
+import {
+  ref,
+  getDownloadURL,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
+import React, { useRef, useState } from "react";
+import { storage } from "../firebase";
 
 const Container = tw.div`
 
@@ -150,6 +159,56 @@ const ValidationVariant = {
 };
 
 function SignUpOptional() {
+  // const inputRef = useRef<HTMLInputElement | null>(null);
+  const [imageURL, setImageURL] = useState<string>("");
+  const [progressPercent, setProgressPercent] = useState<number>(0);
+  const onImageChange = (
+    e: React.ChangeEvent<EventTarget & HTMLInputElement>
+  ) => {
+    e.preventDefault();
+    const file = e.target.files;
+    if (!file) return null;
+
+    const storageRef = ref(storage, `files/${file[0].name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file[0]);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setProgressPercent(progress);
+      },
+      (error) => {
+        switch (error.code) {
+          case "storage/canceld":
+            alert("Upload has been canceled");
+            break;
+        }
+      },
+      () => {
+        e.target.value = "";
+        getDownloadURL(storageRef).then((downloadURL) => {
+          console.log("File available at", downloadURL);
+          setImageURL(downloadURL);
+          //   setImage(downloadURL);
+        });
+      }
+    );
+
+    // const uploadTask = uploadBytes(storageRef, file[0]);
+
+    // uploadTask.then((snapshot) => {
+    //   e.target.value = "";
+    //   getDownloadURL(snapshot.ref).then((downloadURL) => {
+    //     console.log("File available at", downloadURL);
+    //     setImageURL(downloadURL);
+    //     setImage(downloadURL);
+    //   });
+    // });
+  };
+
   const LayoutVariant = {
     hidden: {
       opacity: 0,
@@ -393,14 +452,15 @@ function SignUpOptional() {
               <div className="flex flex-col items-center justify-evenly mt-[15px]">
                 <img
                   className="border w-[300px] h-[300px] "
-                  src={uploadImage}
+                  src={imageURL}
                 ></img>
                 <input
                   className="hidden"
                   type="file"
                   accept="image/*"
                   ref={inputRef}
-                  onChange={onUploadImage}
+                  // onChange={onUploadImage}
+                  onChange={onImageChange}
                 />
                 <div className="flex items-center justify-between w-[170px]">
                   <i
@@ -408,6 +468,12 @@ function SignUpOptional() {
                     className="fa-solid fa-arrow-up-from-bracket p-2 border-2 rounded-full"
                   ></i>
                   <span>프로필 사진 업로드</span>
+                </div>
+                <div className="flex justify-start w-[300px] border h-[6px]">
+                  <span
+                    className={` bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500`}
+                    style={{ width: progressPercent * 3 }}
+                  ></span>
                 </div>
               </div>
             </FlexRequiredBox>

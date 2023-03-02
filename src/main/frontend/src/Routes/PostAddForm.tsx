@@ -1,5 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
-import { createMentoring, createProject, createStudy, IPost } from "api";
+import {
+  createMentoring,
+  createProject,
+  createStudy,
+  IPost,
+  loginCheckApi,
+} from "api";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { isLoginModalState, isLoginState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
@@ -342,6 +348,26 @@ function PostAddForm() {
   };
 
   console.log(getValues().category);
+
+  const { mutate: loginCheckMutate, isLoading: isLoginCheck } = useMutation(
+    ["loginCheckApiAddForm" as string],
+    loginCheckApi,
+    {
+      onError: (error) => {
+        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+          if (localStorage.getItem("key")) localStorage.removeItem("key");
+          navigate("/");
+          alert("로그인이 필요합니다.");
+          setIsLogin(false);
+          setIsLoginModal(true);
+        }
+      },
+    }
+  );
+
+  useEffect(() => {
+    // loginCheckMutate();
+  }, []);
 
   return (
     <>

@@ -10,13 +10,13 @@ function BlankPage() {
   const setIsSignupModal = useSetRecoilState(isSignupModalState);
 
   const setIsLogin = useSetRecoilState(isLoginState);
-  setIsLogin(true);
-
-  localStorage.setItem("key", keyword.get("token") as any);
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    setIsLogin(true);
+    localStorage.setItem("key", keyword.get("token") as any);
+
     if (keyword.get("hasRegistered") === "true") {
       navigate("/");
     } else {
