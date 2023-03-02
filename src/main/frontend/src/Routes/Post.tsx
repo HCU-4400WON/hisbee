@@ -83,6 +83,7 @@ grid
 grid-cols-4
 gap-x-10
 px-9
+min-h-[300px]
 `;
 // sm:grid-cols-2
 // xl:grid-cols-4
@@ -485,9 +486,10 @@ function Post() {
                 </button>
               </Link>
             </SortBox>
-            {(posts?.length as number) > 0 && (
-              <PostGrid>
-                {(posts as IPost[]).map((post, index) => (
+            {/* { ( */}
+            <PostGrid>
+              {(posts?.length as number) > 0 &&
+                (posts as IPost[]).map((post, index) => (
                   <PostItem
                     // initial={{ scale: 1 }}
                     whileHover={{ scale: 1.08 }}
@@ -672,8 +674,8 @@ function Post() {
                     </Link>
                   </PostItem>
                 ))}
-              </PostGrid>
-            )}
+            </PostGrid>
+            {/* )} */}
 
             <div className="flex justify-center items-center w-full h-[100px]  ">
               <button

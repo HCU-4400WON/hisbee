@@ -199,7 +199,7 @@ function Person() {
       {isLoading ? (
         <LoadingAnimation />
       ) : (
-        <div className="flex w-screen ">
+        <div className="flex w-screen">
           <StyledSidebar>
             <div className="flex justify-between items-center">
               <p className="text-[30px] font-bold mb-[20px]">Filter</p>
@@ -470,12 +470,12 @@ function Person() {
             </StyledFilterItem>
           </StyledSidebar>
 
-          <div className=" w-full flex flex-col">
+          <div className="w-full flex flex-col">
             <img
               className=" mb-[40px] w-[full] mx-[0px] bg-[#898989]"
               src="img/personBanner2.png"
             ></img>
-            <div className="grid grid-cols-4 gap-10 mx-[20px] justify-between">
+            <div className="grid grid-cols-4 gap-10 mx-[20px] justify-between h-full">
               {(Users?.length as number) > 0 &&
                 Users?.map((user) => (
                   <Link
