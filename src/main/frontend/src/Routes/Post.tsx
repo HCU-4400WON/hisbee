@@ -38,12 +38,12 @@ vertical-center
 `;
 
 const FilterTitle = tw.p`
+font-unique
 block
 text-xl 
 mx-10
 my-auto
 w-20
-md:text-[25px]
 md:w-60
 `;
 
@@ -95,7 +95,7 @@ min-w-[330px]
 rounded-md
 overflow-hidden
 mb-[80px]
-
+shadow-lg
 `;
 
 const PostImage = tw.div`
@@ -116,6 +116,7 @@ p-[15px]
 `;
 
 const PostCategorySpan = tw.span`
+font-unique
 text-[#185ee4] 
 bg-[#fff] 
 h-[25px] 
@@ -144,8 +145,9 @@ py-[15px]
 `;
 
 const PostTitle = tw.p`
+font-unique
 text-lg 
-font-semibold
+
 `;
 const PostDate = tw.div`
 flex text-[12px] 
@@ -500,7 +502,6 @@ function Post() {
                     // initial={{ scale: 1 }}
                     whileHover={{ scale: 1.08 }}
                     key={index}
-                    style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
                   >
                     <PostContentFirstRow
                       className={`${
@@ -561,7 +562,7 @@ function Post() {
                     <Link to={`/post/${post.id}`}>
                       <PostMainPart>
                         {/* secondRow */}
-                        <PostTitle className="text-lg font-semibold">
+                        <PostTitle>
                           {post.title.length > 16
                             ? post.title.slice(0, 16) + " ..."
                             : post.title}
@@ -692,7 +693,6 @@ function Post() {
                 <p className="font-bold">게시물이 존재하지 않습니다.</p>
               </div>
             ) : (
-              // </div>
               <div className="flex justify-center items-center w-full h-[100px]  ">
                 <button
                   id="prev"
@@ -701,25 +701,7 @@ function Post() {
                 >
                   <i className="fa-solid fa-circle-left text-[30px]"></i>
                 </button>
-                {/* {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-          .map((e) => prevPage + e) */}
 
-                {/* // ].map()
-          //   .slice(
-          //     Math.floor((nowPage - 1) / 10) * 10,
-          //     Math.floor((nowPage - 1) / 10) * 10 + 10
-          //   ) */}
-                {/* {posts?.total === 0 ? (
-                <button
-                  id={1 + ""}
-                  onClick={onPageClick}
-                  className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold hover:opacity-70
-             ${1 === nowPage && "opacity-30"} `}
-                >
-                  1
-                </button>
-              ) : (
-                <> */}
                 {Array.from(
                   {
                     length: Math.ceil(

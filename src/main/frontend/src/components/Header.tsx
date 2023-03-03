@@ -24,8 +24,7 @@ const NavButton = tw.button`
  text-[15px]
  text-black 
  py-2 
- 
- font-semibold
+ font-unique
  
  mx-8
 hover:text-purple-400
@@ -206,7 +205,7 @@ function Header() {
                   }}
                 />
                 <div
-                  className="absolute w-[10px] h-[10px] right-3 top-2"
+                  className="absolute w-[10px] h-[10px] right-4 top-2"
                   // className="absolute w-[10px] h-[10px] right-11 top-[-2px]"
                   style={{
                     backgroundImage:
@@ -239,7 +238,7 @@ function Header() {
                   }}
                 />
                 <div
-                  className="absolute w-[10px] h-[10px] right-3 top-2"
+                  className="absolute w-[10px] h-[10px] right-4 top-2"
                   style={{
                     backgroundImage:
                       "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
@@ -269,7 +268,7 @@ function Header() {
                   }}
                 />
                 <div
-                  className="absolute w-[10px] h-[10px] right-3 top-2"
+                  className="absolute w-[10px] h-[10px] right-4 top-2"
                   style={{
                     backgroundImage:
                       "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",

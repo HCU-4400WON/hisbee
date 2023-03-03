@@ -163,7 +163,8 @@ function Person() {
   useEffect(() => {
     setNextPage(Math.ceil(nowPage / 10) * 10 + 1);
     setPrevPage(Math.floor((nowPage - 1) / 10) * 10);
-    console.log(prevPage, nextPage);
+    // console.log(prevPage, nextPage);
+    console.log(nowPage);
   }, [nowPage]);
 
   const {

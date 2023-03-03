@@ -32,11 +32,12 @@ rounded-3xl
 const Title = tw.p`
   text-[40px]
   font-bold
+  font-unique
 `;
 
 const SubTitle = tw.p`
+font-unique
  text-[22px]
- font-bold
  border-b border-black
  mt-[40px]
  pb-[10px]
@@ -72,6 +73,7 @@ h-[80px]
 
 const Info = tw.p`
   text-[18px]
+  font-main
   my-[20px]
 `;
 

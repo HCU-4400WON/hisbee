@@ -20,7 +20,6 @@ import "./date.css";
 
 const StyledUl = tw.ul`
 flex
-
 `;
 
 const Styledli = tw.li`
@@ -50,7 +49,8 @@ text-center
 `;
 const StyledFieldTitle = tw.label`
 w-[130px] 
-font-normal
+font-semibold
+font-main
 `;
 
 const FieldBox = tw.div`
@@ -385,7 +385,7 @@ function PostAddForm() {
             </div>
           </Link>
           <div className="flex justify-between items-center">
-            <p className="w-full text-[30px] font-normal">모집글 작성하기</p>
+            <p className="w-full text-[30px] font-unique">모집글 작성하기</p>
             <div className="flex h-[40px] items-end">
               <div
                 className="w-[20px] h-[20px]"
@@ -745,7 +745,10 @@ function PostAddForm() {
           </FieldContainer>
 
           <div className="flex mb-[40px] relative">
-            <label htmlFor="title" className="w-[130px] text-[20px] my-auto">
+            <label
+              htmlFor="title"
+              className="w-[130px] text-[20px] my-auto font-main"
+            >
               제목
             </label>
             <input
@@ -781,7 +784,10 @@ function PostAddForm() {
           </div>
 
           <div className="flex relative">
-            <label htmlFor="content" className="w-[130px] text-[20px]">
+            <label
+              htmlFor="content"
+              className="w-[130px] text-[20px] font-main"
+            >
               내용
             </label>
             <textarea

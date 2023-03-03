@@ -42,10 +42,11 @@ items-start
 const SidebarTitle = tw.p`
 py-[40px] 
 text-[33px] 
-font-semibold
+font-unique
 `;
 
 const SidebarItemText = tw.button`
+font-main
 text-[17px]
 mb-[20px]
 font-semibold
@@ -117,6 +118,7 @@ h-[210px]
 min-w-[330px]
 rounded-md
 overflow-hidden
+shadow-lg
 `;
 
 const PostImage = tw.div`
@@ -165,8 +167,8 @@ py-[15px]
 `;
 
 const PostTitle = tw.p`
-text-lg 
-font-semibold
+text-lg
+font-unique
 `;
 const PostDate = tw.div`
 flex text-[12px] 
@@ -773,7 +775,7 @@ function Profile() {
 
               <span className="mt-[40px] text-[20px] font-medium flex items-center">
                 <i className="fa-solid fa-pencil mr-2"> </i>
-                <p className="font-bold">내가 쓴 모집글</p>
+                <p className="font-bold font-unique">내가 쓴 모집글</p>
               </span>
 
               <PostGrid id="myPost">
@@ -782,7 +784,7 @@ function Profile() {
                     // initial={{ scale: 1 }}
                     whileHover={{ scale: 1.08 }}
                     key={index}
-                    style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
+                    // style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
                   >
                     <PostContentFirstRow
                       className={`${
@@ -844,7 +846,7 @@ function Profile() {
                     <Link to={`/post/${post.id}`}>
                       <PostMainPart>
                         {/* secondRow */}
-                        <PostTitle className="text-lg font-semibold">
+                        <PostTitle>
                           {post.title.length > 16
                             ? post.title.slice(0, 16) + " ..."
                             : post.title}
@@ -967,7 +969,7 @@ function Profile() {
 
               <span className="mt-[40px] text-[20px] font-medium flex items-center">
                 <i className="fa-solid fa-heart text-red-600 mr-2"></i>
-                <p className="font-bold">찜한 모집글</p>
+                <p className="font-bold font-unique">찜한 모집글</p>
               </span>
 
               <PostGrid id="zzim">
@@ -976,7 +978,7 @@ function Profile() {
                     // initial={{ scale: 1 }}
                     whileHover={{ scale: 1.08 }}
                     key={index}
-                    style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
+                    // style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
                   >
                     <PostContentFirstRow
                       className={`${
@@ -1037,7 +1039,7 @@ function Profile() {
                     <Link to={`/post/${post.id}`}>
                       <PostMainPart>
                         {/* secondRow */}
-                        <PostTitle className="text-lg font-semibold">
+                        <PostTitle>
                           {post.title.length > 16
                             ? post.title.slice(0, 16) + " ..."
                             : post.title}

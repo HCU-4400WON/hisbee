@@ -60,8 +60,8 @@ mb-10
 `;
 
 const Title = tw.p`
-text-xl 
-font-bold
+text-xl
+font-unique
 `;
 
 const PostGrid = tw(motion.div)`
@@ -77,6 +77,7 @@ min-w-[330px]
 rounded-md
 overflow-hidden
 z-0
+shadow-lg
 
 `;
 
@@ -127,11 +128,13 @@ py-[15px]
 `;
 
 const PostTitle = tw.p`
+pb-[8px]
+font-unique
 text-lg 
-font-semibold
 `;
 const PostDate = tw.div`
-flex text-[12px] 
+flex 
+text-[12px]
 font-semibold 
 items-center
 `;
@@ -162,6 +165,7 @@ px-[10px]
 text-[11px] 
 text-gray-500 
 font-medium
+
 `;
 
 const MAX_WIDTH = window.innerWidth;
@@ -182,7 +186,8 @@ interface IProps {
 
 const postsVariants = {
   hidden: ({ windowSize }: IProps) => ({
-    x: windowSize.width,
+    // x: windowSize.width,
+    x: 1500,
   }),
   showing: {
     x: 0,
@@ -191,7 +196,8 @@ const postsVariants = {
     },
   },
   exit: (windowSize: any) => ({
-    x: -windowSize.windowSize.width,
+    // x: -windowSize.windowSize.width,
+    x: -1500,
     transition: {
       duration: 2,
     },
@@ -457,9 +463,9 @@ function Main() {
                               // transition={{ duration: 2 }}
                               // transition={{ type: "tween" }}
                               key={post?.id}
-                              style={{
-                                boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)",
-                              }}
+                              // style={{
+                              //   boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)",
+                              // }}
                             >
                               <PostContentFirstRow
                                 className={`${
@@ -525,7 +531,7 @@ function Main() {
                               <Link to={`/post/${post.id}`}>
                                 <PostMainPart>
                                   {/* secondRow */}
-                                  <PostTitle className="text-lg font-semibold">
+                                  <PostTitle>
                                     {post?.title.length > 16
                                       ? post?.title.slice(0, 16) + "..."
                                       : post?.title}

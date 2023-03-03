@@ -40,6 +40,7 @@ rounded-3xl
 const Title = tw.p`
   text-[40px]
   font-bold
+  font-unique
 `;
 
 const SubTitle = tw.p`
@@ -86,6 +87,7 @@ h-[70px]
 const Info = tw.label`
   text-[18px]
   my-[20px]
+  font-main
 `;
 
 const InfoInput = tw.input`
@@ -331,7 +333,7 @@ function SignUpOptional() {
           >
             <Title>Sign Up</Title>
 
-            <SubTitle className="mt-[80px]">선택사항</SubTitle>
+            <SubTitle className="mt-[80px] font-unique">선택사항</SubTitle>
             <Info>
               * 선택 사항을 기입하시면 인재풀 페이지를 열람 하실 수 있습니다.
               {/* <Link to="/"> */}

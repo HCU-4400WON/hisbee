@@ -29,7 +29,7 @@ function Footer() {
     <div className="w-[1470px] h-[150px] pr-[50px] flex justify-between items-center mt-[150px]">
       <div className="flex justify-start items-end">
         <img src="/img/logo.png" className="w-[250px]" />
-        <span className="text-[12px] pb-[6px] font-semibold text-gray-500">
+        <span className="text-[12px] pb-[6px] font-unique text-gray-500">
           <strong>ⓒ</strong> 2022 Team.Hot6 All rights reserved
         </span>
       </div>
@@ -38,12 +38,12 @@ function Footer() {
         <a href="https://github.com/HCU-4400WON/hot6" target="_blank">
           <img src="/img/github.png" className="w-[100px] h-[50px]" />
         </a>
-        <span className="text-[25px] mr-[10px] font-medium ">WALAB</span>
+        <span className="text-[25px] mr-[10px] font-unique ">WALAB</span>
         <span>
           <p
             onMouseOver={() => setIsTeamModal(true)}
             onMouseLeave={() => setIsTeamModal(false)}
-            className="hover:opacity-60 text-[25px] font-medium"
+            className="hover:opacity-60 text-[25px] font-unique"
           >
             팀원
           </p>

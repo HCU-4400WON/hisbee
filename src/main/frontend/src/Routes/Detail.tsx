@@ -57,6 +57,7 @@ const ItemTitle = tw.span`
 text-[#757575] 
 text-[18px] 
 min-w-[140px]
+font-unique
 `;
 
 const ItemText = tw.span`
@@ -290,19 +291,22 @@ function Detail() {
         setError("maxMember", { message: "0보다 커야 합니다." });
         return;
       } else if (data.maxMember < data.currMember) {
-        setError("maxMember", { message: "현재 인원 보다 적습니다." });
-        return;
+        // setError("maxMember", { message: "현재 인원 보다 적습니다." });
+        // return;
+        data.maxMember = data.currMember;
       }
     } else if (data.dtype === "M") {
       if (Number(data.maxMentor) + Number(data.maxMentee) === 0) {
         setError("maxMentor", { message: "0보다 커야 합니다." });
         return;
       } else if (data.maxMentor < data.currMentor) {
-        setError("maxMentor", { message: "멘토가 현재 인원 보다 적습니다." });
-        return;
+        // setError("maxMentor", { message: "멘토가 현재 인원 보다 적습니다." });
+        // return;
+        data.maxMentor = data.currMentor;
       } else if (data.maxMentee < data.currMentee) {
-        setError("maxMentee", { message: "멘티가 현재 인원 보다 적습니다." });
-        return;
+        // setError("maxMentee", { message: "멘티가 현재 인원 보다 적습니다." });
+        // return;
+        data.maxMentee = data.currMentee;
       }
     } else if (data.dtype === "P") {
       if (
@@ -314,19 +318,22 @@ function Detail() {
         setError("maxPlanner", { message: "0보다 커야 합니다." });
         return;
       } else if (data.maxPlanner < data.currPlanner) {
-        setError("maxPlanner", {
-          message: "기획자가 현재 인원 보다 적습니다.",
-        });
-        return;
+        // setError("maxPlanner", {
+        //   message: "기획자가 현재 인원 보다 적습니다.",
+        // });
+        // return;
+        data.maxPlanner = data.currPlanner;
       } else if (data.maxDesigner < data.currDesigner) {
-        setError("maxPlanner", {
-          message: "디자이너가 현재 인원 보다 적습니다.",
-        });
-        return;
+        // setError("maxPlanner", {
+        //   message: "디자이너가 현재 인원 보다 적습니다.",
+        // });
+        // return;
+        data.maxDesigner = data.currDesigner;
       } else if (data.maxDeveloper < data.currDeveloper) {
-        setError("maxPlanner", {
-          message: "개발자가 현재 인원 보다 적습니다.",
-        });
+        // setError("maxPlanner", {
+        //   message: "개발자가 현재 인원 보다 적습니다.",
+        // });
+        data.maxDeveloper = data.currDeveloper;
         return;
       }
 
@@ -381,7 +388,6 @@ function Detail() {
       },
     }
   );
-
   useEffect(() => {
     // loginCheckMutate();
   }, []);
@@ -438,7 +444,7 @@ function Detail() {
                     </AnimatePresence>
                   </>
                 ) : (
-                  <>{data?.title}</>
+                  <div className="font-main">{data?.title}</div>
                 )}
               </header>
 
@@ -498,7 +504,7 @@ function Detail() {
               <Grid>
                 <GridItem>
                   <ItemTitle>모집 기간</ItemTitle>
-                  <ItemText className="text-[18px]">
+                  <ItemText>
                     <>
                       {new Date(data?.postStart as Date).getFullYear()} /{" "}
                       {(
