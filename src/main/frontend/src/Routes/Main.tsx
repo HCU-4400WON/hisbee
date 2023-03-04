@@ -40,8 +40,8 @@ const titles = [
 ];
 
 const Banner = tw.img`
+w-max
 
-w-screen
 bg-gradient-to-r from-gray-200 to-gray-500
 mb-[50px]
 `;
@@ -64,7 +64,10 @@ font-unique
 `;
 
 const PostGrid = tw(motion.div)`
-flex justify-between w-full
+flex 
+justify-center
+gap-10
+w-full
 
 `;
 
@@ -169,9 +172,7 @@ font-medium
 
 const MAX_WIDTH = window.innerWidth;
 console.log(MAX_WIDTH);
-const OFFSET = 4;
-const NUM_POSTS = 8;
-const CARD_SIZE = 330;
+const NUM_POSTS = 12;
 
 interface IwindowSize {
   width: number;
@@ -191,14 +192,14 @@ const postsVariants = {
   showing: {
     x: 0,
     transition: {
-      duration: 2,
+      duration: 0.5,
     },
   },
   exit: (windowSize: any) => ({
     // x: -windowSize.windowSize.width,
     x: -1500,
     transition: {
-      duration: 2,
+      duration: 0.5,
     },
   }),
   hover: ({ leaving }: IProps) => ({
@@ -217,6 +218,8 @@ const postsVariants = {
 function Main() {
   // resize되는 화면 크기 구하기
 
+  const [OFFSET, setOFFSET] = useState<number>(4);
+
   const [windowSize, setWindowSize] = useState<{
     width: number | undefined;
     height: number | undefined;
@@ -233,12 +236,17 @@ function Main() {
       });
     };
 
+    if ((windowSize.width as number) >= 1200) setOFFSET(4);
+    else if ((windowSize.width as number) >= 990) setOFFSET(3);
+    else if ((windowSize.width as number) >= 768) setOFFSET(2);
+    else if ((windowSize.width as number) < 768) setOFFSET(1);
+
     window.addEventListener("resize", handleResize);
 
     handleResize();
 
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [window.innerWidth]);
 
   const addLikeMutate = useMutation(
     ["addLikePost" as string],
@@ -415,7 +423,7 @@ function Main() {
       {isLikesLoading || isRecentLoading || isMemberLoading || isEndLoading ? (
         <LoadingAnimation />
       ) : (
-        <div className="mb-[440px] ">
+        <div className="mb-[440px] w-screen">
           {isLoginModal ? <Login /> : null}
           {isSignupModal ? <SignUp /> : null}
           {isExtraSignupModal ? <SignUpOptional /> : null}
