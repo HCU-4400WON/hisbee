@@ -34,17 +34,16 @@ import SignUpOptional from "./SignUpOptional";
 
 const titles = [
   "🔥 요즘 핫한 모집글",
-  "👨‍🎨  신규 모집글",
-  "👨‍👦‍👦  모집인원 임박! 모집글",
-  "📢  마감임박! 모집글",
+  "👨‍🎨 신규 모집글",
+  "👨‍👦‍👦 모집인원 임박! 모집글",
+  "📢 마감임박! 모집글",
 ];
 
 const Banner = tw.img`
 
 w-screen
 bg-gradient-to-r from-gray-200 to-gray-500
-mt-[40px]
-mb-[150px]
+mb-[50px]
 `;
 
 const PostCategory = tw.div`
@@ -416,11 +415,11 @@ function Main() {
       {isLikesLoading || isRecentLoading || isMemberLoading || isEndLoading ? (
         <LoadingAnimation />
       ) : (
-        <div className="mb-[440px] w-[1470px] ">
+        <div className="mb-[440px] ">
           {isLoginModal ? <Login /> : null}
           {isSignupModal ? <SignUp /> : null}
           {isExtraSignupModal ? <SignUpOptional /> : null}
-          <Banner src="/img/mainBannerReal.png" className="w-[1470px]"></Banner>
+          <Banner src="/img/mainBannerReal.png"></Banner>
 
           {[postslikes, postsrecent, postsmember, postsend]?.map(
             (posts?: IPosts, idx?: any) => (

@@ -22,7 +22,6 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 
 const Banner = tw.img`
-mt-10 
 bg-gradient-to-r from-gray-300 to-gray-500
 `;
 
@@ -65,7 +64,8 @@ mx-3
 const SortBox = tw.div`
 flex 
 justify-between
-my-20 
+pt-[20px]
+pb-[40px]
 px-9
 
 `;
@@ -489,7 +489,7 @@ function Post() {
                 </SortSelect>
               </div>
               <Link to="/add">
-                <button className="text-[18px] text-white border border-black py-[5px] bg-black px-[20px] ">
+                <button className="text-[16px] text-white border border-black py-[5px] bg-black px-[20px] ">
                   모집글 쓰기
                 </button>
               </Link>
