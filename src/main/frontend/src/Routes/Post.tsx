@@ -28,7 +28,8 @@ bg-gradient-to-r from-gray-300 to-gray-500
 const FilterRow = tw.div`
 relative
 flex 
-h-16 
+h-12
+md:h-16
 my-1
 border-b-2 
 border-gray-300 
@@ -39,7 +40,8 @@ vertical-center
 const FilterTitle = tw.p`
 font-unique
 block
-text-xl 
+text-md
+md:text-xl
 mx-10
 my-auto
 w-20
@@ -50,7 +52,8 @@ const FilterButtonBox = tw.span`
 
 flex 
 items-center 
-text-lg
+text-sm
+md:text-lg
 `;
 
 const Button = tw.button`
@@ -66,36 +69,43 @@ flex
 justify-between
 pt-[20px]
 pb-[40px]
-px-9
+px-10
 
 `;
 
 const SortTitle = tw.p`
 font-bold 
 mr-5
+
 `;
 
 const SortSelect = tw.select`
-  w-44
+  w-40
+  
+  
 `;
 
 const PostGrid = tw.div`
 grid
-grid-cols-4
+grid-cols-1
+md:grid-cols-2
+lg:grid-cols-3
+xl:grid-cols-4
 gap-x-10
-px-9
+px-5
+place-items-center
+
 `;
-// sm:grid-cols-2
-// xl:grid-cols-4
 
 const PostItem = tw(motion.div)`
 relative
 h-[210px] 
-min-w-[330px]
+w-[320px]
 rounded-md
 overflow-hidden
 mb-[80px]
 shadow-lg
+
 `;
 
 const PostImage = tw.div`
@@ -183,8 +193,7 @@ text-gray-500
 font-medium
 `;
 
-const Container = tw.div`
-w-[1470px]`;
+const Container = tw.div``;
 
 function Post() {
   const location = useLocation();
@@ -489,7 +498,7 @@ function Post() {
                 </SortSelect>
               </div>
               <Link to="/add">
-                <button className="text-[16px] text-white border border-black py-[5px] bg-black px-[20px] ">
+                <button className="text-[12px] md:text-[16px] text-white border border-black py-[5px] bg-black px-[20px] ">
                   모집글 쓰기
                 </button>
               </Link>

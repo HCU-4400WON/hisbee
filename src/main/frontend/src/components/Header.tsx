@@ -26,6 +26,7 @@ h-[30px]
 hover:text-purple-400
  sm:text-[16px]
  text-slate-500
+ 
 `;
 
 const Logo = tw(motion.img)`
@@ -186,72 +187,79 @@ function Header() {
             />
           </Link>
 
-          <Link to="post" className="relative">
-            {isPostURL && (
-              <>
-                <div
-                  className="absolute w-[11px] h-[11px] right-7 top-[-2px]"
-                  // className="absolute w-[10px] h-[10px] left-11 top-[-2px]"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-                <div
-                  className="absolute w-[10px] h-[10px] right-11 top-[-5px]"
-                  // className="absolute w-[12px] h-[13px] right-0 left-0 mx-auto top-[-5px]"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-                <div
-                  className="absolute w-[10px] h-[10px] right-4 top-2"
-                  // className="absolute w-[10px] h-[10px] right-11 top-[-2px]"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-              </>
-            )}
-            {/* text-purple-500 */}
+          <Link to="post">
             <NavButton
-              className={`${isPostURL && "text-purple-400"} md:pr-[30px]`}
+              className={`${
+                isPostURL && "text-purple-400"
+              } md:pr-[30px] relative`}
             >
+              {isPostURL && (
+                <>
+                  <div
+                    className="absolute w-[11px] h-[11px] md:right-6 md:top-[-8px] right-3 top-[-8px]"
+                    // className="absolute w-[10px] h-[10px] left-11 top-[-2px]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
+                    }}
+                  />
+                  <div
+                    className="absolute w-[10px] h-[10px] md:right-10 md:top-[-10px] right-7 top-[-10px]"
+                    // className="absolute w-[12px] h-[13px] right-0 left-0 mx-auto top-[-5px]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
+                    }}
+                  />
+                  <div
+                    className="absolute w-[10px] h-[10px] md:right-3 md:top-[3px] right-0 top-0"
+                    // className="absolute w-[10px] h-[10px] right-11 top-[-2px]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
+                    }}
+                  />
+                </>
+              )}
+              {/* text-purple-500 */}
               모집글
             </NavButton>
           </Link>
 
-          <Link to="person" className="relative">
-            {isPersonURL && (
-              <>
-                <div
-                  className="absolute w-[11px] h-[11px] right-[-5px] top-[-2px]"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-                <div
-                  className="absolute w-[10px] h-[10px] right-3 top-[-5px]"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-                <div
-                  className="absolute w-[10px] h-[10px] right-[-17px] top-2"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-              </>
-            )}
+          <Link to="person">
             <NavButton
-              className={`${isPersonURL && "text-purple-400"}  md:pr-[30px]`}
+              className={`${
+                isPersonURL && "text-purple-400"
+              }  md:pr-[30px] relative`}
             >
+              {isPersonURL && (
+                <>
+                  <div
+                    className="absolute w-[11px] h-[11px] md:right-6 md:top-[-8px] right-3 top-[-8px]"
+                    // className="absolute w-[10px] h-[10px] left-11 top-[-2px]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
+                    }}
+                  />
+                  <div
+                    className="absolute w-[10px] h-[10px] md:right-10 md:top-[-10px] right-7 top-[-10px]"
+                    // className="absolute w-[12px] h-[13px] right-0 left-0 mx-auto top-[-5px]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
+                    }}
+                  />
+                  <div
+                    className="absolute w-[10px] h-[10px] md:right-3 md:top-[3px] right-0 top-0"
+                    // className="absolute w-[10px] h-[10px] right-11 top-[-2px]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
+                    }}
+                  />
+                </>
+              )}
               인재풀
             </NavButton>
           </Link>

@@ -66,13 +66,14 @@ font-unique
 const PostGrid = tw(motion.div)`
 flex 
 justify-center
-gap-10
+md:justify-between
+gap-6
 w-full
-
 `;
 
 //justify-self-center
 const PostItem = tw(motion.div)`
+
 relative
 h-[210px]
 min-w-[330px]
@@ -432,7 +433,7 @@ function Main() {
           {[postslikes, postsrecent, postsmember, postsend]?.map(
             (posts?: IPosts, idx?: any) => (
               // (posts?.length as number) > 0 && (
-              <PostCategory className="mb-[400px]">
+              <PostCategory className="mb-[370px]">
                 <TitleRow>
                   <Title>{titles[idx]}</Title>
                   <svg
