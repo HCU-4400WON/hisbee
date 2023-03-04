@@ -917,7 +917,7 @@ export const readMembers = async (
   }
 
   const response = await axios.get(
-    `http://localhost:8080/pool?&page=${
+    `http://localhost:8080/pool?page=${
       page + ""
     }${paramPosition}${paramDepartment}${paramGrade}`,
     {

@@ -195,6 +195,7 @@ function Person() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log(nowPage);
     refetch();
     console.log(position, grade, department, nowPage);
   }, [position, grade, department, nowPage]);
@@ -526,7 +527,6 @@ ${
             </div>
             {Users?.total === 0 ? (
               <div className="flex justify-center items-center w-full h-[50px] text-[20px] ">
-                {/* <div className="flex items-center w-[300px] border-2 bg-[#eeeeee] rounded-lg h-[150px] justify-center items-center"> */}
                 <i className="fa-solid fa-triangle-exclamation text-yellow-500 ">
                   &nbsp;
                 </i>
@@ -561,8 +561,6 @@ ${
                       {page}
                     </button>
                   ))}
-                {/* </>
-              )} */}
 
                 <button
                   id="next"
