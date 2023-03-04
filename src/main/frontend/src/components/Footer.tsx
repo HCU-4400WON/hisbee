@@ -26,24 +26,29 @@ const FooterVariant = {
 function Footer() {
   const [isTeamModal, setIsTeamModal] = useState(false);
   return (
-    <div className="w-[1470px] h-[150px] pr-[50px] flex justify-between items-center mt-[150px]">
+    <div className="min-w-[480px] h-[150px] pr-[50px] flex justify-between items-center mt-[150px]">
       <div className="flex justify-start items-end">
-        <img src="/img/logo.png" className="w-[250px]" />
-        <span className="text-[12px] pb-[6px] font-unique text-gray-500">
+        <img src="/img/logo.png" className="w-[150px] md:w-[250px]" />
+        <span className="text-[12px] pb-[6px] z-10 min-w-[220px] font-unique text-gray-500 hidden md:block">
           <strong>ⓒ</strong> 2022 Team.Hot6 All rights reserved
         </span>
       </div>
 
       <div className="flex justify-between w-[300px] items-center relative">
         <a href="https://github.com/HCU-4400WON/hot6" target="_blank">
-          <img src="/img/github.png" className="w-[100px] h-[50px]" />
+          <img
+            src="/img/github.png"
+            className="w-[80px] h-[40px] md:w-[100px] md:h-[50px]"
+          />
         </a>
-        <span className="text-[25px] mr-[10px] font-unique ">WALAB</span>
+        <span className="text-[20px] mr-[10px] font-unique md:text-[25px]">
+          WALAB
+        </span>
         <span>
           <p
             onMouseOver={() => setIsTeamModal(true)}
             onMouseLeave={() => setIsTeamModal(false)}
-            className="hover:opacity-60 text-[25px] font-unique"
+            className="hover:opacity-60 text-[20px] font-unique md:text-[25px]"
           >
             팀원
           </p>

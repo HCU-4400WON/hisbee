@@ -193,7 +193,8 @@ text-gray-500
 font-medium
 `;
 
-const Container = tw.div``;
+const Container = tw.div`
+min-w-[480px]`;
 
 function Post() {
   const location = useLocation();

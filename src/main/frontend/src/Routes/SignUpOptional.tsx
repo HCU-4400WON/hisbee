@@ -26,8 +26,8 @@ justify-center
 `;
 
 const SignUpCard = tw.form`
-
-w-[800px] 
+w-[400px]
+md:w-[800px] 
 bg-[#fff]
 mt-[100px] 
 px-[60px] 
@@ -85,7 +85,8 @@ h-[70px]
 `;
 
 const Info = tw.label`
-  text-[18px]
+text-[13px]  
+md:text-[18px]
   my-[20px]
   font-main
 `;
@@ -121,7 +122,8 @@ w-[680px]
 `;
 
 const IntroduceArea = tw.textarea`
-w-[680px]
+w-[300px]
+md:w-[680px]
 h-[110px]
 bg-[#eeeeee]
 `;
@@ -317,7 +319,7 @@ function SignUpOptional() {
       {updateMemberLoading ? (
         <LoadingAnimation />
       ) : (
-        <Container className="relative w-[1470px]">
+        <Container className="relative">
           <motion.div
             variants={LayoutVariant}
             initial="hidden"
@@ -339,14 +341,14 @@ function SignUpOptional() {
               {/* <Link to="/"> */}
               <button
                 onClick={() => setIsExtraSignupModal(false)}
-                className="float-right w-[150px] border-2 border-red-500 rounded-full text-[red]"
+                className="float-right w-[100px] md:w-[150px] border-2 border-red-500 rounded-full text-[red]"
               >
                 안하고 나가기
               </button>
               {/* </Link> */}
             </Info>
 
-            <FlexRequiredBox>
+            <FlexRequiredBox className="flex-col md:flex-row">
               <div className="flex flex-col justify-evenly h-[400px]">
                 <InfoBox>
                   <Info>학부</Info>
@@ -453,7 +455,7 @@ function SignUpOptional() {
               </div>
               <div className="flex flex-col items-center justify-evenly mt-[15px]">
                 <img
-                  className="border w-[300px] h-[300px] "
+                  className="border md:w-[300px] md:h-[300px] w-[200px] h-[200px] my-[10px] md:my-[0px]"
                   src={imageURL}
                 ></img>
                 <input
@@ -464,7 +466,7 @@ function SignUpOptional() {
                   // onChange={onUploadImage}
                   onChange={onImageChange}
                 />
-                <div className="flex items-center justify-between w-[170px]">
+                <div className="flex items-center justify-between w-[170px] md:mb-[0px] mb-[10px]">
                   <i
                     onClick={onUploadImageButtonClick}
                     className="fa-solid fa-arrow-up-from-bracket p-2 border-2 rounded-full"
@@ -490,7 +492,7 @@ function SignUpOptional() {
               />
             </IntroduceBox>
 
-            <FlexRowBox className="justify-between ">
+            <FlexRowBox className="justify-between md:flex-row flex-col">
               <InfoBox>
                 <Info className="my-[25px]">동아리 / 학회 1</Info>
                 <InfoInput
@@ -510,8 +512,8 @@ function SignUpOptional() {
                 />
               </InfoBox>
             </FlexRowBox>
-            <FlexRowBox className="justify-between">
-              <InfoBox className=" h-[150px]">
+            <FlexRowBox className="justify-between md:flex-row flex-col">
+              <InfoBox className=" md:h-[150px] h-[100px]">
                 <Info className=" flex items-center my-[25px]">
                   <p>연락수단</p>
                 </Info>

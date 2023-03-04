@@ -14,6 +14,7 @@ items-center
 px-[20px]
 sm:justify-between
 pr-[60px]
+min-w-[480px]
 `;
 
 const NavButton = tw.button`

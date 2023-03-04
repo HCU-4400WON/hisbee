@@ -28,13 +28,15 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 
 const Sidebar = tw.div`
-min-w-[250px] pl-[30px]
+hidden
+lg:flex
+min-w-[250px] 
+pl-[30px]
 border-r-2
 border-t-2
 border-gray-200
 border-b-2
 min-h-screen
-flex
 flex-col
 items-start
 
@@ -56,19 +58,25 @@ hover:text-gray-400
 `;
 
 const ProfileInfoRow = tw.div`
-
-    flex
-    my-[10px]
-    h-auto
-    items-center
+  w-full
+  flex
+  my-[10px]
+  h-auto
+  items-center
+  text-[13px]
+  lg:text-[17px]
 `;
 
 const ProfileInfoBox = tw.div`
-flex items-center w-[180px]
+flex 
+items-center 
+w-[110px]
+lg:w-[180px]
+
 `;
 
 const ProfileInfoTitle = tw.p`
-min-w-[150px] 
+w-[150px] 
 text-gray-500
 font-medium
 `;
@@ -79,20 +87,28 @@ mr-2
 `;
 
 const ProfileInfoContent = tw.span`
+min-w-[230px]
+md:min-w-[300px]
+
+
 `;
 
 const ProfileBanner = tw.form`
 
-min-w-[700px] 
 my-[40px] 
 rounded-xl 
 bg-[#f2f2f2] 
 p-[50px] 
 flex
+flex-col
+md:flex-row
+items-center
+md:items-start
+
 `;
 
 const PostGrid = tw.div`
-min-w-[700px]
+
 gap-20
 p-10
 flex
@@ -446,7 +462,7 @@ function Profile() {
       ) : (
         <>
           {isDeleteModal ? <DeletePopup /> : null}
-          <div className="flex w-[1470px]">
+          <div className="flex">
             <Sidebar>
               <SidebarTitle>My profile</SidebarTitle>
               <SidebarItemText onClick={onSidebarClick} id="1">
@@ -463,12 +479,12 @@ function Profile() {
                 탈퇴하기
               </SidebarItemText>
             </Sidebar>
-            <div className="px-[50px] w-[1220px] border-t-2 border-b-2 border-gray-200">
+            <div className="px-[50px] w-full lg:w-5/6 border-t-2 border-b-2 border-gray-200 ">
               <ProfileBanner
                 id="profileInfo"
                 onSubmit={handleSubmit(onValid as any)}
               >
-                <div className=" w-[140px] flex flex-col items-center">
+                <div className=" w-[120px] flex flex-col items-center">
                   <img
                     src="img/user.png"
                     className="w-[100%] h-[120px] rounded-full"
@@ -517,7 +533,7 @@ function Profile() {
                     </div>
                   )}
                 </div>
-                <div className="w-full pl-[70px] text-[17px] flex flex-col justify-between">
+                <div className="md:pl-[70px] w-full text-[17px] flex flex-col justify-between mt-[20px] md:mt-[0px]">
                   <ProfileInfoRow>
                     <ProfileInfoBox>
                       <ProfileInfoIcon className="fa-solid fa-graduation-cap"></ProfileInfoIcon>
@@ -598,7 +614,7 @@ function Profile() {
                       {nowModifying ? (
                         <div>
                           <input
-                            className="border-2 h-[35px] px-2 rounded-lg w-[400px]"
+                            className="border-2 h-[35px] px-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px]"
                             type="text"
                             {...register("contact", {
                               required: "필수 사항 입니다",
@@ -631,18 +647,16 @@ function Profile() {
 
                   <ProfileInfoRow className="items-start">
                     <ProfileInfoBox>
-                      <ProfileInfoIcon className="fa-solid fa-circle-nodes mt-2"></ProfileInfoIcon>
+                      <ProfileInfoIcon className="fa-solid fa-circle-nodes "></ProfileInfoIcon>
 
-                      <ProfileInfoTitle className="mt-1">
-                        동아리 / 학회
-                      </ProfileInfoTitle>
+                      <ProfileInfoTitle>동아리 / 학회</ProfileInfoTitle>
                     </ProfileInfoBox>
 
                     {nowModifying ? (
                       <div className="flex flex-col ">
                         <input
                           {...register(`club1`)}
-                          className="border-2 h-[35px] px-2 mb-[10px] rounded-lg w-[400px]"
+                          className="border-2 h-[35px] px-2 mb-[10px] rounded-lg w-[200px] lg:w-[300px] xl:w-[400px]"
                           placeholder="최대 2개"
                           type="text"
                           maxLength={20}
@@ -650,7 +664,7 @@ function Profile() {
 
                         <input
                           {...register(`club2`)}
-                          className="border-2 h-[35px] px-2 rounded-lg w-[400px]"
+                          className="border-2 h-[35px] px-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px]"
                           placeholder="최대 2개"
                           type="text"
                           maxLength={20}
@@ -685,17 +699,15 @@ function Profile() {
 
                   <ProfileInfoRow className=" items-start mb-0">
                     <ProfileInfoBox>
-                      <ProfileInfoIcon className="fa-solid fa-link mt-2"></ProfileInfoIcon>
-                      <ProfileInfoTitle className="mt-1">
-                        외부링크
-                      </ProfileInfoTitle>
+                      <ProfileInfoIcon className="fa-solid fa-link"></ProfileInfoIcon>
+                      <ProfileInfoTitle className="">외부링크</ProfileInfoTitle>
                     </ProfileInfoBox>
 
                     {nowModifying ? (
                       <div>
-                        <div>
+                        <div className="flex items-center">
                           <input
-                            className="border-2 px-2 rounded-lg w-[400px] h-[35px]"
+                            className="border-2 px-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px] h-[35px]"
                             value={externalLink}
                             onChange={onChange}
                             placeholder="ex) github or Linked-In"
@@ -708,9 +720,9 @@ function Profile() {
                         </div>
 
                         {Links?.map((link) => (
-                          <div className="flex items-center justify-between bg-slate-200 px-[10px] w-[400px] h-[30px] mt-[10px]">
+                          <div className="flex items-center justify-between bg-slate-200 px-[10px] w-[200px] lg:w-[300px] xl:w-[400px]  h-[30px] mt-[10px]">
                             <i className="fa-solid fa-link"></i>
-                            {link}{" "}
+                            <p>{link} </p>
                             <i
                               className="fa-regular fa-trash-can"
                               onClick={() => onDelete(link)}
@@ -727,9 +739,9 @@ function Profile() {
                     ) : (
                       <div className="flex flex-col ">
                         {Links?.map((link) => (
-                          <div className=" relative flex items-center justify-center bg-slate-200 px-[10px] w-[400px] h-[30px] mb-[10px]">
+                          <div className="relative flex items-center justify-center w-[230px] md:min-w-[300px] bg-slate-200 h-[30px] mb-[10px]">
                             <i className="fa-solid fa-link absolute left-2"></i>
-                            {link}{" "}
+                            <p>{link} </p>
                           </div>
                         ))}
                       </div>
@@ -739,16 +751,14 @@ function Profile() {
                     className={`${nowModifying && "mt-[20px]"} items-start`}
                   >
                     <ProfileInfoBox>
-                      <ProfileInfoIcon className="fa-solid fa-rocket mt-2"></ProfileInfoIcon>
-                      <ProfileInfoTitle className="mt-1">
-                        자기소개
-                      </ProfileInfoTitle>
+                      <ProfileInfoIcon className="fa-solid fa-rocket"></ProfileInfoIcon>
+                      <ProfileInfoTitle className="">자기소개</ProfileInfoTitle>
                     </ProfileInfoBox>
                     <ProfileInfoContent>
                       {nowModifying ? (
                         <textarea
                           {...register("bio")}
-                          className="border-2 p-2 rounded-lg w-[400px] h-[100px]"
+                          className="border-2 p-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px] h-[100px]"
                           placeholder="자유롭게 작성 해주세요 !"
                           maxLength={150}
                         ></textarea>
@@ -757,22 +767,22 @@ function Profile() {
                       )}
                     </ProfileInfoContent>
                   </ProfileInfoRow>
-                  <div className="w-full">
+                  <div className="flex justify-center md:justify-end ">
                     {!location.state &&
                       (nowModifying ? (
                         <>
                           <button
-                            id="modify"
-                            className="bg-[#fff] w-[120px] h-[32px] border-2 shadow  rounded-full float-right text-gray-500 border-gray-400"
-                          >
-                            제출하기
-                          </button>
-                          <button
                             onClick={() => setNowModifying(false)}
-                            className="mr-[10px] float-right mb-[40px] rounded-full border-2 border-red-500 text-red-500 w-[120px] bg-white h-[32px] "
+                            className="mb-[40px]  rounded-full border-2 border-red-500 text-red-500 w-[80px] bg-white text-[13px] mt-[20px] md:text-[17px] md:w-[120px] md:h-[30px] h-[25px] "
                           >
                             {" "}
                             취소하기{" "}
+                          </button>
+                          <button
+                            id="modify"
+                            className="bg-[#fff] ml-2 w-[80px] text-[13px] mt-[20px] md:text-[17px] md:w-[120px] md:h-[30px] h-[25px] border-2 shadow  rounded-full text-gray-500 border-gray-400"
+                          >
+                            제출하기
                           </button>
                         </>
                       ) : (
@@ -780,7 +790,7 @@ function Profile() {
                           <button
                             id="modify"
                             onClick={onClick}
-                            className="bg-[#fff] w-[120px] h-[32px] border-2 shadow  rounded-full float-right text-gray-500 border-gray-400"
+                            className="bg-[#fff] w-[80px] text-[13px] mt-[10px] md:mt-[0px] md:text-[17px] md:w-[120px] md:h-[30px] h-[25px] border-2 shadow rounded-full  text-gray-500 border-gray-400"
                           >
                             수정하기
                           </button>

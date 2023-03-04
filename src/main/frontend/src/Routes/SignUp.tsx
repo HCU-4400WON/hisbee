@@ -18,7 +18,8 @@ justify-center
 `;
 
 const SignUpCard = tw.form`
-w-[800px] 
+w-[400px]
+md:w-[800px] 
 h-[500px]
 bg-[#fff] 
 px-[60px]
@@ -115,7 +116,8 @@ rounded-full
 `;
 
 const SubmitButton = tw.button`
-w-[150px]
+w-[100px]
+md:w-[150px]
 h-[33px]
 bg-[#eeeeee]
 rounded-full
@@ -203,7 +205,7 @@ function SignUp() {
       {signupMemberLoading ? (
         <LoadingAnimation />
       ) : (
-        <Container className="w-[1470px]">
+        <Container>
           <motion.div
             variants={LayoutVariant}
             initial="hidden"
@@ -250,9 +252,9 @@ function SignUp() {
               </InfoBox>
 
               <InfoBox className="flex w-full flex-row mt-[40px] justify-end">
-                {/* <Link to="/oauth2/redirect/optional"> */}
-                <SubmitButton className="">제출하기</SubmitButton>
-                {/* </Link> */}
+                <Link to="/oauth2/redirect/optional">
+                  <SubmitButton className="">제출하기</SubmitButton>
+                </Link>
               </InfoBox>
             </SignUpCard>
           </div>

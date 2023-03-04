@@ -47,7 +47,7 @@ function DeleteModal() {
         ></motion.div>
       </AnimatePresence>
       <div className="fixed z-20 flex justify-center mt-[150px] w-full h-screen">
-        <div className="w-[1000px] bg-[white] h-[330px] py-[30px] px-[30px] rounded-3xl flex flex-col justify-between">
+        <div className="w-4/5 rounded-2xl md:w-[1000px] bg-[white] h-[330px] py-[30px] px-[30px] md:rounded-3xl flex flex-col justify-between">
           <span className="flex justify-end">
             <i
               onClick={onClick}
@@ -58,7 +58,7 @@ function DeleteModal() {
           <span className="flex justify-center">
             <span className="flex flex-col w-[300px] h-[100px] items-center">
               <img className="w-[200px]" src="/img/logo.png " />
-              <p className="font-semibold text-[25px]">
+              <p className="font-semibold text-[20px] md:text-[25px]">
                 정말로 탈퇴하시겠습니까?
               </p>
             </span>

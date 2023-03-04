@@ -67,7 +67,7 @@ const PostGrid = tw(motion.div)`
 flex 
 justify-center
 md:justify-between
-gap-6
+gap-2
 w-full
 `;
 
@@ -76,7 +76,7 @@ const PostItem = tw(motion.div)`
 
 relative
 h-[210px]
-min-w-[330px]
+w-[320px]
 rounded-md
 overflow-hidden
 z-0
@@ -126,7 +126,7 @@ const PostMainPart = tw.div`
 bg-[#e9e9eb] 
 w-full 
 h-full 
-px-[25px] 
+px-[20px] 
 py-[15px]
 `;
 
@@ -147,7 +147,7 @@ const PostDateStart = tw.p``;
 
 const PostPerson = tw.div`
 absolute 
-left-[25px] 
+left-[20px] 
 bottom-[15px] 
 flex 
 items-center 
@@ -156,6 +156,7 @@ gap-2
 
 const PostPersonTotal = tw.p`
 text-[#185ee4] 
+flex
 font-bold 
 text-[14px]
 `;
@@ -164,8 +165,8 @@ const PostPersonPosition = tw.span`
 border-gray-400 
 border 
 rounded-full 
-px-[10px] 
-text-[11px] 
+px-[5px] 
+text-[10px] 
 text-gray-500 
 font-medium
 
@@ -219,7 +220,7 @@ const postsVariants = {
 function Main() {
   // resize되는 화면 크기 구하기
 
-  const [OFFSET, setOFFSET] = useState<number>(4);
+  const [OFFSET, setOFFSET] = useState<number | null>(null);
 
   const [windowSize, setWindowSize] = useState<{
     width: number | undefined;
@@ -230,17 +231,36 @@ function Main() {
   });
 
   useEffect(() => {
+    handleOFFSET(window.innerWidth);
+  }, []);
+
+  const handleOFFSET = (windowWidth: number) => {
+    if (window.innerWidth >= 1200) setOFFSET(4);
+    else if (window.innerWidth >= 990) setOFFSET(3);
+    else if (window.innerWidth >= 768) setOFFSET(2);
+    else if (window.innerWidth < 768) setOFFSET(1);
+  };
+
+  const handleResize = () => {
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+
+    handleOFFSET(windowSize.width as number);
+  };
+  useEffect(() => {
     const handleResize = () => {
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight,
       });
-    };
 
-    if ((windowSize.width as number) >= 1200) setOFFSET(4);
-    else if ((windowSize.width as number) >= 990) setOFFSET(3);
-    else if ((windowSize.width as number) >= 768) setOFFSET(2);
-    else if ((windowSize.width as number) < 768) setOFFSET(1);
+      if ((windowSize.width as number) >= 1200) setOFFSET(4);
+      else if ((windowSize.width as number) >= 990) setOFFSET(3);
+      else if ((windowSize.width as number) >= 768) setOFFSET(2);
+      else if ((windowSize.width as number) < 768) setOFFSET(1);
+    };
 
     window.addEventListener("resize", handleResize);
 
@@ -284,21 +304,23 @@ function Main() {
   const [indexs, setIndexs] = useState([0, 0, 0, 0]);
 
   const increaseIndex = (idx: number) => {
-    if (leaving) return;
-    setLeaving(true);
-    if (
-      indexs[idx] ===
-      (NUM_POSTS % OFFSET === 0
-        ? NUM_POSTS / OFFSET - 1
-        : Math.floor(NUM_POSTS / OFFSET))
-    )
-      setIndexs((prev) => [...prev.slice(0, idx), 0, ...prev.slice(idx + 1)]);
-    else {
-      setIndexs((prev) => [
-        ...prev.slice(0, idx),
-        prev[idx] + 1,
-        ...prev.slice(idx + 1),
-      ]);
+    if (OFFSET) {
+      if (leaving) return;
+      setLeaving(true);
+      if (
+        indexs[idx] ===
+        (NUM_POSTS % OFFSET === 0
+          ? NUM_POSTS / OFFSET - 1
+          : Math.floor(NUM_POSTS / OFFSET))
+      )
+        setIndexs((prev) => [...prev.slice(0, idx), 0, ...prev.slice(idx + 1)]);
+      else {
+        setIndexs((prev) => [
+          ...prev.slice(0, idx),
+          prev[idx] + 1,
+          ...prev.slice(idx + 1),
+        ]);
+      }
     }
   };
 
@@ -421,10 +443,14 @@ function Main() {
 
   return (
     <>
-      {isLikesLoading || isRecentLoading || isMemberLoading || isEndLoading ? (
+      {isLikesLoading ||
+      isRecentLoading ||
+      isMemberLoading ||
+      isEndLoading ||
+      !OFFSET ? (
         <LoadingAnimation />
       ) : (
-        <div className="mb-[440px] w-screen">
+        <div className="min-w-[480px] mb-[440px] w-screen">
           {isLoginModal ? <Login /> : null}
           {isSignupModal ? <SignUp /> : null}
           {isExtraSignupModal ? <SignUpOptional /> : null}
@@ -433,7 +459,7 @@ function Main() {
           {[postslikes, postsrecent, postsmember, postsend]?.map(
             (posts?: IPosts, idx?: any) => (
               // (posts?.length as number) > 0 && (
-              <PostCategory className="mb-[370px]">
+              <PostCategory className="mb-[350px]">
                 <TitleRow>
                   <Title>{titles[idx]}</Title>
                   <svg
