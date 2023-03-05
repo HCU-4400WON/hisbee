@@ -925,6 +925,7 @@ export const readMembers = async (
       withCredentials: true,
     }
   );
+  console.log(response);
 
   return response.data;
 };

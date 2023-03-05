@@ -348,6 +348,7 @@ function Profile() {
     bio: string;
     club1: string;
     club2: string;
+    imageUrl: string;
   }
 
   const onValid = async (newData: Idata) => {
@@ -357,7 +358,7 @@ function Profile() {
 
     const newUser = {
       nickname: newData.nickname,
-      pictureUrl: "/img/user.png",
+      pictureUrl: newData.imageUrl,
       isPublic: true,
       department: newData.department,
       position: newData.position,

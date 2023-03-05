@@ -174,8 +174,13 @@ function Person() {
   } = useQuery<IUsers>(
     ["members"],
     () => readMembers(nowPage, position, grade, department),
+
     {
+      onSuccess: () => {
+        console.log("성공하였습니다.");
+      },
       onError: (error) => {
+        console.log("실패하였습니다.");
         if (
           ((error as AxiosError).response as AxiosResponse).status === 401 ||
           ((error as AxiosError).response as AxiosResponse).status === 403
