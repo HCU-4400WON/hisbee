@@ -1,6 +1,5 @@
 package com.hcu.hot6.domain.response;
 
-import com.hcu.hot6.domain.Member;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,5 +10,5 @@ import java.util.List;
 public class MemberPoolResponse {
 
     private final long total;
-    private final List<Member> members;
+    private final List<MemberProfileResponse> members;
 }
