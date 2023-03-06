@@ -1,10 +1,10 @@
-package com.hcu.hot6;
+package com.hcu.hot6.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.request.PostCreationRequest;
-import com.hcu.hot6.domain.response.MemberResponse;
+import com.hcu.hot6.domain.response.MemberPoolResponse;
 import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
 import com.hcu.hot6.repository.MemberRepository;
@@ -13,13 +13,11 @@ import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -27,7 +25,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
@@ -42,10 +40,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 기타
  * - Post Create 시, LocalDateTime에 실제 날짜의 범위를 넘어선 값이 들어오는 경우에 대해서는 Validation 어노테이션 필요 없음 -> 자바에서 LocalDateTime으로 변환하는 과정에서 Validation 체크
  */
-@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class PostApiTest {
+public class PostControllerTest {
 
     private static final String TEST_EMAIL = "test@example.com";
 
@@ -92,7 +89,7 @@ public class PostApiTest {
 
         member2.update(MemberRequest.builder()
                 .nickname("member2")
-                .isPublic(false)
+                .isPublic(true)
                 .build());
 
         memberRepository.save(member1);
@@ -113,9 +110,9 @@ public class PostApiTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
-                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
-                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
+                .postEnd(new Date())
+                .projectStart(new Date())
+                .projectEnd(new Date())
                 .maxMentor(1)
                 .maxMentee(2)
                 .build();
@@ -162,35 +159,6 @@ public class PostApiTest {
                 .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
-                .maxMentor(1)
-                .maxMentee(2)
-                .build();
-
-        mockMvc
-                .perform(post("/posts")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(request))
-                        .with(oauth2Login()
-                                .attributes(attr -> attr
-                                        .put("sub", TEST_EMAIL))))
-                .andExpect(status().isBadRequest())
-                .andDo(print());
-    }
-
-    /**
-     * Validation 체크 2번 항목
-     */
-    @DisplayName("모집글 유효 검사: 과거 날짜 입력 여부")
-    @Test
-    public void 날짜입력_Future() throws Exception {
-        PostCreationRequest request = PostCreationRequest.builder()
-                .dtype("M")
-                .title("title")
-                .content("content")
-                .contact("contact")
-                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
-                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
-                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2022, 7, 2, 0, 0, 0)))
                 .maxMentor(1)
                 .maxMentee(2)
                 .build();
@@ -379,7 +347,7 @@ public class PostApiTest {
     @Test
     public void 찜_추가() throws Exception {
         // given
-        postService.createPost(PostCreationRequest.builder()
+        var post = postService.createPost(PostCreationRequest.builder()
                 .dtype("M")
                 .title("title")
                 .content("content")
@@ -393,7 +361,7 @@ public class PostApiTest {
 
         // when
         MvcResult mvcResult = mockMvc
-                .perform(post("/posts/{postId}/likes", 1)
+                .perform(post("/posts/{postId}/likes", post.getId())
                         .with(oauth2Login()
                                 .attributes(attr -> attr
                                         .put("sub", "lifeIsGood@test.com"))))
@@ -402,44 +370,75 @@ public class PostApiTest {
                 .andReturn();
 
         // then
-        List<MemberResponse> results = List.of(objectMapper.readValue(mvcResult.getResponse()
-                .getContentAsString(), MemberResponse[].class));
+        PostReadOneResponse results = objectMapper.readValue(mvcResult.getResponse()
+                .getContentAsString(), PostReadOneResponse.class);
 
-        assertThat(results.size()).isEqualTo(1);
-        assertThat(results.get(0).getNickname()).isEqualTo("member2");
+        assertThat(results.getNLiked()).isEqualTo(1);
     }
 
     @Test
     public void 찜_삭제() throws Exception {
+        // given
+        var post = postService.createPost(PostCreationRequest.builder()
+                .dtype("M")
+                .title("title")
+                .content("content")
+                .contact("contact")
+                .postEnd(Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .projectStart(Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
+                .projectEnd(Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
+                .maxMentor(1)
+                .maxMentee(2)
+                .build(), TEST_EMAIL);
+
+        postService.addBookmark(post.getId(), "lifeIsGood@test.com");
+
+        // when
+        MvcResult mvcResult = mockMvc
+                .perform(delete("/posts/{postId}/likes", post.getId())
+                        .with(oauth2Login()
+                                .attributes(attr -> attr
+                                        .put("sub", "lifeIsGood@test.com"))))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        // then
+        PostReadOneResponse results = objectMapper.readValue(mvcResult.getResponse()
+                .getContentAsString(), PostReadOneResponse.class);
+
+        assertThat(results.getNLiked()).isEqualTo(0);
+    }
+
+    @Test
+    public void 인재풀_조회_모집글_포함() throws Exception {
         // given
         postService.createPost(PostCreationRequest.builder()
                 .dtype("M")
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
-                .projectStart(Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
-                .projectEnd(Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
+                .postEnd(new Date())
+                .projectStart(new Date())
+                .projectEnd(new Date())
                 .maxMentor(1)
                 .maxMentee(2)
-                .build(), TEST_EMAIL);
-
-        postService.addBookmark(1L, "lifeIsGood@test.com");
+                .build(), "lifeIsGood@test.com");
 
         // when
         MvcResult mvcResult = mockMvc
-                .perform(delete("/posts/{postId}/likes", 1)
+                .perform(get("/pool")
+                        .param("page", "1")
                         .with(oauth2Login()
                                 .attributes(attr -> attr
                                         .put("sub", "lifeIsGood@test.com"))))
-                .andExpect(status().isOk())
                 .andDo(print())
+                .andExpect(status().isOk())
                 .andReturn();
 
         // then
-        List<MemberResponse> results = List.of(objectMapper.readValue(mvcResult.getResponse()
-                .getContentAsString(), MemberResponse[].class));
-
-        assertThat(results.size()).isEqualTo(0);
+        var res = objectMapper.readValue(mvcResult.getResponse()
+                .getContentAsString(), MemberPoolResponse.class);
+        assertThat(res.getMembers().get(0).getPosts()).isNotEmpty();
     }
 }

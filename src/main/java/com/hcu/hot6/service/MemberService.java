@@ -5,6 +5,7 @@ import com.hcu.hot6.domain.Pagination;
 import com.hcu.hot6.domain.filter.PoolSearchFilter;
 import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.response.MemberPoolResponse;
+import com.hcu.hot6.domain.response.MemberProfileResponse;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.repository.PoolRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,10 @@ public class MemberService {
 
     public MemberPoolResponse getMatchedProfilesWith(PoolSearchFilter filter) {
         var pagination = new Pagination(filter.getPage(), poolRepository.count(filter));
-        var members = poolRepository.matchWith(filter, pagination.getOffset());
+        var members = poolRepository.matchWith(filter, pagination.getOffset())
+                .stream()
+                .map(MemberProfileResponse::new)
+                .toList();
 
         return new MemberPoolResponse(pagination.getTotal(), members);
     }

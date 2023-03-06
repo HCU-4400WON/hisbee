@@ -1,4 +1,4 @@
-package com.hcu.hot6;
+package com.hcu.hot6.controller;
 
 import com.hcu.hot6.domain.enums.OrderBy;
 import com.hcu.hot6.domain.enums.PostType;
