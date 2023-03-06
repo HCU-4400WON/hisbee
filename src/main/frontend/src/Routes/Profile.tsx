@@ -18,6 +18,7 @@ import {
 import DeletePopup from "components/DeleteModal";
 import LoadingAnimation from "components/LoadingAnimation";
 import { AnimatePresence, motion } from "framer-motion";
+import { userInfo } from "os";
 
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -267,6 +268,7 @@ function Profile() {
     onSuccess: (data) => {
       console.log("Fetch!!!");
       setValue("nickname", data.nickname);
+      setValue("pictureUrl", data.pictureUrl);
       setValue("department", data.department);
       setValue("position", data.position);
       setValue("contact", data.contact);
@@ -484,7 +486,7 @@ function Profile() {
               >
                 <div className=" w-[120px] flex flex-col items-center">
                   <img
-                    src="img/user.png"
+                    src={data?.pictureUrl}
                     className="w-[100%] h-[120px] rounded-full"
                   />
                   {nowModifying ? (

@@ -424,26 +424,24 @@ function Main() {
     }
   };
 
-  const { mutate: loginCheckMutate, isLoading: isLoginCheck } = useMutation(
-    ["loginCheckApiMain" as string],
-    loginCheckApi,
-    {
+  const { mutate: loginCheckMutate, isLoading: isLoginCheckLoading } =
+    useMutation(["loginCheckApiMain" as string], loginCheckApi, {
       onError: (error) => {
         if (((error as AxiosError).response as AxiosResponse).status === 401) {
           if (localStorage.getItem("key")) localStorage.removeItem("key");
           setIsLogin(false);
         }
       },
-    }
-  );
+    });
 
   useEffect(() => {
-    // loginCheckMutate();
+    loginCheckMutate();
   }, []);
 
   return (
     <>
-      {isLikesLoading ||
+      {isLoginCheckLoading ||
+      isLikesLoading ||
       isRecentLoading ||
       isMemberLoading ||
       isEndLoading ||

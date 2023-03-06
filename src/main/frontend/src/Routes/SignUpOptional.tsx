@@ -253,7 +253,16 @@ function SignUpOptional() {
   const onValid = (data: any) => {
     console.log("check", data, Links);
     const newUser = {
-      pictureUrl: uploadImage,
+      pictureUrl:
+        uploadImage !== ""
+          ? uploadImage
+          : positionId === "일반"
+          ? "/img/position1.png"
+          : positionId === "기획자"
+          ? "/img/position2.png"
+          : positionId === "디자이너"
+          ? "/img/position3.png"
+          : "/img/position4.png",
       isPublic: true,
       department: data.department,
       position: positionId,
@@ -263,9 +272,10 @@ function SignUpOptional() {
       contact: data?.contact,
       externalLinks: Links,
     };
-
+    console.log(newUser);
     updateMemberMutate(newUser);
 
+    setImageURL("");
     setIsExtraSignupModal(false);
     navigate("/");
   };
@@ -310,6 +320,7 @@ function SignUpOptional() {
         onError: () => {
           console.log("유저 수정이 작동하지 않습니다.");
         },
+        onSuccess: () => {},
       }
     );
 
@@ -461,8 +472,15 @@ function SignUpOptional() {
               </div>
               <div className="flex flex-col items-center justify-evenly mt-[15px]">
                 <img
-                  className="border md:w-[300px] md:h-[300px] w-[200px] h-[200px] my-[10px] md:my-[0px]"
+                  id="uploadImage"
+                  className="my-[10px] w-[200px] h-[200px] md:my-[0px]"
                   src={imageURL}
+                  onError={(e) => {
+                    e.currentTarget.src = "/img/logoDefault.png";
+                  }}
+                  onLoad={(e) => {
+                    console.log(e);
+                  }}
                 ></img>
                 <input
                   className="hidden"

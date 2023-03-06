@@ -961,7 +961,7 @@ export const deleteLikePost = async (postId: number) => {
 
 export const loginCheckApi = () => {
   const TOKEN = localStorage.getItem("key");
-  const response = axios.post(`http://localhost:8080/`, {
+  const response = axios.get(`http://localhost:8080/auth`, {
     headers: { Authorization: `Bearer ${TOKEN}` },
     withCredentials: true,
   });

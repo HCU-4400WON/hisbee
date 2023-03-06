@@ -422,20 +422,17 @@ function Detail() {
 
   const setIsLogin = useSetRecoilState(isLoginState);
 
-  const { mutate: loginCheckMutate, isLoading: isLoginCheck } = useMutation(
-    ["loginCheckApiDetail" as string],
-    loginCheckApi,
-    {
+  const { mutate: loginCheckMutate, isLoading: isLoginCheckLoading } =
+    useMutation(["loginCheckApiDetail" as string], loginCheckApi, {
       onError: (error) => {
         if (((error as AxiosError).response as AxiosResponse).status === 401) {
           if (localStorage.getItem("key")) localStorage.removeItem("key");
           setIsLogin(false);
         }
       },
-    }
-  );
+    });
   useEffect(() => {
-    // loginCheckMutate();
+    loginCheckMutate();
   }, []);
 
   // useState로 상태관리하기 초기값은 EditorState.createEmpty()
@@ -512,7 +509,7 @@ function Detail() {
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || isLoginCheckLoading ? (
         <LoadingAnimation />
       ) : (
         <>

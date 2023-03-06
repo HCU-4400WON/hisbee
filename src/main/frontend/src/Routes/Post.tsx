@@ -357,18 +357,15 @@ function Post() {
     }
   );
 
-  const { mutate: loginCheckMutate, isLoading: isLoginCheck } = useMutation(
-    ["loginCheckApiPost" as string],
-    loginCheckApi,
-    {
+  const { mutate: loginCheckMutate, isLoading: isLoginCheckLoading } =
+    useMutation(["loginCheckApiPost" as string], loginCheckApi, {
       onError: (error) => {
         if (((error as AxiosError).response as AxiosResponse).status === 401) {
           if (localStorage.getItem("key")) localStorage.removeItem("key");
           setIsLogin(false);
         }
       },
-    }
-  );
+    });
 
   const { mutate: likeDeleteMutate, isLoading: isLikeDeleteLoading } =
     useMutation(
@@ -400,12 +397,12 @@ function Post() {
   };
 
   useEffect(() => {
-    // loginCheckMutate();
+    loginCheckMutate();
   }, []);
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || isLoginCheckLoading ? (
         <LoadingAnimation />
       ) : (
         <>
