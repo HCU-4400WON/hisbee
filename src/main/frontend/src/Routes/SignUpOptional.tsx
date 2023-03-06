@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { IUser, memberUpdate } from "api";
-import { isExtraSignupModalState } from "components/atom";
+import { isExtraSignupModalState, isSignupModalState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
 import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -236,7 +236,7 @@ function SignUpOptional() {
     setLinks((prev) => [...prev.slice(0, idx), ...prev.slice(idx + 1)]);
   };
   const onClickPlus = () => {
-    setLinks((prev) => [...prev, externalLink]);
+    if (externalLink !== "") setLinks((prev) => [...prev, externalLink]);
     setExternalLink("");
   };
   const { register, handleSubmit, formState } = useForm();
@@ -251,6 +251,7 @@ function SignUpOptional() {
   console.log(positionId);
 
   const onValid = (data: any) => {
+    console.log("check", data, Links);
     const newUser = {
       pictureUrl: uploadImage,
       isPublic: true,
@@ -262,11 +263,11 @@ function SignUpOptional() {
       contact: data?.contact,
       externalLinks: Links,
     };
-    console.log(data);
-    // memberUpdate(newUser);
+
     updateMemberMutate(newUser);
-    // navigate("/");
+
     setIsExtraSignupModal(false);
+    navigate("/");
   };
 
   const [uploadImage, setUploadImage] = useState("");
@@ -313,7 +314,7 @@ function SignUpOptional() {
     );
 
   const setIsExtraSignupModal = useSetRecoilState(isExtraSignupModalState);
-
+  const setIsSignupModal = useSetRecoilState(isSignupModalState);
   return (
     <>
       {updateMemberLoading ? (
@@ -340,7 +341,12 @@ function SignUpOptional() {
               * 선택 사항을 기입하시면 인재풀 페이지를 열람 하실 수 있습니다.
               {/* <Link to="/"> */}
               <button
-                onClick={() => setIsExtraSignupModal(false)}
+                type="button"
+                onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+                  setIsExtraSignupModal(false);
+                  setIsSignupModal(false);
+                  navigate("/");
+                }}
                 className="float-right w-[100px] md:w-[150px] border-2 border-red-500 rounded-full text-[red]"
               >
                 안하고 나가기
@@ -572,7 +578,9 @@ function SignUpOptional() {
               </InfoBox>
             </FlexRowBox>
 
-            <StartButton className="">제출하기</StartButton>
+            <StartButton type="submit" className="">
+              제출하기
+            </StartButton>
           </SignUpCard>
         </Container>
       )}

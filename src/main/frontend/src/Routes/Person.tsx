@@ -179,19 +179,19 @@ function Person() {
       onSuccess: () => {
         console.log("성공하였습니다.");
       },
-      onError: (error) => {
-        console.log("실패하였습니다.");
-        if (
-          ((error as AxiosError).response as AxiosResponse).status === 401 ||
-          ((error as AxiosError).response as AxiosResponse).status === 403
-        ) {
-          alert("로그인이 필요합니다.");
-          if (localStorage.getItem("key")) localStorage.removeItem("key");
-          setIsLoginModal(true);
-          setIsLogin(false);
-          navigate("/");
-        }
-      },
+      // onError: (error) => {
+      //   console.log("실패하였습니다.");
+      //   if (
+      //     ((error as AxiosError).response as AxiosResponse).status === 401 ||
+      //     ((error as AxiosError).response as AxiosResponse).status === 403
+      //   ) {
+      //     alert("로그인이 필요합니다.");
+      //     if (localStorage.getItem("key")) localStorage.removeItem("key");
+      //     setIsLoginModal(true);
+      //     setIsLogin(false);
+      //     navigate("/");
+      //   }
+      // },
     }
   );
 

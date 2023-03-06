@@ -151,11 +151,12 @@ function SignUp() {
 
   const { mutate: signupMemberMutate, isLoading: signupMemberLoading } =
     useMutation(
-      ["signupMember" as string],
-
+      ["signupMemberr" as string],
       (newMember: ImemberSignup) => memberSignUp(newMember) as any,
-
       {
+        onSuccess: () => {
+          console.log("성공!");
+        },
         onError: () => {
           console.log("유저 회원 가입이 작동하지 않습니다.");
         },
@@ -163,16 +164,17 @@ function SignUp() {
     );
 
   const onValid = (submitData: IOnValid) => {
+    console.log("!!!!!");
     const newMember: ImemberSignup = {
       nickname: submitData.nickname,
       isPublic: false,
     };
     console.log(newMember);
     // memberSignUp(newMember);
-    signupMemberMutate(newMember);
-    // navigate("/oauth2/redirect/optional");
     setIsSignupModal(false);
     setIsExtraSignupModal(true);
+    signupMemberMutate(newMember);
+    // navigate("/oauth2/redirect/optional");
   };
   // console.log(f);
 
@@ -252,9 +254,7 @@ function SignUp() {
               </InfoBox>
 
               <InfoBox className="flex w-full flex-row mt-[40px] justify-end">
-                <Link to="/oauth2/redirect/optional">
-                  <SubmitButton className="">제출하기</SubmitButton>
-                </Link>
+                <SubmitButton type="submit">제출하기</SubmitButton>
               </InfoBox>
             </SignUpCard>
           </div>

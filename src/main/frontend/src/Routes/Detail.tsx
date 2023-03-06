@@ -12,6 +12,23 @@ import { AnimatePresence, motion } from "framer-motion";
 import LoadingAnimation from "components/LoadingAnimation";
 import { AxiosError, AxiosResponse } from "axios";
 
+import draftToHtml from "draftjs-to-html";
+import htmlToDraft from "html-to-draftjs";
+import { ContentState, convertToRaw, EditorState } from "draft-js";
+
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+
+import {
+  ref,
+  getDownloadURL,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { useRef } from "react";
+import { storage } from "../firebase";
+import styled from "styled-components";
+
 const StyledUl = tw.ul`
 flex
 
@@ -98,7 +115,24 @@ const ValidationVariant = {
   },
 };
 
+const MyBlock = styled.div`
+  .wrapper-class {
+    width: 100%;
+    margin: 0 auto;
+    margin-bottom: 4rem;
+    border: 2px solid lightGray !important;
+  }
+  .editor {
+    min-height: 500px !important;
+    border-top: 3px solid lightGray !important;
+    padding: 10px !important;
+    border-radius: 2px !important;
+  }
+`;
 function Detail() {
+  const [editorString, setEditorString] = useState("");
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
   const { id } = useParams();
 
   const { isLoading, data, refetch, isSuccess } = useQuery<IPost>(
@@ -167,6 +201,17 @@ function Detail() {
         setValue("contact", data.contact);
         setValue("content", data.content);
         setValue("title", data.title);
+
+        const contentDraft = htmlToDraft(data.content);
+        const { contentBlocks, entityMap } = contentDraft;
+        const contentState = ContentState.createFromBlockArray(
+          contentBlocks,
+          entityMap
+        );
+        const editorState = EditorState.createWithContent(contentState);
+
+        setEditorState(editorState);
+        setEditorString(data.content);
       },
       onError: () => {
         console.log("존재하지 않는 게시물입니다.");
@@ -362,7 +407,8 @@ function Detail() {
       contact: data.contact,
       hasPay: data.pay === "Yes" ? true : false,
       title: data.title,
-      content: data.content,
+      // content: data.content,
+      content: draftToHtml(convertToRaw(editorState.getCurrentContent())),
     };
     if (id) {
       console.log(newData, "new");
@@ -391,6 +437,78 @@ function Detail() {
   useEffect(() => {
     // loginCheckMutate();
   }, []);
+
+  // useState로 상태관리하기 초기값은 EditorState.createEmpty()
+  // EditorState의 비어있는 ContentState 기본 구성으로 새 개체를 반환 => 이렇게 안하면 상태 값을 나중에 변경할 수 없음.
+
+  const onEditorStateChange = (editorState: any) => {
+    // editorState에 값 설정
+    setEditorState(editorState);
+  };
+
+  const onClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    console.log("editorState : ", editorState);
+    console.log(
+      "converted to Html : ",
+      draftToHtml(convertToRaw(editorState.getCurrentContent()))
+    );
+    // const getCurrentContent = editorState.getCurrentContent();
+    // const Raw = convertToRaw(getCurrentContent);
+    // const Html = draftToHtml(Raw);
+    // console.log(getCurrentContent, "\n", Raw, "\n", Html);
+  };
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [imageURL, setImageURL] = useState<string>("");
+  const [progressPercent, setProgressPercent] = useState<number>(0);
+  const onImageChange = async (file: any) => {
+    // return new Promise((resolve, reject) => {
+    //   resolve({ data: { link: "www.naver.com" } });
+    // });
+    console.log(file);
+    let newImage: any;
+    // file.preventDefault();
+    // const file = e;
+    if (!file) return null;
+
+    const storageRef = ref(storage, `files/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    console.log(
+      storageRef,
+      uploadTask.then((snapshot) => snapshot)
+    );
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setProgressPercent(progress);
+      },
+      (error) => {
+        switch (error.code) {
+          case "storage/canceld":
+            alert("Upload has been canceled");
+            break;
+        }
+      },
+      async () => {
+        getDownloadURL(storageRef).then((downloadURL) => {
+          console.log("File available at", typeof downloadURL);
+          setImageURL(downloadURL);
+
+          return new Promise((resolve, reject) => {
+            resolve({
+              data: {
+                link: downloadURL,
+              },
+            });
+          });
+        });
+      }
+    );
+  };
 
   return (
     <>
@@ -1104,18 +1222,52 @@ function Detail() {
               </Grid>
               <div className="min-h-[500px]  pt-[50px] pb-[100px] border-b-2 border-gray-300 ">
                 {isModifying ? (
-                  <textarea
-                    {...register("content", {
-                      minLength: {
-                        value: 5,
-                        message: "내용이 너무 짧습니다.",
-                      },
-                    })}
-                    className="min-h-[500px] w-full p-[15px] bg-[#eeeeee]"
-                    placeholder="자유롭게 작성 해주세요 !"
-                  ></textarea>
+                  // <textarea
+                  //   {...register("content", {
+                  //     minLength: {
+                  //       value: 5,
+                  //       message: "내용이 너무 짧습니다.",
+                  //     },
+                  //   })}
+                  //   className="min-h-[500px] w-full p-[15px] bg-[#eeeeee]"
+                  //   placeholder="자유롭게 작성 해주세요 !"
+                  // ></textarea>
+                  <MyBlock>
+                    <Editor
+                      // 에디터와 툴바 모두에 적용되는 클래스
+                      wrapperClassName="wrapper-class"
+                      // 에디터 주변에 적용된 클래스
+                      editorClassName="editor"
+                      // 툴바 주위에 적용된 클래스
+                      toolbarClassName="toolbar-class"
+                      // 툴바 설정
+                      toolbar={{
+                        // inDropdown: 해당 항목과 관련된 항목을 드롭다운으로 나타낼것인지
+                        list: { inDropdown: true },
+                        textAlign: { inDropdown: true },
+                        link: { inDropdown: true },
+                        history: { inDropdown: false },
+                        image: {
+                          uploadCallback: onImageChange,
+                          previewImage: true,
+                          alt: { present: true, mandatory: false },
+                          inputAccept:
+                            "image/gif,image/jpeg,image/jpg,image/png,image/svg",
+                        },
+                      }}
+                      placeholder="내용을 작성해주세요."
+                      // 한국어 설정
+                      localization={{
+                        locale: "ko",
+                      }}
+                      // 초기값 설정
+                      editorState={editorState}
+                      // 에디터의 값이 변경될 때마다 onEditorStateChange 호출
+                      onEditorStateChange={onEditorStateChange}
+                    />
+                  </MyBlock>
                 ) : (
-                  <>{data?.content}</>
+                  <div dangerouslySetInnerHTML={{ __html: editorString }}></div>
                 )}
               </div>
               {isModifying && (

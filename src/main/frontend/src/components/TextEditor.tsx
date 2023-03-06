@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import styled from "styled-components";
 import { EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
+import styled from "styled-components";
+import {
+  useForm,
+  UseFormRegister,
+  UseFormRegisterReturn,
+} from "react-hook-form";
 
 import {
   ref,
@@ -28,7 +33,7 @@ const MyBlock = styled.div`
   }
 `;
 
-const TextEditor = () => {
+const TextEditor = React.forwardRef(() => {
   // useState로 상태관리하기 초기값은 EditorState.createEmpty()
   // EditorState의 비어있는 ContentState 기본 구성으로 새 개체를 반환 => 이렇게 안하면 상태 값을 나중에 변경할 수 없음.
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -38,12 +43,16 @@ const TextEditor = () => {
     setEditorState(editorState);
   };
 
-  const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     console.log("editorState : ", editorState);
     console.log(
       "converted to Html : ",
       draftToHtml(convertToRaw(editorState.getCurrentContent()))
     );
+    // const getCurrentContent = editorState.getCurrentContent();
+    // const Raw = convertToRaw(getCurrentContent);
+    // const Html = draftToHtml(Raw);
+    // console.log(getCurrentContent, "\n", Raw, "\n", Html);
   };
 
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -66,42 +75,36 @@ const TextEditor = () => {
       uploadTask.then((snapshot) => snapshot)
     );
 
-    const uploadNReturn = async () => {
-      await uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          setProgressPercent(progress);
-        },
-        (error) => {
-          switch (error.code) {
-            case "storage/canceld":
-              alert("Upload has been canceled");
-              break;
-          }
-        },
-        () => {
-          getDownloadURL(storageRef).then((downloadURL) => {
-            console.log("File available at", typeof downloadURL);
-            setImageURL(downloadURL);
-
-            // return new Promise((resolve, reject) => {
-            //   resolve({ data: { link: "1123" } });
-            // });
-            console.log("!!", imageURL);
-            //   setImage(downloadURL);
-          });
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setProgressPercent(progress);
+      },
+      (error) => {
+        switch (error.code) {
+          case "storage/canceld":
+            alert("Upload has been canceled");
+            break;
         }
-      );
-      console.log("???");
-      return new Promise((resolve, reject) => {
-        resolve({ data: { link: imageURL } });
-      });
-    };
+      },
+      async () => {
+        getDownloadURL(storageRef).then((downloadURL) => {
+          console.log("File available at", typeof downloadURL);
+          setImageURL(downloadURL);
 
-    uploadNReturn();
+          return new Promise((resolve, reject) => {
+            resolve({
+              data: {
+                link: downloadURL,
+              },
+            });
+          });
+        });
+      }
+    );
   };
 
   return (
@@ -138,10 +141,10 @@ const TextEditor = () => {
           // 에디터의 값이 변경될 때마다 onEditorStateChange 호출
           onEditorStateChange={onEditorStateChange}
         />
+        <button onClick={onClick}>submit</button>
       </MyBlock>
-      <button onClick={onClick}>submit</button>
     </>
   );
-};
+});
 
 export default TextEditor;

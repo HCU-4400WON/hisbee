@@ -273,16 +273,13 @@ function Profile() {
       setValue("club1", data.club?.at(0));
       setValue("club2", data.club?.at(1));
       setValue("bio", data.bio);
-
-      // setValue("imageURl" , data)
-
+      console.log(data);
       // 성공시 호출
       if (!location.state) {
         setLinks([...(data?.externalLinks as string[])]);
       } else {
         data = location.state.user;
         setLinks([...(location.state.user?.externalLinks as string[])]);
-        console.log("!");
       }
     },
     onError: (error) => {
@@ -480,7 +477,7 @@ function Profile() {
                 탈퇴하기
               </SidebarItemText>
             </Sidebar>
-            <div className="px-[50px] w-full lg:w-5/6 border-t-2 border-b-2 border-gray-200 ">
+            <div className="px-[50px] w-full min-w-[530px] lg:w-5/6 border-t-2 border-b-2 border-gray-200 ">
               <ProfileBanner
                 id="profileInfo"
                 onSubmit={handleSubmit(onValid as any)}
@@ -720,16 +717,17 @@ function Profile() {
                           ></i>
                         </div>
 
-                        {Links?.map((link) => (
-                          <div className="flex items-center justify-between bg-slate-200 px-[10px] w-[200px] lg:w-[300px] xl:w-[400px]  h-[30px] mt-[10px]">
-                            <i className="fa-solid fa-link"></i>
-                            <p>{link} </p>
-                            <i
-                              className="fa-regular fa-trash-can"
-                              onClick={() => onDelete(link)}
-                            ></i>
-                          </div>
-                        ))}
+                        {Links.length !== 0 &&
+                          Links?.map((link) => (
+                            <div className="flex items-center justify-between bg-slate-200 px-[10px] w-[200px] lg:w-[300px] xl:w-[400px]  h-[30px] mt-[10px]">
+                              <i className="fa-solid fa-link"></i>
+                              <p>{link} </p>
+                              <i
+                                className="fa-regular fa-trash-can"
+                                onClick={() => onDelete(link)}
+                              ></i>
+                            </div>
+                          ))}
 
                         {/* {data?.externalLinks?.map((link, index) => (
                       <ProfileInfoContent key={index}>
