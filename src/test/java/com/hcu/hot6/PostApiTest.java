@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.request.PostCreationRequest;
+import com.hcu.hot6.domain.response.MemberPoolResponse;
 import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
 import com.hcu.hot6.repository.MemberRepository;
@@ -88,7 +89,7 @@ public class PostApiTest {
 
         member2.update(MemberRequest.builder()
                 .nickname("member2")
-                .isPublic(false)
+                .isPublic(true)
                 .build());
 
         memberRepository.save(member1);
@@ -407,5 +408,37 @@ public class PostApiTest {
                 .getContentAsString(), PostReadOneResponse.class);
 
         assertThat(results.getNLiked()).isEqualTo(0);
+    }
+
+    @Test
+    public void 인재풀_조회_모집글_포함() throws Exception {
+        // given
+        postService.createPost(PostCreationRequest.builder()
+                .dtype("M")
+                .title("title")
+                .content("content")
+                .contact("contact")
+                .postEnd(new Date())
+                .projectStart(new Date())
+                .projectEnd(new Date())
+                .maxMentor(1)
+                .maxMentee(2)
+                .build(), "lifeIsGood@test.com");
+
+        // when
+        MvcResult mvcResult = mockMvc
+                .perform(get("/pool")
+                        .param("page", "1")
+                        .with(oauth2Login()
+                                .attributes(attr -> attr
+                                        .put("sub", "lifeIsGood@test.com"))))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // then
+        var res = objectMapper.readValue(mvcResult.getResponse()
+                .getContentAsString(), MemberPoolResponse.class);
+        assertThat(res.getMembers().get(0).getPosts()).isNotEmpty();
     }
 }
