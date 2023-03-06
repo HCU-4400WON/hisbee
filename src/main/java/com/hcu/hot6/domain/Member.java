@@ -42,9 +42,9 @@ public class Member {
     private String nickname;
     private String bio;
     private String grade;
-    private String club = "";
+    private String club;
     private String contact;
-    private String externalLinks = "";
+    private String externalLinks;
     private boolean isRegistered = true;
 
     @ManyToMany(mappedBy = "likes")
@@ -96,10 +96,10 @@ public class Member {
         this.bio = Objects.isNull(form.getBio()) ? bio : form.getBio();
         this.club = String.join(",", Optional.ofNullable(
                 form.getClub()
-        ).orElse(List.of(club)));
+        ).orElse(List.of()));
         this.externalLinks = String.join(",", Optional.ofNullable(
                 form.getExternalLinks()
-        ).orElse(List.of(externalLinks)));
+        ).orElse(List.of()));
 
         if (!this.isRegistered) this.isRegistered = true;
     }

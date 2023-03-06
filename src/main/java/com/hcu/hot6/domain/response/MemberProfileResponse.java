@@ -25,8 +25,13 @@ public class MemberProfileResponse {
         this.grade = member.getGrade();
         this.contact = member.getContact();
 
-        this.club = Arrays.asList(member.getClub().split(","));
-        this.externalLinks = Arrays.asList(member.getExternalLinks().split(","));
+        this.club = (member.getClub().isBlank())
+                ? List.of()
+                : Arrays.asList(member.getClub().split(","));
+
+        this.externalLinks = (member.getExternalLinks().isBlank())
+                ? List.of()
+                : Arrays.asList(member.getExternalLinks().split(","));
 
         this.likes = member.getLikes()
                 .stream()
