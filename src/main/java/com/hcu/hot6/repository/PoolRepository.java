@@ -22,7 +22,8 @@ public class PoolRepository {
                 .where(
                         eqDepartment(filter.getDepartment()),
                         eqPosition(filter.getPosition()),
-                        eqGrade(filter.getGrade())
+                        eqGrade(filter.getGrade()),
+                        qMember.isPublic
                 ).limit(Pagination.LIMIT)
                 .offset(offset)
                 .orderBy(NumberExpression.random().asc())
@@ -35,7 +36,8 @@ public class PoolRepository {
                 .where(
                         eqDepartment(filter.getDepartment()),
                         eqPosition(filter.getPosition()),
-                        eqGrade(filter.getGrade())
+                        eqGrade(filter.getGrade()),
+                        qMember.isPublic
                 ).fetchOne();
     }
 
