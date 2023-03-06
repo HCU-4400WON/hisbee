@@ -25,4 +25,5 @@ public class MemberRequest {
     private String contact;
     private List<String> club;
     private List<String> externalLinks;
+    private String pictureUrl;
 }

@@ -85,6 +85,7 @@ public class Member {
         // 기본 정보
         this.nickname = Objects.isNull(form.getNickname()) ? nickname : form.getNickname();
         this.isPublic = Objects.isNull(form.getIsPublic()) ? isPublic : form.getIsPublic();
+        this.pictureUrl = Objects.isNull(form.getPictureUrl()) ? pictureUrl : form.getPictureUrl();
 
         // 인재풀 등록시 필수 공개 정보
         this.department = Objects.isNull(form.getDepartment()) ? department : form.getDepartment();
