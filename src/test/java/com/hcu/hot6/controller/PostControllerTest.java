@@ -1,4 +1,4 @@
-package com.hcu.hot6;
+package com.hcu.hot6.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcu.hot6.domain.Member;
@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-public class PostApiTest {
+public class PostControllerTest {
 
     private static final String TEST_EMAIL = "test@example.com";
 
