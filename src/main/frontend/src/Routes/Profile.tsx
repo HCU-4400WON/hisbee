@@ -37,8 +37,9 @@ import tw from "tailwind-styled-components";
 
 const Sidebar = tw.div`
 hidden
+bg-gray-100
 lg:flex
-min-w-[250px] 
+min-w-[220px] 
 pl-[30px]
 border-r-2
 border-t-2
@@ -52,15 +53,15 @@ items-start
 
 const SidebarTitle = tw.p`
 py-[40px] 
-text-[33px] 
+text-[30px] 
 font-unique
 `;
 
 const SidebarItemText = tw.button`
-font-main
-text-[17px]
+font-unique
+text-[15px]
 mb-[20px]
-font-semibold
+
 hover:scale-110
 hover:text-gray-400
 `;
@@ -106,7 +107,7 @@ const ProfileBanner = tw.form`
 my-[40px] 
 rounded-xl 
 bg-[#f2f2f2] 
-p-[50px] 
+p-[40px] 
 flex
 flex-col
 md:flex-row
@@ -602,16 +603,16 @@ function Profile() {
                   </div>
                 )}
 
-                <div className="w-[120px] flex flex-col items-center">
+                <div className="w-[120px] flex flex-col items-center ">
                   {nowModifying ? (
                     <img
-                      className="w-[100%] h-[120px] rounded-full"
+                      className="w-[100%] h-[120px] border-2 border-black rounded-full my-[10px]"
                       src={getValues("pictureUrl")}
                     ></img>
                   ) : (
                     <img
                       src={data?.pictureUrl}
-                      className="w-[100%] h-[120px] rounded-full"
+                      className="w-[100%] h-[120px] border-2 border-black rounded-full my-[10px]"
                     />
                   )}
 
@@ -653,8 +654,8 @@ function Profile() {
                         </p>
                       </span> */}
 
-                      <span className=" text-[17px] font-semibold text-slate-500">
-                        <i className="fa-solid fa-user mr-[10px] "></i>
+                      <span className=" text-[17px] font-semibold text-gray-500">
+                        <i className="fa-solid fa-user mr-[10px] text-gray-600"></i>
                         {data?.nickname}
                       </span>
                     </div>
@@ -801,8 +802,12 @@ function Profile() {
                       <div className="flex flex-col">
                         {data?.club?.map((elem, index) =>
                           data?.club?.at(index) === "" ? null : (
-                            <ProfileInfoContent key={index}>
-                              {elem}
+                            <ProfileInfoContent
+                              className="flex relative items-center justify-center bg-gray-200 my-1 py-[3px] px-[10px]"
+                              key={index}
+                            >
+                              <ProfileInfoIcon className="absolute left-2 fa-solid fa-circle-nodes "></ProfileInfoIcon>
+                              <p>{elem}</p>
                             </ProfileInfoContent>
                           )
                         )}
@@ -824,7 +829,7 @@ function Profile() {
                   </ProfileInfoContent> */}
                   </ProfileInfoRow>
 
-                  <ProfileInfoRow className=" items-start mb-0">
+                  <ProfileInfoRow className=" items-start mb-0 mt-[8px]">
                     <ProfileInfoBox>
                       <ProfileInfoIcon className="fa-solid fa-link"></ProfileInfoIcon>
                       <ProfileInfoTitle className="">외부링크</ProfileInfoTitle>
@@ -878,9 +883,9 @@ function Profile() {
                   <ProfileInfoRow
                     className={`${nowModifying && "mt-[20px]"} items-start`}
                   >
-                    <ProfileInfoBox>
+                    <ProfileInfoBox className="mt-[7px]">
                       <ProfileInfoIcon className="fa-solid fa-rocket"></ProfileInfoIcon>
-                      <ProfileInfoTitle className="">자기소개</ProfileInfoTitle>
+                      <ProfileInfoTitle>자기소개</ProfileInfoTitle>
                     </ProfileInfoBox>
                     <ProfileInfoContent>
                       {nowModifying ? (
@@ -900,7 +905,10 @@ function Profile() {
                       (nowModifying ? (
                         <>
                           <button
-                            onClick={() => setNowModifying(false)}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setNowModifying(false);
+                            }}
                             className="mb-[40px]  rounded-full border-2 border-red-500 text-red-500 w-[80px] bg-white text-[13px] mt-[20px] md:text-[17px] md:w-[120px] md:h-[30px] h-[25px] "
                           >
                             {" "}
