@@ -257,12 +257,12 @@ function SignUpOptional() {
         uploadImage !== ""
           ? uploadImage
           : positionId === "일반"
-          ? "/img/position1.png"
+          ? "/img/position4.png"
           : positionId === "기획자"
-          ? "/img/position2.png"
-          : positionId === "디자이너"
           ? "/img/position3.png"
-          : "/img/position4.png",
+          : positionId === "디자이너"
+          ? "/img/position2.png"
+          : "/img/position1.png",
       isPublic: true,
       department: data.department,
       position: positionId,
@@ -407,7 +407,7 @@ function SignUpOptional() {
                       onClick={onClick}
                     >
                       <PositionGradientBox
-                        src="/img/position1.png"
+                        src="/img/position4.png"
                         // style={{
                         //   background:
                         //     "radial-gradient(closest-side,#3aea31 , white)",
@@ -424,7 +424,7 @@ function SignUpOptional() {
                       onClick={onClick}
                     >
                       <PositionGradientBox
-                        src="/img/position2.png"
+                        src="/img/position3.png"
                         // style={{
                         //   background:
                         //     "radial-gradient(closest-side,#7b87e7 , white)",
@@ -441,7 +441,7 @@ function SignUpOptional() {
                       onClick={onClick}
                     >
                       <PositionGradientBox
-                        src="/img/position3.png"
+                        src="/img/position2.png"
                         // style={{
                         //   background:
 
@@ -459,7 +459,7 @@ function SignUpOptional() {
                       onClick={onClick}
                     >
                       <PositionGradientBox
-                        src="/img/position4.png"
+                        src="/img/position1.png"
                         // style={{
                         //   background:
                         //     "radial-gradient(closest-side,#87879e , white)",

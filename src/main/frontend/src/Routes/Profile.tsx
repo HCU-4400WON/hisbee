@@ -1,3 +1,10 @@
+import {
+  ref,
+  getDownloadURL,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { storage } from "../firebase";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   addLikePost,
@@ -20,7 +27,7 @@ import LoadingAnimation from "components/LoadingAnimation";
 import { AnimatePresence, motion } from "framer-motion";
 import { userInfo } from "os";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useMatch } from "react-router";
 import { Navigate, useNavigate } from "react-router";
@@ -280,6 +287,19 @@ function Profile() {
       if (!location.state) {
         setLinks([...(data?.externalLinks as string[])]);
       } else {
+        ///////////////////////////
+        ////////////////////////////
+        ///////////////////////////
+        ////////////////////////////
+        ///////////////////////////
+        ////////////////////////////
+        ///////////////////////////
+        ////////////////////////////
+        ///////////////////////////
+        ////////////////////////////
+        ///////////////////////////
+        ////////////////////////////
+        // 이부분 수정 !!1
         data = location.state.user;
         setLinks([...(location.state.user?.externalLinks as string[])]);
       }
@@ -322,7 +342,7 @@ function Profile() {
       }
     );
 
-  const { register, handleSubmit, formState, setValue } = useForm();
+  const { register, handleSubmit, formState, setValue, getValues } = useForm();
 
   const [Links, setLinks] = useState<string[]>([]);
   const [externalLink, setExternalLink] = useState<string>("");
@@ -347,17 +367,25 @@ function Profile() {
     bio: string;
     club1: string;
     club2: string;
-    imageUrl: string;
+    pictureUrl: string;
   }
 
   const onValid = async (newData: Idata) => {
     console.log(formState.errors);
     console.log(newData);
-    console.log("de");
 
     const newUser = {
       nickname: newData.nickname,
-      pictureUrl: newData.imageUrl,
+      pictureUrl:
+        newData.pictureUrl.slice(5, 13) !== "position"
+          ? newData.pictureUrl
+          : newData.position === "일반"
+          ? "/img/position4.png"
+          : newData.position === "기획자"
+          ? "/img/position3.png"
+          : newData.position === "디자이너"
+          ? "/img/position2.png"
+          : "/img/position1.png",
       isPublic: true,
       department: newData.department,
       position: newData.position,
@@ -455,6 +483,63 @@ function Profile() {
   const setIsLogin = useSetRecoilState(isLoginState);
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const onUploadImageButtonClick = useCallback(() => {
+    if (!inputRef.current) {
+      return;
+    }
+    inputRef.current.click();
+  }, []);
+
+  const onImageChange = (
+    e: React.ChangeEvent<EventTarget & HTMLInputElement>
+  ) => {
+    e.preventDefault();
+    const file = e.target.files;
+    if (!file) return null;
+
+    const storageRef = ref(storage, `files/${file[0].name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file[0]);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        // setProgressPercent(progress);
+      },
+      (error) => {
+        switch (error.code) {
+          case "storage/canceld":
+            alert("Upload has been canceled");
+            break;
+        }
+      },
+      () => {
+        e.target.value = "";
+        getDownloadURL(storageRef).then((downloadURL) => {
+          console.log("File available at", downloadURL);
+          setImageURL(downloadURL);
+          setValue("pictureUrl", downloadURL);
+          (
+            document.querySelector("#basicImage") as HTMLElement
+          ).style.backgroundColor = "white";
+          (document.querySelector("#basicImage") as HTMLElement).style.color =
+            "black";
+          //   setImage(downloadURL);
+        });
+      }
+    );
+  };
+  const [imageURL, setImageURL] = useState<string>("");
+  const onBasicImageClick = (e: React.FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.currentTarget.style.backgroundColor = "black";
+    e.currentTarget.style.color = "white";
+
+    setValue("pictureUrl", "/img/position4.png");
+  };
   return (
     <>
       {getUserLoading || deleteMemberLoading ? (
@@ -482,13 +567,46 @@ function Profile() {
             <div className="px-[50px] w-full min-w-[530px] lg:w-5/6 border-t-2 border-b-2 border-gray-200 ">
               <ProfileBanner
                 id="profileInfo"
+                className="relative"
                 onSubmit={handleSubmit(onValid as any)}
               >
-                <div className=" w-[120px] flex flex-col items-center">
-                  <img
-                    src={data?.pictureUrl}
-                    className="w-[100%] h-[120px] rounded-full"
-                  />
+                <input
+                  className="hidden"
+                  type="file"
+                  accept="image/*"
+                  ref={inputRef}
+                  // onChange={onUploadImage}
+                  onChange={onImageChange}
+                />
+                {nowModifying && (
+                  <div className="absolute items-center justify-between flex left-[30px] top-[20px] w-[90%] md:w-[190px]">
+                    <i
+                      className="fa-solid fa-panorama w-[40px]"
+                      onClick={onUploadImageButtonClick}
+                    ></i>
+                    <button
+                      id="basicImage"
+                      className=" text-[10px] border-[2px] font-bold px-2 rounded-md border-black"
+                      onClick={onBasicImageClick}
+                    >
+                      기본 이미지
+                    </button>
+                  </div>
+                )}
+
+                <div className="w-[120px] flex flex-col items-center">
+                  {nowModifying ? (
+                    <img
+                      className="w-[100%] h-[120px] rounded-full"
+                      src={getValues("pictureUrl")}
+                    ></img>
+                  ) : (
+                    <img
+                      src={data?.pictureUrl}
+                      className="w-[100%] h-[120px] rounded-full"
+                    />
+                  )}
+
                   {nowModifying ? (
                     <div className="flex flex-col justify-start items-center">
                       <input
@@ -501,7 +619,7 @@ function Profile() {
                             message: "10자 이하만 가능합니다",
                           },
                         })}
-                        className="mt-[20px] text-[17px] px-[10px] w-[150px] "
+                        className="mt-[10px] text-[17px] px-[10px] w-[150px] "
                       />
 
                       <AnimatePresence>
@@ -519,7 +637,7 @@ function Profile() {
                       </AnimatePresence>
                     </div>
                   ) : (
-                    <div className="flex items-center justify-center w-[150px] mt-[20px]">
+                    <div className="flex items-center justify-center w-[150px] mt-[10px]">
                       {/* <span className="flex items-center ">
                         <i className="fa-solid fa-user text-gray-600  w-[18px] mr-[2px]"></i>
                         <p className="mr-[10px] text-gray-500 font-semibold">
@@ -527,7 +645,8 @@ function Profile() {
                         </p>
                       </span> */}
 
-                      <span className=" text-[17px] font-semibold">
+                      <span className=" text-[17px] font-semibold text-slate-500">
+                        <i className="fa-solid fa-user mr-[10px] "></i>
                         {data?.nickname}
                       </span>
                     </div>
