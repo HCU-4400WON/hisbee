@@ -45,6 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PostControllerTest {
 
     private static final String TEST_EMAIL = "test@example.com";
+    private static boolean isInitialised;
 
     @Autowired
     private WebApplicationContext context;
@@ -70,6 +71,8 @@ public class PostControllerTest {
 
     @PostConstruct
     void memberSetup() {
+        if (isInitialised) return;
+
         Member member1 = Member.builder()
                 .uid("1")
                 .email(TEST_EMAIL)
@@ -94,6 +97,7 @@ public class PostControllerTest {
 
         memberRepository.save(member1);
         memberRepository.save(member2);
+        isInitialised = true;
     }
 
     // ==== CREATE ==== //

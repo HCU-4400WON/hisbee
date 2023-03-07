@@ -202,8 +202,8 @@ class MemberControllerTest {
                         .contact("contact")
                         .department(Department.CSEE)
                         .position(Position.DEVELOPER)
-                        .club("club")
-                        .externalLinks("link")
+                        .club("")
+                        .externalLinks("")
                         .posts(List.of(Project.builder()
                                 .dtype("P")
                                 .title("title")
@@ -245,6 +245,9 @@ class MemberControllerTest {
 
         assertThat(res.getPosts().size()).isEqualTo(1);
         assertThat(res.getPosts().get(0).getMaxDeveloper()).isEqualTo(3);
+
+        assertThat(res.getClub()).isEmpty();
+        assertThat(res.getExternalLinks()).isEmpty();
     }
 
     @Test

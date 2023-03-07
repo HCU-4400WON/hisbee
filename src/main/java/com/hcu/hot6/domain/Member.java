@@ -42,9 +42,9 @@ public class Member {
     private String nickname;
     private String bio;
     private String grade;
-    private String club = "";
+    private String club;
     private String contact;
-    private String externalLinks = "";
+    private String externalLinks;
     private boolean isRegistered = true;
 
     @ManyToMany(mappedBy = "likes")
@@ -85,6 +85,7 @@ public class Member {
         // 기본 정보
         this.nickname = Objects.isNull(form.getNickname()) ? nickname : form.getNickname();
         this.isPublic = Objects.isNull(form.getIsPublic()) ? isPublic : form.getIsPublic();
+        this.pictureUrl = Objects.isNull(form.getPictureUrl()) ? pictureUrl : form.getPictureUrl();
 
         // 인재풀 등록시 필수 공개 정보
         this.department = Objects.isNull(form.getDepartment()) ? department : form.getDepartment();
@@ -96,10 +97,10 @@ public class Member {
         this.bio = Objects.isNull(form.getBio()) ? bio : form.getBio();
         this.club = String.join(",", Optional.ofNullable(
                 form.getClub()
-        ).orElse(List.of(club)));
+        ).orElse(List.of()));
         this.externalLinks = String.join(",", Optional.ofNullable(
                 form.getExternalLinks()
-        ).orElse(List.of(externalLinks)));
+        ).orElse(List.of()));
 
         if (!this.isRegistered) this.isRegistered = true;
     }
