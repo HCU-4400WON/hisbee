@@ -372,7 +372,11 @@ function Profile() {
 
   const onValid = async (newData: Idata) => {
     console.log(formState.errors);
-    console.log(newData);
+    console.log("before", newData);
+
+    let arr = new Array<string>();
+    if (newData.club1) arr.push(newData.club1);
+    if (newData.club2) arr.push(newData.club2);
 
     const newUser = {
       nickname: newData.nickname,
@@ -391,12 +395,16 @@ function Profile() {
       position: newData.position,
       bio: newData.bio,
       grade: newData.grade,
-      club: [newData.club1, newData.club2],
+      // club: [
+      //   newData.club1 === undefined,
+      //   newData.club2 === false newData.club2,
+      // ],
+      club: arr,
       contact: newData?.contact,
       externalLinks: Links,
     };
 
-    await memberUpdate(newUser);
+    await memberUpdate(newUser as any);
     setNowModifying(false);
     refetch();
   };
