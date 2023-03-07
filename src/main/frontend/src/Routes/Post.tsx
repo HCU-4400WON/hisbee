@@ -22,14 +22,14 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 
 const Banner = tw.img`
-mt-10 
 bg-gradient-to-r from-gray-300 to-gray-500
 `;
 
 const FilterRow = tw.div`
 relative
 flex 
-h-16 
+h-12
+md:h-16
 my-1
 border-b-2 
 border-gray-300 
@@ -38,12 +38,13 @@ vertical-center
 `;
 
 const FilterTitle = tw.p`
+font-unique
 block
-text-xl 
+text-md
+md:text-xl
 mx-10
 my-auto
 w-20
-md:text-[25px]
 md:w-60
 `;
 
@@ -51,7 +52,8 @@ const FilterButtonBox = tw.span`
 
 flex 
 items-center 
-text-lg
+text-sm
+md:text-lg
 `;
 
 const Button = tw.button`
@@ -65,36 +67,44 @@ mx-3
 const SortBox = tw.div`
 flex 
 justify-between
-my-20 
-px-9
+pt-[20px]
+pb-[40px]
+px-10
 
 `;
 
 const SortTitle = tw.p`
 font-bold 
 mr-5
+
 `;
 
 const SortSelect = tw.select`
-  w-44
+  w-40
+  
+  
 `;
 
 const PostGrid = tw.div`
 grid
-grid-cols-4
+grid-cols-1
+md:grid-cols-2
+lg:grid-cols-3
+xl:grid-cols-4
 gap-x-10
-px-9
+px-5
+place-items-center
+
 `;
-// sm:grid-cols-2
-// xl:grid-cols-4
 
 const PostItem = tw(motion.div)`
 relative
 h-[210px] 
-min-w-[330px]
+w-[320px]
 rounded-md
 overflow-hidden
 mb-[80px]
+shadow-lg
 
 `;
 
@@ -116,6 +126,7 @@ p-[15px]
 `;
 
 const PostCategorySpan = tw.span`
+font-unique
 text-[#185ee4] 
 bg-[#fff] 
 h-[25px] 
@@ -144,8 +155,9 @@ py-[15px]
 `;
 
 const PostTitle = tw.p`
+font-unique
 text-lg 
-font-semibold
+
 `;
 const PostDate = tw.div`
 flex text-[12px] 
@@ -182,7 +194,7 @@ font-medium
 `;
 
 const Container = tw.div`
-w-[1470px]`;
+min-w-[480px]`;
 
 function Post() {
   const location = useLocation();
@@ -345,18 +357,15 @@ function Post() {
     }
   );
 
-  const { mutate: loginCheckMutate, isLoading: isLoginCheck } = useMutation(
-    ["loginCheckApiPost" as string],
-    loginCheckApi,
-    {
+  const { mutate: loginCheckMutate, isLoading: isLoginCheckLoading } =
+    useMutation(["loginCheckApiPost" as string], loginCheckApi, {
       onError: (error) => {
         if (((error as AxiosError).response as AxiosResponse).status === 401) {
           if (localStorage.getItem("key")) localStorage.removeItem("key");
           setIsLogin(false);
         }
       },
-    }
-  );
+    });
 
   const { mutate: likeDeleteMutate, isLoading: isLikeDeleteLoading } =
     useMutation(
@@ -388,12 +397,12 @@ function Post() {
   };
 
   useEffect(() => {
-    // loginCheckMutate();
+    loginCheckMutate();
   }, []);
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || isLoginCheckLoading ? (
         <LoadingAnimation />
       ) : (
         <>
@@ -487,7 +496,7 @@ function Post() {
                 </SortSelect>
               </div>
               <Link to="/add">
-                <button className="text-[18px] text-white border border-black py-[5px] bg-black px-[20px] ">
+                <button className="text-[12px] md:text-[16px] text-white border border-black py-[5px] bg-black px-[20px] ">
                   모집글 쓰기
                 </button>
               </Link>
@@ -500,7 +509,6 @@ function Post() {
                     // initial={{ scale: 1 }}
                     whileHover={{ scale: 1.08 }}
                     key={index}
-                    style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
                   >
                     <PostContentFirstRow
                       className={`${
@@ -561,7 +569,7 @@ function Post() {
                     <Link to={`/post/${post.id}`}>
                       <PostMainPart>
                         {/* secondRow */}
-                        <PostTitle className="text-lg font-semibold">
+                        <PostTitle>
                           {post.title.length > 16
                             ? post.title.slice(0, 16) + " ..."
                             : post.title}
@@ -692,7 +700,6 @@ function Post() {
                 <p className="font-bold">게시물이 존재하지 않습니다.</p>
               </div>
             ) : (
-              // </div>
               <div className="flex justify-center items-center w-full h-[100px]  ">
                 <button
                   id="prev"
@@ -701,25 +708,7 @@ function Post() {
                 >
                   <i className="fa-solid fa-circle-left text-[30px]"></i>
                 </button>
-                {/* {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-          .map((e) => prevPage + e) */}
 
-                {/* // ].map()
-          //   .slice(
-          //     Math.floor((nowPage - 1) / 10) * 10,
-          //     Math.floor((nowPage - 1) / 10) * 10 + 10
-          //   ) */}
-                {/* {posts?.total === 0 ? (
-                <button
-                  id={1 + ""}
-                  onClick={onPageClick}
-                  className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold hover:opacity-70
-             ${1 === nowPage && "opacity-30"} `}
-                >
-                  1
-                </button>
-              ) : (
-                <> */}
                 {Array.from(
                   {
                     length: Math.ceil(

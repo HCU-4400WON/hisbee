@@ -20,6 +20,7 @@ function Router() {
     <BrowserRouter>
       <Header />
       <Routes>
+        {/* <Route path="editor" element={<TextEditor />}></Route> */}
         <Route path="/" element={<Main />}></Route>
         <Route path="post" element={<Post />}></Route>
         <Route path="oauth2/redirect" element={<BlankPage />}></Route>

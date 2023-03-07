@@ -846,11 +846,13 @@ export interface ImemberSignup {
 
 export const memberSignUp = (data: ImemberSignup) => {
   try {
+    console.log("!!!");
     const TOKEN = localStorage.getItem("key");
     const response = axios.post("http://localhost:8080/users", data, {
       headers: { Authorization: `Bearer ${TOKEN}` },
       withCredentials: true,
     });
+
     return response;
   } catch (error) {
     console.error(error);
@@ -866,6 +868,7 @@ export const memberUpdate = (data: IUser) => {
       headers: { Authorization: `Bearer ${TOKEN}` },
       withCredentials: true,
     });
+    console.log(response);
     return response;
   } catch (error) {
     console.error(error);
@@ -925,6 +928,7 @@ export const readMembers = async (
       withCredentials: true,
     }
   );
+
   return response.data;
 };
 
@@ -957,7 +961,7 @@ export const deleteLikePost = async (postId: number) => {
 
 export const loginCheckApi = () => {
   const TOKEN = localStorage.getItem("key");
-  const response = axios.post(`http://localhost:8080/`, {
+  const response = axios.get(`http://localhost:8080/auth`, {
     headers: { Authorization: `Bearer ${TOKEN}` },
     withCredentials: true,
   });

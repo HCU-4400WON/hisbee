@@ -1,3 +1,5 @@
+import "./fonts/fonts.css";
+
 import Router from "components/Router";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useEffect, useState } from "react";

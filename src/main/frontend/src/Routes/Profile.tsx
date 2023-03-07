@@ -1,3 +1,10 @@
+import {
+  ref,
+  getDownloadURL,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { storage } from "../firebase";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   addLikePost,
@@ -18,8 +25,9 @@ import {
 import DeletePopup from "components/DeleteModal";
 import LoadingAnimation from "components/LoadingAnimation";
 import { AnimatePresence, motion } from "framer-motion";
+import { userInfo } from "os";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useMatch } from "react-router";
 import { Navigate, useNavigate } from "react-router";
@@ -28,12 +36,15 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 
 const Sidebar = tw.div`
-min-w-[250px] pl-[30px]
+hidden
+lg:flex
+min-w-[250px] 
+pl-[30px]
 border-r-2
+border-t-2
 border-gray-200
 border-b-2
 min-h-screen
-flex
 flex-col
 items-start
 
@@ -42,10 +53,11 @@ items-start
 const SidebarTitle = tw.p`
 py-[40px] 
 text-[33px] 
-font-semibold
+font-unique
 `;
 
 const SidebarItemText = tw.button`
+font-main
 text-[17px]
 mb-[20px]
 font-semibold
@@ -54,18 +66,25 @@ hover:text-gray-400
 `;
 
 const ProfileInfoRow = tw.div`
-    flex
-    my-[10px]
-    h-auto
-    items-center
+  w-full
+  flex
+  my-[10px]
+  h-auto
+  items-center
+  text-[13px]
+  lg:text-[17px]
 `;
 
 const ProfileInfoBox = tw.div`
-flex items-center w-[180px]
+flex 
+items-center 
+w-[110px]
+lg:w-[180px]
+
 `;
 
 const ProfileInfoTitle = tw.p`
-min-w-[150px] 
+w-[150px] 
 text-gray-500
 font-medium
 `;
@@ -76,28 +95,36 @@ mr-2
 `;
 
 const ProfileInfoContent = tw.span`
+min-w-[230px]
+md:min-w-[300px]
+
+
 `;
 
 const ProfileBanner = tw.form`
 
-min-w-[700px] 
 my-[40px] 
 rounded-xl 
 bg-[#f2f2f2] 
 p-[50px] 
 flex
+flex-col
+md:flex-row
+items-center
+md:items-start
+
 `;
 
 const PostGrid = tw.div`
-min-w-[700px]
+
 gap-20
 p-10
 flex
 white
 whitespace-nowrap
 overflow-scroll
-justify-between
-mt-[40px]
+justify-start
+mt-[0px]
 mb-[80px]
 
 `;
@@ -117,6 +144,7 @@ h-[210px]
 min-w-[330px]
 rounded-md
 overflow-hidden
+shadow-lg
 `;
 
 const PostImage = tw.div`
@@ -165,8 +193,8 @@ py-[15px]
 `;
 
 const PostTitle = tw.p`
-text-lg 
-font-semibold
+text-lg
+font-unique
 `;
 const PostDate = tw.div`
 flex text-[12px] 
@@ -220,6 +248,21 @@ const ValidationVariant = {
   },
 };
 
+const PostItemVariant = {
+  initial: {
+    scale: 0,
+    opacity: 0,
+  },
+  showing: {
+    scale: 1,
+    opacity: 1,
+  },
+  hidden: {
+    scale: 0,
+    opacity: 0,
+  },
+};
+
 function Profile() {
   const location = useLocation();
   console.log(location);
@@ -232,22 +275,33 @@ function Profile() {
     onSuccess: (data) => {
       console.log("Fetch!!!");
       setValue("nickname", data.nickname);
+      setValue("pictureUrl", data.pictureUrl);
       setValue("department", data.department);
       setValue("position", data.position);
       setValue("contact", data.contact);
       setValue("club1", data.club?.at(0));
       setValue("club2", data.club?.at(1));
       setValue("bio", data.bio);
-
-      // setValue("imageURl" , data)
-
+      console.log(data);
       // 성공시 호출
       if (!location.state) {
         setLinks([...(data?.externalLinks as string[])]);
       } else {
+        ///////////////////////////
+        ////////////////////////////
+        ///////////////////////////
+        ////////////////////////////
+        ///////////////////////////
+        ////////////////////////////
+        ///////////////////////////
+        ////////////////////////////
+        ///////////////////////////
+        ////////////////////////////
+        ///////////////////////////
+        ////////////////////////////
+        // 이부분 수정 !!1
         data = location.state.user;
         setLinks([...(location.state.user?.externalLinks as string[])]);
-        console.log("!");
       }
     },
     onError: (error) => {
@@ -288,7 +342,7 @@ function Profile() {
       }
     );
 
-  const { register, handleSubmit, formState, setValue } = useForm();
+  const { register, handleSubmit, formState, setValue, getValues } = useForm();
 
   const [Links, setLinks] = useState<string[]>([]);
   const [externalLink, setExternalLink] = useState<string>("");
@@ -313,16 +367,25 @@ function Profile() {
     bio: string;
     club1: string;
     club2: string;
+    pictureUrl: string;
   }
 
   const onValid = async (newData: Idata) => {
     console.log(formState.errors);
     console.log(newData);
-    console.log("de");
 
     const newUser = {
       nickname: newData.nickname,
-      pictureUrl: "/img/user.png",
+      pictureUrl:
+        newData.pictureUrl.slice(5, 13) !== "position"
+          ? newData.pictureUrl
+          : newData.position === "일반"
+          ? "/img/position4.png"
+          : newData.position === "기획자"
+          ? "/img/position3.png"
+          : newData.position === "디자이너"
+          ? "/img/position2.png"
+          : "/img/position1.png",
       isPublic: true,
       department: newData.department,
       position: newData.position,
@@ -420,6 +483,63 @@ function Profile() {
   const setIsLogin = useSetRecoilState(isLoginState);
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const onUploadImageButtonClick = useCallback(() => {
+    if (!inputRef.current) {
+      return;
+    }
+    inputRef.current.click();
+  }, []);
+
+  const onImageChange = (
+    e: React.ChangeEvent<EventTarget & HTMLInputElement>
+  ) => {
+    e.preventDefault();
+    const file = e.target.files;
+    if (!file) return null;
+
+    const storageRef = ref(storage, `files/${file[0].name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file[0]);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        // setProgressPercent(progress);
+      },
+      (error) => {
+        switch (error.code) {
+          case "storage/canceld":
+            alert("Upload has been canceled");
+            break;
+        }
+      },
+      () => {
+        e.target.value = "";
+        getDownloadURL(storageRef).then((downloadURL) => {
+          console.log("File available at", downloadURL);
+          setImageURL(downloadURL);
+          setValue("pictureUrl", downloadURL);
+          (
+            document.querySelector("#basicImage") as HTMLElement
+          ).style.backgroundColor = "white";
+          (document.querySelector("#basicImage") as HTMLElement).style.color =
+            "black";
+          //   setImage(downloadURL);
+        });
+      }
+    );
+  };
+  const [imageURL, setImageURL] = useState<string>("");
+  const onBasicImageClick = (e: React.FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.currentTarget.style.backgroundColor = "black";
+    e.currentTarget.style.color = "white";
+
+    setValue("pictureUrl", "/img/position4.png");
+  };
   return (
     <>
       {getUserLoading || deleteMemberLoading ? (
@@ -427,7 +547,7 @@ function Profile() {
       ) : (
         <>
           {isDeleteModal ? <DeletePopup /> : null}
-          <div className="flex w-[1470px]">
+          <div className="flex">
             <Sidebar>
               <SidebarTitle>My profile</SidebarTitle>
               <SidebarItemText onClick={onSidebarClick} id="1">
@@ -444,16 +564,49 @@ function Profile() {
                 탈퇴하기
               </SidebarItemText>
             </Sidebar>
-            <div className="px-[50px] w-[1220px] border-b-2 border-gray-300">
+            <div className="px-[50px] w-full min-w-[530px] lg:w-5/6 border-t-2 border-b-2 border-gray-200 ">
               <ProfileBanner
                 id="profileInfo"
+                className="relative"
                 onSubmit={handleSubmit(onValid as any)}
               >
-                <div className=" w-[140px] flex flex-col items-center">
-                  <img
-                    src="img/user.png"
-                    className="w-[100%] h-[120px] rounded-full"
-                  />
+                <input
+                  className="hidden"
+                  type="file"
+                  accept="image/*"
+                  ref={inputRef}
+                  // onChange={onUploadImage}
+                  onChange={onImageChange}
+                />
+                {nowModifying && (
+                  <div className="absolute items-center justify-between flex left-[30px] top-[20px] w-[90%] md:w-[190px]">
+                    <i
+                      className="fa-solid fa-panorama w-[40px]"
+                      onClick={onUploadImageButtonClick}
+                    ></i>
+                    <button
+                      id="basicImage"
+                      className=" text-[10px] border-[2px] font-bold px-2 rounded-md border-black"
+                      onClick={onBasicImageClick}
+                    >
+                      기본 이미지
+                    </button>
+                  </div>
+                )}
+
+                <div className="w-[120px] flex flex-col items-center">
+                  {nowModifying ? (
+                    <img
+                      className="w-[100%] h-[120px] rounded-full"
+                      src={getValues("pictureUrl")}
+                    ></img>
+                  ) : (
+                    <img
+                      src={data?.pictureUrl}
+                      className="w-[100%] h-[120px] rounded-full"
+                    />
+                  )}
+
                   {nowModifying ? (
                     <div className="flex flex-col justify-start items-center">
                       <input
@@ -466,7 +619,7 @@ function Profile() {
                             message: "10자 이하만 가능합니다",
                           },
                         })}
-                        className="mt-[20px] text-[17px] px-[10px] w-[150px] "
+                        className="mt-[10px] text-[17px] px-[10px] w-[150px] "
                       />
 
                       <AnimatePresence>
@@ -484,7 +637,7 @@ function Profile() {
                       </AnimatePresence>
                     </div>
                   ) : (
-                    <div className="flex items-center justify-center w-[150px] mt-[20px]">
+                    <div className="flex items-center justify-center w-[150px] mt-[10px]">
                       {/* <span className="flex items-center ">
                         <i className="fa-solid fa-user text-gray-600  w-[18px] mr-[2px]"></i>
                         <p className="mr-[10px] text-gray-500 font-semibold">
@@ -492,13 +645,14 @@ function Profile() {
                         </p>
                       </span> */}
 
-                      <span className=" text-[17px] font-semibold">
+                      <span className=" text-[17px] font-semibold text-slate-500">
+                        <i className="fa-solid fa-user mr-[10px] "></i>
                         {data?.nickname}
                       </span>
                     </div>
                   )}
                 </div>
-                <div className="w-full pl-[70px] text-[17px] flex flex-col justify-between">
+                <div className="md:pl-[70px] w-full text-[17px] flex flex-col justify-between mt-[20px] md:mt-[0px]">
                   <ProfileInfoRow>
                     <ProfileInfoBox>
                       <ProfileInfoIcon className="fa-solid fa-graduation-cap"></ProfileInfoIcon>
@@ -579,7 +733,7 @@ function Profile() {
                       {nowModifying ? (
                         <div>
                           <input
-                            className="border-2 h-[35px] px-2 rounded-lg w-[400px]"
+                            className="border-2 h-[35px] px-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px]"
                             type="text"
                             {...register("contact", {
                               required: "필수 사항 입니다",
@@ -612,18 +766,16 @@ function Profile() {
 
                   <ProfileInfoRow className="items-start">
                     <ProfileInfoBox>
-                      <ProfileInfoIcon className="fa-solid fa-circle-nodes mt-2"></ProfileInfoIcon>
+                      <ProfileInfoIcon className="fa-solid fa-circle-nodes "></ProfileInfoIcon>
 
-                      <ProfileInfoTitle className="mt-1">
-                        동아리 / 학회
-                      </ProfileInfoTitle>
+                      <ProfileInfoTitle>동아리 / 학회</ProfileInfoTitle>
                     </ProfileInfoBox>
 
                     {nowModifying ? (
                       <div className="flex flex-col ">
                         <input
                           {...register(`club1`)}
-                          className="border-2 h-[35px] px-2 mb-[10px] rounded-lg w-[400px]"
+                          className="border-2 h-[35px] px-2 mb-[10px] rounded-lg w-[200px] lg:w-[300px] xl:w-[400px]"
                           placeholder="최대 2개"
                           type="text"
                           maxLength={20}
@@ -631,7 +783,7 @@ function Profile() {
 
                         <input
                           {...register(`club2`)}
-                          className="border-2 h-[35px] px-2 rounded-lg w-[400px]"
+                          className="border-2 h-[35px] px-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px]"
                           placeholder="최대 2개"
                           type="text"
                           maxLength={20}
@@ -666,17 +818,15 @@ function Profile() {
 
                   <ProfileInfoRow className=" items-start mb-0">
                     <ProfileInfoBox>
-                      <ProfileInfoIcon className="fa-solid fa-link mt-2"></ProfileInfoIcon>
-                      <ProfileInfoTitle className="mt-1">
-                        외부링크
-                      </ProfileInfoTitle>
+                      <ProfileInfoIcon className="fa-solid fa-link"></ProfileInfoIcon>
+                      <ProfileInfoTitle className="">외부링크</ProfileInfoTitle>
                     </ProfileInfoBox>
 
                     {nowModifying ? (
                       <div>
-                        <div>
+                        <div className="flex items-center">
                           <input
-                            className="border-2 px-2 rounded-lg w-[400px] h-[35px]"
+                            className="border-2 px-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px] h-[35px]"
                             value={externalLink}
                             onChange={onChange}
                             placeholder="ex) github or Linked-In"
@@ -688,16 +838,17 @@ function Profile() {
                           ></i>
                         </div>
 
-                        {Links?.map((link) => (
-                          <div className="flex items-center justify-between bg-slate-200 px-[10px] w-[400px] h-[30px] mt-[10px]">
-                            <i className="fa-solid fa-link"></i>
-                            {link}{" "}
-                            <i
-                              className="fa-regular fa-trash-can"
-                              onClick={() => onDelete(link)}
-                            ></i>
-                          </div>
-                        ))}
+                        {Links.length !== 0 &&
+                          Links?.map((link) => (
+                            <div className="flex items-center justify-between bg-slate-200 px-[10px] w-[200px] lg:w-[300px] xl:w-[400px]  h-[30px] mt-[10px]">
+                              <i className="fa-solid fa-link"></i>
+                              <p>{link} </p>
+                              <i
+                                className="fa-regular fa-trash-can"
+                                onClick={() => onDelete(link)}
+                              ></i>
+                            </div>
+                          ))}
 
                         {/* {data?.externalLinks?.map((link, index) => (
                       <ProfileInfoContent key={index}>
@@ -708,9 +859,9 @@ function Profile() {
                     ) : (
                       <div className="flex flex-col ">
                         {Links?.map((link) => (
-                          <div className=" relative flex items-center justify-center bg-slate-200 px-[10px] w-[400px] h-[30px] mb-[10px]">
+                          <div className="relative flex items-center justify-center w-[230px] md:min-w-[300px] bg-slate-200 h-[30px] mb-[10px]">
                             <i className="fa-solid fa-link absolute left-2"></i>
-                            {link}{" "}
+                            <p>{link} </p>
                           </div>
                         ))}
                       </div>
@@ -720,16 +871,14 @@ function Profile() {
                     className={`${nowModifying && "mt-[20px]"} items-start`}
                   >
                     <ProfileInfoBox>
-                      <ProfileInfoIcon className="fa-solid fa-rocket mt-2"></ProfileInfoIcon>
-                      <ProfileInfoTitle className="mt-1">
-                        자기소개
-                      </ProfileInfoTitle>
+                      <ProfileInfoIcon className="fa-solid fa-rocket"></ProfileInfoIcon>
+                      <ProfileInfoTitle className="">자기소개</ProfileInfoTitle>
                     </ProfileInfoBox>
                     <ProfileInfoContent>
                       {nowModifying ? (
                         <textarea
                           {...register("bio")}
-                          className="border-2 p-2 rounded-lg w-[400px] h-[100px]"
+                          className="border-2 p-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px] h-[100px]"
                           placeholder="자유롭게 작성 해주세요 !"
                           maxLength={150}
                         ></textarea>
@@ -738,22 +887,22 @@ function Profile() {
                       )}
                     </ProfileInfoContent>
                   </ProfileInfoRow>
-                  <div className="w-full">
+                  <div className="flex justify-center md:justify-end ">
                     {!location.state &&
                       (nowModifying ? (
                         <>
                           <button
-                            id="modify"
-                            className="bg-[#fff] w-[120px] h-[32px] border-2 shadow  rounded-full float-right text-gray-500 border-gray-400"
-                          >
-                            제출하기
-                          </button>
-                          <button
                             onClick={() => setNowModifying(false)}
-                            className="mr-[10px] float-right mb-[40px] rounded-full border-2 border-red-500 text-red-500 w-[120px] bg-white h-[32px] "
+                            className="mb-[40px]  rounded-full border-2 border-red-500 text-red-500 w-[80px] bg-white text-[13px] mt-[20px] md:text-[17px] md:w-[120px] md:h-[30px] h-[25px] "
                           >
                             {" "}
                             취소하기{" "}
+                          </button>
+                          <button
+                            id="modify"
+                            className="bg-[#fff] ml-2 w-[80px] text-[13px] mt-[20px] md:text-[17px] md:w-[120px] md:h-[30px] h-[25px] border-2 shadow  rounded-full text-gray-500 border-gray-400"
+                          >
+                            제출하기
                           </button>
                         </>
                       ) : (
@@ -761,7 +910,7 @@ function Profile() {
                           <button
                             id="modify"
                             onClick={onClick}
-                            className="bg-[#fff] w-[120px] h-[32px] border-2 shadow  rounded-full float-right text-gray-500 border-gray-400"
+                            className="bg-[#fff] w-[80px] text-[13px] mt-[10px] md:mt-[0px] md:text-[17px] md:w-[120px] md:h-[30px] h-[25px] border-2 shadow rounded-full  text-gray-500 border-gray-400"
                           >
                             수정하기
                           </button>
@@ -773,7 +922,7 @@ function Profile() {
 
               <span className="mt-[40px] text-[20px] font-medium flex items-center">
                 <i className="fa-solid fa-pencil mr-2"> </i>
-                <p className="font-bold">내가 쓴 모집글</p>
+                <p className="font-bold font-unique">내가 쓴 모집글</p>
               </span>
 
               <PostGrid id="myPost">
@@ -782,7 +931,7 @@ function Profile() {
                     // initial={{ scale: 1 }}
                     whileHover={{ scale: 1.08 }}
                     key={index}
-                    style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
+                    // style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
                   >
                     <PostContentFirstRow
                       className={`${
@@ -844,7 +993,7 @@ function Profile() {
                     <Link to={`/post/${post.id}`}>
                       <PostMainPart>
                         {/* secondRow */}
-                        <PostTitle className="text-lg font-semibold">
+                        <PostTitle>
                           {post.title.length > 16
                             ? post.title.slice(0, 16) + " ..."
                             : post.title}
@@ -967,61 +1116,67 @@ function Profile() {
 
               <span className="mt-[40px] text-[20px] font-medium flex items-center">
                 <i className="fa-solid fa-heart text-red-600 mr-2"></i>
-                <p className="font-bold">찜한 모집글</p>
+                <p className="font-bold font-unique">찜한 모집글</p>
               </span>
 
               <PostGrid id="zzim">
-                {data?.likes?.map((post, index) => (
-                  <PostItem
-                    // initial={{ scale: 1 }}
-                    whileHover={{ scale: 1.08 }}
-                    key={index}
-                    style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
-                  >
-                    <PostContentFirstRow
-                      className={`${
-                        post.dtype === "P"
-                          ? "bg-[#e0c3f8]"
-                          : post.dtype === "S"
-                          ? "bg-[#c7c7c7]"
-                          : "bg-[#bdc9f2]"
-                      }`}
+                <AnimatePresence>
+                  {data?.likes?.map((post, index) => (
+                    <PostItem
+                      key={index}
+                      variants={PostItemVariant}
+                      initial="initial"
+                      animate="showing"
+                      exit="hidden"
+                      // initial={{ scale: 1 }}
+                      whileHover={{ scale: 1.08 }}
+
+                      // style={{ boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)" }}
                     >
-                      <PostCategorySpan>
-                        <PostCategoryLabel
-                          className={`${
-                            post.dtype === "P"
-                              ? "text-purple-400"
-                              : post.dtype === "S"
-                              ? "text-gray-400"
-                              : "text-blue-400"
-                          } `}
-                        >
-                          {post.dtype === "P"
-                            ? "프로젝트"
+                      <PostContentFirstRow
+                        className={`${
+                          post.dtype === "P"
+                            ? "bg-[#e0c3f8]"
                             : post.dtype === "S"
-                            ? "스터디"
-                            : "멘토링"}
-                        </PostCategoryLabel>
-                      </PostCategorySpan>
-                      <div>
-                        <HeartIcon
-                          whileHover={{ scale: [1, 1.3, 1, 1.3, 1] }}
-                          whileTap={{ y: [0, -30, 0] }}
-                          onClick={() =>
-                            onHeartClick(post.id, post.hasLiked as boolean)
-                          }
-                          className={`${
-                            post.hasLiked
-                              ? "fa-solid fa-heart text-red-600"
-                              : "fa-regular fa-heart"
-                          }`}
-                        >
-                          {/* {post.likenum} */}
-                        </HeartIcon>
-                        &nbsp; {post?.nliked}
-                      </div>
-                      {/* <svg
+                            ? "bg-[#c7c7c7]"
+                            : "bg-[#bdc9f2]"
+                        }`}
+                      >
+                        <PostCategorySpan>
+                          <PostCategoryLabel
+                            className={`${
+                              post.dtype === "P"
+                                ? "text-purple-400"
+                                : post.dtype === "S"
+                                ? "text-gray-400"
+                                : "text-blue-400"
+                            } `}
+                          >
+                            {post.dtype === "P"
+                              ? "프로젝트"
+                              : post.dtype === "S"
+                              ? "스터디"
+                              : "멘토링"}
+                          </PostCategoryLabel>
+                        </PostCategorySpan>
+                        <div>
+                          <HeartIcon
+                            whileHover={{ scale: [1, 1.3, 1, 1.3, 1] }}
+                            whileTap={{ y: [0, -30, 0] }}
+                            onClick={() =>
+                              onHeartClick(post.id, post.hasLiked as boolean)
+                            }
+                            className={`${
+                              post.hasLiked
+                                ? "fa-solid fa-heart text-red-600"
+                                : "fa-regular fa-heart"
+                            }`}
+                          >
+                            {/* {post.likenum} */}
+                          </HeartIcon>
+                          &nbsp; {post?.nliked}
+                        </div>
+                        {/* <svg
                 width="15px"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 512 512"
@@ -1031,131 +1186,132 @@ function Profile() {
                   d="M244 84L255.1 96L267.1 84.02C300.6 51.37 347 36.51 392.6 44.1C461.5 55.58 512 115.2 512 185.1V190.9C512 232.4 494.8 272.1 464.4 300.4L283.7 469.1C276.2 476.1 266.3 480 256 480C245.7 480 235.8 476.1 228.3 469.1L47.59 300.4C17.23 272.1 0 232.4 0 190.9V185.1C0 115.2 50.52 55.58 119.4 44.1C164.1 36.51 211.4 51.37 244 84C243.1 84 244 84.01 244 84L244 84zM255.1 163.9L210.1 117.1C188.4 96.28 157.6 86.4 127.3 91.44C81.55 99.07 48 138.7 48 185.1V190.9C48 219.1 59.71 246.1 80.34 265.3L256 429.3L431.7 265.3C452.3 246.1 464 219.1 464 190.9V185.1C464 138.7 430.4 99.07 384.7 91.44C354.4 86.4 323.6 96.28 301.9 117.1L255.1 163.9z"
                 />
               </svg> */}
-                      {/* <p className="mx-5 my-1 text-sm font-bold">개발자</p>
+                        {/* <p className="mx-5 my-1 text-sm font-bold">개발자</p>
        <p className="text-sm text-blue-500">{post.total}명 모집</p> */}
-                    </PostContentFirstRow>
-                    <Link to={`/post/${post.id}`}>
-                      <PostMainPart>
-                        {/* secondRow */}
-                        <PostTitle className="text-lg font-semibold">
-                          {post.title.length > 16
-                            ? post.title.slice(0, 16) + " ..."
-                            : post.title}
-                        </PostTitle>
+                      </PostContentFirstRow>
+                      <Link to={`/post/${post.id}`}>
+                        <PostMainPart>
+                          {/* secondRow */}
+                          <PostTitle>
+                            {post.title.length > 16
+                              ? post.title.slice(0, 16) + " ..."
+                              : post.title}
+                          </PostTitle>
 
-                        {/* ThirdRow */}
-                        <PostDate>
-                          {(new Date(post.projectEnd).getTime() -
-                            new Date(post.projectStart).getTime()) /
-                            (1000 * 24 * 60 * 60) >=
-                          365 ? (
-                            <PostDatePlan>
-                              {Math.floor(
-                                (new Date(post.projectEnd).getTime() -
-                                  new Date(post.projectStart).getTime()) /
-                                  (1000 * 24 * 60 * 60 * 365)
-                              )}
-                              {""}년 플랜
-                            </PostDatePlan>
-                          ) : (new Date(post.projectEnd).getTime() -
+                          {/* ThirdRow */}
+                          <PostDate>
+                            {(new Date(post.projectEnd).getTime() -
                               new Date(post.projectStart).getTime()) /
                               (1000 * 24 * 60 * 60) >=
-                            30 ? (
-                            <PostDatePlan>
-                              {Math.floor(
-                                (new Date(post.projectEnd).getTime() -
-                                  new Date(post.projectStart).getTime()) /
-                                  (1000 * 24 * 60 * 60 * 30)
-                              )}
-                              {""}달 플랜
-                            </PostDatePlan>
-                          ) : (new Date(post.projectEnd).getTime() -
-                              new Date(post.projectStart).getTime()) /
-                              (1000 * 24 * 60 * 60) >=
-                            7 ? (
-                            <PostDatePlan>
-                              {Math.floor(
-                                (new Date(post.projectEnd).getTime() -
-                                  new Date(post.projectStart).getTime()) /
-                                  (1000 * 24 * 60 * 60 * 7)
-                              )}
-                              {""}주 플랜
-                            </PostDatePlan>
-                          ) : (
-                            <PostDatePlan>
-                              {Math.floor(
-                                (new Date(post.projectEnd).getTime() -
-                                  new Date(post.projectStart).getTime()) /
-                                  (1000 * 24 * 60 * 60)
-                              )}
-                              {""}일 플랜
-                            </PostDatePlan>
-                          )}
-                          <p className="mx-[7px] pb-0.5">|</p>
-                          <PostDateStart>
-                            {" "}
-                            {new Date(post.projectStart).getMonth()}월{" "}
-                            {new Date(post.projectStart).getDate()}일 시작
-                          </PostDateStart>
-                        </PostDate>
+                            365 ? (
+                              <PostDatePlan>
+                                {Math.floor(
+                                  (new Date(post.projectEnd).getTime() -
+                                    new Date(post.projectStart).getTime()) /
+                                    (1000 * 24 * 60 * 60 * 365)
+                                )}
+                                {""}년 플랜
+                              </PostDatePlan>
+                            ) : (new Date(post.projectEnd).getTime() -
+                                new Date(post.projectStart).getTime()) /
+                                (1000 * 24 * 60 * 60) >=
+                              30 ? (
+                              <PostDatePlan>
+                                {Math.floor(
+                                  (new Date(post.projectEnd).getTime() -
+                                    new Date(post.projectStart).getTime()) /
+                                    (1000 * 24 * 60 * 60 * 30)
+                                )}
+                                {""}달 플랜
+                              </PostDatePlan>
+                            ) : (new Date(post.projectEnd).getTime() -
+                                new Date(post.projectStart).getTime()) /
+                                (1000 * 24 * 60 * 60) >=
+                              7 ? (
+                              <PostDatePlan>
+                                {Math.floor(
+                                  (new Date(post.projectEnd).getTime() -
+                                    new Date(post.projectStart).getTime()) /
+                                    (1000 * 24 * 60 * 60 * 7)
+                                )}
+                                {""}주 플랜
+                              </PostDatePlan>
+                            ) : (
+                              <PostDatePlan>
+                                {Math.floor(
+                                  (new Date(post.projectEnd).getTime() -
+                                    new Date(post.projectStart).getTime()) /
+                                    (1000 * 24 * 60 * 60)
+                                )}
+                                {""}일 플랜
+                              </PostDatePlan>
+                            )}
+                            <p className="mx-[7px] pb-0.5">|</p>
+                            <PostDateStart>
+                              {" "}
+                              {new Date(post.projectStart).getMonth()}월{" "}
+                              {new Date(post.projectStart).getDate()}일 시작
+                            </PostDateStart>
+                          </PostDate>
 
-                        {/* lastRow */}
-                        <PostPerson>
-                          <PostPersonTotal>
-                            {post.dtype === "P"
-                              ? post.maxDesigner +
-                                post.maxDeveloper +
-                                post.maxPlanner
-                              : post.dtype === "S"
-                              ? post.maxMember
-                              : post.maxMentee + post.maxMentor}
-                            명 모집
-                          </PostPersonTotal>
+                          {/* lastRow */}
+                          <PostPerson>
+                            <PostPersonTotal>
+                              {post.dtype === "P"
+                                ? post.maxDesigner +
+                                  post.maxDeveloper +
+                                  post.maxPlanner
+                                : post.dtype === "S"
+                                ? post.maxMember
+                                : post.maxMentee + post.maxMentor}
+                              명 모집
+                            </PostPersonTotal>
 
-                          {post.dtype === "P" ? (
-                            <>
-                              {post.maxDeveloper !== 0 && (
-                                <PostPersonPosition>
-                                  개발자 {post.maxDeveloper}명
-                                </PostPersonPosition>
-                              )}
-                              {post.maxPlanner !== 0 && (
-                                <PostPersonPosition>
-                                  기획자 {post.maxPlanner}명
-                                </PostPersonPosition>
-                              )}
+                            {post.dtype === "P" ? (
+                              <>
+                                {post.maxDeveloper !== 0 && (
+                                  <PostPersonPosition>
+                                    개발자 {post.maxDeveloper}명
+                                  </PostPersonPosition>
+                                )}
+                                {post.maxPlanner !== 0 && (
+                                  <PostPersonPosition>
+                                    기획자 {post.maxPlanner}명
+                                  </PostPersonPosition>
+                                )}
 
-                              {post.maxDesigner !== 0 && (
+                                {post.maxDesigner !== 0 && (
+                                  <PostPersonPosition>
+                                    디자이너 {post.maxDesigner}명
+                                  </PostPersonPosition>
+                                )}
+                              </>
+                            ) : post.dtype === "S" ? (
+                              post.maxMember !== 0 && (
                                 <PostPersonPosition>
-                                  디자이너 {post.maxDesigner}명
+                                  스터디원 {post.maxMember}명
                                 </PostPersonPosition>
-                              )}
-                            </>
-                          ) : post.dtype === "S" ? (
-                            post.maxMember !== 0 && (
-                              <PostPersonPosition>
-                                스터디원 {post.maxMember}명
-                              </PostPersonPosition>
-                            )
-                          ) : (
-                            <>
-                              {post.maxMentor !== 0 && (
-                                <PostPersonPosition>
-                                  멘토 {post.maxMentor}명
-                                </PostPersonPosition>
-                              )}
-                              {post.maxMentee !== 0 && (
-                                <PostPersonPosition>
-                                  멘티 {post.maxMentee}명
-                                </PostPersonPosition>
-                              )}
-                            </>
-                          )}
-                        </PostPerson>
-                      </PostMainPart>
-                    </Link>
-                  </PostItem>
-                ))}
+                              )
+                            ) : (
+                              <>
+                                {post.maxMentor !== 0 && (
+                                  <PostPersonPosition>
+                                    멘토 {post.maxMentor}명
+                                  </PostPersonPosition>
+                                )}
+                                {post.maxMentee !== 0 && (
+                                  <PostPersonPosition>
+                                    멘티 {post.maxMentee}명
+                                  </PostPersonPosition>
+                                )}
+                              </>
+                            )}
+                          </PostPerson>
+                        </PostMainPart>
+                      </Link>
+                    </PostItem>
+                  ))}
+                </AnimatePresence>
               </PostGrid>
 
               {/* 

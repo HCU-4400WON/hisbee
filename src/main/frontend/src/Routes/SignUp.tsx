@@ -18,7 +18,8 @@ justify-center
 `;
 
 const SignUpCard = tw.form`
-w-[800px] 
+w-[400px]
+md:w-[800px] 
 h-[500px]
 bg-[#fff] 
 px-[60px]
@@ -32,11 +33,12 @@ rounded-3xl
 const Title = tw.p`
   text-[40px]
   font-bold
+  font-unique
 `;
 
 const SubTitle = tw.p`
+font-unique
  text-[22px]
- font-bold
  border-b border-black
  mt-[40px]
  pb-[10px]
@@ -72,6 +74,7 @@ h-[80px]
 
 const Info = tw.p`
   text-[18px]
+  font-main
   my-[20px]
 `;
 
@@ -113,7 +116,8 @@ rounded-full
 `;
 
 const SubmitButton = tw.button`
-w-[150px]
+w-[100px]
+md:w-[150px]
 h-[33px]
 bg-[#eeeeee]
 rounded-full
@@ -147,11 +151,12 @@ function SignUp() {
 
   const { mutate: signupMemberMutate, isLoading: signupMemberLoading } =
     useMutation(
-      ["signupMember" as string],
-
+      ["signupMemberr" as string],
       (newMember: ImemberSignup) => memberSignUp(newMember) as any,
-
       {
+        onSuccess: () => {
+          console.log("성공!");
+        },
         onError: () => {
           console.log("유저 회원 가입이 작동하지 않습니다.");
         },
@@ -159,16 +164,17 @@ function SignUp() {
     );
 
   const onValid = (submitData: IOnValid) => {
+    console.log("!!!!!");
     const newMember: ImemberSignup = {
       nickname: submitData.nickname,
       isPublic: false,
     };
     console.log(newMember);
     // memberSignUp(newMember);
-    signupMemberMutate(newMember);
-    // navigate("/oauth2/redirect/optional");
     setIsSignupModal(false);
     setIsExtraSignupModal(true);
+    signupMemberMutate(newMember);
+    // navigate("/oauth2/redirect/optional");
   };
   // console.log(f);
 
@@ -201,7 +207,7 @@ function SignUp() {
       {signupMemberLoading ? (
         <LoadingAnimation />
       ) : (
-        <Container className="w-[1470px]">
+        <Container>
           <motion.div
             variants={LayoutVariant}
             initial="hidden"
@@ -248,9 +254,7 @@ function SignUp() {
               </InfoBox>
 
               <InfoBox className="flex w-full flex-row mt-[40px] justify-end">
-                {/* <Link to="/oauth2/redirect/optional"> */}
-                <SubmitButton className="">제출하기</SubmitButton>
-                {/* </Link> */}
+                <SubmitButton type="submit">제출하기</SubmitButton>
               </InfoBox>
             </SignUpCard>
           </div>

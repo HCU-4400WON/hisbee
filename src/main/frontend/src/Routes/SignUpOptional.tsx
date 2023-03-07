@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { IUser, memberUpdate } from "api";
-import { isExtraSignupModalState } from "components/atom";
+import { isExtraSignupModalState, isSignupModalState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
 import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -26,8 +26,8 @@ justify-center
 `;
 
 const SignUpCard = tw.form`
-
-w-[800px] 
+w-[400px]
+md:w-[800px] 
 bg-[#fff]
 mt-[100px] 
 px-[60px] 
@@ -40,6 +40,7 @@ rounded-3xl
 const Title = tw.p`
   text-[40px]
   font-bold
+  font-unique
 `;
 
 const SubTitle = tw.p`
@@ -84,8 +85,10 @@ h-[70px]
 `;
 
 const Info = tw.label`
-  text-[18px]
+text-[13px]  
+md:text-[18px]
   my-[20px]
+  font-main
 `;
 
 const InfoInput = tw.input`
@@ -119,7 +122,8 @@ w-[680px]
 `;
 
 const IntroduceArea = tw.textarea`
-w-[680px]
+w-[300px]
+md:w-[680px]
 h-[110px]
 bg-[#eeeeee]
 `;
@@ -232,7 +236,7 @@ function SignUpOptional() {
     setLinks((prev) => [...prev.slice(0, idx), ...prev.slice(idx + 1)]);
   };
   const onClickPlus = () => {
-    setLinks((prev) => [...prev, externalLink]);
+    if (externalLink !== "") setLinks((prev) => [...prev, externalLink]);
     setExternalLink("");
   };
   const { register, handleSubmit, formState } = useForm();
@@ -247,8 +251,18 @@ function SignUpOptional() {
   console.log(positionId);
 
   const onValid = (data: any) => {
+    console.log("check", data, Links);
     const newUser = {
-      pictureUrl: uploadImage,
+      pictureUrl:
+        uploadImage !== ""
+          ? uploadImage
+          : positionId === "일반"
+          ? "/img/position4.png"
+          : positionId === "기획자"
+          ? "/img/position3.png"
+          : positionId === "디자이너"
+          ? "/img/position2.png"
+          : "/img/position1.png",
       isPublic: true,
       department: data.department,
       position: positionId,
@@ -258,11 +272,12 @@ function SignUpOptional() {
       contact: data?.contact,
       externalLinks: Links,
     };
-    console.log(data);
-    // memberUpdate(newUser);
+    console.log(newUser);
     updateMemberMutate(newUser);
-    // navigate("/");
+
+    setImageURL("");
     setIsExtraSignupModal(false);
+    navigate("/");
   };
 
   const [uploadImage, setUploadImage] = useState("");
@@ -305,17 +320,18 @@ function SignUpOptional() {
         onError: () => {
           console.log("유저 수정이 작동하지 않습니다.");
         },
+        onSuccess: () => {},
       }
     );
 
   const setIsExtraSignupModal = useSetRecoilState(isExtraSignupModalState);
-
+  const setIsSignupModal = useSetRecoilState(isSignupModalState);
   return (
     <>
       {updateMemberLoading ? (
         <LoadingAnimation />
       ) : (
-        <Container className="relative w-[1470px]">
+        <Container className="relative">
           <motion.div
             variants={LayoutVariant}
             initial="hidden"
@@ -331,20 +347,25 @@ function SignUpOptional() {
           >
             <Title>Sign Up</Title>
 
-            <SubTitle className="mt-[80px]">선택사항</SubTitle>
+            <SubTitle className="mt-[80px] font-unique">선택사항</SubTitle>
             <Info>
               * 선택 사항을 기입하시면 인재풀 페이지를 열람 하실 수 있습니다.
               {/* <Link to="/"> */}
               <button
-                onClick={() => setIsExtraSignupModal(false)}
-                className="float-right w-[150px] border-2 border-red-500 rounded-full text-[red]"
+                type="button"
+                onClick={(e: React.FormEvent<HTMLButtonElement>) => {
+                  setIsExtraSignupModal(false);
+                  setIsSignupModal(false);
+                  navigate("/");
+                }}
+                className="float-right w-[100px] md:w-[150px] border-2 border-red-500 rounded-full text-[red]"
               >
                 안하고 나가기
               </button>
               {/* </Link> */}
             </Info>
 
-            <FlexRequiredBox>
+            <FlexRequiredBox className="flex-col md:flex-row">
               <div className="flex flex-col justify-evenly h-[400px]">
                 <InfoBox>
                   <Info>학부</Info>
@@ -386,7 +407,7 @@ function SignUpOptional() {
                       onClick={onClick}
                     >
                       <PositionGradientBox
-                        src="/img/position1.png"
+                        src="/img/position4.png"
                         // style={{
                         //   background:
                         //     "radial-gradient(closest-side,#3aea31 , white)",
@@ -403,7 +424,7 @@ function SignUpOptional() {
                       onClick={onClick}
                     >
                       <PositionGradientBox
-                        src="/img/position2.png"
+                        src="/img/position3.png"
                         // style={{
                         //   background:
                         //     "radial-gradient(closest-side,#7b87e7 , white)",
@@ -420,7 +441,7 @@ function SignUpOptional() {
                       onClick={onClick}
                     >
                       <PositionGradientBox
-                        src="/img/position3.png"
+                        src="/img/position2.png"
                         // style={{
                         //   background:
 
@@ -438,7 +459,7 @@ function SignUpOptional() {
                       onClick={onClick}
                     >
                       <PositionGradientBox
-                        src="/img/position4.png"
+                        src="/img/position1.png"
                         // style={{
                         //   background:
                         //     "radial-gradient(closest-side,#87879e , white)",
@@ -451,8 +472,15 @@ function SignUpOptional() {
               </div>
               <div className="flex flex-col items-center justify-evenly mt-[15px]">
                 <img
-                  className="border w-[300px] h-[300px] "
+                  id="uploadImage"
+                  className="my-[10px] w-[200px] h-[200px] md:my-[0px]"
                   src={imageURL}
+                  onError={(e) => {
+                    e.currentTarget.src = "/img/logoDefault.png";
+                  }}
+                  onLoad={(e) => {
+                    console.log(e);
+                  }}
                 ></img>
                 <input
                   className="hidden"
@@ -462,7 +490,7 @@ function SignUpOptional() {
                   // onChange={onUploadImage}
                   onChange={onImageChange}
                 />
-                <div className="flex items-center justify-between w-[170px]">
+                <div className="flex items-center justify-between w-[170px] md:mb-[0px] mb-[10px]">
                   <i
                     onClick={onUploadImageButtonClick}
                     className="fa-solid fa-arrow-up-from-bracket p-2 border-2 rounded-full"
@@ -488,7 +516,7 @@ function SignUpOptional() {
               />
             </IntroduceBox>
 
-            <FlexRowBox className="justify-between ">
+            <FlexRowBox className="justify-between md:flex-row flex-col">
               <InfoBox>
                 <Info className="my-[25px]">동아리 / 학회 1</Info>
                 <InfoInput
@@ -508,8 +536,8 @@ function SignUpOptional() {
                 />
               </InfoBox>
             </FlexRowBox>
-            <FlexRowBox className="justify-between">
-              <InfoBox className=" h-[150px]">
+            <FlexRowBox className="justify-between md:flex-row flex-col">
+              <InfoBox className=" md:h-[150px] h-[100px]">
                 <Info className=" flex items-center my-[25px]">
                   <p>연락수단</p>
                 </Info>
@@ -568,7 +596,9 @@ function SignUpOptional() {
               </InfoBox>
             </FlexRowBox>
 
-            <StartButton className="">제출하기</StartButton>
+            <StartButton type="submit" className="">
+              제출하기
+            </StartButton>
           </SignUpCard>
         </Container>
       )}

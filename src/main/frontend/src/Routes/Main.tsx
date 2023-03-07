@@ -34,17 +34,16 @@ import SignUpOptional from "./SignUpOptional";
 
 const titles = [
   "🔥 요즘 핫한 모집글",
-  "👨‍🎨  신규 모집글",
-  "👨‍👦‍👦  모집인원 임박! 모집글",
-  "📢  마감임박! 모집글",
+  "👨‍🎨 신규 모집글",
+  "👨‍👦‍👦 모집인원 임박! 모집글",
+  "📢 마감임박! 모집글",
 ];
 
 const Banner = tw.img`
+w-max
 
-w-screen
 bg-gradient-to-r from-gray-200 to-gray-500
-mt-[40px]
-mb-[150px]
+mb-[50px]
 `;
 
 const PostCategory = tw.div`
@@ -60,23 +59,28 @@ mb-10
 `;
 
 const Title = tw.p`
-text-xl 
-font-bold
+text-xl
+font-unique
 `;
 
 const PostGrid = tw(motion.div)`
-flex justify-between w-full
-
+flex 
+justify-center
+md:justify-between
+gap-2
+w-full
 `;
 
 //justify-self-center
 const PostItem = tw(motion.div)`
+
 relative
 h-[210px]
-min-w-[330px]
+w-[320px]
 rounded-md
 overflow-hidden
 z-0
+shadow-lg
 
 `;
 
@@ -122,16 +126,18 @@ const PostMainPart = tw.div`
 bg-[#e9e9eb] 
 w-full 
 h-full 
-px-[25px] 
+px-[20px] 
 py-[15px]
 `;
 
 const PostTitle = tw.p`
+pb-[8px]
+font-unique
 text-lg 
-font-semibold
 `;
 const PostDate = tw.div`
-flex text-[12px] 
+flex 
+text-[12px]
 font-semibold 
 items-center
 `;
@@ -141,7 +147,7 @@ const PostDateStart = tw.p``;
 
 const PostPerson = tw.div`
 absolute 
-left-[25px] 
+left-[20px] 
 bottom-[15px] 
 flex 
 items-center 
@@ -150,6 +156,7 @@ gap-2
 
 const PostPersonTotal = tw.p`
 text-[#185ee4] 
+flex
 font-bold 
 text-[14px]
 `;
@@ -158,17 +165,16 @@ const PostPersonPosition = tw.span`
 border-gray-400 
 border 
 rounded-full 
-px-[10px] 
-text-[11px] 
+px-[5px] 
+text-[10px] 
 text-gray-500 
 font-medium
+
 `;
 
 const MAX_WIDTH = window.innerWidth;
 console.log(MAX_WIDTH);
-const OFFSET = 4;
-const NUM_POSTS = 8;
-const CARD_SIZE = 330;
+const NUM_POSTS = 12;
 
 interface IwindowSize {
   width: number;
@@ -182,18 +188,20 @@ interface IProps {
 
 const postsVariants = {
   hidden: ({ windowSize }: IProps) => ({
-    x: windowSize.width,
+    // x: windowSize.width,
+    x: 1500,
   }),
   showing: {
     x: 0,
     transition: {
-      duration: 2,
+      duration: 0.5,
     },
   },
   exit: (windowSize: any) => ({
-    x: -windowSize.windowSize.width,
+    // x: -windowSize.windowSize.width,
+    x: -1500,
     transition: {
-      duration: 2,
+      duration: 0.5,
     },
   }),
   hover: ({ leaving }: IProps) => ({
@@ -212,6 +220,8 @@ const postsVariants = {
 function Main() {
   // resize되는 화면 크기 구하기
 
+  const [OFFSET, setOFFSET] = useState<number | null>(null);
+
   const [windowSize, setWindowSize] = useState<{
     width: number | undefined;
     height: number | undefined;
@@ -221,11 +231,35 @@ function Main() {
   });
 
   useEffect(() => {
+    handleOFFSET(window.innerWidth);
+  }, []);
+
+  const handleOFFSET = (windowWidth: number) => {
+    if (window.innerWidth >= 1200) setOFFSET(4);
+    else if (window.innerWidth >= 990) setOFFSET(3);
+    else if (window.innerWidth >= 768) setOFFSET(2);
+    else if (window.innerWidth < 768) setOFFSET(1);
+  };
+
+  const handleResize = () => {
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+
+    handleOFFSET(windowSize.width as number);
+  };
+  useEffect(() => {
     const handleResize = () => {
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight,
       });
+
+      if ((windowSize.width as number) >= 1200) setOFFSET(4);
+      else if ((windowSize.width as number) >= 990) setOFFSET(3);
+      else if ((windowSize.width as number) >= 768) setOFFSET(2);
+      else if ((windowSize.width as number) < 768) setOFFSET(1);
     };
 
     window.addEventListener("resize", handleResize);
@@ -233,7 +267,7 @@ function Main() {
     handleResize();
 
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [window.innerWidth]);
 
   const addLikeMutate = useMutation(
     ["addLikePost" as string],
@@ -270,21 +304,23 @@ function Main() {
   const [indexs, setIndexs] = useState([0, 0, 0, 0]);
 
   const increaseIndex = (idx: number) => {
-    if (leaving) return;
-    setLeaving(true);
-    if (
-      indexs[idx] ===
-      (NUM_POSTS % OFFSET === 0
-        ? NUM_POSTS / OFFSET - 1
-        : Math.floor(NUM_POSTS / OFFSET))
-    )
-      setIndexs((prev) => [...prev.slice(0, idx), 0, ...prev.slice(idx + 1)]);
-    else {
-      setIndexs((prev) => [
-        ...prev.slice(0, idx),
-        prev[idx] + 1,
-        ...prev.slice(idx + 1),
-      ]);
+    if (OFFSET) {
+      if (leaving) return;
+      setLeaving(true);
+      if (
+        indexs[idx] ===
+        (NUM_POSTS % OFFSET === 0
+          ? NUM_POSTS / OFFSET - 1
+          : Math.floor(NUM_POSTS / OFFSET))
+      )
+        setIndexs((prev) => [...prev.slice(0, idx), 0, ...prev.slice(idx + 1)]);
+      else {
+        setIndexs((prev) => [
+          ...prev.slice(0, idx),
+          prev[idx] + 1,
+          ...prev.slice(idx + 1),
+        ]);
+      }
     }
   };
 
@@ -388,38 +424,40 @@ function Main() {
     }
   };
 
-  const { mutate: loginCheckMutate, isLoading: isLoginCheck } = useMutation(
-    ["loginCheckApiMain" as string],
-    loginCheckApi,
-    {
+  const { mutate: loginCheckMutate, isLoading: isLoginCheckLoading } =
+    useMutation(["loginCheckApiMain" as string], loginCheckApi, {
       onError: (error) => {
         if (((error as AxiosError).response as AxiosResponse).status === 401) {
           if (localStorage.getItem("key")) localStorage.removeItem("key");
           setIsLogin(false);
         }
       },
-    }
-  );
+    });
 
   useEffect(() => {
-    // loginCheckMutate();
+    loginCheckMutate();
   }, []);
 
   return (
     <>
-      {isLikesLoading || isRecentLoading || isMemberLoading || isEndLoading ? (
+      {isLoginCheckLoading ||
+      isLikesLoading ||
+      isRecentLoading ||
+      isMemberLoading ||
+      isEndLoading ||
+      !OFFSET ? (
         <LoadingAnimation />
       ) : (
-        <div className="mb-[440px] w-[1470px] ">
+        <div className="min-w-[480px] mb-[440px] w-screen">
           {isLoginModal ? <Login /> : null}
           {isSignupModal ? <SignUp /> : null}
           {isExtraSignupModal ? <SignUpOptional /> : null}
-          <Banner src="/img/mainBannerReal.png" className="w-[1470px]"></Banner>
+          <Banner src="/img/mainBannerReal.png"></Banner>
 
           {[postslikes, postsrecent, postsmember, postsend]?.map(
             (posts?: IPosts, idx?: any) => (
               // (posts?.length as number) > 0 && (
-              <PostCategory className="mb-[400px]">
+              <PostCategory className="mb-[350px]">
                 <TitleRow>
                   <Title>{titles[idx]}</Title>
                   <svg
@@ -457,9 +495,9 @@ function Main() {
                               // transition={{ duration: 2 }}
                               // transition={{ type: "tween" }}
                               key={post?.id}
-                              style={{
-                                boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)",
-                              }}
+                              // style={{
+                              //   boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)",
+                              // }}
                             >
                               <PostContentFirstRow
                                 className={`${
@@ -525,7 +563,7 @@ function Main() {
                               <Link to={`/post/${post.id}`}>
                                 <PostMainPart>
                                   {/* secondRow */}
-                                  <PostTitle className="text-lg font-semibold">
+                                  <PostTitle>
                                     {post?.title.length > 16
                                       ? post?.title.slice(0, 16) + "..."
                                       : post?.title}

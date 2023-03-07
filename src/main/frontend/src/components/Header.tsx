@@ -11,56 +11,53 @@ const Nav = tw.nav`
 flex 
 justify-center
 items-center 
-border-b-2 
-
 px-[20px]
-
-lg:justify-between
-
+sm:justify-between
+pr-[60px]
+min-w-[480px]
 `;
 
 const NavButton = tw.button`
- bg-white 
- text-[15px]
- text-black 
- py-2 
+ text-[14px]
+ text-black
+ font-unique
+ min-w-[80px]
  
- font-semibold
- 
- mx-8
+h-[30px]
 hover:text-purple-400
- sm:mx-10
  sm:text-[16px]
+ text-slate-500
+ 
 `;
 
 const Logo = tw(motion.img)`
-    font-bold
-    w-[200px]
-    hidden 
-    lg:flex
-    
-    text-lg
-    text-black 
-  py-2 
-  hover:text-purple-500
-  
- sm:text-xl
+    min-w-[150px]
+    md : w-[200px]
+    hover:text-purple-500
 `;
 const NavFlexBox = tw.div`
     flex
 `;
-const NavCenterBox = tw(NavFlexBox)`
+const NavLeftBox = tw(NavFlexBox)`
+flex
+items-center
+w-[300px]
+
+md: w-[450px]
+md: justify-between
+
 
 `;
 const NavRightBox = tw(NavFlexBox)`
-hidden
-lg:flex
+
+
 `;
 
 const SearchBox = tw(motion.form)`
   w-[300px]
   h-[30px]
   items-center
+  
 `;
 
 const LogoVairants = {
@@ -81,7 +78,7 @@ const LogoVairants = {
 };
 
 const SearchInput = tw(motion.input)`
-w-full border h-full border-gray-400 rounded-full origin-right px-[45px]
+w-full border h-full border-slate-400 rounded-full origin-right px-[45px]
 focus:outline-0
 `;
 
@@ -121,7 +118,9 @@ function Header() {
         scale: 0,
       });
       SearchIconAnimate.start({
-        x: "0px",
+        // x: "0px",
+        right: 0,
+        left: "auto",
       });
     } else {
       searchAnimate.start({
@@ -133,7 +132,9 @@ function Header() {
         scale: 1,
       });
       SearchIconAnimate.start({
-        x: "-265px",
+        // x: "-465px",
+        // right: 0,
+        left: 15,
       });
     }
     if (!isSearch) document.getElementsByTagName("input")[0].focus();
@@ -176,116 +177,98 @@ function Header() {
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
   return (
     <>
-      <Nav className="w-[1470px]">
-        <Link to="/">
-          <Logo
-            src="/img/logo.png"
-            variants={LogoVairants}
-            initial="initial"
-            whileHover="hover"
-          />
-        </Link>
-        <NavCenterBox>
-          <Link to="post" className="relative">
-            {isPostURL && (
-              <>
-                <div
-                  className="absolute w-[11px] h-[11px] right-7 top-[-2px]"
-                  // className="absolute w-[10px] h-[10px] left-11 top-[-2px]"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-                <div
-                  className="absolute w-[10px] h-[10px] right-11 top-[-5px]"
-                  // className="absolute w-[12px] h-[13px] right-0 left-0 mx-auto top-[-5px]"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-                <div
-                  className="absolute w-[10px] h-[10px] right-3 top-2"
-                  // className="absolute w-[10px] h-[10px] right-11 top-[-2px]"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-              </>
-            )}
-            {/* text-purple-500 */}
-            <NavButton className={`${isPostURL && "text-purple-400"} `}>
+      <Nav className="h-[70px]">
+        <NavLeftBox>
+          <Link to="/">
+            <Logo
+              src="/img/logo.png"
+              variants={LogoVairants}
+              initial="initial"
+              whileHover="hover"
+            />
+          </Link>
+
+          <Link to="post">
+            <NavButton
+              className={`${
+                isPostURL && "text-purple-400"
+              } md:pr-[30px] relative`}
+            >
+              {isPostURL && (
+                <>
+                  <div
+                    className="absolute w-[11px] h-[11px] md:right-6 md:top-[-8px] right-3 top-[-8px]"
+                    // className="absolute w-[10px] h-[10px] left-11 top-[-2px]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
+                    }}
+                  />
+                  <div
+                    className="absolute w-[10px] h-[10px] md:right-10 md:top-[-10px] right-7 top-[-10px]"
+                    // className="absolute w-[12px] h-[13px] right-0 left-0 mx-auto top-[-5px]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
+                    }}
+                  />
+                  <div
+                    className="absolute w-[10px] h-[10px] md:right-3 md:top-[3px] right-0 top-0"
+                    // className="absolute w-[10px] h-[10px] right-11 top-[-2px]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
+                    }}
+                  />
+                </>
+              )}
+              {/* text-purple-500 */}
               모집글
             </NavButton>
           </Link>
 
-          <Link to="person" className="relative">
-            {isPersonURL && (
-              <>
-                <div
-                  className="absolute w-[11px] h-[11px] right-7 top-[-2px]"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-                <div
-                  className="absolute w-[10px] h-[10px] right-11 top-[-5px]"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-                <div
-                  className="absolute w-[10px] h-[10px] right-3 top-2"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-              </>
-            )}
-            <NavButton className={`${isPersonURL && "text-purple-400"} `}>
+          <Link to="person">
+            <NavButton
+              className={`${
+                isPersonURL && "text-purple-400"
+              }  md:pr-[30px] relative`}
+            >
+              {isPersonURL && (
+                <>
+                  <div
+                    className="absolute w-[11px] h-[11px] md:right-6 md:top-[-8px] right-3 top-[-8px]"
+                    // className="absolute w-[10px] h-[10px] left-11 top-[-2px]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
+                    }}
+                  />
+                  <div
+                    className="absolute w-[10px] h-[10px] md:right-10 md:top-[-10px] right-7 top-[-10px]"
+                    // className="absolute w-[12px] h-[13px] right-0 left-0 mx-auto top-[-5px]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
+                    }}
+                  />
+                  <div
+                    className="absolute w-[10px] h-[10px] md:right-3 md:top-[3px] right-0 top-0"
+                    // className="absolute w-[10px] h-[10px] right-11 top-[-2px]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
+                    }}
+                  />
+                </>
+              )}
               인재풀
             </NavButton>
           </Link>
-          <Link to="profile" className="relative">
-            {isProfileURL && (
-              <>
-                <div
-                  className="absolute w-[11px] h-[11px] right-7 top-[-2px]"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-                <div
-                  className="absolute w-[10px] h-[10px] right-11 top-[-5px]"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-                <div
-                  className="absolute w-[10px] h-[10px] right-3 top-2"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
-                  }}
-                />
-              </>
-            )}
-            <NavButton className={`${isProfileURL && "text-purple-400"} `}>
-              프로필
-            </NavButton>
-          </Link>
-        </NavCenterBox>
+        </NavLeftBox>
 
         <NavRightBox className="items-center">
           <SearchBox
-            className="flex relative"
+            className="relative hidden md:flex"
             id="searchForm"
             // onBlur={() => {
             //   setValue("search", "");
@@ -295,8 +278,9 @@ function Header() {
             onSubmit={handleSubmit(onValid as any)}
           >
             <motion.svg
-              className="absolute right-0 w-5 z-10 fill-gray-400 hover:fill-purple-500"
-              initial={{ x: "-265px" }}
+              className="absolute right-0 w-5 z-10 fill-slate-500 hover:fill-purple-500"
+              // initial={{ x: "-465px" }}
+              initial={{ left: 15 }}
               animate={SearchIconAnimate}
               // animate={{ x: isSearch ? "-265px" : "0px" }}
               xmlns="http://www.w3.org/2000/svg"
@@ -338,17 +322,28 @@ function Header() {
           </SearchBox>
           {/* <Link to="login"> */}
           {!isLogin ? (
-            <NavButton onClick={onClick}>Login</NavButton>
+            <NavButton onClick={onClick} className="md:pl-[60px]">
+              Login
+            </NavButton>
           ) : (
-            <NavButton id="logout" onClick={onClick}>
+            <NavButton id="logout" onClick={onClick} className="md:pl-[60px]">
               Logout
             </NavButton>
           )}
+          {isLogin && (
+            <Link to="profile" className="relative ">
+              <NavButton
+                className={`${isProfileURL && "text-purple-400"} md:pl-[40px]`}
+              >
+                <i className="fa-regular fa-circle-user text-[25px]"></i>
+              </NavButton>
+            </Link>
+          )}
 
           {/* </Link> */}
-          <Link to="oauth2/redirect">
+          {/* <Link to="oauth2/redirect">
             <NavButton>Sign up</NavButton>
-          </Link>
+          </Link> */}
         </NavRightBox>
       </Nav>
     </>

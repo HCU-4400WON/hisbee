@@ -4,6 +4,11 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["AppleSDGothicNeoM", "Arial", "sans-serif"],
+        main: ["SUIT-Medium", "sans-serif"],
+        unique: ["SUIT-SemiBold", "sans-serif"],
+      },
       colors: {
         hello: "#222222",
       },
