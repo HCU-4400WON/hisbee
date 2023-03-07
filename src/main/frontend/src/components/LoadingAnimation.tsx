@@ -41,7 +41,7 @@ const AlphabetVariants = {
 
 function LoadingAnimation() {
   return (
-    <motion.div className="opacity-50 w-full h-[700px] flex justify-center items-center">
+    <motion.div className="opacity-50 w-full h-[600px] flex justify-center items-center">
       <motion.div
         variants={BoxVariants}
         initial="start"
