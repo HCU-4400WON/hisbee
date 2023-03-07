@@ -3,7 +3,7 @@ package com.hcu.hot6.repository;
 import com.hcu.hot6.domain.*;
 import com.hcu.hot6.domain.filter.PoolSearchFilter;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -26,7 +26,7 @@ public class PoolRepository {
                         qMember.isPublic
                 ).limit(Pagination.LIMIT)
                 .offset(offset)
-                .orderBy(NumberExpression.random().asc())
+                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .fetch();
     }
 
