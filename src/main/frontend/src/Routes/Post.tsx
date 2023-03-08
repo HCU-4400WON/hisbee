@@ -15,7 +15,7 @@ import { AxiosError, AxiosResponse } from "axios";
 import { isLoginModalState, isLoginState } from "components/atom";
 import Login from "components/LoginModal";
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useLocation, useMatch, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -253,7 +253,7 @@ function Post() {
   //   project: ["true", "false"],
   // };
 
-  const categories: string[] = ["study", "mentoring", "project"];
+  const categories: string[] = [ "project","study", "mentoring"];
 
   const positions: IFiltering = {
     study: ["member"],
@@ -400,6 +400,23 @@ function Post() {
     loginCheckMutate();
   }, []);
 
+  // const[select , setSelect] =useState("likes");
+  // const onChangeSelect = (e : React.ChangeEvent<HTMLSelectElement>) => {
+  //   const { target : {value}} = e;
+  //   setSelect(value);
+    
+  //   // if(value === "recent"){
+  //   //   console.log("1");
+  //   //   setSelect("recents")
+  //   // } else if( value==="likes"){
+  //   //   console.log("2");
+  //   //   setSelect("likes")
+  //   // } else if(value==="member"){
+  //   //   setSelect("member")
+  //   // }else if(value==="end"){
+  //   //   setSelect("end");
+  //   // }
+  // }
   return (
     <>
       {isLoading || isLoginCheckLoading ? (
@@ -420,7 +437,7 @@ function Post() {
                     onClick={onClick}
                     className={`${
                       category === filterCategory &&
-                      "border-black bg-black text-white"
+                      "border-black bg-black text-white "
                     }`}
                   >
                     {category === "study"
@@ -448,7 +465,7 @@ function Post() {
                       }`}
                     >
                       {position === "member"
-                        ? "맴버"
+                        ? "멤버"
                         : position === "mentor"
                         ? "멘토"
                         : position === "mentee"
@@ -457,7 +474,7 @@ function Post() {
                         ? "기획자"
                         : position === "developer"
                         ? "개발자"
-                        : "디자인"}
+                        : "디자이너"}
                     </Button>
                   ))}
                 </FilterButtonBox>
@@ -489,10 +506,10 @@ function Post() {
               <div className="flex items-center">
                 <SortTitle>Sort by</SortTitle>
                 <SortSelect className="vertical-center" onInput={onInput}>
-                  <option value="recent">최신 순</option>
-                  <option value="likes">찜 많은 순</option>
-                  <option value="member">모집 인원 마감 임박</option>
-                  <option value="end">모집마감 임박순</option>
+                  <option id="recent" value="recent">최신 순</option>
+                  <option id="likes" value="likes">찜 많은 순</option>
+                  <option id="member" value="member">모집 인원 마감 임박</option>
+                  <option id="end" value="end">모집마감 임박순</option>
                 </SortSelect>
               </div>
               <Link to="/add">
