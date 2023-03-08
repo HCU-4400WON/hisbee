@@ -200,7 +200,7 @@ function Post() {
   const location = useLocation();
   const search = location.state ? location.state.search : null;
 
-  const [order, setOrder] = useState<string | null>(null);
+  const [order, setOrder] = useState<string>("recent");
   const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
     setOrder(event.currentTarget.value);
     console.log(event.currentTarget.value);
@@ -505,7 +505,7 @@ function Post() {
             <SortBox>
               <div className="flex items-center">
                 <SortTitle>Sort by</SortTitle>
-                <SortSelect className="vertical-center" onInput={onInput}>
+                <SortSelect  className="vertical-center" onInput={onInput} value={order}>
                   <option id="recent" value="recent">최신 순</option>
                   <option id="likes" value="likes">찜 많은 순</option>
                   <option id="member" value="member">모집 인원 마감 임박</option>
@@ -536,6 +536,7 @@ function Post() {
                           : "bg-[#bdc9f2]"
                       }`}
                     >
+                      {/* "text-[rgb(151,151,168)]" */}
                       <PostCategorySpan>
                         <PostCategoryLabel
                           className={`${

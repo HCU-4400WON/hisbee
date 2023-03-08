@@ -498,21 +498,21 @@ function PostAddForm() {
             <p className="w-full md:text-[30px] text-[20px] font-unique">모집글 작성하기</p>
             <div className="flex h-[40px] items-end">
               <div
-                className="w-[20px] h-[20px]"
+                className="w-[15px] h-[15px]"
                 style={{
                   backgroundImage:
                     "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
                 }}
               />
               <div
-                className="w-[20px] h-[20px]"
+                className="w-[15px] h-[15px]"
                 style={{
                   backgroundImage:
                     "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
                 }}
               />
               <div
-                className="w-[20px] h-[20px]"
+                className="w-[15px] h-[15px]"
                 style={{
                   backgroundImage:
                     "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
