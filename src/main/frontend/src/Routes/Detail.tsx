@@ -49,14 +49,20 @@ const StyledInputNumber = tw.input`
 
 
 `;
+const StyledInputLabel = tw.label`
+text-[13px]
+md:text-[18px]
+`
 
 const Grid = tw.div`
 grid 
-grid-cols-2  
+md:grid-cols-2  
+grid-cols-1
 border-t-2 
 border-b-2 
 border-gray-300 
-h-[250px] 
+md:h-[250px]
+h-[450px]
 py-[20px] 
 items-center
 w-full
@@ -72,29 +78,35 @@ h-[30px]
 
 const ItemTitle = tw.span`
 text-[#757575] 
-text-[18px] 
-min-w-[140px]
+min-w-[130px]
+
+text-[14px] 
+md:text-[18px]
+md:min-w-[140px]
 font-unique
 `;
 
 const ItemText = tw.span`
-text-[17px] 
+text-[13px] 
+md:text-[17px]
 font-medium
 
 `;
 
 const WriteInfoBox = tw.div`
 flex 
-
 py-[20px]
 `;
 
 const WriteInfo = tw.span`
+text-[13px]
+md:text-[17px]
 
-text-[17px]
+md:w-auto
 mr-[20px]
 text-gray-400
-
+h-[20px]
+md:h-auto
 `;
 
 const ValidationVariant = {
@@ -379,7 +391,7 @@ function Detail() {
         //   message: "개발자가 현재 인원 보다 적습니다.",
         // });
         data.maxDeveloper = data.currDeveloper;
-        return;
+        // return;
       }
 
       console.log("제출되었습니다.");
@@ -514,23 +526,23 @@ function Detail() {
       ) : (
         <>
           {isPostDeleteModal && <PostDeleteModal postId={data?.id} />}
-          <div className=" w-[1470px] flex">
-            <span className="min-w-[100px] py-[62px]  border-gray-300  flex justify-end">
+          <div className=" md:w-[1470px] flex w-full">
+            <span className=" md:min-w-[100px] min-w-[40px] py-[62px] border-gray-300  flex justify-end">
               <button
                 onClick={() => navigate(-1)}
-                className=" mr-[40px] h-[30px]"
+                className=" md:mr-[40px] mr-[10px] h-[30px]"
               >
-                <i className="fa-solid fa-arrow-left  text-[23px]"></i>
+                <i className="fa-solid fa-arrow-left text-[18px] md:text-[23px]"></i>
               </button>
             </span>
 
-            <form onSubmit={handleSubmit(onValid as any)} className="w-full ">
-              <header className=" pt-[55px] text-[25px] font-semibold flex">
+            <form onSubmit={handleSubmit(onValid as any)} className="w-full">
+              <header className=" pt-[62px] md:pt-[55px] text-[20px] md:text-[25px] font-semibold flex">
                 {isModifying ? (
                   <>
                     <input
                       type="text"
-                      className="w-[400px] h-[40px] px-[15px] bg-[#eeeeee]"
+                      className="w-[400px] md:h-[40px] h-[35px] px-[15px] bg-[#eeeeee]"
                       {...register("title", {
                         required: "필수 항목 입니다",
                         minLength: {
@@ -559,17 +571,21 @@ function Detail() {
                     </AnimatePresence>
                   </>
                 ) : (
-                  <div className="font-main">{data?.title}</div>
+                  <div className="font-main  " >{data?.title}</div>
                 )}
               </header>
 
-              <div className="flex justify-between ">
-                <WriteInfoBox className="flex items-center">
+              <div className="flex justify-between">
+                <WriteInfoBox className="flex flex-col md:flex-row items-center ">
+                  <div className="flex w-[200px] md:w-[auto]">
                   <WriteInfo className="">작성자</WriteInfo>
                   <WriteInfo className="mr-[40px] text-gray-500">
                     {data?.writer}
                   </WriteInfo>
-                  <WriteInfo>작성일</WriteInfo>
+                  </div>
+                  
+                  <div className="flex w-[200px] md:w-[auto]">
+                  <WriteInfo className="">작성일</WriteInfo>
                   <WriteInfo className="text-gray-500">
                     {new Date(data?.postStart as Date).getFullYear()} /{" "}
                     {(
@@ -583,14 +599,17 @@ function Detail() {
                     ).padStart(2, "0")}
                     {/* {getValues("postStart")} */}
                   </WriteInfo>
+                  </div>
+                  
                 </WriteInfoBox>
 
-                <div className="flex items-center w-[100px] justify-between">
+                <div className="flex items-center w-[70px] md:w-[100px] justify-between">
                   {register("varified") && (
                     <>
                       {isModifying ? (
                         <button
                           id="modify"
+                          
                           className="w-[70px] text-gray-500 rounded-full"
                         >
                           <i className="fa-solid fa-check text-[30px] text-green-600"></i>
@@ -601,7 +620,7 @@ function Detail() {
                           onClick={onBtnClick}
                           className="w-[70px] text-gray-500 rounded-full"
                         >
-                          <i className="fa-regular fa-pen-to-square text-[30px]"></i>
+                          <i className="fa-regular fa-pen-to-square text-[25px] md:text-[30px]"></i>
                         </button>
                       )}
 
@@ -610,7 +629,7 @@ function Detail() {
                         onClick={onBtnClick}
                         className="w-[70px]  text-red-400  rounded-full"
                       >
-                        <i className="fa-regular fa-trash-can text-[30px]"></i>
+                        <i className="fa-regular fa-trash-can text-[25px] md:text-[30px]"></i>
                       </button>
                     </>
                   )}
@@ -641,7 +660,7 @@ function Detail() {
                         <div className="flex">
                           <input
                             type="date"
-                            className="px-[10px] text-[18px] w-[170px]"
+                            className="px-[10px] text-[13px] md:text-[18px] w-[130px] md:w-[170px]"
                             {...register("postEnd", {
                               required: "필수 항목",
                             })}
@@ -707,7 +726,7 @@ function Detail() {
                         {data?.dtype === "P" ? (
                           <>
                             <Styledli>
-                              <label htmlFor="currDeveloper">개발자</label>
+                              <StyledInputLabel htmlFor="currDeveloper">개발자</StyledInputLabel>
                               <StyledInputNumber
                                 {...register("currDeveloper")}
                                 min="0"
@@ -716,7 +735,7 @@ function Detail() {
                               />
                             </Styledli>
                             <Styledli>
-                              <label htmlFor="currPlanner">기획자</label>
+                              <StyledInputLabel htmlFor="currPlanner">기획자</StyledInputLabel>
                               <StyledInputNumber
                                 {...register("currPlanner", {
                                   required: "필수 사항 입니다.",
@@ -727,7 +746,7 @@ function Detail() {
                               />
                             </Styledli>
                             <Styledli>
-                              <label htmlFor="currDesigner">디자이너</label>
+                              <StyledInputLabel htmlFor="currDesigner">디자이너</StyledInputLabel>
                               <StyledInputNumber
                                 {...register("currDesigner")}
                                 min="0"
@@ -755,7 +774,7 @@ function Detail() {
                         ) : data?.dtype === "M" ? (
                           <>
                             <Styledli>
-                              <label htmlFor="currMentor">멘토</label>
+                              <StyledInputLabel htmlFor="currMentor" className="text-[13px] md:text-[18px]">멘토</StyledInputLabel>
                               <StyledInputNumber
                                 {...register("currMentor", {
                                   required: "필수 사항 입니다.",
@@ -766,7 +785,7 @@ function Detail() {
                               />
                             </Styledli>
                             <Styledli>
-                              <label htmlFor="currMentee">멘티</label>
+                              <StyledInputLabel htmlFor="currMentee">멘티</StyledInputLabel>
                               <StyledInputNumber
                                 {...register("currMentee", {
                                   required: "필수 사항 입니다.",
@@ -796,7 +815,7 @@ function Detail() {
                         ) : data?.dtype === "S" ? (
                           <>
                             <Styledli>
-                              <label htmlFor="currMember">스터디원</label>
+                              <StyledInputLabel htmlFor="currMember">스터디원</StyledInputLabel>
                               <StyledInputNumber
                                 {...register("currMember", {
                                   required: "필수 사항입니다.",
@@ -875,7 +894,7 @@ function Detail() {
                     {isModifying ? (
                       <input
                         type="date"
-                        className="px-[10px] text-[18px] w-[165px]"
+                        className=" text-[13px] md:text-[18px] w-[110px] md:w-[165px] mr-[10px]"
                         {...register("projectStart", {
                           required: "필수 항목입니다.",
                         })}
@@ -912,7 +931,7 @@ function Detail() {
                       <div className="flex">
                         <input
                           type="date"
-                          className="px-[10px] text-[18px] w-[165px]"
+                          className="text-[13px] md:text-[18px] w-[110px] md:w-[165px] mx-[10px]"
                           {...register("projectEnd", {
                             required: "필수 항목 입니다",
                           })}
@@ -974,7 +993,7 @@ function Detail() {
                         {data?.dtype === "P" ? (
                           <>
                             <Styledli>
-                              <label htmlFor="maxDeveloper">개발자</label>
+                              <StyledInputLabel htmlFor="maxDeveloper">개발자</StyledInputLabel>
                               <StyledInputNumber
                                 {...register("maxDeveloper")}
                                 min="0"
@@ -983,7 +1002,7 @@ function Detail() {
                               />
                             </Styledli>
                             <Styledli>
-                              <label htmlFor="maxPlanner">기획자</label>
+                              <StyledInputLabel htmlFor="maxPlanner">기획자</StyledInputLabel>
                               <StyledInputNumber
                                 {...register("maxPlanner", {
                                   required: "필수 사항 입니다.",
@@ -994,7 +1013,7 @@ function Detail() {
                               />
                             </Styledli>
                             <Styledli>
-                              <label htmlFor="maxDesigner">디자이너</label>
+                              <StyledInputLabel htmlFor="maxDesigner">디자이너</StyledInputLabel>
                               <StyledInputNumber
                                 {...register("maxDesigner")}
                                 min="0"
@@ -1030,7 +1049,7 @@ function Detail() {
                         ) : data?.dtype === "M" ? (
                           <>
                             <Styledli>
-                              <label htmlFor="maxMentor">멘토</label>
+                              <StyledInputLabel htmlFor="maxMentor">멘토</StyledInputLabel>
                               <StyledInputNumber
                                 {...register("maxMentor", {
                                   required: "필수 사항 입니다.",
@@ -1041,7 +1060,7 @@ function Detail() {
                               />
                             </Styledli>
                             <Styledli>
-                              <label htmlFor="maxMentee">멘티</label>
+                              <StyledInputLabel htmlFor="maxMentee">멘티</StyledInputLabel>
                               <StyledInputNumber
                                 {...register("maxMentee", {
                                   required: "필수 사항 입니다.",
@@ -1073,7 +1092,7 @@ function Detail() {
                         ) : data?.dtype === "S" ? (
                           <>
                             <Styledli>
-                              <label htmlFor="maxMember">스터디원</label>
+                              <StyledInputLabel htmlFor="maxMember">스터디원</StyledInputLabel>
                               <StyledInputNumber
                                 {...register("maxMember", {
                                   required: "필수 사항입니다.",
@@ -1143,7 +1162,7 @@ function Detail() {
 
                 <GridItem>
                   <ItemTitle>연락수단</ItemTitle>
-                  <ItemText className="w-full">
+                  <ItemText className="md:w-full w-[200px] ">
                     {isModifying ? (
                       <div className="flex">
                         <input
@@ -1152,7 +1171,7 @@ function Detail() {
                           })}
                           placeholder="ex) 전화 번호 , 이메일 , 카톡 아이디 등"
                           type="text"
-                          className=" w-[350px] h-[30px] bg-[#eeeeee] px-[15px] text-[17px]"
+                          className=" w-[350px] h-[30px] bg-[#eeeeee] px-[15px] md:text-[17px] text-[15px]"
                           maxLength={30}
                         ></input>
                         <AnimatePresence>
@@ -1217,7 +1236,7 @@ function Detail() {
                   )}
                 </GridItem>
               </Grid>
-              <div className="min-h-[500px]  pt-[50px] pb-[100px] border-b-2 border-gray-300 ">
+              <div className=" pt-[50px] pb-[50px] border-b-2 border-gray-300 ">
                 {isModifying ? (
                   // <textarea
                   //   {...register("content", {
@@ -1274,7 +1293,7 @@ function Detail() {
               )}
             </form>
 
-            <div className=" border-gray-300 min-w-[100px] "></div>
+            <div className="min-w-[40px] md:min-w-[100px] "></div>
           </div>
         </>
       )}

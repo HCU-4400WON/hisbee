@@ -459,7 +459,10 @@ function Main() {
               // (posts?.length as number) > 0 && (
               <PostCategory className="mb-[350px]">
                 <TitleRow>
+                  <span className="flex jusify-between min-w-[260px]">
                   <Title>{titles[idx]}</Title>
+                  <Title className="ml-[30px]"> { `( ${indexs[idx] + 1} /  ${(12/OFFSET)} )`  }  </Title>
+                  </span>
                   <svg
                     onClick={() => increaseIndex(idx)}
                     className="w-4"
@@ -484,7 +487,8 @@ function Main() {
                             indexs[idx] * OFFSET,
                             indexs[idx] * OFFSET + OFFSET
                           )
-                          .map((post?: any) => (
+                          .map((post?: any, index ?: any) => (
+                            
                             <PostItem
                               custom={{ windowSize, leaving }}
                               variants={postsVariants}
@@ -499,6 +503,7 @@ function Main() {
                               //   boxShadow: "0px 0px 25px rgb(0 0 0 / 0.25)",
                               // }}
                             >
+                            
                               <PostContentFirstRow
                                 className={`${
                                   post?.dtype === "P"

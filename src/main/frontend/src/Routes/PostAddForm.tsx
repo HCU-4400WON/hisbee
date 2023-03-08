@@ -61,7 +61,7 @@ text-center
 
 `;
 const StyledFieldTitle = tw.label`
-w-[100px] 
+w-[90px] 
 md:w-[130px]
 font-semibold
 font-main
@@ -96,7 +96,8 @@ mb-[40px]
 `;
 
 const StyledSpan = tw.span`
-px-[30px]
+md:px-[30px]
+px-[10px]
 `;
 
 const ValidationVariant = {
@@ -494,24 +495,24 @@ function PostAddForm() {
             </div>
           </Link>
           <div className="flex justify-between items-center">
-            <p className="w-full text-[30px] font-unique">모집글 작성하기</p>
+            <p className="w-full md:text-[30px] text-[20px] font-unique">모집글 작성하기</p>
             <div className="flex h-[40px] items-end">
               <div
-                className="w-[20px] h-[20px]"
+                className="w-[15px] h-[15px]"
                 style={{
                   backgroundImage:
                     "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
                 }}
               />
               <div
-                className="w-[20px] h-[20px]"
+                className="w-[15px] h-[15px]"
                 style={{
                   backgroundImage:
                     "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
                 }}
               />
               <div
-                className="w-[20px] h-[20px]"
+                className="w-[15px] h-[15px]"
                 style={{
                   backgroundImage:
                     "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
@@ -529,7 +530,7 @@ function PostAddForm() {
                       id="study"
                       type="radio"
                       {...register("category", {
-                        required: "필수 항목입니다.",
+                        required: "필수 항목",
                       })}
                       value="study"
                       onClick={onClick}
@@ -541,7 +542,7 @@ function PostAddForm() {
                       id="mentoring"
                       type="radio"
                       {...register("category", {
-                        required: "필수 항목입니다.",
+                        required: "필수 항목",
                       })}
                       value="mentoring"
                       onClick={onClick}
@@ -555,7 +556,7 @@ function PostAddForm() {
                       id="project"
                       type="radio"
                       {...register("category", {
-                        required: "필수 항목입니다.",
+                        required: "필수 항목",
                       })}
                       value="project"
                       onClick={onClick}
@@ -708,7 +709,7 @@ function PostAddForm() {
                 <input
                   id="projectStart"
                   {...register("projectStart", {
-                    required: "필수 항목입니다.",
+                    required: "필수 항목",
                   })}
                   type="date"
                   className=" px-[10px]"
@@ -716,7 +717,7 @@ function PostAddForm() {
                 <StyledSpan>~</StyledSpan>
                 <input
                   {...register("projectEnd", {
-                    required: "필수 항목입니다.",
+                    required: "필수 항목",
                   })}
                   type="date"
                   className=" px-[10px]"
@@ -749,14 +750,14 @@ function PostAddForm() {
               })}
               type="date"
             /> */}
-                <span className=" font-medium">
+                <span className=" font-medium pr-[10px]">
                   {formState.defaultValues?.postStart}
                 </span>
                 <StyledSpan>~</StyledSpan>
                 <input
                   className="w-[150px]  px-[10px]"
                   {...register("postEnd", {
-                    required: "필수 항목입니다.",
+                    required: "필수 항목",
                   })}
                   type="date"
                 />
@@ -785,7 +786,7 @@ function PostAddForm() {
                   id="contact"
                   type="text"
                   {...register("contact", {
-                    required: "필수 항목입니다.",
+                    required: "필수 항목",
                   })}
                   placeholder="ex) 전화 번호 , 이메일 , 카톡 아이디 등"
                   maxLength={30}
@@ -815,7 +816,7 @@ function PostAddForm() {
                       <StyledInput
                         id="yes"
                         {...register("pay", {
-                          required: "보수 유무는 필수 항목입니다.",
+                          required: "필수 항목",
                         })}
                         type="radio"
                         value="yes"
@@ -826,7 +827,7 @@ function PostAddForm() {
                       <StyledInput
                         id="no"
                         {...register("pay", {
-                          required: "필수 항목입니다.",
+                          required: "필수 항목",
                         })}
                         type="radio"
                         value="no"
@@ -856,7 +857,7 @@ function PostAddForm() {
           <div className="flex mb-[40px] relative">
             <label
               htmlFor="title"
-              className="md:w-[130px] w-[80px] text-[20px] my-auto font-main"
+              className="md:w-[130px] w-[80px] text-[15px] md:text-[20px] my-auto font-main"
             >
               제목
             </label>
@@ -895,7 +896,7 @@ function PostAddForm() {
           <div className="flex relative">
             <label
               htmlFor="content"
-              className="md:w-[130px] w-[80px] text-[20px] font-main"
+              className="md:w-[130px] text-[15px] md:text-[20px] w-[80px] font-main"
             >
               내용
             </label>
