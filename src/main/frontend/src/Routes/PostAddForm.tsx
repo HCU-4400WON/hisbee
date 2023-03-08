@@ -59,13 +59,13 @@ border-gray-300
 mx-[20px]
 text-center
 
-
-
 `;
 const StyledFieldTitle = tw.label`
-w-[130px] 
+w-[100px] 
+md:w-[130px]
 font-semibold
 font-main
+
 `;
 
 const FieldBox = tw.div`
@@ -76,6 +76,12 @@ flex
 
 const FieldRow = tw.div`
  flex
+ flex-col
+ md:flex-row
+ h-[80px]
+ md:h-auto
+ justify-between
+ min-w-[1000px]
  
 `;
 
@@ -480,10 +486,10 @@ function PostAddForm() {
       ) : (
         <form
           onSubmit={handleSubmit(onValid as any)}
-          className=" w-[1470px] px-[100px] py-[50px] pb-[100px] relative"
+          className="md:text-[16px] text-[13px] md:w-[1470px] md:px-[100px] px-[30px] py-[50px] pb-[100px] relative"
         >
           <Link to="/post">
-            <div className="absolute top-[62px] left-[40px]">
+            <div className="absolute md:top-[62px] md:left-[40px] top-[25px] left-[30px]">
               <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
             </div>
           </Link>
@@ -850,7 +856,7 @@ function PostAddForm() {
           <div className="flex mb-[40px] relative">
             <label
               htmlFor="title"
-              className="w-[130px] text-[20px] my-auto font-main"
+              className="md:w-[130px] w-[80px] text-[20px] my-auto font-main"
             >
               제목
             </label>
@@ -889,7 +895,7 @@ function PostAddForm() {
           <div className="flex relative">
             <label
               htmlFor="content"
-              className="w-[130px] text-[20px] font-main"
+              className="md:w-[130px] w-[80px] text-[20px] font-main"
             >
               내용
             </label>

@@ -3,6 +3,7 @@ import { fakeUsers, IUser, IUsers, readMembers } from "api";
 import { AxiosError, AxiosResponse } from "axios";
 import { isLoginModalState, isLoginState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
+import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -10,18 +11,26 @@ import tw from "tailwind-styled-components";
 import Login from "../components/LoginModal";
 import "./button.css";
 
-const Item = tw.div`
+const Item = tw(motion.div)`
+ shadow-md
  h-[170px] 
- w-[270px]
+ w-[260px]
  bg-[#f6f6f6]
  rounded-xl
  p-[10px]
+
+
+
 `;
 
 const StyledSidebar = tw.div`
-w-[270px]
-border-r
-
+min-w-[235px]
+border-r-2
+border-b-2
+border-t-2
+border-gray-200
+hidden
+md:block
 px-[20px]
 pt-[20px] 
 pb-[60px]
@@ -33,21 +42,25 @@ mt-[50px]
 
 const StyledSpan = tw.span`
 flex 
+
+items-start
 justify-between
 `;
 
 const StyledSubTitle = tw.p`
 mb-[10px]
 text-[20px] 
-font-bold
+font-unique
 `;
 const StyledButton = tw.svg`
-w-[20px]
+w-[15px]
+mt-1
 `;
 
 const Styledli = tw.li`
 flex 
 my-[10px]
+
 `;
 
 const Styledul = tw.ul`
@@ -59,7 +72,7 @@ mr-3
 
 const StyledliText = tw.label`
 text-[15px]
-font-bold
+font-unique
 hover:text-blue-700
 
 `;
@@ -179,19 +192,19 @@ function Person() {
       onSuccess: () => {
         console.log("성공하였습니다.");
       },
-      // onError: (error) => {
-      //   console.log("실패하였습니다.");
-      //   if (
-      //     ((error as AxiosError).response as AxiosResponse).status === 401 ||
-      //     ((error as AxiosError).response as AxiosResponse).status === 403
-      //   ) {
-      //     alert("로그인이 필요합니다.");
-      //     if (localStorage.getItem("key")) localStorage.removeItem("key");
-      //     setIsLoginModal(true);
-      //     setIsLogin(false);
-      //     navigate("/");
-      //   }
-      // },
+      onError: (error) => {
+        console.log("실패하였습니다.");
+        if (
+          ((error as AxiosError).response as AxiosResponse).status === 401 ||
+          ((error as AxiosError).response as AxiosResponse).status === 403
+        ) {
+          alert("로그인이 필요합니다.");
+          if (localStorage.getItem("key")) localStorage.removeItem("key");
+          setIsLoginModal(true);
+          setIsLogin(false);
+          navigate("/");
+        }
+      },
     }
   );
 
@@ -210,10 +223,12 @@ function Person() {
       {isLoading ? (
         <LoadingAnimation />
       ) : (
-        <div className="flex w-screen">
+        <div className="flex w-full">
           <StyledSidebar>
             <div className="flex justify-between items-center">
-              <p className="text-[30px] font-bold mb-[20px]">Filter</p>
+              <p className="text-[30px] font-unique mt-[10px] mb-[15px]">
+                Filter
+              </p>
             </div>
             <button
               onClick={onClick}
@@ -481,21 +496,29 @@ function Person() {
             </StyledFilterItem>
           </StyledSidebar>
 
-          <div className="w-full flex flex-col">
+          <div
+            className="w-full flex flex-col border-b-2
+              border-gray-200 pb-[50px]"
+          >
             <img
-              className=" mb-[40px] w-[full] mx-[0px] bg-[#898989]"
+              className=" mb-[40px] w-full mx-[0px] bg-[#898989]"
               src="img/personBanner2.png"
             ></img>
-            <div className="grid grid-cols-4 gap-10 mx-[20px] justify-between h-full">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 px-[20px] h-full">
+              {/* if (window.innerWidth >= 1200) setOFFSET(4);
+else if (window.innerWidth >= 990) setOFFSET(3);
+else if (window.innerWidth >= 768) setOFFSET(2);
+else if (window.innerWidth < 768) setOFFSET(1); */}
               {(Users?.members.length as number) > 0 &&
                 Users?.members.map((user) => (
                   <Link
+                    className="max-h-[170px] mx-auto"
                     to="/profile"
                     state={{
                       user,
                     }}
                   >
-                    <Item>
+                    <Item whileHover={{ scale: 1.08 }}>
                       <div
                         className={`flex border rounded-full bg-white w-[65px] h-[20px] justify-center items-center
 ${
@@ -513,7 +536,7 @@ ${
                       </div>
                       <div className="flex flex-col items-center">
                         <img
-                          src="img/user.png"
+                          src={user?.pictureUrl}
                           className="rounded-full w-[60px] h-[60px]"
                         />
                         <p className="text-[16px] mt-[7px] font-semibold">

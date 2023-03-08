@@ -37,8 +37,9 @@ import tw from "tailwind-styled-components";
 
 const Sidebar = tw.div`
 hidden
+bg-gray-100
 lg:flex
-min-w-[250px] 
+min-w-[220px] 
 pl-[30px]
 border-r-2
 border-t-2
@@ -52,15 +53,15 @@ items-start
 
 const SidebarTitle = tw.p`
 py-[40px] 
-text-[33px] 
+text-[30px] 
 font-unique
 `;
 
 const SidebarItemText = tw.button`
-font-main
-text-[17px]
+font-unique
+text-[15px]
 mb-[20px]
-font-semibold
+
 hover:scale-110
 hover:text-gray-400
 `;
@@ -97,16 +98,17 @@ mr-2
 const ProfileInfoContent = tw.span`
 min-w-[230px]
 md:min-w-[300px]
+font-main
 
 
 `;
 
 const ProfileBanner = tw.form`
-
+shadow-md
 my-[40px] 
 rounded-xl 
 bg-[#f2f2f2] 
-p-[50px] 
+p-[40px] 
 flex
 flex-col
 md:flex-row
@@ -267,53 +269,60 @@ function Profile() {
   const location = useLocation();
   console.log(location);
 
+  const [onSuccessLoading, setOnSuccessLoading] = useState(true);
+
   const {
     isLoading: getUserLoading,
     data,
     refetch,
-  } = useQuery<IUser>(["User"], memberProfile, {
-    onSuccess: (data) => {
-      console.log("Fetch!!!");
-      setValue("nickname", data.nickname);
-      setValue("pictureUrl", data.pictureUrl);
-      setValue("department", data.department);
-      setValue("position", data.position);
-      setValue("contact", data.contact);
-      setValue("club1", data.club?.at(0));
-      setValue("club2", data.club?.at(1));
-      setValue("bio", data.bio);
-      console.log(data);
-      // 성공시 호출
-      if (!location.state) {
-        setLinks([...(data?.externalLinks as string[])]);
-      } else {
-        ///////////////////////////
-        ////////////////////////////
-        ///////////////////////////
-        ////////////////////////////
-        ///////////////////////////
-        ////////////////////////////
-        ///////////////////////////
-        ////////////////////////////
-        ///////////////////////////
-        ////////////////////////////
-        ///////////////////////////
-        ////////////////////////////
-        // 이부분 수정 !!1
-        data = location.state.user;
-        setLinks([...(location.state.user?.externalLinks as string[])]);
-      }
-    },
-    onError: (error) => {
-      if (((error as AxiosError).response as AxiosResponse).status === 401) {
-        alert("로그인이 필요합니다.");
-        setIsLoginModal(true);
-        setIsLogin(false);
-        if (localStorage.getItem("key")) localStorage.removeItem("key");
-        navigate("/");
-      }
-    },
-  });
+  } = useQuery<IUser>(
+    ["User", location.state ? location.state.user.nickname : "me"],
+    memberProfile,
+    {
+      onSuccess: async (data) => {
+        if (!location.state) {
+          setLinks([...(data?.externalLinks as string[])]);
+        } else {
+          const newData: IUser = location.state.user;
+          data.bio = newData.bio;
+          data.club = newData.club;
+          data.contact = newData.contact;
+          data.department = newData.department;
+          data.email = newData.email;
+          // data.externalLinks = newData.externalLinks;
+          data.grade = newData.grade;
+          data.isPublic = newData.isPublic;
+          data.likes = newData.likes;
+          data.nickname = newData.nickname;
+          data.pictureUrl = newData.pictureUrl;
+          data.position = newData.position;
+          data.posts = newData.posts;
+
+          setLinks([...(location.state.user?.externalLinks as string[])]);
+        }
+
+        setValue("nickname", data.nickname);
+        setValue("pictureUrl", data.pictureUrl);
+        setValue("department", data.department);
+        setValue("position", data.position);
+        setValue("contact", data.contact);
+        setValue("club1", data.club?.at(0));
+        setValue("club2", data.club?.at(1));
+        setValue("bio", data.bio);
+
+        setOnSuccessLoading(false);
+      },
+      onError: (error) => {
+        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+          alert("로그인이 필요합니다.");
+          setIsLoginModal(true);
+          setIsLogin(false);
+          if (localStorage.getItem("key")) localStorage.removeItem("key");
+          navigate("/");
+        }
+      },
+    }
+  );
 
   const [nowModifying, setNowModifying] = useState(false);
 
@@ -372,7 +381,11 @@ function Profile() {
 
   const onValid = async (newData: Idata) => {
     console.log(formState.errors);
-    console.log(newData);
+    console.log("before", newData);
+
+    let arr = new Array<string>();
+    if (newData.club1) arr.push(newData.club1);
+    if (newData.club2) arr.push(newData.club2);
 
     const newUser = {
       nickname: newData.nickname,
@@ -391,12 +404,16 @@ function Profile() {
       position: newData.position,
       bio: newData.bio,
       grade: newData.grade,
-      club: [newData.club1, newData.club2],
+      // club: [
+      //   newData.club1 === undefined,
+      //   newData.club2 === false newData.club2,
+      // ],
+      club: arr,
       contact: newData?.contact,
       externalLinks: Links,
     };
 
-    await memberUpdate(newUser);
+    await memberUpdate(newUser as any);
     setNowModifying(false);
     refetch();
   };
@@ -542,7 +559,7 @@ function Profile() {
   };
   return (
     <>
-      {getUserLoading || deleteMemberLoading ? (
+      {onSuccessLoading || getUserLoading || deleteMemberLoading ? (
         <LoadingAnimation />
       ) : (
         <>
@@ -594,16 +611,16 @@ function Profile() {
                   </div>
                 )}
 
-                <div className="w-[120px] flex flex-col items-center">
+                <div className="w-[120px] flex flex-col items-center ">
                   {nowModifying ? (
                     <img
-                      className="w-[100%] h-[120px] rounded-full"
+                      className="w-[100%] h-[120px] border border-black rounded-full my-[10px]"
                       src={getValues("pictureUrl")}
                     ></img>
                   ) : (
                     <img
                       src={data?.pictureUrl}
-                      className="w-[100%] h-[120px] rounded-full"
+                      className="w-[100%] h-[120px] border-black rounded-full my-[10px]"
                     />
                   )}
 
@@ -619,7 +636,7 @@ function Profile() {
                             message: "10자 이하만 가능합니다",
                           },
                         })}
-                        className="mt-[10px] text-[17px] px-[10px] w-[150px] "
+                        className="mt-[10px] text-[17px] px-[10px] w-[150px] rounded-md border-2 border-gray-200"
                       />
 
                       <AnimatePresence>
@@ -645,8 +662,8 @@ function Profile() {
                         </p>
                       </span> */}
 
-                      <span className=" text-[17px] font-semibold text-slate-500">
-                        <i className="fa-solid fa-user mr-[10px] "></i>
+                      <span className=" text-[17px] font-semibold text-gray-500 bg-white px-[20px]">
+                        <i className="fa-solid fa-user mr-[10px] text-gray-600"></i>
                         {data?.nickname}
                       </span>
                     </div>
@@ -793,8 +810,12 @@ function Profile() {
                       <div className="flex flex-col">
                         {data?.club?.map((elem, index) =>
                           data?.club?.at(index) === "" ? null : (
-                            <ProfileInfoContent key={index}>
-                              {elem}
+                            <ProfileInfoContent
+                              className="flex relative items-center justify-center bg-gray-200 my-1 py-[3px] px-[10px]"
+                              key={index}
+                            >
+                              <ProfileInfoIcon className="absolute left-2 fa-solid fa-circle-nodes "></ProfileInfoIcon>
+                              <p>{elem}</p>
                             </ProfileInfoContent>
                           )
                         )}
@@ -816,7 +837,7 @@ function Profile() {
                   </ProfileInfoContent> */}
                   </ProfileInfoRow>
 
-                  <ProfileInfoRow className=" items-start mb-0">
+                  <ProfileInfoRow className=" items-start mb-0 mt-[8px]">
                     <ProfileInfoBox>
                       <ProfileInfoIcon className="fa-solid fa-link"></ProfileInfoIcon>
                       <ProfileInfoTitle className="">외부링크</ProfileInfoTitle>
@@ -870,9 +891,9 @@ function Profile() {
                   <ProfileInfoRow
                     className={`${nowModifying && "mt-[20px]"} items-start`}
                   >
-                    <ProfileInfoBox>
+                    <ProfileInfoBox className="">
                       <ProfileInfoIcon className="fa-solid fa-rocket"></ProfileInfoIcon>
-                      <ProfileInfoTitle className="">자기소개</ProfileInfoTitle>
+                      <ProfileInfoTitle>자기소개</ProfileInfoTitle>
                     </ProfileInfoBox>
                     <ProfileInfoContent>
                       {nowModifying ? (
@@ -892,7 +913,12 @@ function Profile() {
                       (nowModifying ? (
                         <>
                           <button
-                            onClick={() => setNowModifying(false)}
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              refetch();
+                              setNowModifying(false);
+                            }}
                             className="mb-[40px]  rounded-full border-2 border-red-500 text-red-500 w-[80px] bg-white text-[13px] mt-[20px] md:text-[17px] md:w-[120px] md:h-[30px] h-[25px] "
                           >
                             {" "}

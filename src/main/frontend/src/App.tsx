@@ -92,7 +92,7 @@ function App() {
   return (
     <>
       <Router />
-      <ReactQueryDevtools initialIsOpen={true} />
+      {/* <ReactQueryDevtools initialIsOpen={true} /> */}
     </>
   );
 }
