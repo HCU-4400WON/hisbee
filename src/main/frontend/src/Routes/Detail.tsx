@@ -52,6 +52,8 @@ const StyledInputNumber = tw.input`
 const StyledInputLabel = tw.label`
 text-[13px]
 md:text-[18px]
+w-[35px]
+md:w-auto
 `
 
 const Grid = tw.div`
@@ -78,7 +80,7 @@ h-[30px]
 
 const ItemTitle = tw.span`
 text-[#757575] 
-min-w-[130px]
+min-w-[120px]
 
 text-[14px] 
 md:text-[18px]
@@ -90,7 +92,6 @@ const ItemText = tw.span`
 text-[13px] 
 md:text-[17px]
 font-medium
-
 `;
 
 const WriteInfoBox = tw.div`
@@ -608,6 +609,7 @@ function Detail() {
                     <>
                       {isModifying ? (
                         <button
+                        
                           id="modify"
                           
                           className="w-[70px] text-gray-500 rounded-full"
@@ -746,7 +748,7 @@ function Detail() {
                               />
                             </Styledli>
                             <Styledli>
-                              <StyledInputLabel htmlFor="currDesigner">디자이너</StyledInputLabel>
+                              <StyledInputLabel htmlFor="currDesigner" className="w-[45px] md:w-auto">디자이너</StyledInputLabel>
                               <StyledInputNumber
                                 {...register("currDesigner")}
                                 min="0"
@@ -1013,7 +1015,7 @@ function Detail() {
                               />
                             </Styledli>
                             <Styledli>
-                              <StyledInputLabel htmlFor="maxDesigner">디자이너</StyledInputLabel>
+                              <StyledInputLabel htmlFor="maxDesigner" className="w-[45px] md:w-auto">디자이너</StyledInputLabel>
                               <StyledInputNumber
                                 {...register("maxDesigner")}
                                 min="0"
@@ -1287,7 +1289,9 @@ function Detail() {
                 )}
               </div>
               {isModifying && (
-                <button className=" w-[130px] h-[30px] text-white bg-black mt-[30px] mb-[10px] float-right">
+                <button
+                
+                className=" w-[130px] h-[30px] text-white bg-black mt-[30px] mb-[10px] float-right">
                   수정하기
                 </button>
               )}
