@@ -1,7 +1,7 @@
 import { memberDelete } from "api";
 import { useNavigate } from "react-router";
 import { useSetRecoilState } from "recoil";
-import { isDeleteModalState, isLoginState } from "./atom";
+import { isDeleteModalState, isLoginState } from "../../components/atom";
 import { motion, AnimatePresence } from "framer-motion";
 const LayoutVariant = {
   hidden: {

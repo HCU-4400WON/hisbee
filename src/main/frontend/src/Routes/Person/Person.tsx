@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
-import Login from "../components/LoginModal";
+import Login from "../../components/LoginModal";
 import "./button.css";
 
 const Item = tw(motion.div)`
@@ -218,6 +218,19 @@ function Person() {
     console.log(position, grade, department, nowPage);
   }, [position, grade, department, nowPage]);
 
+  interface IFilterLists {
+    position : string[],
+    grade : string[],
+    department : string[],
+  }
+
+  const FilterLists : IFilterLists = {
+    position : ["일반" , "기획자" , "개발자" , "디자이너"],
+    grade : ["1학년" , "2학년" , "3학년" , "4학년"],
+    department : ["글로벌리더십학부" , "국제어문학부" , "경영경제학부" , "법학부" , "커뮤니케이션학부" , "공간환경시스템공학부" , "기계제어공학부" , "콘텐츠융합디자인학부" , "생명과학부" , "전산전자공학부" , "상담심리사회복지학부" , "ICT창업학부"]
+
+  }
+
   return (
     <>
       {isLoading ? (
@@ -253,43 +266,17 @@ function Person() {
               </StyledSpan>
               {!showPositions ? null : (
                 <Styledul id="포지션ul">
-                  <Styledli className="checks etrans">
+                  {FilterLists["position"].map((position, index) => (
+                  <Styledli key={index} className="checks etrans">
                     <StyledRadio
                       name="포지션"
-                      id="일반"
+                      id={position}
                       type="radio"
                       onClick={onClick}
                     />
-                    <StyledliText htmlFor="일반">일반</StyledliText>
+                    <StyledliText htmlFor={position}>{position}</StyledliText>
                   </Styledli>
-
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="포지션"
-                      id="기획자"
-                      type="radio"
-                      onClick={onClick}
-                    />
-                    <StyledliText htmlFor="기획자">기획자</StyledliText>
-                  </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="포지션"
-                      id="개발자"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="개발자">개발자</StyledliText>
-                  </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="포지션"
-                      id="디자이너"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="디자이너">디자이너</StyledliText>
-                  </Styledli>
+                  ) )}
                 </Styledul>
               )}
             </StyledFilterItem>
@@ -308,42 +295,17 @@ function Person() {
               </StyledSpan>
               {!showGrades ? null : (
                 <Styledul id="학년ul">
-                  <Styledli className="checks etrans">
+                  {FilterLists["grade"].map( (grade, index) => (
+                  <Styledli key={index} className="checks etrans">
                     <StyledRadio
                       name="학년"
-                      id="1학년"
+                      id={grade}
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText htmlFor="1학년">1학년</StyledliText>
+                    <StyledliText htmlFor={grade}>{grade}</StyledliText>
                   </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="학년"
-                      id="2학년"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="2학년">2학년</StyledliText>
-                  </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="학년"
-                      id="3학년"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="3학년">3학년</StyledliText>
-                  </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="학년"
-                      id="4학년"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="4학년">4학년</StyledliText>
-                  </Styledli>
+                  ) )}
                 </Styledul>
               )}
             </StyledFilterItem>
@@ -363,134 +325,20 @@ function Person() {
 
               {!showDepartments ? null : (
                 <Styledul id="학부ul">
-                  <Styledli className="checks etrans">
+                  {FilterLists["department"].map((department,index) => (
+                    <Styledli key={index} className="checks etrans">
                     <StyledRadio
                       name="학부"
-                      id="글로벌리더십학부"
+                      id={department}
                       onClick={onClick}
                       type="radio"
                     />
-                    <StyledliText htmlFor="글로벌리더십학부">
-                      글로벌리더십학부
+                    <StyledliText htmlFor={department}>
+                      {department}
                     </StyledliText>
                   </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="학부"
-                      id="국제어문학부"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="국제어문학부">
-                      국제어문학부
-                    </StyledliText>
-                  </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="학부"
-                      id="경영경제학부"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="경영경제학부">
-                      경영경제학부
-                    </StyledliText>
-                  </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="학부"
-                      id="법학부"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="법학부">법학부</StyledliText>
-                  </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="학부"
-                      id="커뮤니케이션학부"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="커뮤니케이션학부">
-                      커뮤니케이션학부
-                    </StyledliText>
-                  </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="학부"
-                      id="공간환경시스템공학부"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="공간환경시스템공학부">
-                      공간환경시스템공학부
-                    </StyledliText>
-                  </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="학부"
-                      id="기계제어공학부"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="기계제어공학부">
-                      기계제어공학부
-                    </StyledliText>
-                  </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="학부"
-                      id="콘텐츠융합디자인학부"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="콘텐츠융합디자인학부">
-                      콘텐츠융합디자인학부
-                    </StyledliText>
-                  </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="학부"
-                      id="생명과학부"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="생명과학부">생명과학부</StyledliText>
-                  </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="학부"
-                      id="전산전자공학부"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="전산전자공학부">
-                      전산전자공학부
-                    </StyledliText>
-                  </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="학부"
-                      id="상담심리사회복지학부"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="상담심리사회복지학부">
-                      상담심리사회복지학부
-                    </StyledliText>
-                  </Styledli>
-                  <Styledli className="checks etrans">
-                    <StyledRadio
-                      name="학부"
-                      id="ICT창업학부"
-                      onClick={onClick}
-                      type="radio"
-                    />
-                    <StyledliText htmlFor="ICT창업학부">
-                      ICT창업학부
-                    </StyledliText>
-                  </Styledli>
+
+                  ))}
                 </Styledul>
               )}
             </StyledFilterItem>
@@ -504,11 +352,8 @@ function Person() {
               className=" mb-[40px] w-full mx-[0px] bg-[#898989]"
               src="img/personBanner2.png"
             ></img>
-            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 px-[20px] h-full">
-              {/* if (window.innerWidth >= 1200) setOFFSET(4);
-else if (window.innerWidth >= 990) setOFFSET(3);
-else if (window.innerWidth >= 768) setOFFSET(2);
-else if (window.innerWidth < 768) setOFFSET(1); */}
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 px-[20px] pb-[70px]">
+
               {(Users?.members.length as number) > 0 &&
                 Users?.members.map((user) => (
                   <Link
