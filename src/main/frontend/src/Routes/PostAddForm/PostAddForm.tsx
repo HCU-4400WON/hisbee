@@ -17,7 +17,6 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
-import "./date.css";
 
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -31,7 +30,8 @@ import {
   uploadBytes,
   uploadBytesResumable,
 } from "firebase/storage";
-import { storage } from "../firebase";
+import { storage } from "../../firebase";
+import Validation from "./Validation";
 
 const StyledUl = tw.ul`
 flex
@@ -477,6 +477,30 @@ function PostAddForm() {
     );
   };
 
+  interface Iconverter {
+    [study : string] : string,
+    mentoring : string,
+    project : string,
+
+    planner : string,
+    designer : string,
+    developer : string,
+    mentor : string,
+    mentee : string,
+  }
+
+  const converter : Iconverter = {
+    study : "스터디",
+    mentoring : "멘토링",
+    project : "프로젝트",
+
+    planner : "기획자",
+    designer : "디자이너",
+    developer : "개발자",
+    mentor : "멘토",
+    mentee : "멘티",
+  }
+
   return (
     <>
       {isLoginCheckLoading ||
@@ -497,27 +521,14 @@ function PostAddForm() {
           <div className="flex justify-between items-center">
             <p className="w-full md:text-[30px] text-[20px] font-unique">모집글 작성하기</p>
             <div className="flex h-[40px] items-end">
-              <div
+              {[ "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)" ,"radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)" , "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)"].map((color,index) => (
+                <div key={index}
                 className="w-[15px] h-[15px]"
                 style={{
-                  backgroundImage:
-                    "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
+                  backgroundImage: color,
                 }}
               />
-              <div
-                className="w-[15px] h-[15px]"
-                style={{
-                  backgroundImage:
-                    "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
-                }}
-              />
-              <div
-                className="w-[15px] h-[15px]"
-                style={{
-                  backgroundImage:
-                    "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
-                }}
-              />
+              ))}
             </div>
           </div>
           <FieldContainer>
@@ -525,60 +536,23 @@ function PostAddForm() {
               <FieldBox>
                 <StyledFieldTitle>모집유형</StyledFieldTitle>
                 <StyledUl>
-                  <Styledli>
+                  {["study" , "mentoring" , "project"].map((category , index) => (
+                    <Styledli key={index}>
                     <StyledInput
-                      id="study"
+                      id={category}
                       type="radio"
                       {...register("category", {
                         required: "필수 항목",
                       })}
-                      value="study"
+                      value={category}
                       onClick={onClick}
                     />
-                    <StyledInputName htmlFor="study">스터디</StyledInputName>
-                  </Styledli>
-                  <Styledli>
-                    <StyledInput
-                      id="mentoring"
-                      type="radio"
-                      {...register("category", {
-                        required: "필수 항목",
-                      })}
-                      value="mentoring"
-                      onClick={onClick}
-                    />
-                    <StyledInputName htmlFor="mentoring">
-                      멘토링
-                    </StyledInputName>
-                  </Styledli>
-                  <Styledli>
-                    <StyledInput
-                      id="project"
-                      type="radio"
-                      {...register("category", {
-                        required: "필수 항목",
-                      })}
-                      value="project"
-                      onClick={onClick}
-                    />
-                    <StyledInputName htmlFor="project">
-                      프로젝트
-                    </StyledInputName>
+                    <StyledInputName htmlFor={category}>{converter[category]}</StyledInputName>
                   </Styledli>
 
-                  <AnimatePresence>
-                    {(formState.errors.category?.message as string) && (
-                      <motion.li
-                        variants={ValidationVariant}
-                        className="text-xs my-auto"
-                        initial="hidden"
-                        animate="showing"
-                        exit="exit"
-                      >
-                        *{formState.errors.category?.message as string}
-                      </motion.li>
-                    )}
-                  </AnimatePresence>
+                  ))}
+                  <Validation message={formState.errors.category?.message} />
+                 
                 </StyledUl>
               </FieldBox>
 
@@ -587,86 +561,38 @@ function PostAddForm() {
                 <StyledUl>
                   {cat === "project" ? (
                     <>
-                      <Styledli>
-                        <label htmlFor="planner">기획자</label>
-                        <StyledInputNumber
-                          {...register("planner", {
-                            required: "필수 사항 입니다.",
-                          })}
-                          min="0"
-                          id="planner"
-                          type="number"
-                        />
-                      </Styledli>
-                      <Styledli>
-                        <label htmlFor="designer">디자이너</label>
-                        <StyledInputNumber
-                          {...register("designer")}
-                          min="0"
-                          id="designer"
-                          type="number"
-                        />
-                      </Styledli>
-                      <Styledli>
-                        <label htmlFor="developer">개발자</label>
-                        <StyledInputNumber
-                          {...register("developer")}
-                          min="0"
-                          id="developer"
-                          type="number"
-                        />
-                      </Styledli>
-
-                      <AnimatePresence>
-                        {(formState.errors.planner?.message as any) && (
-                          <motion.li
-                            variants={ValidationVariant}
-                            className="text-xs my-auto"
-                            initial="hidden"
-                            animate="showing"
-                            exit="exit"
-                          >
-                            * {formState.errors.planner?.message as any}
-                          </motion.li>
-                        )}
-                      </AnimatePresence>
+                    {["planner" , "designer" , "developer"].map((position , index) => (
+                      <Styledli key={index}>
+                      <label htmlFor={position}>{converter[position]}</label>
+                      <StyledInputNumber
+                        {...register(position as any, {
+                          required: "필수 사항 입니다.",
+                        })}
+                        min="0"
+                        id={position}
+                        type="number"
+                      />
+                    </Styledli>
+                    ))}
+                     
+                      <Validation message={formState.errors.planner?.message} />
                     </>
                   ) : cat === "mentoring" ? (
                     <>
-                      <Styledli>
-                        <label htmlFor="mentor">멘토</label>
-                        <StyledInputNumber
-                          {...register("mentor", {
-                            required: "필수 사항 입니다.",
-                          })}
-                          min="0"
-                          id="mentor"
-                          type="number"
-                        />
-                      </Styledli>
-                      <Styledli>
-                        <label htmlFor="mentee">멘티</label>
-                        <StyledInputNumber
-                          {...register("mentee")}
-                          min="0"
-                          id="mentee"
-                          type="number"
-                        />
-                      </Styledli>
-
-                      <AnimatePresence>
-                        {(formState.errors.mentor?.message as any) && (
-                          <motion.li
-                            variants={ValidationVariant}
-                            className="text-xs my-auto"
-                            initial="hidden"
-                            animate="showing"
-                            exit="exit"
-                          >
-                            * {formState.errors.mentor?.message as any}
-                          </motion.li>
-                        )}
-                      </AnimatePresence>
+                    {["mentor" , "mentee"].map((position , index) => (
+                      <Styledli key={index}>
+                      <label htmlFor={position}>{converter[position]}</label>
+                      <StyledInputNumber
+                        {...register(position as any, {
+                          required: "필수 사항 입니다.",
+                        })}
+                        min="0"
+                        id={position}
+                        type="number"
+                      />
+                    </Styledli>
+                    ))}
+                      <Validation message={formState.errors.mentor?.message} />
                     </>
                   ) : cat === "study" ? (
                     <>
@@ -680,19 +606,7 @@ function PostAddForm() {
                         />
                       </Styledli>
 
-                      <AnimatePresence>
-                        {(formState.errors.member?.message as any) && (
-                          <motion.li
-                            variants={ValidationVariant}
-                            className="text-xs my-auto"
-                            initial="hidden"
-                            animate="showing"
-                            exit="exit"
-                          >
-                            * {formState.errors.member?.message as any}
-                          </motion.li>
-                        )}
-                      </AnimatePresence>
+                      <Validation message={formState.errors.member?.message} />
                     </>
                   ) : null}
                 </StyledUl>
@@ -705,7 +619,6 @@ function PostAddForm() {
                   프로젝트 기간
                 </StyledFieldTitle>
 
-                {/* <div className="flex"> */}
                 <input
                   id="projectStart"
                   {...register("projectStart", {
@@ -722,34 +635,12 @@ function PostAddForm() {
                   type="date"
                   className=" px-[10px]"
                 />
-                {/* </div> */}
-                <AnimatePresence>
-                  {((formState.errors.projectStart?.message as string) ||
-                    (formState.errors.projectEnd?.message as string)) && (
-                    <motion.div
-                      variants={ValidationVariant}
-                      className="text-xs my-auto mx-5"
-                      initial="hidden"
-                      animate="showing"
-                      exit="exit"
-                    >
-                      *{" "}
-                      {(formState.errors.projectStart?.message as string) ||
-                        (formState.errors.projectEnd?.message as string)}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+               
+                <Validation message={(formState.errors.projectStart?.message as string) || (formState.errors.projectEnd?.message as string)} />
               </FieldBox>
               <FieldBox>
                 <StyledFieldTitle htmlFor="postEnd">모집 기간</StyledFieldTitle>
 
-                {/* <input
-              id="postStart"
-              {...register("postStart", {
-                required: "필수 항목입니다.",
-              })}
-              type="date"
-            /> */}
                 <span className=" font-medium pr-[10px]">
                   {formState.defaultValues?.postStart}
                 </span>
@@ -761,20 +652,8 @@ function PostAddForm() {
                   })}
                   type="date"
                 />
+                <Validation message={formState.errors.postEnd?.message} />
 
-                <AnimatePresence>
-                  {(formState.errors.postEnd?.message as string) && (
-                    <motion.div
-                      variants={ValidationVariant}
-                      className="text-xs my-auto mx-5"
-                      initial="hidden"
-                      animate="showing"
-                      exit="exit"
-                    >
-                      * {formState.errors.postEnd?.message as string}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </FieldBox>
             </FieldRow>
 
@@ -792,19 +671,8 @@ function PostAddForm() {
                   maxLength={30}
                 />
 
-                <AnimatePresence>
-                  {(formState.errors.contact?.message as string) && (
-                    <motion.div
-                      variants={ValidationVariant}
-                      className="text-xs my-auto mx-5"
-                      initial="hidden"
-                      animate="showing"
-                      exit="exit"
-                    >
-                      * {formState.errors.contact?.message as string}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+               
+                <Validation message={formState.errors.contact?.message} />
               </FieldBox>
 
               {cat === "" || cat === "study" ? null : (
@@ -836,19 +704,7 @@ function PostAddForm() {
                     </Styledli>
                   </StyledUl>
 
-                  <AnimatePresence>
-                    {(formState.errors.pay?.message as string) && (
-                      <motion.div
-                        variants={ValidationVariant}
-                        className="text-xs my-auto"
-                        initial="hidden"
-                        animate="showing"
-                        exit="exit"
-                      >
-                        * {formState.errors.pay?.message as string}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  <Validation message={formState.errors.pay?.message} />
                 </FieldBox>
               )}
             </FieldRow>
@@ -878,19 +734,8 @@ function PostAddForm() {
               placeholder="3~30글자 제한 (짧은 제목 권장)"
               maxLength={30}
             />
-            <AnimatePresence>
-              {(formState.errors.title?.message as string) && (
-                <motion.div
-                  variants={ValidationVariant}
-                  className="absolute text-xs my-auto mx-5 bottom-[-20px] left-[100px]"
-                  initial="hidden"
-                  animate="showing"
-                  exit="exit"
-                >
-                  * {formState.errors.title?.message as string}
-                </motion.div>
-              )}
-            </AnimatePresence>
+           
+            <Validation message={formState.errors.title?.message} />
           </div>
 
           <div className="flex relative">
@@ -900,17 +745,7 @@ function PostAddForm() {
             >
               내용
             </label>
-            {/* <textarea
-              {...register("content", {
-                minLength: {
-                  value: 5,
-                  message: "내용이 너무 짧습니다.",
-                },
-              })}
-              id="content"
-              className="w-full bg-[#eeeeee] h-[345px] px-[10px] py-[10px] "
-              placeholder="자유롭게 작성 해주세요 !"
-            /> */}
+            
             <MyBlock className="w-full">
               <Editor
                 // 에디터와 툴바 모두에 적용되는 클래스
@@ -946,19 +781,7 @@ function PostAddForm() {
               />
             </MyBlock>
 
-            <AnimatePresence>
-              {(formState.errors.content?.message as string) && (
-                <motion.div
-                  variants={ValidationVariant}
-                  className="absolute text-xs my-auto mx-5 bottom-[-20px] left-[100px]"
-                  initial="hidden"
-                  animate="showing"
-                  exit="exit"
-                >
-                  * {formState.errors.content?.message as string}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <Validation message={formState.errors.content?.message} className="absolute text-xs my-auto mx-5 bottom-[-20px] left-[100px]" />
           </div>
 
           <input

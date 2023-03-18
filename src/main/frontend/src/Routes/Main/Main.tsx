@@ -30,8 +30,8 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import { runInThisContext } from "vm";
 import Login from "../../components/LoginModal";
-import SignUp from "../SignUp";
-import SignUpOptional from "../SignUpOptional";
+import SignUp from "./SignUp";
+import SignUpOptional from "./SignUpOptional";
 
 const Container = tw.div`
 min-w-[480px] 

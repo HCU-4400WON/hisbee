@@ -1,14 +1,14 @@
 import tw from "tailwind-styled-components";
 import React, { useEffect, useState } from "react";
-import { IPost, loginCheckApi, posts, readOnePost, updatePost } from "api";
+import { IPost, loginCheckApi, readOnePost, updatePost } from "api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
-import { Link } from "react-router-dom";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoginState, isPostDeleteModalState } from "components/atom";
-import PostDeleteModal from "components/PostDeleteModal";
+import PostDeleteModal from "Routes/Detail/PostDeleteModal";
 import { useForm } from "react-hook-form";
-import { AnimatePresence, motion } from "framer-motion";
+
 import LoadingAnimation from "components/LoadingAnimation";
 import { AxiosError, AxiosResponse } from "axios";
 
@@ -22,12 +22,51 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import {
   ref,
   getDownloadURL,
-  uploadBytes,
   uploadBytesResumable,
 } from "firebase/storage";
 import { useRef } from "react";
-import { storage } from "../firebase";
+import { storage } from "../../firebase";
 import styled from "styled-components";
+import Validation from "./Validation";
+import MyEditor from "./MyEditor";
+
+
+const Container = tw.div`
+md:w-[1470px] 
+flex w-full
+`
+const GoBackSpan = tw.span`
+md:min-w-[100px] min-w-[40px] py-[62px] border-gray-300  flex justify-end
+`
+
+const GoBackButton = tw.button`
+md:mr-[40px] mr-[10px] h-[30px]`
+
+const GoBackIcon = tw.i`
+fa-solid fa-arrow-left text-[18px] md:text-[23px]
+`
+
+const Form = tw.form`
+w-full
+`
+const FormHeader = tw.header`
+pt-[62px] md:pt-[55px] text-[20px] md:text-[25px] font-semibold flex`
+
+const FormTitleInput = tw.input`
+w-[400px] 
+md:h-[40px] 
+h-[35px] 
+px-[15px] 
+bg-[#eeeeee]
+`
+
+const FormTitle = tw.div`
+font-main
+`
+
+const FormAuthorNButtonRow = tw.div`
+flex justify-between
+`
 
 const StyledUl = tw.ul`
 flex
@@ -93,11 +132,18 @@ font-medium
 
 `;
 
-const WriteInfoBox = tw.div`
+const FormAuthorSpan = tw.div`
+
 flex 
+flex-col md:flex-row items-center
 py-[20px]
 `;
 
+const WriterSpan = tw.span`
+flex w-[200px] md:w-[auto]
+`
+const WriteDateSpan = tw.span`
+`
 const WriteInfo = tw.span`
 text-[13px]
 md:text-[17px]
@@ -108,6 +154,34 @@ text-gray-400
 h-[20px]
 md:h-auto
 `;
+
+const FormButtonDiv = tw.div`
+flex items-center w-[70px] md:w-[100px] justify-between
+`
+
+const FormModifyOKButton = tw.button`
+w-[70px] text-gray-500 rounded-full
+`
+
+const FormModifyOKIcon = tw.i`
+fa-solid fa-check text-[30px] text-green-600
+`
+
+const FormModifyButton = tw.button`
+w-[70px] text-gray-500 rounded-full
+`
+const FormModifyIcon = tw.i`
+fa-regular fa-pen-to-square text-[25px] md:text-[30px]
+
+`
+
+const FormDeleteButton = tw.button`
+w-[70px]  text-red-400  rounded-full
+`
+
+const FormDeleteIcon = tw.i`
+fa-regular fa-trash-can text-[25px] md:text-[30px]
+`
 
 const ValidationVariant = {
   hidden: {
@@ -235,37 +309,11 @@ function Detail() {
   const {
     register,
     handleSubmit,
-    watch,
     setError,
     formState,
     setValue,
-    getValues,
-    getFieldState,
   } = useForm({
     mode: "onSubmit",
-    // defaultValues: {
-    //   currMentor: "0",
-    //   currMentee: "0",
-    //   currMember: "0",
-    //   dtype: "",
-    //   projectStart: "",
-    //   projectEnd: "",
-    //   postStart:
-    //     new Date().getFullYear() +
-    //     "" +
-    //     "-" +
-    //     (new Date().getMonth() + 1 + "").padStart(2, "0") +
-    //     "-" +
-    //     (new Date().getDate() + "").padStart(2, "0"),
-    //   postEnd: "",
-    //   contact: "",
-    //   currDeveloper: "0",
-    //   currPlanner: "0",
-    //   currDesigner: "0",
-    //   pay: "",
-    //   title: "",
-    //   content: "",
-    // },
   });
 
   interface IData {
@@ -293,13 +341,6 @@ function Detail() {
     content: string;
   }
 
-  // console.log("Debug ", data);
-  // console.log("!!", new Date(data?.postStart as any));
-  // const data?: IPost = data as any;
-
-  // const data? = posts[+(id as any)];
-
-  // console.log(data?);
 
   const [isPostDeleteModal, setIsPostDeleteModal] = useRecoilState(
     isPostDeleteModalState
@@ -321,16 +362,6 @@ function Detail() {
 
   const [isModifying, setIsModifying] = useState(false);
 
-  const onModifyClick = () => {
-    // const data = {};
-    //  모집 인원 부분 모집 유형에 따라 변하도록
-    //  state useForm으로 채우기
-    //  마지막 refetch... validation... api...
-
-    setIsModifying(false);
-
-    // updatePost(data?.id, data);
-  };
 
   const navigate = useNavigate();
   const onValid = async (data: IData) => {
@@ -348,8 +379,7 @@ function Detail() {
         setError("maxMember", { message: "0보다 커야 합니다." });
         return;
       } else if (data.maxMember < data.currMember) {
-        // setError("maxMember", { message: "현재 인원 보다 적습니다." });
-        // return;
+       
         data.maxMember = data.currMember;
       }
     } else if (data.dtype === "M") {
@@ -357,12 +387,10 @@ function Detail() {
         setError("maxMentor", { message: "0보다 커야 합니다." });
         return;
       } else if (data.maxMentor < data.currMentor) {
-        // setError("maxMentor", { message: "멘토가 현재 인원 보다 적습니다." });
-        // return;
+        
         data.maxMentor = data.currMentor;
       } else if (data.maxMentee < data.currMentee) {
-        // setError("maxMentee", { message: "멘티가 현재 인원 보다 적습니다." });
-        // return;
+        
         data.maxMentee = data.currMentee;
       }
     } else if (data.dtype === "P") {
@@ -375,27 +403,18 @@ function Detail() {
         setError("maxPlanner", { message: "0보다 커야 합니다." });
         return;
       } else if (data.maxPlanner < data.currPlanner) {
-        // setError("maxPlanner", {
-        //   message: "기획자가 현재 인원 보다 적습니다.",
-        // });
-        // return;
+        
         data.maxPlanner = data.currPlanner;
       } else if (data.maxDesigner < data.currDesigner) {
-        // setError("maxPlanner", {
-        //   message: "디자이너가 현재 인원 보다 적습니다.",
-        // });
-        // return;
+        
         data.maxDesigner = data.currDesigner;
       } else if (data.maxDeveloper < data.currDeveloper) {
-        // setError("maxPlanner", {
-        //   message: "개발자가 현재 인원 보다 적습니다.",
-        // });
+       
         data.maxDeveloper = data.currDeveloper;
-        // return;
+        
       }
 
-      console.log("제출되었습니다.");
-      // setIsModifying(true);
+      console.log("제출되었습니다.")
     }
 
     const newData = {
@@ -519,6 +538,39 @@ function Detail() {
     );
   };
 
+  interface Iconverter {
+    [maxDeveloper:string] : string,
+    maxPlanner: string,
+    maxDesigner: string,
+    maxMentor: string,
+    maxMentee: string,
+  }
+  const converter : Iconverter = {
+    maxDeveloper: "개발자",
+    maxPlanner:"기획자",
+    maxDesigner: "디자이너",
+    maxMentor: "멘토",
+    maxMentee: "멘티",
+    currDeveloper: "개발자",
+    currPlanner:"기획자",
+    currDesigner: "디자이너",
+    currMentor: "멘토",
+    currMentee: "멘티",
+    
+  } 
+  const dateConverter = (date : Date) => {
+    const str = "";
+    return str.concat(new Date(date).getFullYear() + "", " / ",
+    (
+      new Date(date).getMonth() +
+      1 +
+      ""
+    ).padStart(2, "0"), " / ",
+    (
+      new Date(date).getDate() + ""
+    ).padStart(2, "0"))
+  }
+
   return (
     <>
       {isLoading || isLoginCheckLoading ? (
@@ -526,23 +578,21 @@ function Detail() {
       ) : (
         <>
           {isPostDeleteModal && <PostDeleteModal postId={data?.id} />}
-          <div className=" md:w-[1470px] flex w-full">
-            <span className=" md:min-w-[100px] min-w-[40px] py-[62px] border-gray-300  flex justify-end">
-              <button
+          <Container>
+            <GoBackSpan>
+              <GoBackButton
                 onClick={() => navigate(-1)}
-                className=" md:mr-[40px] mr-[10px] h-[30px]"
               >
-                <i className="fa-solid fa-arrow-left text-[18px] md:text-[23px]"></i>
-              </button>
-            </span>
+                <GoBackIcon></GoBackIcon>
+              </GoBackButton>
+            </GoBackSpan>
 
-            <form onSubmit={handleSubmit(onValid as any)} className="w-full">
-              <header className=" pt-[62px] md:pt-[55px] text-[20px] md:text-[25px] font-semibold flex">
+            <Form onSubmit={handleSubmit(onValid as any)}>
+              <FormHeader>
                 {isModifying ? (
                   <>
-                    <input
+                    <FormTitleInput
                       type="text"
-                      className="w-[400px] md:h-[40px] h-[35px] px-[15px] bg-[#eeeeee]"
                       {...register("title", {
                         required: "필수 항목 입니다",
                         minLength: {
@@ -556,101 +606,68 @@ function Detail() {
                       })}
                       placeholder="3~30자 이내"
                     />
-                    <AnimatePresence>
-                      {(formState.errors.title?.message as string) && (
-                        <motion.div
-                          variants={ValidationVariant}
-                          className="text-xs my-auto mx-5 bottom-[-20px] left-[100px]"
-                          initial="hidden"
-                          animate="showing"
-                          exit="exit"
-                        >
-                          * {formState.errors.title?.message as string}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <Validation message={formState.errors.title?.message} />
                   </>
                 ) : (
-                  <div className="font-main  " >{data?.title}</div>
+                  <FormTitle >{data?.title}</FormTitle>
                 )}
-              </header>
+              </FormHeader>
 
-              <div className="flex justify-between">
-                <WriteInfoBox className="flex flex-col md:flex-row items-center ">
-                  <div className="flex w-[200px] md:w-[auto]">
-                  <WriteInfo className="">작성자</WriteInfo>
-                  <WriteInfo className="mr-[40px] text-gray-500">
-                    {data?.writer}
-                  </WriteInfo>
-                  </div>
+              <FormAuthorNButtonRow>
+                <FormAuthorSpan >
+                  <WriterSpan>
+                    <WriteInfo className="">작성자</WriteInfo>
+                    <WriteInfo className="mr-[40px] text-gray-500">
+                      {data?.writer}
+                    </WriteInfo>
+                  </WriterSpan>
                   
-                  <div className="flex w-[200px] md:w-[auto]">
+                  <WriteDateSpan className="flex w-[200px] md:w-[auto]">
                   <WriteInfo className="">작성일</WriteInfo>
                   <WriteInfo className="text-gray-500">
-                    {new Date(data?.postStart as Date).getFullYear()} /{" "}
-                    {(
-                      new Date(data?.postStart as Date).getMonth() +
-                      1 +
-                      ""
-                    ).padStart(2, "0")}{" "}
-                    /{" "}
-                    {(
-                      new Date(data?.postStart as Date).getDate() + ""
-                    ).padStart(2, "0")}
-                    {/* {getValues("postStart")} */}
+                    
+                    {dateConverter(data?.postStart as Date)}
+                    
                   </WriteInfo>
-                  </div>
+                  </WriteDateSpan>
                   
-                </WriteInfoBox>
+                </FormAuthorSpan>
 
-                <div className="flex items-center w-[70px] md:w-[100px] justify-between">
+                <FormButtonDiv>
                   {register("varified") && (
                     <>
                       {isModifying ? (
-                        <button
+                        <FormModifyOKButton
                           id="modify"
-                          
-                          className="w-[70px] text-gray-500 rounded-full"
                         >
-                          <i className="fa-solid fa-check text-[30px] text-green-600"></i>
-                        </button>
+                          <FormModifyOKIcon />
+                        </FormModifyOKButton>
                       ) : (
-                        <button
+                        <FormModifyButton
                           id="modify"
                           onClick={onBtnClick}
-                          className="w-[70px] text-gray-500 rounded-full"
                         >
-                          <i className="fa-regular fa-pen-to-square text-[25px] md:text-[30px]"></i>
-                        </button>
+                          <FormModifyIcon />
+                        </FormModifyButton>
                       )}
 
-                      <button
+                      <FormDeleteButton
                         id="delete"
                         onClick={onBtnClick}
-                        className="w-[70px]  text-red-400  rounded-full"
+                        
                       >
-                        <i className="fa-regular fa-trash-can text-[25px] md:text-[30px]"></i>
-                      </button>
+                        <FormDeleteIcon />
+                      </FormDeleteButton>
                     </>
                   )}
-                </div>
-              </div>
+                </FormButtonDiv>
+              </FormAuthorNButtonRow>
               <Grid>
                 <GridItem>
                   <ItemTitle>모집 기간</ItemTitle>
                   <ItemText>
                     <>
-                      {new Date(data?.postStart as Date).getFullYear()} /{" "}
-                      {(
-                        new Date(data?.postStart as Date).getMonth() +
-                        1 +
-                        ""
-                      ).padStart(2, "0")}{" "}
-                      /{" "}
-                      {(
-                        new Date(data?.postStart as Date).getDate() + ""
-                      ).padStart(2, "0")}
-                      {/* {getValues("postStart")} */}
+                      {dateConverter(data?.postStart as Date)}
                     </>
                   </ItemText>
                   <ItemText className="mx-[10px] ml-[20px]">~</ItemText>
@@ -664,43 +681,14 @@ function Detail() {
                             {...register("postEnd", {
                               required: "필수 항목",
                             })}
-                            // defaultValue={`${new Date(
-                            //   data?.postEnd
-                            // ).getFullYear()}-${(
-                            //   new Date(data?.postEnd).getMonth() +
-                            //   1 +
-                            //   ""
-                            // ).padStart(2, "0")}-${(
-                            //   new Date(data?.postEnd).getDate() + ""
-                            // ).padStart(2, "0")}`}
+                           
                           ></input>
-                          <AnimatePresence>
-                            {(formState.errors.postEnd?.message as string) && (
-                              <motion.div
-                                variants={ValidationVariant}
-                                className="text-xs my-auto ml-[3px]"
-                                initial="hidden"
-                                animate="showing"
-                                exit="exit"
-                              >
-                                * {formState.errors.postEnd?.message as string}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
+                          <Validation message={formState.errors.postEnd?.message} />
+                        
                         </div>
                       ) : (
                         <>
-                          {new Date(data?.postEnd as Date).getFullYear()} /{" "}
-                          {(
-                            new Date(data?.postEnd as Date).getMonth() +
-                            1 +
-                            ""
-                          ).padStart(2, "0")}{" "}
-                          /{" "}
-                          {(
-                            new Date(data?.postEnd as Date).getDate() + ""
-                          ).padStart(2, "0")}
-                          {/* {getValues("postEnd")} */}
+                          {dateConverter(data?.postEnd as Date)}
                         </>
                       )}
                     </ItemText>
@@ -725,92 +713,36 @@ function Detail() {
                       <StyledUl>
                         {data?.dtype === "P" ? (
                           <>
-                            <Styledli>
-                              <StyledInputLabel htmlFor="currDeveloper">개발자</StyledInputLabel>
-                              <StyledInputNumber
-                                {...register("currDeveloper")}
-                                min="0"
-                                id="currDeveloper"
-                                type="number"
-                              />
-                            </Styledli>
-                            <Styledli>
-                              <StyledInputLabel htmlFor="currPlanner">기획자</StyledInputLabel>
-                              <StyledInputNumber
-                                {...register("currPlanner", {
-                                  required: "필수 사항 입니다.",
-                                })}
-                                min="0"
-                                id="currPlanner"
-                                type="number"
-                              />
-                            </Styledli>
-                            <Styledli>
-                              <StyledInputLabel htmlFor="currDesigner">디자이너</StyledInputLabel>
-                              <StyledInputNumber
-                                {...register("currDesigner")}
-                                min="0"
-                                id="currDesigner"
-                                type="number"
-                              />
-                            </Styledli>
-
-                            <AnimatePresence>
-                              {(formState.errors.currPlanner
-                                ?.message as any) && (
-                                <motion.li
-                                  variants={ValidationVariant}
-                                  className="text-xs my-auto"
-                                  initial="hidden"
-                                  animate="showing"
-                                  exit="exit"
-                                >
-                                  *{" "}
-                                  {formState.errors.currPlanner?.message as any}
-                                </motion.li>
-                              )}
-                            </AnimatePresence>
+                          {["currDeveloper", "currPlanner" ,"currDesigner"].map((element,index)=> (
+                            <Styledli key={index}>
+                            <StyledInputLabel htmlFor={element}>{converter[element]}</StyledInputLabel>
+                            <StyledInputNumber
+                              {...register(element)}
+                              min="0"
+                              id={element}
+                              type="number"
+                            />
+                          </Styledli>
+                          ))}
+                            
+                          
+                            <Validation message={formState.errors.currPlanner?.message} />
                           </>
                         ) : data?.dtype === "M" ? (
                           <>
-                            <Styledli>
-                              <StyledInputLabel htmlFor="currMentor" className="text-[13px] md:text-[18px]">멘토</StyledInputLabel>
-                              <StyledInputNumber
-                                {...register("currMentor", {
-                                  required: "필수 사항 입니다.",
-                                })}
-                                min="0"
-                                id="currMentor"
-                                type="number"
-                              />
-                            </Styledli>
-                            <Styledli>
-                              <StyledInputLabel htmlFor="currMentee">멘티</StyledInputLabel>
-                              <StyledInputNumber
-                                {...register("currMentee", {
-                                  required: "필수 사항 입니다.",
-                                })}
-                                min="0"
-                                id="currMentee"
-                                type="number"
-                              />
-                            </Styledli>
+                          {["currMentor", "currMentee"].map((element,index)=> (
+                            <Styledli key={index}>
+                            <StyledInputLabel htmlFor={element}>{converter[element]}</StyledInputLabel>
+                            <StyledInputNumber
+                              {...register(element)}
+                              min="0"
+                              id={element}
+                              type="number"
+                            />
+                          </Styledli>
+                          ))}
 
-                            <AnimatePresence>
-                              {(formState.errors.currMentor
-                                ?.message as any) && (
-                                <motion.li
-                                  variants={ValidationVariant}
-                                  className="text-xs my-auto"
-                                  initial="hidden"
-                                  animate="showing"
-                                  exit="exit"
-                                >
-                                  *{" "}
-                                  {formState.errors.currMentor?.message as any}
-                                </motion.li>
-                              )}
-                            </AnimatePresence>
+                            <Validation message={formState.errors.currMentor?.message} />
                           </>
                         ) : data?.dtype === "S" ? (
                           <>
@@ -826,21 +758,9 @@ function Detail() {
                               />
                             </Styledli>
 
-                            <AnimatePresence>
-                              {(formState.errors.currMember
-                                ?.message as any) && (
-                                <motion.li
-                                  variants={ValidationVariant}
-                                  className="text-xs my-auto"
-                                  initial="hidden"
-                                  animate="showing"
-                                  exit="exit"
-                                >
-                                  *{" "}
-                                  {formState.errors.currMember?.message as any}
-                                </motion.li>
-                              )}
-                            </AnimatePresence>
+                           
+                            <Validation message={formState.errors.currMember?.message} />
+                            
                           </>
                         ) : null}
                       </StyledUl>
@@ -898,30 +818,12 @@ function Detail() {
                         {...register("projectStart", {
                           required: "필수 항목입니다.",
                         })}
-                        // defaultValue={`${new Date(
-                        //   data?.projectStart
-                        // ).getFullYear()}-${(
-                        //   new Date(data?.projectStart).getMonth() +
-                        //   1 +
-                        //   ""
-                        // ).padStart(2, "0")}-${(
-                        //   new Date(data?.projectStart).getDate() + ""
-                        // ).padStart(2, "0")}`}
+                      
                       ></input>
                     ) : (
                       <>
-                        {new Date(data?.projectStart as Date).getFullYear()} /{" "}
-                        {(
-                          new Date(data?.projectStart as Date).getMonth() +
-                          1 +
-                          ""
-                        ).padStart(2, "0")}{" "}
-                        /{" "}
-                        {(
-                          new Date(data?.projectStart as Date).getDate() + ""
-                        ).padStart(2, "0")}
-                        {/* {getValues("projectStart")}
-                         */}
+                       
+                         {dateConverter(data?.projectStart as Date)}
                       </>
                     )}
                   </ItemText>
@@ -935,51 +837,15 @@ function Detail() {
                           {...register("projectEnd", {
                             required: "필수 항목 입니다",
                           })}
-                          // defaultValue={`${new Date(
-                          //   data?.projectEnd
-                          // ).getFullYear()}-${(
-                          //   new Date(data?.projectEnd).getMonth() +
-                          //   1 +
-                          //   ""
-                          // ).padStart(2, "0")}-${(
-                          //   new Date(data?.projectEnd).getDate() + ""
-                          // ).padStart(2, "0")}`}
+                        
                         ></input>
 
-                        <AnimatePresence>
-                          {((formState.errors.projectStart
-                            ?.message as string) ||
-                            (formState.errors.projectEnd
-                              ?.message as string)) && (
-                            <motion.div
-                              variants={ValidationVariant}
-                              className="text-xs my-auto mx-5"
-                              initial="hidden"
-                              animate="showing"
-                              exit="exit"
-                            >
-                              *{" "}
-                              {(formState.errors.projectStart
-                                ?.message as string) ||
-                                (formState.errors.projectEnd
-                                  ?.message as string)}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                      
+                        <Validation message={formState.errors.projectStart?.message || formState.errors.projectEnd?.message} />
                       </div>
                     ) : (
                       <>
-                        {new Date(data?.projectEnd as Date).getFullYear()} /{" "}
-                        {(
-                          new Date(data?.projectEnd as Date).getMonth() +
-                          1 +
-                          ""
-                        ).padStart(2, "0")}{" "}
-                        /{" "}
-                        {(
-                          new Date(data?.projectEnd as Date).getDate() + ""
-                        ).padStart(2, "0")}
-                        {/* {getValues("projectEnd")} */}
+                        {dateConverter(data?.projectEnd as Date)}
                       </>
                     )}
                   </ItemText>
@@ -992,102 +858,39 @@ function Detail() {
                       <StyledUl>
                         {data?.dtype === "P" ? (
                           <>
-                            <Styledli>
-                              <StyledInputLabel htmlFor="maxDeveloper">개발자</StyledInputLabel>
+                          {["maxDeveloper","maxPlanner","maxDesigner"].map((element,index)=> ( 
+                          <Styledli key={index}>
+                              <StyledInputLabel htmlFor={element}>{converter[element]}</StyledInputLabel>
                               <StyledInputNumber
-                                {...register("maxDeveloper")}
+                                {...register(element)}
                                 min="0"
-                                id="maxDeveloper"
+                                id={element}
                                 type="number"
                               />
                             </Styledli>
-                            <Styledli>
-                              <StyledInputLabel htmlFor="maxPlanner">기획자</StyledInputLabel>
-                              <StyledInputNumber
-                                {...register("maxPlanner", {
-                                  required: "필수 사항 입니다.",
-                                })}
-                                min="0"
-                                id="maxPlanner"
-                                type="number"
-                              />
-                            </Styledli>
-                            <Styledli>
-                              <StyledInputLabel htmlFor="maxDesigner">디자이너</StyledInputLabel>
-                              <StyledInputNumber
-                                {...register("maxDesigner")}
-                                min="0"
-                                id="maxDesigner"
-                                type="number"
-                              />
-                            </Styledli>
+                            ))}
+                            
 
-                            <AnimatePresence>
-                              {((formState.errors.maxPlanner?.message as any) ||
-                                (formState.errors.maxDeveloper
-                                  ?.message as any) ||
-                                (formState.errors.maxDesigner
-                                  ?.message as any)) && (
-                                <motion.li
-                                  variants={ValidationVariant}
-                                  className="text-xs my-auto"
-                                  initial="hidden"
-                                  animate="showing"
-                                  exit="exit"
-                                >
-                                  *{" "}
-                                  {(formState.errors.maxPlanner
-                                    ?.message as any) ||
-                                    (formState.errors.maxDeveloper
-                                      ?.message as any) ||
-                                    (formState.errors.maxDesigner
-                                      ?.message as any)}
-                                </motion.li>
-                              )}
-                            </AnimatePresence>
+                           
+                            <Validation message={formState.errors.maxPlanner?.message || formState.errors.maxDeveloper?.message || formState.errors.maxDesigner?.message} />
                           </>
                         ) : data?.dtype === "M" ? (
                           <>
-                            <Styledli>
-                              <StyledInputLabel htmlFor="maxMentor">멘토</StyledInputLabel>
-                              <StyledInputNumber
-                                {...register("maxMentor", {
-                                  required: "필수 사항 입니다.",
-                                })}
-                                min="0"
-                                id="maxMentor"
-                                type="number"
-                              />
-                            </Styledli>
-                            <Styledli>
-                              <StyledInputLabel htmlFor="maxMentee">멘티</StyledInputLabel>
-                              <StyledInputNumber
-                                {...register("maxMentee", {
-                                  required: "필수 사항 입니다.",
-                                })}
-                                min="0"
-                                id="maxMentee"
-                                type="number"
-                              />
-                            </Styledli>
+                          {["maxMentor" , "maxMentee"].map((element,index) => (
+                            <Styledli key={index}>
+                            <StyledInputLabel htmlFor={element}>{converter[element]}</StyledInputLabel>
+                            <StyledInputNumber
+                              {...register(element, {
+                                required: "필수 사항 입니다.",
+                              })}
+                              min="0"
+                              id={element}
+                              type="number"
+                            />
+                          </Styledli>
+                          ))}
 
-                            <AnimatePresence>
-                              {((formState.errors.maxMentor?.message as any) ||
-                                formState.errors.maxMentee?.message) && (
-                                <motion.li
-                                  variants={ValidationVariant}
-                                  className="text-xs my-auto"
-                                  initial="hidden"
-                                  animate="showing"
-                                  exit="exit"
-                                >
-                                  *{" "}
-                                  {(formState.errors.maxMentor
-                                    ?.message as any) ||
-                                    formState.errors.maxMentee?.message}
-                                </motion.li>
-                              )}
-                            </AnimatePresence>
+                            <Validation message={formState.errors.maxMentor?.message || formState.errors.maxMentee?.message} />
                           </>
                         ) : data?.dtype === "S" ? (
                           <>
@@ -1103,19 +906,8 @@ function Detail() {
                               />
                             </Styledli>
 
-                            <AnimatePresence>
-                              {(formState.errors.maxMember?.message as any) && (
-                                <motion.li
-                                  variants={ValidationVariant}
-                                  className="text-xs my-auto"
-                                  initial="hidden"
-                                  animate="showing"
-                                  exit="exit"
-                                >
-                                  * {formState.errors.maxMember?.message as any}
-                                </motion.li>
-                              )}
-                            </AnimatePresence>
+                            
+                            <Validation message={formState.errors.maxMember?.message} />
                           </>
                         ) : null}
                       </StyledUl>
@@ -1124,6 +916,7 @@ function Detail() {
                     <>
                       {data?.dtype === "P" ? (
                         <>
+                        
                           {data?.maxDeveloper !== 0 && (
                             <ItemText>
                               개발자 {data?.maxDeveloper}명 &nbsp;
@@ -1174,19 +967,8 @@ function Detail() {
                           className=" w-[350px] h-[30px] bg-[#eeeeee] px-[15px] md:text-[17px] text-[15px]"
                           maxLength={30}
                         ></input>
-                        <AnimatePresence>
-                          {(formState.errors.contact?.message as string) && (
-                            <motion.div
-                              variants={ValidationVariant}
-                              className="text-xs my-auto mx-5"
-                              initial="hidden"
-                              animate="showing"
-                              exit="exit"
-                            >
-                              * {formState.errors.contact?.message as string}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                        
+                        <Validation message={formState.errors.contact?.message} />
                       </div>
                     ) : (
                       <>{data?.contact}</>
@@ -1271,6 +1053,7 @@ function Detail() {
                       // 에디터의 값이 변경될 때마다 onEditorStateChange 호출
                       onEditorStateChange={onEditorStateChange}
                     />
+                    
                   </MyBlock>
                 ) : (
                   <div dangerouslySetInnerHTML={{ __html: editorString }}></div>
@@ -1281,10 +1064,10 @@ function Detail() {
                   수정하기
                 </button>
               )}
-            </form>
+            </Form>
 
             <div className="min-w-[40px] md:min-w-[100px] "></div>
-          </div>
+          </Container>
         </>
       )}
     </>
