@@ -45,23 +45,14 @@ const TextEditor = React.forwardRef(() => {
       "converted to Html : ",
       draftToHtml(convertToRaw(editorState.getCurrentContent()))
     );
-    // const getCurrentContent = editorState.getCurrentContent();
-    // const Raw = convertToRaw(getCurrentContent);
-    // const Html = draftToHtml(Raw);
-    // console.log(getCurrentContent, "\n", Raw, "\n", Html);
   };
 
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [imageURL, setImageURL] = useState<string>("");
   const [progressPercent, setProgressPercent] = useState<number>(0);
   const onImageChange = async (file: any) => {
-    // return new Promise((resolve, reject) => {
-    //   resolve({ data: { link: "www.naver.com" } });
-    // });
     console.log(file);
     let newImage: any;
-    // file.preventDefault();
-    // const file = e;
     if (!file) return null;
 
     const storageRef = ref(storage, `files/${file.name}`);

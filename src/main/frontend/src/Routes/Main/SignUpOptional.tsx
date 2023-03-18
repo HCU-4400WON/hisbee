@@ -17,7 +17,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import React, { useRef, useState } from "react";
-import { storage } from "../firebase";
+import { storage } from "../../firebase";
 
 const Container = tw.div`
 
