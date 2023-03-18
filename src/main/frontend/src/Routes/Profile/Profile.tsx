@@ -323,73 +323,24 @@ function Profile() {
     const {
       currentTarget: { id },
     } = event;
+    const scrollToTarget = (target : string) => window.scrollTo(
+      (document.querySelector(target) as HTMLElement).offsetLeft,
+      (document.querySelector(target) as HTMLElement).offsetTop
+    );
+
     if (id === "1") {
-      window.scrollTo(
-        (document.querySelector("#profileInfo") as HTMLElement).offsetLeft,
-        (document.querySelector("#profileInfo") as HTMLElement).offsetTop
-      );
+      scrollToTarget("#profileInfo")
     } else if (id === "2") {
-      window.scrollTo(
-        (document.querySelector("#myPost") as HTMLElement).offsetLeft,
-        (document.querySelector("#myPost") as HTMLElement).offsetTop
-      );
+      scrollToTarget("#myPost")
     } else if (id === "3") {
-      window.scrollTo(
-        (document.querySelector("#zzim") as HTMLElement).offsetLeft,
-        (document.querySelector("#zzim") as HTMLElement).offsetTop
-      );
+      scrollToTarget("#zzim")
     } else if (id === "4") {
-      window.scrollTo(
-        (document.querySelector("#delete") as HTMLElement).offsetLeft,
-        (document.querySelector("#delete") as HTMLElement).offsetTop
-      );
+      scrollToTarget("#delete")
     }
   };
 
   const [isDeleteModal, setIsDeleteModal] = useRecoilState(isDeleteModalState);
 
-  const { mutate: likeAddMutate, isLoading: isLikeAddLoading } = useMutation(
-    ["likeAddMutate" as string],
-    (postId: number) => addLikePost(postId) as any,
-    {
-      onSuccess: () => {
-        refetch();
-      },
-      onError: (error) => {
-        if (((error as AxiosError).response as AxiosResponse).status === 401) {
-          alert("로그인이 필요합니다.");
-          setIsLoginModal(true);
-          setIsLogin(false);
-          if (localStorage.getItem("key")) localStorage.removeItem("key");
-          navigate("/");
-        }
-      },
-    }
-  );
-
-  const { mutate: likeDeleteMutate, isLoading: isLikeDeleteLoading } =
-    useMutation(
-      ["likeDeleteMutate" as string],
-      (postId: number) => deleteLikePost(postId) as any,
-      {
-        onSuccess: () => {
-          refetch();
-        },
-        onError: (error) => {
-          if (
-            ((error as AxiosError).response as AxiosResponse).status === 401
-          ) {
-            alert("로그인이 필요합니다.");
-            setIsLoginModal(true);
-            setIsLogin(false);
-            if (localStorage.getItem("key")) localStorage.removeItem("key");
-            navigate("/");
-          }
-        },
-      }
-    );
-
-  
   const setIsLogin = useSetRecoilState(isLoginState);
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
 

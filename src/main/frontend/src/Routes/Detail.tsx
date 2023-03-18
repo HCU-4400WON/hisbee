@@ -1238,16 +1238,6 @@ function Detail() {
               </Grid>
               <div className=" pt-[50px] pb-[50px] border-b-2 border-gray-300 ">
                 {isModifying ? (
-                  // <textarea
-                  //   {...register("content", {
-                  //     minLength: {
-                  //       value: 5,
-                  //       message: "내용이 너무 짧습니다.",
-                  //     },
-                  //   })}
-                  //   className="min-h-[500px] w-full p-[15px] bg-[#eeeeee]"
-                  //   placeholder="자유롭게 작성 해주세요 !"
-                  // ></textarea>
                   <MyBlock>
                     <Editor
                       // 에디터와 툴바 모두에 적용되는 클래스

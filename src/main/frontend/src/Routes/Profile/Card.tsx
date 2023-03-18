@@ -3,7 +3,7 @@ import { addLikePost, deleteLikePost, IPost } from "api";
 import { AxiosError, AxiosResponse } from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import { isLoginModalState, isLoginState } from "../../components/atom";
@@ -198,13 +198,15 @@ function Card({post, refetch} : any){
           onError: (error) => {
             if (((error as AxiosError).response as AxiosResponse).status === 401) {
               alert("로그인이 필요합니다.");
-              if (localStorage.getItem("key")) localStorage.removeItem("key");
-              setIsLoginModal(true);
-              setIsLogin(false);
+            setIsLoginModal(true);
+            setIsLogin(false);
+            if (localStorage.getItem("key")) localStorage.removeItem("key");
+            navigate("/");
             }
           },
         }
       );
+      const navigate = useNavigate();
     
       const { mutate: likeDeleteMutate, isLoading: isLikeDeleteLoading } =
         useMutation(
@@ -220,22 +222,15 @@ function Card({post, refetch} : any){
                 ((error as AxiosError).response as AxiosResponse).status === 401
               ) {
                 alert("로그인이 필요합니다.");
-                if (localStorage.getItem("key")) localStorage.removeItem("key");
-                setIsLoginModal(true);
-                setIsLogin(false);
+            setIsLoginModal(true);
+            setIsLogin(false);
+            if (localStorage.getItem("key")) localStorage.removeItem("key");
+            navigate("/");
               }
             },
           }
         );
-        const [windowSize, setWindowSize] = useState<{
-            width: number | undefined;
-            height: number | undefined;
-          }>({
-            width: undefined,
-            height: undefined,
-          });
-
-        // const [leaving, setLeaving] = useState(false);
+        
   const setIsLogin = useSetRecoilState(isLoginState);
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
