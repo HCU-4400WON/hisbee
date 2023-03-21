@@ -92,7 +92,6 @@ gap-2
 w-full
 `;
 
-//justify-self-center
 const PostItem = tw(motion.div)`
 
 relative
