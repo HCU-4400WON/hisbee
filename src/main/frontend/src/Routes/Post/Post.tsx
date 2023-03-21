@@ -227,8 +227,9 @@ function Post() {
         null
       ),
     {
-      onSuccess: () => {
-        console.log("Fetched!");
+      onSuccess: (posts) => {
+        // console.log(nowPage,order,filterCategory , filterPosition , filterPay);
+        console.log("Fetched!" ,posts as any);
       },
     }
   );
@@ -393,7 +394,7 @@ function Post() {
             <PostGrid>
               {(posts?.posts.length as number) > 0 &&
                 (posts as IPosts).posts.map((post, index) => (
-                  <Card post={post} refetch={refetch} index={index}  />
+                  <Card key={index} post={post} refetch={refetch} index={index}  />
                 ))}
             </PostGrid>
             {/* )} */}
@@ -419,7 +420,7 @@ function Post() {
                 {Array.from(
                   {
                     length: Math.ceil(
-                      (posts?.total as number) / POSTS_PER_PAGE
+                      (Number(posts?.total)) / POSTS_PER_PAGE
                     ),
                   },
                   (v, i) => i + 1

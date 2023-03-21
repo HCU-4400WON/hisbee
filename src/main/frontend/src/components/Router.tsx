@@ -12,7 +12,7 @@ import SignUpOptional from "Routes/Main/SignUpOptional";
 import LoadingAnimation from "./LoadingAnimation";
 import Slider from "./Slider";
 import Footer from "./Footer";
-import BlankPage from "Routes/BlankPage";
+import BlankPage from "Routes/BlankPage/BlankPage";
 import PrivateRoute from "./PrivateRoute";
 
 function Router() {

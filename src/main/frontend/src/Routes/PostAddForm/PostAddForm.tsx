@@ -10,7 +10,6 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { isLoginModalState, isLoginState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
 
-import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
