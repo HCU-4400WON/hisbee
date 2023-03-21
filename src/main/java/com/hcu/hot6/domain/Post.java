@@ -5,88 +5,81 @@ import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-import net.minidev.json.annotate.JsonIgnore;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Entity
 @Getter
-@SuperBuilder
-@Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DiscriminatorColumn(name = "dtype")
-public abstract class Post {
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "dtype", insertable = false, updatable = false)
-    private String dtype;
 
     @NotNull
     private String title;
     private String content;
     @NotNull
     private String contact;
-
     @Embedded
     private Period period;
-
+    private String durationList;
+    private String keywordList;
     private int total;
-    private int currTotal;
+    private int curr;
     private int remaining;
+    private int views;
     private boolean isCompleted;
+    private boolean isArchived;
+    private boolean isAutoClose;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    @NotNull
-    @JoinColumn(name = "author_id")
     private Member author;
 
     @ManyToMany
-    @JsonIgnore
     @JoinTable(name = "PostLike",
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "member_id"))
-    @Builder.Default
     private List<Member> likes = new ArrayList<>();
 
-    public static Optional<Post> determinePostType(PostCreationRequest request, Member author) {
-        switch (request.getDtype()) {
-            case "P" -> {
-                return Optional.of(new Project(request, author));
-            }
-            case "S" -> {
-                return Optional.of(new Study(request, author));
-            }
-            case "M" -> {
-                return Optional.of(new Mentoring(request, author));
-            }
-        }
-        return Optional.empty();
-    }
-
-    public Post(PostCreationRequest request, Member author, int total) {
+    public Post(PostCreationRequest request, Member author) {
         this.title = request.getTitle();
         this.content = request.getContent();
         this.contact = request.getContact();
         this.period = Period.ByPeriodBuilder()
-                .postEnd(LocalDateTime.ofInstant(request.getPostEnd().toInstant(), ZoneId.systemDefault()))
-                .projectStart(LocalDateTime.ofInstant(request.getProjectStart().toInstant(), ZoneId.systemDefault()))
-                .projectEnd(LocalDateTime.ofInstant(request.getProjectEnd().toInstant(), ZoneId.systemDefault()))
+                .postStart(request.getPostStart())
+                .postEnd(request.getPostEnd())
+                .projectStart(request.getProjectStart())
                 .build();
-        this.total = total;
+        this.total = request.getTotal();
+        this.curr = 0;
+        this.remaining = request.getTotal();
+        this.views = 0;
+        this.keywordList = String.join(
+                ",",
+                Optional.ofNullable(request.getKeywords())
+                        .orElse(List.of())
+        );
+        this.durationList = arrayToString(request.getDurations());
         registerAuthor(author);
+    }
+
+    private String arrayToString(List<Duration> durations) {
+        List<String> list = durations.stream()
+                .map(Enum::name)
+                .toList();
+
+        return String.join(
+                ",",
+                Optional.of(list)
+                        .orElse(List.of())
+        );
     }
 
     //=== 연관관계 메서드 ===//
@@ -113,17 +106,25 @@ public abstract class Post {
         return this;
     }
 
-    protected void updatePost(PostUpdateRequest request, int total, int currTotal) {
+    public void update(PostUpdateRequest request) {
         this.title = request.getTitle();
         this.content = request.getContent();
         this.contact = request.getContact();
-        this.period.setPostEnd(LocalDateTime.ofInstant(request.getPostEnd().toInstant(), ZoneId.systemDefault()));
-        this.period.setProjectStart(LocalDateTime.ofInstant(request.getProjectStart().toInstant(), ZoneId.systemDefault()));
-        this.period.setProjectEnd(LocalDateTime.ofInstant(request.getProjectEnd().toInstant(), ZoneId.systemDefault()));
-        this.total = total;
-        this.currTotal = currTotal;
-        this.remaining = total - currTotal;
-        this.isCompleted = total == currTotal;
+        this.period.update(
+                request.getPostStart(),
+                request.getPostEnd(),
+                request.getProjectStart()
+        );
+        this.total = request.getTotal();
+        this.curr = request.getCurr();
+        this.remaining = total - curr;
+        this.isCompleted = total == curr;
+        this.keywordList = String.join(
+                ",",
+                Optional.ofNullable(request.getKeywords())
+                        .orElse(List.of())
+        );
+        this.durationList = arrayToString(request.getDurations());
     }
 
     public PostReadOneResponse toResponse(String email) {
