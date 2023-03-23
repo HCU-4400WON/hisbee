@@ -5,8 +5,6 @@ import {
   createMentoring,
   deleteLikePost,
   departments,
-  IPost,
-  IPosts,
   loginCheckApi,
   posts,
   readPosts,
@@ -100,6 +98,38 @@ place-items-center
 
 const Container = tw.div`
 min-w-[480px]`;
+
+
+export interface IPost {
+  id: number;
+  writer: string;
+  title: string;
+  content: string;
+  contact: string;
+  postStart: Date;
+  postEnd: Date;
+  projectStart: Date;
+  duration: string[];
+  keywords: string[];
+  nliked: number;
+  total: number;
+  curr: number;
+  views: number;
+  createdDate: Date;
+  lastModifiedDate: Date;
+  varified?: boolean;
+  hasLiked?: boolean;
+  
+
+  // period: number;
+  // total: number;
+  // category: string;
+}
+export interface IPosts {
+  total: number;
+  posts: IPost[];
+}
+
 
 function Post() {
   const location = useLocation();
