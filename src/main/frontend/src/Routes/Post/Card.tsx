@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { addLikePost, deleteLikePost, IPost } from "api";
+import { addLikePost, deleteLikePost } from "api";
 import { AxiosError, AxiosResponse } from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import { isLoginModalState, isLoginState } from "../../components/atom";
+
 
 
 const PostItem = tw(motion.div)`
@@ -143,46 +144,46 @@ const postsVariants = {
   
 
   
-  type IdtypeToStyle = {
-    [P: string] : {
-      color: string,
-      bdColor : string,
-      text: string,
-    },
-    M: {
-      color: string,
-      bdColor : string,
-      text: string,
-    },
-    S : {
+  // type IdtypeToStyle = {
+  //   [P: string] : {
+  //     color: string,
+  //     bdColor : string,
+  //     text: string,
+  //   },
+  //   M: {
+  //     color: string,
+  //     bdColor : string,
+  //     text: string,
+  //   },
+  //   S : {
       
-        color: string,
-        bdColor : string,
-        text: string,
+  //       color: string,
+  //       bdColor : string,
+  //       text: string,
       
-    }
-  }
+  //   }
+  // }
 function Card({post, refetch, index} : any){
 
     
-    const dtypeToStyle : IdtypeToStyle = {
-        P: {
-          color: 'text-purple-400',
-          bdColor: 'bg-[#e0c3f8]',
-          text: '프로젝트',
-        },
-        M: {
-          color:"text-blue-400",
-          bdColor:'bg-[#bdc9f2]',
-          text:'멘토링'
-        },
-        S: {
-          color:"text-gray-400",
-          bdColor:'bg-[#c7c7c7]',
-          text:'스터디'
+    // const dtypeToStyle : IdtypeToStyle = {
+    //     P: {
+    //       color: 'text-purple-400',
+    //       bdColor: 'bg-[#e0c3f8]',
+    //       text: '프로젝트',
+    //     },
+    //     M: {
+    //       color:"text-blue-400",
+    //       bdColor:'bg-[#bdc9f2]',
+    //       text:'멘토링'
+    //     },
+    //     S: {
+    //       color:"text-gray-400",
+    //       bdColor:'bg-[#c7c7c7]',
+    //       text:'스터디'
     
-        }
-      }
+    //     }
+    //   }
 
     const onHeartClick = async (postId: number, hasLiked: boolean) => {
         if (hasLiked) {
@@ -252,25 +253,15 @@ function Card({post, refetch, index} : any){
       key={index}
     >
               <PostContentFirstRow
-                className={`${
-                  // post?.dtype === "P"
-                  //   ? "bg-[#e0c3f8]"
-                  //   : post?.dtype === "S"
-                  //   ? "bg-[#c7c7c7]"
-                  //   : "bg-[#bdc9f2]"
-                  dtypeToStyle[post?.dtype].bdColor
-                }`}
+                className="bg-[#c7c7c7]"
               >
                 <PostCategorySpan>
                   <PostCategoryLabel
                    
-                    className={`${
-                      
-                      dtypeToStyle[post?.dtype].color
-                    }`}
+                    className="text-gray-400"
                   >
                    
-                      {dtypeToStyle[post?.dtype].text}
+                      모집글
                   </PostCategoryLabel>
                 </PostCategorySpan>
                 <HeartSpan >

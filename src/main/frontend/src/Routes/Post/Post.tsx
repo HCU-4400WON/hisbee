@@ -319,6 +319,9 @@ function Post() {
     loginCheckMutate();
   }, []);
 
+  const [keywords , setKeywords] = useState<string[] | []>(["프로젝트" , "스터디" , "멘토링" , "밥고" , "팀 프로젝트"]);
+  const [selectedKeywords , setSelectedKeywords] = useState<string[] | []>([]);
+
   return (
     <>
       {isLoading || isLoginCheckLoading ? (
@@ -328,6 +331,44 @@ function Post() {
           {isLoginModal ? <Login /> : null}
           <Container>
             <Banner src="/img/postBannerReal.png"></Banner>
+            
+            
+            {/* keyword Categorizing */}
+              <div className="flex items-center h-[60px] border-b-2 border-gray-300 px-[50px] text-[17px]">
+                <div className="flex items-center min-w-[330px] justify-between">
+                <label htmlFor="filtering" className="">키워드</label>
+                <input id="filtering" type="text" className="border-2 border-gray-400 px-[10px]" placeholder="키워드 입력"></input>
+                <button className="px-[10px] text-white h-[29px] bg-black">검색</button>
+                </div>
+                {/* keywords */}
+                <div className="w-full ml-[50px] flex items-center">
+                {selectedKeywords.map((keyword , index) => (
+                  <div id={keyword} onClick={() => {
+                    setSelectedKeywords( (prev) => {
+                      const deleteIdx = prev.findIndex( (elem) => elem === keyword)
+                    return [...prev.splice(0,deleteIdx) , ...prev.splice(deleteIdx+1)];
+                    })
+                  }} 
+                  key={index} className="border-2 bg-black flex items-center h-[33px] text-white rounded-full text-center px-[20px] mr-[30px] ">
+                    <p>{keyword}</p>
+                    </div>))}
+                    
+
+                  {keywords.map( ( keyword, index) => (
+                    !selectedKeywords.includes(keyword as never) &&(<div id={keyword} onClick={
+                      () => {
+                        setSelectedKeywords(prev => [...prev , keyword]);
+                      }
+                    } key={index} className=" flex items-center border-2 h-[33px] border-gray-300 rounded-full text-center px-[20px] mr-[30px] ">
+                      <p>{keyword}</p>
+                      </div>)
+                    
+                  ))}
+                  
+
+                </div>
+              </div>
+            
             <FilterRow>
               <FilterTitle>CATEGORY</FilterTitle>
               <FilterButtonBox>
