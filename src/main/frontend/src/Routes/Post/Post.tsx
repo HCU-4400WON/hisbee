@@ -369,7 +369,7 @@ function Post() {
                 </div>
               </div>
             
-            <FilterRow>
+            {/* <FilterRow>
               <FilterTitle>CATEGORY</FilterTitle>
               <FilterButtonBox>
                 {categories.map((category) => (
@@ -443,7 +443,7 @@ function Post() {
                   ))}
                 </FilterButtonBox>
               </FilterRow>
-            )}
+            )} */}
 
             <SortBox>
               <div className="flex items-center">

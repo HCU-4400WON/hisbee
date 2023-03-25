@@ -9,7 +9,6 @@ import tw from "tailwind-styled-components";
 import { isLoginModalState, isLoginState } from "../../components/atom";
 
 
-
 const PostItem = tw(motion.div)`
 relative
 h-[210px] 
