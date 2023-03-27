@@ -514,7 +514,8 @@ function PostAddForm() {
 
         <>
 {/* Preview */}
-        <div className="w-full h-[600px] flex items-center justify-center">
+
+        <div className="w-full h-[600px] flex items-center justify-between px-[100px]">
           <div className="w-[400px] h-[400px] bg-[#eeeeee] p-[30px]">
             <div className="mb-[70px]">
               <span className="flex items-center justify-between mb-[20px]">
@@ -537,7 +538,20 @@ function PostAddForm() {
             
             
           </div>
+
+
+
+        <div className="w-[400px] h-[400px] border">
+          
         </div>
+
+        <div className="w-[400px] h-[400px] border">
+
+        </div>
+        </div>
+
+
+
 
         <form
           onSubmit={handleSubmit(onValid as any)}

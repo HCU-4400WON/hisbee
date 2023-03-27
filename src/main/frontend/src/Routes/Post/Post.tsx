@@ -13,7 +13,7 @@ import { AxiosError, AxiosResponse } from "axios";
 import { isLoginModalState, isLoginState } from "components/atom";
 import Login from "components/LoginModal";
 import { motion } from "framer-motion";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, ComponentRef, useEffect, useRef, useState } from "react";
 import { useLocation, useMatch, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -100,6 +100,11 @@ const Container = tw.div`
 min-w-[480px]`;
 
 
+
+const FormModifyOKIcon = tw.i`
+fa-solid fa-check text-[15px] text-black mr-[5px]
+`
+
 export interface IPost {
   id: number;
   writer: string;
@@ -136,10 +141,7 @@ function Post() {
   const search = location.state ? location.state.search : null;
 
   const [order, setOrder] = useState<string>("recent");
-  const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
-    setOrder(event.currentTarget.value);
-    console.log(event.currentTarget.value);
-  };
+  
 
   // Filtering
   const [filterCategory, setFilterCategory] = useState<string>("");
@@ -168,19 +170,8 @@ function Post() {
   //     }
   //   }
   // };
-  const onClick = (e : React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    
-    const buttonName = e.currentTarget.innerText;
-    if(Categories.includes(buttonName)){
-      const targetIndex = Categories.findIndex( elem => elem === buttonName);
-      setSelectedButton(targetIndex);
-    }
-  }
-
-  const [selectedButton , setSelectedButton] = useState<number | null>(null);
-
-
+  
+ 
 
 
   useEffect(() => {
@@ -199,7 +190,7 @@ function Post() {
     mentoring: ["mentor", "mentee"],
     project: ["planner", "developer", "designer"],
   };
-
+  
   const pays: IFiltering = {
     // study: [],
     mentoring: ["yes", "no"],
@@ -214,7 +205,7 @@ function Post() {
   // let TOTAL_POSTS = 10;
   // let POSTS_PER_PAGE = 12;
   // let TOTAL_PAGES = Math.ceil(TOTAL_POSTS / POSTS_PER_PAGE);
-
+  
   // const TOTAL_POSTS = 200;
   const POSTS_PER_PAGE = 12;
   // let TOTAL_PAGES = Math.ceil(posts?.total as number / POSTS_PER_PAGE);
@@ -248,7 +239,7 @@ function Post() {
   useEffect(() => {
     // refetch();
   }, [search, order, filterCategory, filterPosition, filterPay]);
-
+  
   // [사이에 필터링을 추가하기]
   const {
     data: posts,
@@ -333,12 +324,96 @@ function Post() {
     loginCheckMutate();
   }, []);
 
+  
+
+
+
+  const [selectedMajor , setSelectedMajor ] = useState<string | "">("");
+  const [selectedGrade , setSelectedGrade] = useState<string | "">("");
+  const [selectedCategory , setSelectedCategory] = useState<string | "">(""); // about category
+  const [keywordInput , setKeywordInput] = useState<string | "">("dd");
   const [keywords , setKeywords] = useState<string[] | []>(["프로젝트" , "스터디" , "멘토링" , "밥고" , "팀 프로젝트"]);
   const [selectedKeywords , setSelectedKeywords] = useState<string[] | []>([]);
+  
+  const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
+    const selectedId = event.currentTarget.id;
+    const selectedValue = event.currentTarget.value;
+    if(selectedId === "sortSelect"){
+      setOrder(selectedValue);
+      console.log(selectedValue);
+    }
+    else if(selectedId === "majorSelect"){
+      setSelectedMajor(selectedValue);
+      console.log(selectedValue)
+    }
+    else if(selectedId ==="gradeSelect"){
+      setSelectedGrade(selectedValue);
+      console.log(selectedValue)
 
-  const Categories = ["A" , "B" , "C" , "D" , "E" , "F" , "G" , "H"];
-  const Majors = ["전공 무관", "1","2","3","4","5","6","7","8","9","10","11","12","13"];
-  const Grades = [ "학년 무관", "23학번 새내기" , "1학년" , "2학년" , "3학년" , "4학년" , "9학기 이상"];
+    }
+    
+  };
+  const onChange = (e: React.FormEvent<HTMLInputElement>) => {
+    const selectedId = e.currentTarget.id;
+    const selectedValue = e.currentTarget.value;
+    console.log("onChange inputValue : " , selectedValue);
+    
+    if(selectedId === "keywordInput") setKeywordInput(selectedValue);
+  }
+  const onClick = (e : React.MouseEvent<HTMLButtonElement>) => {
+   
+    const selectedId = e.currentTarget.id;
+    const selectedValue = e.currentTarget.innerText;
+    // if(Categories.includes(buttonName)){
+    //   const targetIndex = Categories.findIndex( elem => elem === buttonName);
+    //   setSelectedCategory(targetIndex);
+    // }
+
+    if(selectedId ==="categoryButton"){
+      setSelectedCategory(selectedValue);
+
+      console.log(selectedValue);
+
+    }
+   
+    // else i
+    else if(selectedId === "deleteKeywordButton" ){
+      setSelectedKeywords( (prev) => {
+        const deleteIdx = prev.findIndex( (elem) => elem === selectedValue)
+        const newKeywords = [...prev.slice(0,deleteIdx) , ...prev.slice(deleteIdx+1)]
+        console.log("keyWords : " , newKeywords)
+        return newKeywords;
+        })
+
+    }
+    else if(selectedId === "insertKeywordButton"){
+      setSelectedKeywords(prev => {
+        const newKeywords = [...prev , selectedValue];
+
+        console.log("keyWords : " , newKeywords);
+        return newKeywords;
+      }
+    );
+    }
+    else if(selectedId ==="allFilterDelete"){
+      setSelectedCategory("");
+      setSelectedGrade("모든 학년");
+      if(majorRef.current) majorRef.current.selectedIndex = 0;
+      if(gradeRef.current) gradeRef.current.selectedIndex = 0;
+      setSelectedKeywords([]);
+      setSelectedMajor("모든 전공");
+      //다시 전체 모집글 refetch
+    }
+
+   
+  }
+
+  const Categories = ["동아리" , "학회" , "공모전/대회" , "스터디" , "프로젝트" , "학술모임" , "운동/게임/취미" , "기타"];
+  const Majors =  ["모든 전공" ,"글로벌리더십학부" , "국제어문학부" , "경영경제학부" , "법학부" , "커뮤니케이션학부" , "공간환경시스템공학부" , "기계제어공학부" , "콘텐츠융합디자인학부" , "생명과학부" , "전산전자공학부" , "상담심리사회복지학부" , "ICT창업학부"];
+  const Grades = ["모든 학년", "23학번 새내기" , "1학년" , "2학년" , "3학년" , "4학년" , "9학기 이상"];
+
+  const majorRef = useRef<HTMLSelectElement>(null);
+  const gradeRef = useRef<HTMLSelectElement>(null);
   return (
     <>
       {isLoading || isLoginCheckLoading ? (
@@ -349,40 +424,71 @@ function Post() {
           <Container>
             <Banner src="/img/postBannerReal.png"></Banner>
             
+          <div>
+            <div className=" flex justify-between items-center px-[50px] border-black border-b-2 w-full h-[60px]">
+              <div className="w-full flex justify-evenly">
+                {Categories.map((category, index) => (
+                
+                <button id="categoryButton" onClick={onClick} className={`${selectedCategory === category ? 'text-black' :'text-gray-400'}`} key={index}>
+                  {category}
+                </button>
+                ))}
+              
+              </div>
+                  
+                  
+            </div>
+              <div className="flex h-[60px] justify-between px-[50px] border-b-2 border-black">
+                <div className="flex  items-center">
+                  <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] border-2 border-black">
+                    {Majors.map((major, index) => (
+                      <option key={index}>
+                        {major}
+                      </option>
+                    ))}
+                  </select>
+                  <select ref={gradeRef} id="gradeSelect" onInput={onInput} className="ml-[50px] px-[10px] border-2 border-black">
+                    {Grades.map((grade,index)=> (
+                      <option key={index}>
+                        {grade}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="flex items-center">
+                    <p className="ml-[50px]">키워드</p>
+                    <input value={keywordInput} id="keywordInput" onChange={onChange} type="text" className="w-[100px] ml-[20px] px-[10px] border-2 border-black rounded-lg"/>
+                    <button className="ml-[20px] border border-black px-[5px] rounded-lg bg-black text-white">추가</button>
+                  </span>
+                  <span>
+                      <div className="w-full ml-[50px] flex items-center">
+                    {selectedKeywords.map((keyword , index) => (
+                      <button id="deleteKeywordButton" onClick={onClick} 
+                      key={index} className="text-[14px] flex items-center border-2 h-[25px] border-black rounded-lg text-center px-[10px] mr-[30px]">
+                        <FormModifyOKIcon />
+                        {keyword}
+                        </button>))}
+                        
 
-            <div className="flex justify-between items-center px-[50px] border-black border-b-2 w-full h-[60px]">
-            <div className="w-[800px] flex justify-between">
-            {Categories.map((category, index) => (
-            
-            <button onClick={onClick} className={`${selectedButton === index ? 'text-black' :'text-gray-400'}`} key={index}>
-              {category}
-            </button>
-            ))}
-            
-            </div>
-            <div className="flex items-center">
-            <select className="">
-              {Majors.map((major, index) => (
-                <option key={index}>
-                  {major}
-                </option>
-              ))}
-            </select>
-            <select className="ml-[50px]">
-              {Grades.map((grade,index)=> (
-                <option key={index}>
-                  {grade}
-                </option>
-              ))}
-            </select>
-            <span className="flex items-center">
-              <p className="ml-[50px]">키워드</p>
-              <input type="text" className="w-[100px] ml-[20px] px-[10px] border-2 border-black rounded-lg"/>
-              <button className="ml-[20px] border border-black px-[5px] rounded-lg bg-black text-white">추가</button>
-            </span>
-            </div>
-            </div>
+                      {keywords.map( ( keyword, index) => (
+                        !selectedKeywords.includes(keyword as never) &&(<button id="insertKeywordButton" onClick={onClick} key={index} className="text-[14px] flex items-center border-2 h-[25px] border-black rounded-lg text-center px-[10px] mr-[30px] ">
+                          <p>{keyword}</p>
+                          </button>)
+                        
+                      ))}
+                      
 
+                    </div>
+                  </span>
+                </div>
+              
+            
+              
+                <button id="allFilterDelete" onClick={onClick}>
+                      필터 전체 삭제 버튼
+                </button>
+              
+            </div>
+          </div>
 
             {/* keyword */}
               {/* <div className="flex items-center h-[60px] border-b-2 border-gray-300 px-[50px] text-[17px]">
@@ -496,21 +602,29 @@ function Post() {
             )} */}
 
             <SortBox>
-              <div className="flex items-center">
-                <SortTitle>Sort by</SortTitle>
-                <SortSelect  className="vertical-center" onInput={onInput} value={order}>
-                  <option id="recent" value="recent">최신 순</option>
-                  <option id="likes" value="likes">찜 많은 순</option>
-                  <option id="member" value="member">모집 인원 마감 임박</option>
-                  <option id="end" value="end">모집마감 임박순</option>
-                </SortSelect>
+              <div className="flex items-center justify-between w-[350px]">
+                <div className="flex">
+                내 전공 관련글만 보기
+                  <input type="checkBox" className=" ml-[10px] mt-[4px] w-[20px] h-[20px] bg-[#eeeeee]" />
+                </div>
+                <div className="flex items-center">
+                  {/* <SortTitle>Sort by</SortTitle> */}
+                  <SortSelect id="sortSelect" className="vertical-center" onInput={onInput} value={order}>
+                    <option id="recent" value="recent">최신 순</option>
+                    <option id="likes" value="likes">찜 많은 순</option>
+                    <option id="member" value="member">모집 인원 마감 임박</option>
+                    <option id="end" value="end">모집마감 임박순</option>
+                  </SortSelect>
+                </div>
               </div>
+              
               <Link to="/add">
                 <button className="text-[12px] md:text-[16px] text-white border border-black py-[5px] bg-black px-[20px] ">
                   모집글 쓰기
                 </button>
               </Link>
             </SortBox>
+
             {/* { ( */}
             <PostGrid>
               {(posts?.posts.length as number) > 0 &&
