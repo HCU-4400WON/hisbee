@@ -146,28 +146,42 @@ function Post() {
   const [filterPosition, setFilterPosition] = useState<string>("");
   const [filterPay, setFilterPay] = useState<string>("");
 
-  const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (event.currentTarget.id === "category") {
-      // 필터링 취소
-      if (filterCategory === event.currentTarget.name) {
-        setFilterCategory("");
-      } else setFilterCategory(event.currentTarget.name);
-      setFilterPosition("");
-      setFilterPay("");
-    } else if (event.currentTarget.id === "position") {
-      // 2차 필터링 취소
-      if (filterPosition === event.currentTarget.name) {
-        setFilterPosition("");
-      } else setFilterPosition(event.currentTarget.name);
-    } else if (event.currentTarget.id === "pay") {
-      //3차 필터링 취소
-      if (filterPay === event.currentTarget.name) {
-        setFilterPay("");
-      } else {
-        setFilterPay(event.currentTarget.name);
-      }
+  // const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  //   if (event.currentTarget.id === "category") {
+  //     // 필터링 취소
+  //     if (filterCategory === event.currentTarget.name) {
+  //       setFilterCategory("");
+  //     } else setFilterCategory(event.currentTarget.name);
+  //     setFilterPosition("");
+  //     setFilterPay("");
+  //   } else if (event.currentTarget.id === "position") {
+  //     // 2차 필터링 취소
+  //     if (filterPosition === event.currentTarget.name) {
+  //       setFilterPosition("");
+  //     } else setFilterPosition(event.currentTarget.name);
+  //   } else if (event.currentTarget.id === "pay") {
+  //     //3차 필터링 취소
+  //     if (filterPay === event.currentTarget.name) {
+  //       setFilterPay("");
+  //     } else {
+  //       setFilterPay(event.currentTarget.name);
+  //     }
+  //   }
+  // };
+  const onClick = (e : React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    
+    const buttonName = e.currentTarget.innerText;
+    if(Categories.includes(buttonName)){
+      const targetIndex = Categories.findIndex( elem => elem === buttonName);
+      setSelectedButton(targetIndex);
     }
-  };
+  }
+
+  const [selectedButton , setSelectedButton] = useState<number | null>(null);
+
+
+
 
   useEffect(() => {
     console.log(filterCategory, filterPosition, filterPay);
@@ -322,6 +336,9 @@ function Post() {
   const [keywords , setKeywords] = useState<string[] | []>(["프로젝트" , "스터디" , "멘토링" , "밥고" , "팀 프로젝트"]);
   const [selectedKeywords , setSelectedKeywords] = useState<string[] | []>([]);
 
+  const Categories = ["A" , "B" , "C" , "D" , "E" , "F" , "G" , "H"];
+  const Majors = ["전공 무관", "1","2","3","4","5","6","7","8","9","10","11","12","13"];
+  const Grades = [ "학년 무관", "23학번 새내기" , "1학년" , "2학년" , "3학년" , "4학년" , "9학기 이상"];
   return (
     <>
       {isLoading || isLoginCheckLoading ? (
@@ -332,15 +349,48 @@ function Post() {
           <Container>
             <Banner src="/img/postBannerReal.png"></Banner>
             
+
+            <div className="flex justify-between items-center px-[50px] border-black border-b-2 w-full h-[60px]">
+            <div className="w-[800px] flex justify-between">
+            {Categories.map((category, index) => (
             
-            {/* keyword Categorizing */}
-              <div className="flex items-center h-[60px] border-b-2 border-gray-300 px-[50px] text-[17px]">
+            <button onClick={onClick} className={`${selectedButton === index ? 'text-black' :'text-gray-400'}`} key={index}>
+              {category}
+            </button>
+            ))}
+            
+            </div>
+            <div className="flex items-center">
+            <select className="">
+              {Majors.map((major, index) => (
+                <option key={index}>
+                  {major}
+                </option>
+              ))}
+            </select>
+            <select className="ml-[50px]">
+              {Grades.map((grade,index)=> (
+                <option key={index}>
+                  {grade}
+                </option>
+              ))}
+            </select>
+            <span className="flex items-center">
+              <p className="ml-[50px]">키워드</p>
+              <input type="text" className="w-[100px] ml-[20px] px-[10px] border-2 border-black rounded-lg"/>
+              <button className="ml-[20px] border border-black px-[5px] rounded-lg bg-black text-white">추가</button>
+            </span>
+            </div>
+            </div>
+
+
+            {/* keyword */}
+              {/* <div className="flex items-center h-[60px] border-b-2 border-gray-300 px-[50px] text-[17px]">
                 <div className="flex items-center min-w-[330px] justify-between">
                 <label htmlFor="filtering" className="">키워드</label>
                 <input id="filtering" type="text" className="border-2 border-gray-400 px-[10px]" placeholder="키워드 입력"></input>
                 <button className="px-[10px] text-white h-[29px] bg-black">검색</button>
                 </div>
-                {/* keywords */}
                 <div className="w-full ml-[50px] flex items-center">
                 {selectedKeywords.map((keyword , index) => (
                   <div id={keyword} onClick={() => {
@@ -367,7 +417,7 @@ function Post() {
                   
 
                 </div>
-              </div>
+              </div> */}
             
             {/* <FilterRow>
               <FilterTitle>CATEGORY</FilterTitle>
