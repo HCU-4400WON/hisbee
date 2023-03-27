@@ -1,13 +1,20 @@
 package com.hcu.hot6.domain;
 
 import jakarta.persistence.Embeddable;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.util.Assert;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
-@Getter @Setter
+import static com.hcu.hot6.util.Utils.toLocalDateTime;
+
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
 public class Period {
@@ -18,20 +25,28 @@ public class Period {
     private LocalDateTime postEnd;
     @NotNull
     private LocalDateTime projectStart;
-    @NotNull
-    private LocalDateTime projectEnd;
+
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
 
     //=== 생성 메서드 ===//
     @Builder(builderClassName = "ByPeriodBuilder", builderMethodName = "ByPeriodBuilder")
-    public Period(LocalDateTime postEnd, LocalDateTime projectStart, LocalDateTime projectEnd){
-        Assert.notNull(postEnd, "모집글의 게시 마감일(postEnd)은 필수 입력사항입니다.");
-        Assert.notNull(projectStart, "모집글의 프로젝트 시작일(projectStart)은 필수 입력사항입니다.");
-        Assert.notNull(projectEnd, "모집글의 프로젝트 마감일(projectEnd)은 필수 입력사항입니다.");
-
-        this.postStart = LocalDateTime.now();
-        this.postEnd = postEnd;
-        this.projectStart = projectStart;
-        this.projectEnd = projectEnd;
+    public Period(@NotNull Date postStart,
+                  @NotNull Date postEnd,
+                  @NotNull Date projectStart) {
+        this.postStart = toLocalDateTime(postStart);
+        this.postEnd = toLocalDateTime(postEnd);
+        this.projectStart = toLocalDateTime(projectStart);
     }
 
+    public void update(Date postStart,
+                       Date postEnd,
+                       Date projectStart) {
+        this.postStart = toLocalDateTime(postStart);
+        this.postEnd = toLocalDateTime(postEnd);
+        this.projectStart = toLocalDateTime(projectStart);
+    }
 }

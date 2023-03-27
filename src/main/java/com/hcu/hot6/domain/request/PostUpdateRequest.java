@@ -1,45 +1,32 @@
 package com.hcu.hot6.domain.request;
 
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotNull;
+import com.hcu.hot6.domain.Duration;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 public class PostUpdateRequest {
-
-    private String dtype;
-
     private String title;
     private String content;
     private String contact;
-    private int maxDeveloper;
-    private int maxPlanner;
-    private int maxDesigner;
-    private int maxMentor;
-    private int maxMentee;
-    private int maxMember;
-    private int currDeveloper;
-    private int currPlanner;
-    private int currDesigner;
-    private int currMentor;
-    private int currMentee;
-    private int currMember;
+    private int total;
+    private int curr;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date postStart;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date postEnd;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date projectStart;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date projectEnd;
 
+    private List<Duration> durations;
+    private List<String> keywords;
     private boolean isCompleted;
-
-
-    private boolean hasPay;
 }

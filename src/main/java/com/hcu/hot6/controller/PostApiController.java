@@ -62,8 +62,9 @@ public class PostApiController {
     @PutMapping("/posts/{postId}")
     public ResponseEntity<PostReadOneResponse> updatePost(
             @PathVariable Long postId,
-            @RequestBody PostUpdateRequest request) {
-        return ResponseEntity.ok(postService.updatePost(postId, request));
+            @RequestBody PostUpdateRequest request,
+            @AuthenticationPrincipal OAuth2User user) {
+        return ResponseEntity.ok(postService.updatePost(postId, request, user.getName()));
     }
 
     /**
@@ -83,15 +84,8 @@ public class PostApiController {
                 .page(page)
                 .search(search)
                 .orderBy(orderBy)
-                .type(type)
-                .typeDetails(position)
-                .hasPay(hasPay)
                 .limit(limit)
                 .build();
-
-        if (filter.isNotValid()) {
-            throw new IllegalArgumentException();
-        }
 
         return ResponseEntity.ok(postService.readFilteredPost(filter, email));
     }
