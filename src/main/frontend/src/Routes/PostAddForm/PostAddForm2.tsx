@@ -1,32 +1,46 @@
-import React, { useEffect, useState } from "react";
+import { async } from "@firebase/util";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
 
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { EditorState, convertToRaw } from "draft-js";
+import draftToHtml from "draftjs-to-html";
+import styled from "styled-components";
 
+import {
+  ref,
+  getDownloadURL,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { storage } from "../../firebase";
+const converter = (what : string , info ?: string | Date) => {
+        
+    if(what === "year"){
+        let year = ((info as Date).getFullYear() + "").padStart(2, "0");
+        let month = (((info as Date).getMonth() +1) + "").padStart(2, "0");
+        let date = (info as Date).getDate();
+        let convertedDate = year + "-" + month + "-" + date;
+        // console.log("이거? " ,convertedDate);
+        return convertedDate;
+    }
+}
+
+const dateDifference = (end : string) => {
+    const date1 = new Date(converter("year" , new Date())! );
+    const date2 = new Date(end);
+
+    const diffDate = date1.getTime() - date2.getTime();
+
+    return Math.abs(diffDate / (1000 * 60 * 60 * 24));
+}
 
 function PostAddForm2(){
-
-    const converter = (what : string , info ?: string | Date) => {
-        
-        if(what === "year"){
-            let year = ((info as Date).getFullYear() + "").padStart(2, "0");
-            let month = (((info as Date).getMonth() +1) + "").padStart(2, "0");
-            let date = (info as Date).getDate();
-            let convertedDate = year + "-" + month + "-" + date;
-            console.log(convertedDate);
-            return convertedDate;
-        }
-    }
-
-    const dateDifference = (end : string) => {
-        const date1 = new Date(converter("year" , new Date())! );
-        const date2 = new Date(end);
-
-        const diffDate = date1.getTime() - date2.getTime();
-
-        return Math.abs(diffDate / (1000 * 60 * 60 * 24));
-    }
+    
+    
 
 const {register, watch ,formState , handleSubmit , getValues , setValue} = useForm({ mode: "onSubmit",
 defaultValues: {
@@ -43,9 +57,10 @@ defaultValues: {
     positionNum : "",
     grades : [],
     majors : [],
+    keyword : "",
+    // poster : "",
 
 } });
-
 
 watch("categories");
 watch("durationIndex");
@@ -53,6 +68,7 @@ watch("postStart");
 watch("postEnd");
 watch("position");
 watch("positionNum");
+watch("keyword");
 
 interface IPositionList {
     position : string,
@@ -64,13 +80,13 @@ interface IPositionList {
 // const categoriesWatch = watch("categories");
 // https://dotorimook.github.io/post/2020-10-05-rhf-watch-vs-getvalues/
 
-    useEffect( () => {
-        console.log("changed");
-    } , [])
+   
 
     const onSubmit = () =>{
         console.log(getValues("grades"));
         console.log(getValues("majors"));
+        console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
+        console.log(imageURL);
     }
 
     const Categories = ["동아리" , "프로젝트" , "학회" , "학술모임" , "공모전/대회" , "운동/게임/취미" , "전공 스터디" , "기타 모임"];
@@ -102,7 +118,83 @@ interface IPositionList {
         
     const [visible, setVisible] = useState<Boolean[]>(Array.from({length : Majors.length}, ()=>false));
     
+    const [keywords , setKeywords] = useState<string[] | []>([]);
 
+
+
+
+
+
+
+
+
+// useState로 상태관리하기 초기값은 EditorState.createEmpty()
+  // EditorState의 비어있는 ContentState 기본 구성으로 새 개체를 반환 => 이렇게 안하면 상태 값을 나중에 변경할 수 없음.
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+
+  const onEditorStateChange = (editorState: any) => {
+    // editorState에 값 설정
+    setEditorState(editorState);
+  };
+
+ 
+  
+// content : draftToHtml(convertToRaw(editorState.getCurrentContent();
+
+
+
+
+const [imageURL, setImageURL] = useState<string>("");
+const inputRef = useRef<HTMLInputElement | null>(null);
+  const onUploadImageButtonClick = useCallback(() => {
+    if (!inputRef.current) {
+      return;
+    }
+    inputRef.current.click();
+  }, []);
+
+  const onImageChange = (
+    e: React.ChangeEvent<EventTarget & HTMLInputElement>
+  ) => {
+    e.preventDefault();
+    const file = e.target.files;
+    if (!file) return null;
+
+    const storageRef = ref(storage, `files/${file[0].name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file[0]);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        // setProgressPercent(progress);
+      },
+      (error) => {
+        switch (error.code) {
+          case "storage/canceld":
+            alert("Upload has been canceled");
+            break;
+        }
+      },
+      () => {
+        e.target.value = "";
+        getDownloadURL(storageRef).then((downloadURL) => {
+          console.log("File available at", downloadURL);
+          setImageURL(downloadURL);
+        //   setValue("poster", downloadURL);
+          
+        //   (
+        //     document.querySelector("#basicImage") as HTMLElement
+        //   ).style.backgroundColor = "white";
+        //   (document.querySelector("#basicImage") as HTMLElement).style.color =
+        //     "black";
+          
+        });
+      }
+    );
+  };
     return(
         <div className="p-[50px]">
             <div className="flex justify-between border-b-2 pb-[20px]">
@@ -315,44 +407,121 @@ interface IPositionList {
                             ))}
                         </div>
                         <div className="w-full grid grid-cols-5 border">
-                        {Majors.map((major,index) => {
-                            const key = Object.keys(major)[0];
-                            const values = Object.values(major)[0];
-                            let clicked = false;
-                            return(
-                                <div className="flex flex-col">
-                                    <span key={index} className="flex items-center">
-                                        <input type="checkBox" {...register("majors")} value={key} className="ml-[10px]" />
-                                        <p>{key}</p>
-                                        {values.length !== 0 && clicked===false && <i onClick={(e : any) => {
-                                            e.currentTarget.className === "fa-solid fa-chevron-up" ? 
-                                            e.currentTarget.className="fa-solid fa-chevron-down" : 
-                                            e.currentTarget.className="fa-solid fa-chevron-up"
-                                            setVisible( prev => [...prev.slice(0,index) , !prev[index] , ...prev.slice(index+1)])
-                                            }} className="fa-solid fa-chevron-down"></i>} 
+                            {Majors.map((major,index) => {
+                                const key = Object.keys(major)[0];
+                                const values = Object.values(major)[0];
+                                let clicked = false;
+                                return(
+                                    <div className="flex flex-col">
+                                        <span key={index} className="flex items-center">
+                                            <input type="checkBox" {...register("majors")} value={key} className="ml-[10px]" />
+                                            <p>{key}</p>
+                                            {values.length !== 0 && clicked===false && <i onClick={(e : any) => {
+                                                e.currentTarget.className === "fa-solid fa-chevron-up" ? 
+                                                e.currentTarget.className="fa-solid fa-chevron-down" : 
+                                                e.currentTarget.className="fa-solid fa-chevron-up"
+                                                setVisible( prev => [...prev.slice(0,index) , !prev[index] , ...prev.slice(index+1)])
+                                                }} className="fa-solid fa-chevron-down"></i>} 
 
-                                        
-                                    </span>
-                                    {visible[index] && ( values.map((value : string , idx : number) => (
-                                        <span key={idx} className="pl-[20px] flex items-center">
-                                            <input type="checkBox" {...register("majors")} value={value} className="ml-[10px]" />
-                                            <p>{value}</p>
-                                        </span>
-                                    
-                                                ))
-                                                
                                             
-                                        )}
-                                </div>
-                        );
-                        }
-                            
-                                
+                                        </span>
+                                        {visible[index] && ( values.map((value : string , idx : number) => (
+                                            <span key={idx} className="pl-[20px] flex items-center">
+                                                <input type="checkBox" {...register("majors")} value={value} className="ml-[10px]" />
+                                                <p>{value}</p>
+                                            </span>
+                                        
+                                                    ))
+                                                    
+                                                
+                                            )}
+                                    </div>
+                                );
+                            }
                             )}
                         </div>
                     </div>
                 </div>
                 
+                <div>
+                    <p className="text-[20px] font-main">검색 키워드 입력하기</p>
+                    <p className="mt-[10px]">모집글과 관련된 키워드를 입력해주세요</p>
+                    
+                    <div className="flex">
+                        <p>키워드</p>
+                        {keywords.map( (keyword , index) => ( 
+                        <span key={index} className="flex px-[20px]">
+                            <p>{keyword}</p>
+                            <i className="fa-solid fa-xmark" onClick={ () =>
+                                setKeywords(prev => [...prev.slice(0,index) , ...prev.slice(index+1)])
+                            }></i>
+                        </span>
+                        ))}
+                    </div>
+
+                    <div className="flex">
+                        <p>키워드 입력</p>
+                        <input type="text" className="w-[300px] border-2 rounded-lg" {...register("keyword")}/>
+                        <button onClick={ async() => {
+                            
+                            await setKeywords( prev => [...prev , getValues("keyword")])
+                            setValue("keyword" , "");
+                        }}> 생성 </button>
+                    </div>
+
+                </div>
+
+                <div>
+                    <p className="text-[20px] font-main">내용 입력하기</p>
+                    <p className="mt-[10px]">모임의 목적,활동 내용 등에 대한 자세한 내용을 자유롭게 작성해주세요!</p>
+                    
+                    <Editor
+                // 에디터와 툴바 모두에 적용되는 클래스
+                wrapperClassName="wrapper-class"
+                // 에디터 주변에 적용된 클래스
+                editorClassName="editor"
+                // 툴바 주위에 적용된 클래스
+                toolbarClassName="toolbar-class"
+                // 툴바 설정
+                toolbar={{
+                  // inDropdown: 해당 항목과 관련된 항목을 드롭다운으로 나타낼것인지
+                  list: { inDropdown: true },
+                  textAlign: { inDropdown: true },
+                  link: { inDropdown: true },
+                  history: { inDropdown: false },
+                }}
+                placeholder="내용을 작성해주세요."
+                // 한국어 설정
+                localization={{
+                  locale: "ko",
+                }}
+                // 초기값 설정
+                editorState={editorState}
+                // 에디터의 값이 변경될 때마다 onEditorStateChange 호출
+                onEditorStateChange={onEditorStateChange}
+              />
+            </div>
+
+            <div>
+                <p className="text-[20px] font-main">포스터 업로드하기</p>
+                <p className="mt-[10px]">포스터를 제작하셨다면 업로드해주세요! 모집글 상세보기 페이지 및 포스터 모아보기 페이지에서 보여집니다.</p>
+                
+                <input
+                  className="hidden"
+                  type="file"
+                  accept="image/*"
+                  ref={inputRef}
+                  onChange={onImageChange}
+                />
+                <div className=" items-center justify-between flex left-[30px] top-[20px] w-[90%] md:w-[190px]">
+                    <i className="fa-solid fa-panorama w-[40px]"
+                      onClick={onUploadImageButtonClick}
+                    ></i>
+                   
+                  </div>
+                  <img className="w-[100%] h-[120px] border border-black rounded-full my-[10px]" src={imageURL}
+                    ></img>
+            </div>
             </form>
 
         </div>
