@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
@@ -28,10 +28,10 @@ function PostAddForm2(){
         return Math.abs(diffDate / (1000 * 60 * 60 * 24));
     }
 
-const {register, watch ,formState , handleSubmit , getValues} = useForm({ mode: "onSubmit",
+const {register, watch ,formState , handleSubmit , getValues , setValue} = useForm({ mode: "onSubmit",
 defaultValues: {
     categories : [],
-    durationIndex : "0",
+    durationIndex : "1",
     postStart : converter("year" , new Date()),
     postEnd : converter("year", new Date()),
     title : "",
@@ -39,13 +39,25 @@ defaultValues: {
     keywordsFirstLine : [],
     keywordsSecondLine : [],
     keywordsThirdLine : [],
+    position : "",
+    positionNum : "",
 } });
 
 
 watch("categories");
-watch("durationIndex")
-watch("postStart")
-watch("postEnd")
+watch("durationIndex");
+watch("postStart");
+watch("postEnd");
+watch("position");
+watch("positionNum");
+
+interface IPositionList {
+    position : string,
+    positionNum : number
+}
+
+    const [positionList , setPositionList] = useState<IPositionList[] | []>([]);
+
 // const categoriesWatch = watch("categories");
 // https://dotorimook.github.io/post/2020-10-05-rhf-watch-vs-getvalues/
 
@@ -58,6 +70,14 @@ watch("postEnd")
     }
 
     const Categories = ["동아리" , "프로젝트" , "학회" , "학술모임" , "공모전/대회" , "운동/게임/취미" , "전공 스터디" , "기타 모임"];
+
+    // const onClick = (e : React.FormEvent<HTMLButtonElement>) => {
+    //     const selectedId = e.currentTarget.id;
+        
+    // // }
+    // const onDelete = (id : number) => {
+    //     ;
+    // }
 
     return(
         <div className="p-[50px]">
@@ -139,7 +159,7 @@ watch("postEnd")
 
 
 
-                    <div className="w-[300px] h-[350px] border px-[40px] py-[30px]">
+                    <div className="w-[270px] h-[350px] px-[40px] py-[30px]">
                         <p>모집 기간</p>
                         <span className="flex mt-[20px]">
                             <input type="radio" {...register("durationIndex")} value="0" className="mr-[10px]"/>
@@ -160,7 +180,7 @@ watch("postEnd")
                         
                     </div>
 
-                    <div className="w-[600px] h-[350px] border px-[40px] py-[30px]">
+                    <div className="w-[600px] h-[350px] px-[40px] py-[30px]">
                         <p>모임 유형(카테고리)</p>
                         <div className="flex">
                             <div className="grid grid-cols-2 w-[300px]"> 
@@ -172,13 +192,84 @@ watch("postEnd")
                             ))}
                             </div>
                             <div className="flex flex-col justify-end">
-                                <input type="text" className="border border-gray-400 rounded-lg w-full" placeholder="(선택입력) 기타모임유형명"/>
+                                <input type="text" className="border border-gray-400 rounded-lg w-full px-[10px]" placeholder="(선택) 기타 모임"/>
                             </div>
                         </div>
                     </div>
                 </div>
-                                <button>제출 테스트</button>
-        </form>
+                                {/* <button>제출 테스트</button> */}
+                <div>
+                    <p className="text-[20px] font-main">최소 내용 입력하기</p>
+                    <p className="mt-[10px]">모집글을 완성하기 위한 최소한의 내용을 적어주세요!</p>
+                    <div className="flex">
+                        <div className="w-[400px] h-[250px]  mt-[20px]">
+                            <p className="">모집 인원</p>
+                            <span className="flex mt-[10px]">
+                                <input className="border-2 rounded-lg px-[10px] " {...register("position")} placeholder="(선택) 포지션" type="text" />
+                                <input className="border-2 max-w-[70px] rounded-lg px-[10px] ml-[10px]" {...register("positionNum")} placeholder="인원" type="number" />
+                                <p className="ml-[5px]">명</p>
+                            </span>
+                            
+                            {positionList.length > 0 && (
+                                positionList?.map((elem , index) => (
+                                    <div  key={index} className="flex items-center justify-between bg-slate-200 px-[10px] w-[200px] lg:w-[300px] xl:w-[400px]  h-[30px] mt-[10px]">
+                                    <i className="fa-solid fa-link"></i>
+                                    <p>{elem.position}</p> 
+                                    {/* <p>{elem.positionNum}명</p> */}
+                                    <span className="flex items-center">
+                                        <span onClick={() => {
+                                            const newElem = {
+                                                position : elem.position,
+                                                positionNum : elem.positionNum + 1,
+                                            }
+                                            setPositionList( prev => [...prev.slice(0,index) , newElem ,...prev.slice(index+1)]);
+                                        }}>+</span>
+                                        <p className="mx-[10px]">{elem.positionNum}명</p>
+                                        <span onClick={() => {
+                                            const newElem = {
+                                                position : elem.position,
+                                                positionNum : elem.positionNum - 1,
+                                            }
+                                            setPositionList( prev => [...prev.slice(0,index) , newElem ,...prev.slice(index+1)]);
+                                        }}>-</span>
+                                    </span>
+                                    <i
+                                        className="fa-regular fa-trash-can"
+                                        onClick={ () => setPositionList( prev => [...prev.slice(0,index) , ...prev.slice(index+1)]) }
+                                    ></i>
+                                     </div>
+                                ))
+                                
+                            )}
+                            <button className="border w-[25px] h-[25px] rounded-lg mt-[40px]"
+                            onClick={ () => {
+                                const newPosition = {
+                                    position : getValues("position") !== "" ? getValues("position") : "누구든지",
+                                    positionNum : +getValues("positionNum"),
+                                }
+                                setPositionList( prev => [...prev , newPosition]);
+                                setValue("position","");
+                                setValue("positionNum" ,"");
+                            
+                            }}>+</button>
+                        </div>
+                        <div className="w-[800px] h-[250px] mt-[20px] p-[30px]">
+                            <span className="flex">
+                                <p className="w-[110px]">신청 방법</p>
+                                <input type="text" className="w-full border-2 rounded-lg ml-[20px] px-[10px]" placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."/>
+                            </span>
+                            <span className="flex mt-[10px]">
+                                <p className="w-[110px]">신청 방법 안내</p>
+                                <textarea className="p-[10px] w-full h-[200px] border-2 rounded-lg ml-[20px]" placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요.&#13;&#10;예시) 메일 제목은 '리쿠르팅 접수'로 해주시고 본인의 작업물이 담긴 포트폴리오를 10장 이하의 분량의 pdf로 보내주세요."/>
+                            </span>
+                            
+                        </div>
+                    </div>
+
+                
+                </div>
+                
+            </form>
 
         </div>
     )
