@@ -41,6 +41,9 @@ defaultValues: {
     keywordsThirdLine : [],
     position : "",
     positionNum : "",
+    grades : [],
+    majors : [],
+
 } });
 
 
@@ -66,7 +69,8 @@ interface IPositionList {
     } , [])
 
     const onSubmit = () =>{
-        console.log(getValues("categories"));
+        console.log(getValues("grades"));
+        console.log(getValues("majors"));
     }
 
     const Categories = ["동아리" , "프로젝트" , "학회" , "학술모임" , "공모전/대회" , "운동/게임/취미" , "전공 스터디" , "기타 모임"];
@@ -78,6 +82,26 @@ interface IPositionList {
     // const onDelete = (id : number) => {
     //     ;
     // }
+    
+
+    const Grades = ["상관없음" , "23학번 새내기" , "1학년" , "2학년" , "3학년" , "4학년" , "9학기 이상"];
+    const Majors = [
+        {"상관없음":[]},
+        {"경영경제학부" : ["경영학", "경제학" , "GM"]},
+        {"상당심리사회복지학부" : ["상담심리학" , "사회복지학"]},
+        {"생명과학부" : ["생명과학부"]},
+        {"전산전자공학부" : ["AI 컴퓨터공학심화" , "컴퓨터공학" , "전자공학심화"]},
+        {"ICT창업학부" : ["GE" , "ICT융합" , "ACE"]},
+        {"커뮤니케이션학부" : ["언론정보학" , "공연영상학"]},
+        {"기계제어공학부" : ["기계공학" , "전자제어공학"]},
+        {"국제어문학부" : ["국제지역학", "영어"]},
+        {"법학부" : ["한국법", "UIL"]},
+        {"공간환경시스템공학부" : ["건설공학" , "도시환경공학"]},
+        {"콘텐츠융합디자인학부" : ["시각디자인" , "제품디자인"]},            
+    ]
+        
+    const [visible, setVisible] = useState<Boolean[]>(Array.from({length : Majors.length}, ()=>false));
+    
 
     return(
         <div className="p-[50px]">
@@ -197,7 +221,7 @@ interface IPositionList {
                         </div>
                     </div>
                 </div>
-                                {/* <button>제출 테스트</button> */}
+                                <button>제출 테스트</button>
                 <div>
                     <p className="text-[20px] font-main">최소 내용 입력하기</p>
                     <p className="mt-[10px]">모집글을 완성하기 위한 최소한의 내용을 적어주세요!</p>
@@ -243,8 +267,15 @@ interface IPositionList {
                             )}
                             <button className="border w-[25px] h-[25px] rounded-lg mt-[40px]"
                             onClick={ () => {
+
+                               if (positionList.find((elem) => elem.position === getValues("position")) || (positionList.find((elem) => elem.position === "아무나") && getValues("position")==="")){
+
+                                setValue("position","");
+                                setValue("positionNum" ,"");
+                                return;
+                               } 
                                 const newPosition = {
-                                    position : getValues("position") !== "" ? getValues("position") : "누구든지",
+                                    position : getValues("position") !== ""  ? getValues("position") :"아무나",
                                     positionNum : +getValues("positionNum"),
                                 }
                                 setPositionList( prev => [...prev , newPosition]);
@@ -253,7 +284,7 @@ interface IPositionList {
                             
                             }}>+</button>
                         </div>
-                        <div className="w-[800px] h-[250px] mt-[20px] p-[30px]">
+                        <div className="w-[800px] h-[250px] mt-[20px] px-[100px]">
                             <span className="flex">
                                 <p className="w-[110px]">신청 방법</p>
                                 <input type="text" className="w-full border-2 rounded-lg ml-[20px] px-[10px]" placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."/>
@@ -267,6 +298,59 @@ interface IPositionList {
                     </div>
 
                 
+                </div>
+
+
+                <div>
+                    <p className="text-[20px] font-main">모집 대상 조건 설정하기</p>
+                    <p className="mt-[10px]">모집글들을 필터링할 때 쓰이는 정보이니 채워주시면 좋습니다.</p>
+
+                    <div className="flex w-full">
+                        <div className="flex flex-col w-[300px] border h-[400px]">
+                            {Grades.map((grade,index) => (
+                                <span key={index} className="flex items-center">
+                                    <input type="checkBox" {...register("grades")} value={grade} className="ml-[10px]" />
+                                    <p>{grade}</p>
+                                </span>
+                            ))}
+                        </div>
+                        <div className="w-full grid grid-cols-5 border">
+                        {Majors.map((major,index) => {
+                            const key = Object.keys(major)[0];
+                            const values = Object.values(major)[0];
+                            let clicked = false;
+                            return(
+                                <div className="flex flex-col">
+                                    <span key={index} className="flex items-center">
+                                        <input type="checkBox" {...register("majors")} value={key} className="ml-[10px]" />
+                                        <p>{key}</p>
+                                        {values.length !== 0 && clicked===false && <i onClick={(e : any) => {
+                                            e.currentTarget.className === "fa-solid fa-chevron-up" ? 
+                                            e.currentTarget.className="fa-solid fa-chevron-down" : 
+                                            e.currentTarget.className="fa-solid fa-chevron-up"
+                                            setVisible( prev => [...prev.slice(0,index) , !prev[index] , ...prev.slice(index+1)])
+                                            }} className="fa-solid fa-chevron-down"></i>} 
+
+                                        
+                                    </span>
+                                    {visible[index] && ( values.map((value : string , idx : number) => (
+                                        <span key={idx} className="pl-[20px] flex items-center">
+                                            <input type="checkBox" {...register("majors")} value={value} className="ml-[10px]" />
+                                            <p>{value}</p>
+                                        </span>
+                                    
+                                                ))
+                                                
+                                            
+                                        )}
+                                </div>
+                        );
+                        }
+                            
+                                
+                            )}
+                        </div>
+                    </div>
                 </div>
                 
             </form>
