@@ -439,7 +439,17 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                         <div className="flex flex-col w-[300px] border h-[400px]">
                             {Grades.map((grade,index) => (
                                 <span key={index} className="flex items-center mt-[10px]">
-                                    <input type="checkBox" {...register("grades")} value={grade} className="mx-[10px] " />
+                                    <input type="checkBox" {...register("grades")} value={grade} className="mx-[10px]" onClick = {
+                                        (e : any) => {
+                                            if(index === 0 && e.target.checked){
+                                                setValue("grades", [grade as never]);
+                                            }
+                                            else if( index!== 0 && getValues("grades").includes("상관없음" as never)){
+                                                e.preventDefault();
+                                                return;
+                                            }
+                                        }
+                                    } />
                                     <p>{grade}</p>
                                 </span>
                             ))}
@@ -452,7 +462,28 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 return(
                                     <div className="flex flex-col">
                                         <span key={index} className="flex items-center px-[20px] py-[10px]">
-                                            {/* <input type="checkBox" {...register("majors")} value={key} className="ml-[10px]" /> */}
+                                            <input type="checkBox" {...register("majors")} value={key} className="mr-[10px]" onClick={(e : any) => 
+                                            {
+                                                if(index === 0){
+                                                    if(e.target.checked) setValue("majors" , [Object.keys(major)[0] as never]);
+                                                }
+                                                else if(getValues("majors").includes("상관없음" as never)){
+                                                    e.preventDefault();
+                                                    return;
+                                                }
+                                                else if(e.target.checked){
+                                                    const inputList = document.querySelectorAll(`#majors${index}`);
+                                                    for(let i = 0 ; i < inputList.length ; ++i){
+                                                        (inputList[i] as any).checked  = true;
+                                                    }
+                                                }else{
+                                                    const inputList = document.querySelectorAll(`#majors${index}`);
+                                                    for(let i = 0 ; i < inputList.length ; ++i){
+                                                        (inputList[i] as any) .checked  = false;
+                                                    }
+                                                }
+                                            }
+                                            } />
                                             <p className="mr-[10px]">{key}</p>
                                             {values.length !== 0 && clicked===false && <i onClick={(e : any) => {
                                                 e.currentTarget.className === "fa-solid fa-chevron-up" ? 
@@ -465,7 +496,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                         </span>
                                         {visible[index] && ( values.map((value : string , idx : number) => (
                                             <span key={idx} className="pl-[20px] flex items-center">
-                                                <input type="checkBox" {...register("majors")} value={value} className="mx-[10px]" />
+                                                <input type="checkBox" id={`majors${index}`} {...register("majors")} value={value} className="mx-[10px]" />
                                                 <p>{value}</p>
                                             </span>
                                         
