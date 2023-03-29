@@ -445,7 +445,8 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                                 setValue("grades", [grade as never]);
                                             }
                                             else if( index!== 0 && getValues("grades").includes("상관없음" as never)){
-                                                e.preventDefault();
+                                                // e.preventDefault();
+                                                setValue("grades", [grade as never]);
                                                 return;
                                             }
                                         }
@@ -467,11 +468,17 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                                 if(index === 0){
                                                     if(e.target.checked) setValue("majors" , [Object.keys(major)[0] as never]);
                                                 }
-                                                else if(getValues("majors").includes("상관없음" as never)){
-                                                    e.preventDefault();
-                                                    return;
-                                                }
+                                                // else if(getValues("majors").includes("상관없음" as never)){
+                                                //     e.preventDefault();
+                                                //     // setValue("majors" , [Object.keys(major)[0] as never]);
+                                                //     return;
+                                                // }
                                                 else if(e.target.checked){
+                                                    // 상관없음 체크 된 상황, 큰 카테고리 체크하였을 때 상관없음 체크 해제
+                                                    if(getValues("majors").includes("상관없음" as never)){
+                                                        setValue("majors" , [Object.keys(major)[0] as never]);
+                                                    }
+                                                    // 큰 카테고리와 하위 카테고리 체크
                                                     const inputList = document.querySelectorAll(`#majors${index}`);
                                                     for(let i = 0 ; i < inputList.length ; ++i){
                                                         (inputList[i] as any).checked  = true;
@@ -496,7 +503,14 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                         </span>
                                         {visible[index] && ( values.map((value : string , idx : number) => (
                                             <span key={idx} className="pl-[20px] flex items-center">
-                                                <input type="checkBox" id={`majors${index}`} {...register("majors")} value={value} className="mx-[10px]" />
+                                                <input type="checkBox" id={`majors${index}`} {...register("majors")} value={value} className="mx-[10px]"
+                                                onClick={() => {
+                                                    //상관없음 체크 되었을 때, 하위 카테고리 체크시 상관없음 체크 해제
+                                                    if(getValues("majors").includes("상관없음" as never)){
+                                                        setValue("majors" , [value as never]);
+                                                    }
+                                                }}
+                                                />
                                                 <p>{value}</p>
                                             </span>
                                         
