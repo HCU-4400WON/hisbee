@@ -17,6 +17,23 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { storage } from "../../firebase";
+
+const MyBlock = styled.div`
+
+  .wrapper-class {
+    margin: 0 auto;
+    margin-bottom: 4rem;
+    border: 2px solid lightGray !important;
+  }
+  .editor {
+    
+    min-height: 300px !important;
+    border-top: 3px solid lightGray !important;
+    padding: 10px !important;
+    border-radius: 2px !important;
+  }
+`;
+
 const converter = (what : string , info ?: string | Date) => {
         
     if(what === "year"){
@@ -42,7 +59,7 @@ function PostAddForm2(){
     
     
 
-const {register, watch ,formState , handleSubmit , getValues , setValue} = useForm({ mode: "onSubmit",
+const {register, watch ,formState , handleSubmit , getValues , setValue , trigger} = useForm({ mode: "onSubmit",
 defaultValues: {
     categories : [],
     durationIndex : "1",
@@ -58,17 +75,14 @@ defaultValues: {
     grades : [],
     majors : [],
     keyword : "",
+    firstKeyword : "",
+    secondKeyword : "",
+    thirdKeyword : "",
     // poster : "",
 
 } });
 
-watch("categories");
-watch("durationIndex");
-watch("postStart");
-watch("postEnd");
-watch("position");
-watch("positionNum");
-watch("keyword");
+watch(["categories", "durationIndex" , "postStart" , "postEnd" , "position" , "positionNum" , "keyword" , "keywordsFirstLine" , "keywordsSecondLine" ,"keywordsThirdLine"]);
 
 interface IPositionList {
     position : string,
@@ -116,9 +130,13 @@ interface IPositionList {
         {"콘텐츠융합디자인학부" : ["시각디자인" , "제품디자인"]},            
     ]
         
-    const [visible, setVisible] = useState<Boolean[]>(Array.from({length : Majors.length}, ()=>false));
+    const [visible, setVisible] = useState<Boolean[]>(Array.from({length : Majors.length}, ()=>true));
     
     const [keywords , setKeywords] = useState<string[] | []>([]);
+
+
+    const [firstKeywords , setFirstKeywords] = useState<string[]>();
+
 
 
 
@@ -140,6 +158,8 @@ interface IPositionList {
  
   
 // content : draftToHtml(convertToRaw(editorState.getCurrentContent();
+
+
 
 
 
@@ -256,19 +276,37 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                             </span>
                         <i className="fa-regular fa-heart text-[23px] text-gray-400"></i>
                         </span>
+                        
+                        
                         <input className="w-[340px] text-[20px] p-[5px] mb-[10px]" {...register("title")} type="text" placeholder="모집글 제목을 입력하세요" />
                         <textarea className="w-[340px] text-[15px] px-[5px] p-[2px]" {...register("subTitle")} placeholder="모집글 제목을 입력하세요" />
 
                         </div>
-                        <div className="mb-[10px]">
+                        {[{array:"keywordsFirstLine" , str : "firstKeyword"} , {array:"keywordsSecondLine" , str : "secondKeyword"} ,{array:"keywordsThirdLine" , str : "thirdKeyword"}].map( (lineObj , index) => (
+                            <div key={index} className="flex mb-[10px] items-center">
+                            {/* firstLine Keyword */}
+                            
+                            {getValues(lineObj.array as any)?.map( (keyword : string,index : number) => (
+                                <div key={index} className="px-[20px] bg-white mr-[10px]">
+                                    {keyword}
+                                </div>
+                            ))}
+                            <input type="text" className="px-[5px] w-[90px]" {...register(lineObj.str as any)} placeholder="키워드 입력"/>
+                            <button onClick={async() => {
+                                if(getValues(lineObj.str as any) === "") return;
+                                setValue(lineObj.array as any , await [...getValues(lineObj.array as any), getValues(lineObj.str as any)] as never );
+                                setValue(lineObj.str as any , "");
+                            }} className="px-[10px] bg-white ml-[5px] rounded-full"> + </button>
+                        </div>
+                        ))}
+                        
+                        
+                        {/* <div className=" mb-[10px]">
                         <input type="text" className="px-[5px] w-[100px]" placeholder="키워드 입력"/>
                         </div>
                         <div className=" mb-[10px]">
                         <input type="text" className="px-[5px] w-[100px]" placeholder="키워드 입력"/>
-                        </div>
-                        <div className=" mb-[10px]">
-                        <input type="text" className="px-[5px] w-[100px]" placeholder="키워드 입력"/>
-                        </div>
+                        </div> */}
                         
                         
                     </div>
@@ -400,8 +438,8 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                     <div className="flex w-full">
                         <div className="flex flex-col w-[300px] border h-[400px]">
                             {Grades.map((grade,index) => (
-                                <span key={index} className="flex items-center">
-                                    <input type="checkBox" {...register("grades")} value={grade} className="ml-[10px]" />
+                                <span key={index} className="flex items-center mt-[10px]">
+                                    <input type="checkBox" {...register("grades")} value={grade} className="mx-[10px] " />
                                     <p>{grade}</p>
                                 </span>
                             ))}
@@ -413,9 +451,9 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 let clicked = false;
                                 return(
                                     <div className="flex flex-col">
-                                        <span key={index} className="flex items-center">
-                                            <input type="checkBox" {...register("majors")} value={key} className="ml-[10px]" />
-                                            <p>{key}</p>
+                                        <span key={index} className="flex items-center px-[20px] py-[10px]">
+                                            {/* <input type="checkBox" {...register("majors")} value={key} className="ml-[10px]" /> */}
+                                            <p className="mr-[10px]">{key}</p>
                                             {values.length !== 0 && clicked===false && <i onClick={(e : any) => {
                                                 e.currentTarget.className === "fa-solid fa-chevron-up" ? 
                                                 e.currentTarget.className="fa-solid fa-chevron-down" : 
@@ -427,7 +465,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                         </span>
                                         {visible[index] && ( values.map((value : string , idx : number) => (
                                             <span key={idx} className="pl-[20px] flex items-center">
-                                                <input type="checkBox" {...register("majors")} value={value} className="ml-[10px]" />
+                                                <input type="checkBox" {...register("majors")} value={value} className="mx-[10px]" />
                                                 <p>{value}</p>
                                             </span>
                                         
@@ -444,11 +482,11 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                 </div>
                 
                 <div>
-                    <p className="text-[20px] font-main">검색 키워드 입력하기</p>
+                    <p className="text-[20px] font-main mt-[50px]">검색 키워드 입력하기</p>
                     <p className="mt-[10px]">모집글과 관련된 키워드를 입력해주세요</p>
                     
                     <div className="flex">
-                        <p>키워드</p>
+                        <p className="mt-[10px]">키워드</p>
                         {keywords.map( (keyword , index) => ( 
                         <span key={index} className="flex px-[20px]">
                             <p>{keyword}</p>
@@ -459,10 +497,10 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                         ))}
                     </div>
 
-                    <div className="flex">
-                        <p>키워드 입력</p>
+                    <div className="flex  mt-[10px]">
+                        <p className="mr-[20px]">키워드 입력</p>
                         <input type="text" className="w-[300px] border-2 rounded-lg" {...register("keyword")}/>
-                        <button onClick={ async() => {
+                        <button className="ml-[20px] bg-black text-white  px-[10px]" onClick={ async() => {
                             
                             await setKeywords( prev => [...prev , getValues("keyword")])
                             setValue("keyword" , "");
@@ -472,9 +510,9 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                 </div>
 
                 <div>
-                    <p className="text-[20px] font-main">내용 입력하기</p>
-                    <p className="mt-[10px]">모임의 목적,활동 내용 등에 대한 자세한 내용을 자유롭게 작성해주세요!</p>
-                    
+                    <p className="text-[20px] font-main mt-[50px]">내용 입력하기</p>
+                    <p className="mt-[10px] mb-[20px]">모임의 목적,활동 내용 등에 대한 자세한 내용을 자유롭게 작성해주세요!</p>
+                    <MyBlock>
                     <Editor
                 // 에디터와 툴바 모두에 적용되는 클래스
                 wrapperClassName="wrapper-class"
@@ -500,6 +538,8 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                 // 에디터의 값이 변경될 때마다 onEditorStateChange 호출
                 onEditorStateChange={onEditorStateChange}
               />
+                    </MyBlock>
+                    
             </div>
 
             <div>
@@ -519,8 +559,16 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                     ></i>
                    
                   </div>
-                  <img className="w-[100%] h-[120px] border border-black rounded-full my-[10px]" src={imageURL}
-                    ></img>
+                  <div className="flex justify-center">
+                  {imageURL !== "" ? (<img className="w-[500px] border-2 mt-[30px]" src={imageURL}
+                    ></img>) : (<div className="w-[400px] h-[400px] border-2 border-gray-300 mt-[30px] flex justify-center items-center">
+                        <i className="fa-solid fa-plus text-gray-300 text-[40px]"></i>
+                    </div>)}
+
+                    </div>
+            </div>
+            <div className="flex justify-end mt-[50px]">
+            <button className="text-white bg-black text-[20px] px-[20px]"> 제출하기</button>
             </div>
             </form>
 
