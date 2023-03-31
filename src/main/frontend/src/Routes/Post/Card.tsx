@@ -162,6 +162,9 @@ const postsVariants = {
       
   //   }
   // }
+
+  
+
 function Card({post, refetch, index} : any){
 
     
@@ -259,7 +262,7 @@ function Card({post, refetch, index} : any){
                    
                     className="text-gray-400"
                   >
-                   
+                    
                       모집글
                   </PostCategoryLabel>
                 </PostCategorySpan>

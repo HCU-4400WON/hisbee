@@ -331,7 +331,7 @@ function Post() {
   const [selectedMajor , setSelectedMajor ] = useState<string | "">("");
   const [selectedGrade , setSelectedGrade] = useState<string | "">("");
   const [selectedCategory , setSelectedCategory] = useState<string | "">(""); // about category
-  const [keywordInput , setKeywordInput] = useState<string | "">("dd");
+  const [keywordInput , setKeywordInput] = useState<string | "">("");
   const [keywords , setKeywords] = useState<string[] | []>(["프로젝트" , "스터디" , "멘토링" , "밥고" , "팀 프로젝트"]);
   const [selectedKeywords , setSelectedKeywords] = useState<string[] | []>([]);
   

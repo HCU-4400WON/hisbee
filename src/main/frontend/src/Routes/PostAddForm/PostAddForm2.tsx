@@ -114,9 +114,9 @@ interface IPositionList {
     // }
     
 
-    const Grades = ["상관없음" , "23학번 새내기" , "1학년" , "2학년" , "3학년" , "4학년" , "9학기 이상"];
+    const Grades = ["23학번 새내기" , "1학년" , "2학년" , "3학년" , "4학년" , "9학기 이상"];
     const Majors = [
-        {"상관없음":[]},
+        // {"상관없음":[]},
         {"경영경제학부" : ["경영학", "경제학" , "GM"]},
         {"상당심리사회복지학부" : ["상담심리학" , "사회복지학"]},
         {"생명과학부" : ["생명과학부"]},
@@ -165,6 +165,7 @@ interface IPositionList {
 
 
 const [imageURL, setImageURL] = useState<string>("");
+const [imageURLList , setImageURLList] = useState< string[] | []>([]);
 const inputRef = useRef<HTMLInputElement | null>(null);
   const onUploadImageButtonClick = useCallback(() => {
     if (!inputRef.current) {
@@ -203,6 +204,8 @@ const inputRef = useRef<HTMLInputElement | null>(null);
         getDownloadURL(storageRef).then((downloadURL) => {
           console.log("File available at", downloadURL);
           setImageURL(downloadURL);
+          setImageURLList(prev => [...prev , downloadURL]);
+          
         //   setValue("poster", downloadURL);
           
         //   (
@@ -215,6 +218,10 @@ const inputRef = useRef<HTMLInputElement | null>(null);
       }
     );
   };
+
+  const [gradeToggle ,setGradeToggle] = useState<boolean>(false);
+  const [majorToggle, setMajorToggle] = useState<boolean>(false);
+
     return(
         <div className="p-[50px]">
             <div className="flex justify-between border-b-2 pb-[20px]">
@@ -437,7 +444,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
 
                     <div className="flex w-full">
                         <div className="flex flex-col w-[300px] border h-[400px]">
-                            {Grades.map((grade,index) => (
+                            {/* {Grades.map((grade,index) => (
                                 <span key={index} className="flex items-center mt-[10px]">
                                     <input type="checkBox" {...register("grades")} value={grade} className="mx-[10px]" onClick = {
                                         (e : any) => {
@@ -453,10 +460,78 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                     } />
                                     <p>{grade}</p>
                                 </span>
-                            ))}
+                            ))} */}
+
+
+    <span className={`flex items-center mt-[10px] ${gradeToggle && ('text-gray-400')}`}>
+    {gradeToggle ? (
+        <input type="checkBox" {...register("grades")} value="상관없음" disabled className="mx-[10px]"></input>
+    ) : (<input type="checkBox" {...register("grades")} value="상관없음" checked className="mx-[10px]"></input>)}
+    
+    <p>상관없음</p>
+    </span>
+
+<span className="flex items-center mt-[10px]">
+                            <p className="mx-[10px]">학년 선택하기</p>
+    <i className={gradeToggle ? `fa-solid fa-chevron-up` :`fa-solid fa-chevron-down`} onClick={() => {
+        if(gradeToggle) setValue("grades" , ["상관없음"] as any);
+        else setValue("grades" , []);
+        setGradeToggle(prev => !prev);
+        console.log(getValues("grades"))
+    }
+    }></i>
+</span>
+                            {gradeToggle && (
+                                <>
+                                {Grades.map((grade,index) => (
+                                    <span key={index} className="flex items-center mt-[10px]">
+                                        <input type="checkBox" {...register("grades")} value={grade} className="mx-[10px]" onClick = {
+                                            (e : any) => {
+                                                // if(index === 0 && e.target.checked){
+                                                //     setValue("grades", [grade as never]);
+                                                // }
+                                                // else if( index!== 0 && getValues("grades").includes("상관없음" as never)){
+                                                //     // e.preventDefault();
+                                                //     setValue("grades", [grade as never]);
+                                                //     return;
+                                                // }
+                                            }
+                                        } />
+                                        <p>{grade}</p>
+                                    </span>
+                                ))}
+                                </>
+                            )}
+                            
                         </div>
+
+                        
                         <div className="w-full grid grid-cols-5 border">
-                            {Majors.map((major,index) => {
+
+                            <div>
+                            <span className={`flex items-start mt-[10px] ${majorToggle && ('text-gray-400')}`}>
+                            {majorToggle ? (
+                                <input type="checkBox" {...register("majors")} value="상관없음" disabled className="mx-[10px] mt-[5px]"></input>
+                            ) : (<input type="checkBox" {...register("majors")} value="상관없음" checked className="mx-[10px] mt-[5px]"></input>)}
+                            
+                            <p>상관없음</p>
+                            </span>
+
+
+                            <span className="flex items-center mt-[10px]">
+                                <p className="mx-[10px]">전공 선택하기</p>
+                                <i className={majorToggle ? `fa-solid fa-chevron-up` :`fa-solid fa-chevron-down`} onClick={() => {
+                                    if(majorToggle) setValue("majors" , ["상관없음"] as any);
+                                    else setValue("majors", []);
+                                    setMajorToggle(prev => !prev);
+                                }
+                                }></i>
+                            </span>
+                            </div>
+                            {majorToggle && (
+
+                                <>
+                                {Majors.map((major,index) => {
                                 const key = Object.keys(major)[0];
                                 const values = Object.values(major)[0];
                                 let clicked = false;
@@ -465,19 +540,12 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                         <span key={index} className="flex items-center px-[20px] py-[10px]">
                                             <input type="checkBox" {...register("majors")} value={key} className="mr-[10px]" onClick={(e : any) => 
                                             {
-                                                if(index === 0){
-                                                    if(e.target.checked) setValue("majors" , [Object.keys(major)[0] as never]);
-                                                }
-                                                // else if(getValues("majors").includes("상관없음" as never)){
-                                                //     e.preventDefault();
-                                                //     // setValue("majors" , [Object.keys(major)[0] as never]);
-                                                //     return;
-                                                // }
-                                                else if(e.target.checked){
+                                                
+                                                if(e.target.checked){
                                                     // 상관없음 체크 된 상황, 큰 카테고리 체크하였을 때 상관없음 체크 해제
-                                                    if(getValues("majors").includes("상관없음" as never)){
-                                                        setValue("majors" , [Object.keys(major)[0] as never]);
-                                                    }
+                                                    // if(getValues("majors").includes("상관없음" as never)){
+                                                    //     setValue("majors" , [Object.keys(major)[0] as never]);
+                                                    // }
                                                     // 큰 카테고리와 하위 카테고리 체크
                                                     const inputList = document.querySelectorAll(`#majors${index}`);
                                                     for(let i = 0 ; i < inputList.length ; ++i){
@@ -504,12 +572,12 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                         {visible[index] && ( values.map((value : string , idx : number) => (
                                             <span key={idx} className="pl-[20px] flex items-center">
                                                 <input type="checkBox" id={`majors${index}`} {...register("majors")} value={value} className="mx-[10px]"
-                                                onClick={() => {
+                                                // onClick={() => {
                                                     //상관없음 체크 되었을 때, 하위 카테고리 체크시 상관없음 체크 해제
-                                                    if(getValues("majors").includes("상관없음" as never)){
-                                                        setValue("majors" , [value as never]);
-                                                    }
-                                                }}
+                                                    // if(getValues("majors").includes("상관없음" as never)){
+                                                    //     setValue("majors" , [value as never]);
+                                                    // }
+                                                // }}
                                                 />
                                                 <p>{value}</p>
                                             </span>
@@ -521,7 +589,9 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                     </div>
                                 );
                             }
+                            )}</>
                             )}
+                            
                         </div>
                     </div>
                 </div>
@@ -532,6 +602,13 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                     
                     <div className="flex">
                         <p className="mt-[10px]">키워드</p>
+                        {["categories", "keywordsFirstLine" , "keywordsSecondLine" , "keywordsThirdLine"].map((elem ) => (
+                            getValues(elem as any)?.map((v : string,index : number) => (
+                            <span key={index}>
+                                <p>{v}</p>
+                            </span>))
+                            
+                        ))}
                         {keywords.map( (keyword , index) => ( 
                         <span key={index} className="flex px-[20px]">
                             <p>{keyword}</p>
@@ -604,13 +681,30 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                     ></i>
                    
                   </div>
-                  <div className="flex justify-center">
-                  {imageURL !== "" ? (<img className="w-[500px] border-2 mt-[30px]" src={imageURL}
-                    ></img>) : (<div className="w-[400px] h-[400px] border-2 border-gray-300 mt-[30px] flex justify-center items-center">
+                  <div className="grid grid-cols-3">
+                  {imageURLList?.map((imageUrl : string , index : number) => (
+                    
+                    <span>
+                   <img className="w-[400px] border-2 mt-[30px]" src={imageUrl} key={index}
+                   ></img>
+                   <button onClick={ () => {
+                    setImageURLList(prev => [...prev.slice(0,index) , ...prev.slice(index+1)]);
+                   }}>delete</button>
+                   </span>
+                    
+                ))}
+                <div onClick={onUploadImageButtonClick} className="w-[400px] h-[400px] border-2 border-gray-300 mt-[30px] flex justify-center items-center">
+                        <i className="fa-solid fa-plus text-gray-300 text-[40px]"></i>
+                    </div>
+                </div>
+                
+                  {/* <div className="flex justify-center">
+                  {imageURLList.length !== 0 ? (<img className="w-[500px] border-2 mt-[30px]" src={imageURLList[0]}
+                    ></img>) : (<div onClick={onUploadImageButtonClick} className="w-[400px] h-[400px] border-2 border-gray-300 mt-[30px] flex justify-center items-center">
                         <i className="fa-solid fa-plus text-gray-300 text-[40px]"></i>
                     </div>)}
 
-                    </div>
+                    </div> */}
             </div>
             <div className="flex justify-end mt-[50px]">
             <button className="text-white bg-black text-[20px] px-[20px]"> 제출하기</button>
