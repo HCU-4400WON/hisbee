@@ -20,27 +20,41 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
     private Long id;
 
     @NotNull
-    private String title;
-    private String content;
-    @NotNull
-    private String contact;
-    @Embedded
-    private Period period;
-    private String durationList;
-    private String keywordList;
-    private int total;
-    private int curr;
-    private int remaining;
-    private int views;
-    private boolean isCompleted;
-    private boolean isArchived;
-    private boolean isAutoClose;
-
     @ManyToOne(fetch = FetchType.LAZY)
     private Member author;
+    @NotNull
+    private String postTypes;   // keyword. "," 콤마로 구분
+    @NotNull
+    private String contact;
+
+    // 필수 아닌 필드
+    private String content;
+    private String contactDetails;
+    private String targetYears;         // 다중선택 가능. "," 콤마로 구분
+    private String targetDepartment;    // 다중선택 가능. "," 콤마로 구분
+
+    @OneToMany(mappedBy = "post")
+    @JoinColumn(name="bookmark_id")
+    private List<Bookmark> bookmarks;
+    @OneToMany(mappedBy = "post")
+    @JoinColumn(name="position_id")
+    private List<Position> positions;
+
+    @OneToMany(mappedBy = "post")
+    @JoinColumn(name = "poster_id")
+    private List<Poster> posters;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "thumbnail_id")
+    private Thumbnail thumbnail;
+
+    private String keywords;            // 추가 설명 키워드. "," 콤마로 구분
+    private Long views;                 // 조회수
+    private boolean isAutoClose;
 
     @ManyToMany
     @JoinTable(name = "PostLike",
@@ -49,24 +63,13 @@ public class Post {
     private List<Member> likes = new ArrayList<>();
 
     public Post(PostCreationRequest request, Member author) {
-        this.title = request.getTitle();
         this.content = request.getContent();
         this.contact = request.getContact();
-        this.period = Period.ByPeriodBuilder()
-                .postStart(request.getPostStart())
-                .postEnd(request.getPostEnd())
-                .projectStart(request.getProjectStart())
-                .build();
-        this.total = request.getTotal();
-        this.curr = 0;
-        this.remaining = request.getTotal();
-        this.views = 0;
-        this.keywordList = String.join(
+        this.keywords = String.join(
                 ",",
                 Optional.ofNullable(request.getKeywords())
                         .orElse(List.of())
         );
-        this.durationList = arrayToString(request.getDurations());
         registerAuthor(author);
     }
 
@@ -93,7 +96,6 @@ public class Post {
             throw new IllegalArgumentException("Already liked the post.");
         }
         this.likes.add(member);
-        member.getLikes().add(this);
         return this;
     }
 
@@ -102,29 +104,12 @@ public class Post {
             throw new IllegalArgumentException("No match member found: " + member);
         }
         this.likes.remove(member);
-        member.getLikes().remove(this);
         return this;
     }
 
     public void update(PostUpdateRequest request) {
-        this.title = request.getTitle();
         this.content = request.getContent();
         this.contact = request.getContact();
-        this.period.update(
-                request.getPostStart(),
-                request.getPostEnd(),
-                request.getProjectStart()
-        );
-        this.total = request.getTotal();
-        this.curr = request.getCurr();
-        this.remaining = total - curr;
-        this.isCompleted = total == curr;
-        this.keywordList = String.join(
-                ",",
-                Optional.ofNullable(request.getKeywords())
-                        .orElse(List.of())
-        );
-        this.durationList = arrayToString(request.getDurations());
     }
 
     public PostReadOneResponse toResponse(String email) {

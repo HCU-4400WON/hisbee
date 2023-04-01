@@ -68,8 +68,30 @@ public class PostRepository {
                 .fetchOne();
     }
 
+    /*Todo: 키워드 필터링 테스트 미완*/
     private BooleanExpression eqSearch(String keyword) {
-        return (Strings.isBlank(keyword)) ? null : post.title.contains(keyword);
+        //return (Strings.isBlank(keyword)) ? null : post.title.contains(keyword); // 기존 코드
+        if(Strings.isBlank(keyword)) return null;
+
+        String[] searchTokens = keyword.split(","); // 검색할 키워드 ,(콤마)로 분류
+
+        int flag = 0;   // 키워드 포함 안됨 -> 필터링에서 걸러짐
+        BooleanExpression be = null;
+        for(int i=0; i<searchTokens.length; i++){   // 검색할 키워드 중, 하나라도 포함하고 있는 게시글인 fetch
+            be = eqSearchOne(searchTokens[i]);
+            if(be != null) {
+                flag = 1;
+                break;
+            }
+        }
+
+        if(flag == 0) return null;  // 검색할 키워드 중, 아무것도 포함하고 있지 않은 게시글은 걸러짐
+        return be;
+
+    }
+
+    private BooleanExpression eqSearchOne(String token){
+        return post.keywordList.contains("," + token + ",");
     }
 
     private OrderSpecifier<?> orderCond(OrderBy orderBy) {

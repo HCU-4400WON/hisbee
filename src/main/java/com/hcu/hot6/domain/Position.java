@@ -2,29 +2,22 @@ package com.hcu.hot6.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 
-@RequiredArgsConstructor
-public enum Position {
-    ORDINARY("일반"),
-    PLANNER("기획자"),
-    DESIGNER("디자이너"),
-    DEVELOPER("개발자");
+@Getter
+@Entity
+public class Position {
 
-    private final String name;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private int count;
 
-    @JsonCreator
-    public static Department from(String property) {
-        return Arrays.stream(Department.values())
-                .filter(value -> value.getName().equals(property))
-                .findFirst()
-                .orElseThrow();
-    }
-
-    @JsonValue
-    public String getName() {
-        return name;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Post post;
 }

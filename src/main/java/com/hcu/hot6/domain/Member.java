@@ -20,6 +20,7 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long id;
 
     @NotNull
@@ -34,9 +35,6 @@ public class Member {
     @Enumerated(value = EnumType.STRING)
     private Department department;
 
-    @Enumerated(value = EnumType.STRING)
-    private Position position;
-
     private boolean isPublic = false;
     private String nickname;
     private String bio;
@@ -46,11 +44,14 @@ public class Member {
     private String externalLinks;
     private boolean isRegistered = true;
 
-    @ManyToMany(mappedBy = "likes")
-    private List<Post> likes = new ArrayList<>();
+    @OneToMany(mappedBy = "member")
+    private List<Bookmark> bookmarks = new ArrayList<>();
 
     @OneToMany(mappedBy = "author", orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Archive> archives = new ArrayList<>();
 
     //=== 생성 메서드 ===//
     @Builder(builderClassName = "ByMemberBuilder", builderMethodName = "ByMemberBuilder")
@@ -58,7 +59,6 @@ public class Member {
         this.email = email;
         this.pictureUrl = pictureUrl;
         this.department = department;
-        this.position = position;
         this.isPublic = isPublic;
         this.nickname = nickname;
         this.bio = bio;
@@ -66,7 +66,6 @@ public class Member {
         this.club = club;
         this.contact = contact;
         this.externalLinks = externalLinks;
-        this.likes = likes;
         this.posts = posts;
     }
 
@@ -86,7 +85,6 @@ public class Member {
 
         // 인재풀 등록시 필수 공개 정보
         this.department = Objects.isNull(form.getDepartment()) ? department : form.getDepartment();
-        this.position = Objects.isNull(form.getPosition()) ? position : form.getPosition();
         this.grade = Objects.isNull(form.getGrade()) ? grade : form.getGrade();
         this.contact = Objects.isNull(form.getContact()) ? contact : form.getContact();
 

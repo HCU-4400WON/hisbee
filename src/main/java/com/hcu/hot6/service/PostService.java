@@ -6,6 +6,7 @@ import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
+import com.hcu.hot6.domain.response.KeywordSearchedResponse;
 import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.domain.response.PostFilterResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
