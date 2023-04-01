@@ -112,15 +112,11 @@ public class PostControllerTest {
     public void createMentoring() throws Exception {
         // 1L를 PK로 가지는 유저가 있는 상태에서 테스트. -> 통과
         PostCreationRequest request = PostCreationRequest.builder()
-                .dtype("M")
                 .title("title")
                 .content("content")
                 .contact("contact")
                 .postEnd(new Date())
                 .projectStart(new Date())
-                .projectEnd(new Date())
-                .maxMentor(1)
-                .maxMentee(2)
                 .build();
 
         MvcResult result = mockMvc
@@ -137,7 +133,6 @@ public class PostControllerTest {
         MockHttpServletResponse response = result.getResponse();
         PostCreationResponse res = objectMapper.readValue(response.getContentAsString(), PostCreationResponse.class);
 
-        assertThat(res.getDtype()).isEqualTo("M");
         assertThat(res.getTitle()).isEqualTo("title");
     }
 
@@ -158,15 +153,11 @@ public class PostControllerTest {
     @Test
     public void notnull_validation() throws Exception {
         PostCreationRequest request = PostCreationRequest.builder()
-                .dtype("M")
                 // .title("title") # missing title
                 .content("content")
                 .contact("contact")
                 .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
-                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
-                .maxMentor(1)
-                .maxMentee(2)
                 .build();
 
         mockMvc
@@ -191,15 +182,11 @@ public class PostControllerTest {
     @Test
     public void 모집인원_음수() throws Exception {
         PostCreationRequest request = PostCreationRequest.builder()
-                .dtype("M")
                 .title("title")
                 .content("content")
                 .contact("contact")
                 .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
-                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
-                .maxMentor(-1)
-                .maxMentee(2)
                 .build();
 
         mockMvc
@@ -220,15 +207,11 @@ public class PostControllerTest {
     @WithMockUser
     public void 모집글_삭제() throws Exception {
         PostCreationRequest request = PostCreationRequest.builder()
-                .dtype("M")
                 .title("title")
                 .content("content")
                 .contact("contact")
                 .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
-                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
-                .maxMentor(2)
-                .maxMentee(2)
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -250,15 +233,11 @@ public class PostControllerTest {
     @WithMockUser
     public void 모집글_상세_보기_소유자_아님() throws Exception {
         PostCreationRequest request = PostCreationRequest.builder()
-                .dtype("M")
                 .title("title")
                 .content("content")
                 .contact("contact")
                 .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
-                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
-                .maxMentor(2)
-                .maxMentee(2)
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -274,7 +253,6 @@ public class PostControllerTest {
                 PostReadOneResponse.class);
 
         assertThat(response.getContent()).isEqualTo("content");
-        assertThat(response.getMaxMentor()).isEqualTo(2);
         assertThat(response.getPostEnd()).isEqualTo("2023-03-02T00:00");
         assertThat(response.isVerified()).isFalse();
     }
@@ -283,15 +261,11 @@ public class PostControllerTest {
     @Test
     public void 모집글_상세_보기_소유자_확인() throws Exception {
         PostCreationRequest request = PostCreationRequest.builder()
-                .dtype("M")
                 .title("title")
                 .content("content")
                 .contact("contact")
                 .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
-                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
-                .maxMentor(2)
-                .maxMentee(2)
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -310,7 +284,6 @@ public class PostControllerTest {
                 PostReadOneResponse.class);
 
         assertThat(response.getContent()).isEqualTo("content");
-        assertThat(response.getMaxMentor()).isEqualTo(2);
         assertThat(response.getPostEnd()).isEqualTo("2023-03-02T00:00");
         assertThat(response.isVerified()).isTrue();
     }
@@ -321,15 +294,11 @@ public class PostControllerTest {
     @WithMockUser
     public void 모집글_수정_Mentoring() throws Exception {
         PostCreationRequest request = PostCreationRequest.builder()
-                .dtype("M")
                 .title("title")
                 .content("content")
                 .contact("contact")
                 .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
-                .projectEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
-                .maxMentor(2)
-                .maxMentee(2)
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -354,15 +323,11 @@ public class PostControllerTest {
     public void 찜_추가() throws Exception {
         // given
         var post = postService.createPost(PostCreationRequest.builder()
-                .dtype("M")
                 .title("title")
                 .content("content")
                 .contact("contact")
                 .postEnd(Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
-                .projectEnd(Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
-                .maxMentor(1)
-                .maxMentee(2)
                 .build(), TEST_EMAIL);
 
         // when
@@ -379,22 +344,17 @@ public class PostControllerTest {
         PostReadOneResponse results = objectMapper.readValue(mvcResult.getResponse()
                 .getContentAsString(), PostReadOneResponse.class);
 
-        assertThat(results.getNLiked()).isEqualTo(1);
     }
 
     @Test
     public void 찜_삭제() throws Exception {
         // given
         var post = postService.createPost(PostCreationRequest.builder()
-                .dtype("M")
                 .title("title")
                 .content("content")
                 .contact("contact")
                 .postEnd(Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
-                .projectEnd(Timestamp.valueOf(LocalDateTime.of(2023, 7, 2, 0, 0, 0)))
-                .maxMentor(1)
-                .maxMentee(2)
                 .build(), TEST_EMAIL);
 
         postService.addBookmark(post.getId(), "lifeIsGood@test.com");
@@ -413,22 +373,17 @@ public class PostControllerTest {
         PostReadOneResponse results = objectMapper.readValue(mvcResult.getResponse()
                 .getContentAsString(), PostReadOneResponse.class);
 
-        assertThat(results.getNLiked()).isEqualTo(0);
     }
 
     @Test
     public void 인재풀_조회_모집글_포함() throws Exception {
         // given
         postService.createPost(PostCreationRequest.builder()
-                .dtype("M")
                 .title("title")
                 .content("content")
                 .contact("contact")
                 .postEnd(new Date())
                 .projectStart(new Date())
-                .projectEnd(new Date())
-                .maxMentor(1)
-                .maxMentee(2)
                 .build(), "lifeIsGood@test.com");
 
         // when

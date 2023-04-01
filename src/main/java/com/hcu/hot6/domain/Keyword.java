@@ -14,11 +14,6 @@ public class Keyword {
 
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Post post;
-
-    public Keyword(String name, Post post) {
-        this.name = name;
-        this.post = post;
-    }
+    private Long count;
+    private boolean isCategory;
 }

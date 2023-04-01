@@ -6,9 +6,11 @@ import com.hcu.hot6.domain.enums.PostTypeDetails;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
+import com.hcu.hot6.domain.response.KeywordSearchedResponse;
 import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.domain.response.PostFilterResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
+import com.hcu.hot6.service.KeywordService;
 import com.hcu.hot6.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ import java.util.Objects;
 public class PostApiController {
 
     private final PostService postService;
+    private final KeywordService keywordService;
 
     /**
      * 모집글 게시(CREATE)
@@ -88,6 +91,14 @@ public class PostApiController {
                 .build();
 
         return ResponseEntity.ok(postService.readFilteredPost(filter, email));
+    }
+
+    /**
+     * 키워드 겁색
+     * */
+    @GetMapping("/posts/keywords")
+    public ResponseEntity<KeywordSearchedResponse> searchKeywords(@RequestParam(required = false) String searchWord){
+        return ResponseEntity.ok(keywordService.readSearchedKeyword(searchWord));
     }
 
     @PostMapping("/posts/{postId}/likes")
