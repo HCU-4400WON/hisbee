@@ -39,7 +39,7 @@ const converter = (what : string , info ?: string | Date) => {
     if(what === "year"){
         let year = ((info as Date).getFullYear() + "").padStart(2, "0");
         let month = (((info as Date).getMonth() +1) + "").padStart(2, "0");
-        let date = (info as Date).getDate();
+        let date = ((info as Date).getDate() + "").padStart(2,"0");
         let convertedDate = year + "-" + month + "-" + date;
         // console.log("이거? " ,convertedDate);
         return convertedDate;
@@ -62,7 +62,7 @@ function PostAddForm2(){
 const {register, watch ,formState , handleSubmit , getValues , setValue , trigger} = useForm({ mode: "onSubmit",
 defaultValues: {
     categories : [],
-    durationIndex : "1",
+    durationIndex : "0",
     postStart : converter("year" , new Date()),
     postEnd : converter("year", new Date()),
     title : "",
@@ -250,17 +250,16 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                 </div>
 
                 <p className="flex justify-end text-[#ff0000] mt-[20px]">
-                    오른쪽에 * 표시가 있는 항목은 필수 입력 항목입니다!
+                    * 표시는 필수 입력 내용입니다.
                 </p>
                 
             <form onSubmit={handleSubmit(onSubmit)} className="px-[20px]">
                 <p className="text-[20px] font-main">
-                    썸네일 구성하기
+                    썸네일 제작
                 </p>
                 <p className="mt-[10px]">
-                    썸네일을 보고 어떤 모집글인지 바로 알 수 있도록 핵심 내용만 간결하게 넣어주세요!
+                    썸네일을 보고 무슨 모집글인지  알기 쉽도록 만들어주세요!
                 </p>
-                    
 
                 <div className="w-full h-[600px] flex items-center justify-between ">
                     <div className="w-[400px] h-[350px] bg-[#eeeeee] p-[30px]">
@@ -320,47 +319,72 @@ const inputRef = useRef<HTMLInputElement | null>(null);
 
 
 
-                    <div className="w-[270px] h-[350px] px-[40px] py-[30px]">
+                    <div className="w-[300px] h-[350px] px-[40px] py-[30px]">
                         <p>모집 기간</p>
                         <span className="flex mt-[20px]">
-                            <input type="radio" {...register("durationIndex")} value="0" className="mr-[10px]"/>
-                            <p>상시 모집</p>
+                            {/* <input type="radio" {...register("durationIndex")} value="0" className="mr-[10px]"/> */}
+                            {/* <p>상시 모집</p> */}
+                            <button className={`${getValues("durationIndex") === "0" ? 'bg-purple-200 border-2 border-purple-300' : 'bg-gray-200'} px-[15px] py-[8px] rounded-lg`} onClick={() => setValue("durationIndex" , '0')}>상시 모집</button>
                         </span>
 
-                        <span className="flex mt-[20px] mb-[10px]">
-                            <input {...register("durationIndex")} type="radio" value="1" className="mr-[10px]"/>
-                            <p>기간 설정</p>
+                        <span className="flex mt-[20px] mb-[0px]">
+                            {/* <input {...register("durationIndex")} type="radio" value="1" className="mr-[10px]"/> */}
+                            {/* <p>기간 설정</p> */}
+                            <button className={`${getValues("durationIndex") === "1" ? 'bg-purple-200 border-2 border-purple-300' : 'bg-gray-200'} px-[15px] py-[8px] rounded-lg`} onClick={() => setValue("durationIndex", "1")}>기간 설정</button>
                         </span>
                         {getValues("durationIndex") === "1" && (<span className="pl-[30px] mb-[200px]">
-                            <input type="date" {...register("postStart")}/>
-                            <span className="flex pl-[30px] mt-[10px]">
-                                <span className="mr-[10px]">~</span>
+                            <span className="flex items-center mb-[10px]">
+                                <p className="mx-[15px]">시작</p>
+                                <input type="date" {...register("postStart")}/>
+                            </span>
+                            
+                            <span className="flex items-center">
+                                <p className="mx-[15px]">마감</p>
                                 <input type="date" {...register("postEnd")}/>
                             </span>
                         </span>)}
+                        <button></button>
+                        
                         
                     </div>
 
                     <div className="w-[600px] h-[350px] px-[40px] py-[30px]">
-                        <p>모임 유형(카테고리)</p>
+                        <span className="flex items-center">모임 유형(카테고리) <p className="text-[13px] ml-[20px]">최대 2개 선택 가능</p></span>
+                        
                         <div className="flex">
                             <div className="grid grid-cols-2 w-[300px]"> 
                             {Categories.map((category,index) => (
                                 (<span key={index} className="flex items-center mt-[20px]">
-                                    <input {...register("categories")} value={category} type="checkBox" className="mx-[10px]" />
-                                    <p>{category}</p>
+                                    {/* <input {...register("categories")} value={category} type="checkBox" className="mx-[10px]" /> */}
+                                    {/* <p>{category}</p> */}
+                                    <button className={`${getValues("categories").includes(category as never) ? 'bg-purple-200 border-2 border-purple-300' : 'bg-gray-200'} px-[15px] py-[8px] rounded-lg`} onClick={
+                                        async() => {
+                                            const gv = getValues("categories");
+                                            const gvIdx = gv.indexOf(category as never);
+                                            if(!gv.includes(category as never) && gv.length < 2) {
+                                                await setValue("categories" , [ ...gv , category as never ]);
+                                                if(category === "기타 모임") document.getElementById("categoryETC")?.focus();
+                                            } else if(gv.includes(category as never) && gv.length <= 2){
+                                                
+                                                setValue("categories" , [...gv.slice(0,gvIdx) , ...gv.slice(gvIdx+1)]);
+                                            }
+                                        }
+                                    }>{category}</button>
+                                    
                                 </span>)
                             ))}
                             </div>
                             <div className="flex flex-col justify-end">
-                                <input type="text" className="border border-gray-400 rounded-lg w-full px-[10px]" placeholder="(선택) 기타 모임"/>
+                            {getValues("categories").includes("기타 모임" as never) && (
+                                        <input type="text" id="categoryETC" className="border-b-2 h-[40px] border-gray-400 w-full px-[10px]" placeholder="모집 유형을 입력해주세요"/>
+                                    )}
                             </div>
                         </div>
                     </div>
                 </div>
                                 <button>제출 테스트</button>
                 <div>
-                    <p className="text-[20px] font-main">최소 내용 입력하기</p>
+                    <p className="text-[20px] font-main">모집글 필수 내용</p>
                     <p className="mt-[10px]">모집글을 완성하기 위한 최소한의 내용을 적어주세요!</p>
                     <div className="flex">
                         <div className="w-[400px] h-[250px]  mt-[20px]">
