@@ -8,7 +8,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,6 +57,9 @@ public class Post {
     private String keywords;            // 추가 설명 키워드. "," 콤마로 구분
     private Long views;                 // 조회수
     private boolean isAutoClose;
+    @CreatedDate
+    private LocalDateTime createdDate;
+    private LocalDateTime lastModifiedDate;
 
     @ManyToMany
     @JoinTable(name = "PostLike",
@@ -115,4 +120,5 @@ public class Post {
     public PostReadOneResponse toResponse(String email) {
         return new PostReadOneResponse(this, email);
     }
+
 }
