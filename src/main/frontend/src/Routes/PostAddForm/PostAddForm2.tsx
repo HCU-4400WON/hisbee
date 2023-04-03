@@ -69,7 +69,7 @@ defaultValues: {
     subTitle : "",
     keywordsFirstLine : [],
     keywordsSecondLine : [],
-    keywordsThirdLine : [],
+    // keywordsThirdLine : [],
     position : "",
     positionNum : "",
     grades : [],
@@ -77,12 +77,13 @@ defaultValues: {
     keyword : "",
     firstKeyword : "",
     secondKeyword : "",
-    thirdKeyword : "",
+    positionToggle : false,
+    total: "0",
     // poster : "",
 
 } });
 
-watch(["categories", "durationIndex" , "postStart" , "postEnd" , "position" , "positionNum" , "keyword" , "keywordsFirstLine" , "keywordsSecondLine" ,"keywordsThirdLine"]);
+watch(["categories", "durationIndex" , "postStart" , "postEnd" , "position" , "positionNum" , "keyword" , "keywordsFirstLine" , "keywordsSecondLine" , "positionToggle" ]);
 
 interface IPositionList {
     position : string,
@@ -222,6 +223,8 @@ const inputRef = useRef<HTMLInputElement | null>(null);
   const [gradeToggle ,setGradeToggle] = useState<boolean>(false);
   const [majorToggle, setMajorToggle] = useState<boolean>(false);
 
+
+
     return(
         <div className="p-[50px]">
             <div className="flex justify-between border-b-2 pb-[20px]">
@@ -261,9 +264,9 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                     썸네일을 보고 무슨 모집글인지  알기 쉽도록 만들어주세요!
                 </p>
 
-                <div className="w-full h-[600px] flex items-center justify-between ">
-                    <div className="w-[400px] h-[350px] bg-[#eeeeee] p-[30px]">
-                        <div className="mb-[50px]">
+                <div className="w-full h-[400px] flex items-center justify-between my-[20px] ">
+                    <div className="w-[400px] bg-[#eeeeee] p-[30px]">
+                        <div className="mb-[30px]">
                         <span className="flex items-center justify-between mb-[20px]">
                             <span className="flex items-center">
                                 {/* <input className="w-[70px] px-[10px] rounded-full mr-[20px]" placeholder="일정 입력"/> */}
@@ -276,28 +279,31 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                   : "D-"+ dateDifference(getValues("postEnd")! )}
                                 </span>
 
-                                {getValues("categories").length !==0 && getValues("categories").map((category : string, index : number) => 
-                                    <span className="bg-white px-[10px] rounded-full mr-[10px]" key={index}>{category}</span>
-                                )}
+                                
                             </span>
                         <i className="fa-regular fa-heart text-[23px] text-gray-400"></i>
                         </span>
                         
                         
-                        <input className="w-[340px] text-[20px] p-[5px] mb-[10px]" {...register("title")} type="text" placeholder="모집글 제목을 입력하세요" />
-                        <textarea className="w-[340px] text-[15px] px-[5px] p-[2px]" {...register("subTitle")} placeholder="모집글 제목을 입력하세요" />
+                        <input className="w-[340px] text-[20px] py-[5px] px-[15px] mb-[10px]" {...register("title")} type="text" placeholder="모집글 제목을 입력하세요" />
+                        <textarea className="w-[340px] text-[15px] px-[15px] pt-[5px]" {...register("subTitle")} placeholder="모집글 제목을 입력하세요" />
 
                         </div>
-                        {[{array:"keywordsFirstLine" , str : "firstKeyword"} , {array:"keywordsSecondLine" , str : "secondKeyword"} ,{array:"keywordsThirdLine" , str : "thirdKeyword"}].map( (lineObj , index) => (
+                        <div className="flex items-center">
+                        {getValues("categories").length !==0 && getValues("categories").map((category : string, index : number) => 
+                                    <div className="bg-purple-200 py-[5px] mb-[20px] px-[15px] rounded-full mr-[10px]" key={index}>{category}</div>
+                        )}
+                        </div>
+                        {[{array:"keywordsFirstLine" , str : "firstKeyword"} , {array:"keywordsSecondLine" , str : "secondKeyword"} ,].map( (lineObj , index) => (
                             <div key={index} className="flex mb-[10px] items-center">
                             {/* firstLine Keyword */}
                             
                             {getValues(lineObj.array as any)?.map( (keyword : string,index : number) => (
-                                <div key={index} className="px-[20px] bg-white mr-[10px]">
+                                <div key={index} className="text-[15px] px-[15px] py-[1px] rounded-full border-2 border-purple-300 bg-purple-200 mr-[10px]">
                                     {keyword}
                                 </div>
                             ))}
-                            <input type="text" className="px-[5px] w-[90px]" {...register(lineObj.str as any)} placeholder="키워드 입력"/>
+                            <input type="text" className="py-[2px] px-[15px] w-[110px] rounded-full" {...register(lineObj.str as any)} placeholder="키워드 입력"/>
                             <button onClick={async() => {
                                 if(getValues(lineObj.str as any) === "") return;
                                 setValue(lineObj.array as any , await [...getValues(lineObj.array as any), getValues(lineObj.str as any)] as never );
@@ -382,26 +388,40 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                         </div>
                     </div>
                 </div>
-                                <button>제출 테스트</button>
+                <button className="mb-[70px] py-[10px] text-[16px] px-[15px] border-2 border-blue-500 text-blue-500 rounded-lg">다른 모집글은 어떻게 작성되었는지 살펴보세요!</button>
+                         
                 <div>
                     <p className="text-[20px] font-main">모집글 필수 내용</p>
                     <p className="mt-[10px]">모집글을 완성하기 위한 최소한의 내용을 적어주세요!</p>
                     <div className="flex">
                         <div className="w-[400px] h-[250px]  mt-[20px]">
                             <p className="">모집 인원</p>
-                            <span className="flex mt-[10px]">
-                                <input className="border-2 rounded-lg px-[10px] " {...register("position")} placeholder="(선택) 포지션" type="text" />
-                                <input className="border-2 max-w-[70px] rounded-lg px-[10px] ml-[10px]" {...register("positionNum")} placeholder="인원" type="number" />
-                                <p className="ml-[5px]">명</p>
-                            </span>
                             
-                            {positionList.length > 0 && (
+                            {getValues("positionToggle") === true ? (
+                                <span className="flex mt-[10px] items-center">
+                                    <div></div>
+                                <input className="border-b-2 px-[10px] w-[100px]" {...register("position")} placeholder="포지션" type="text" />
+                                <p className="mx-[10px] text-gray-400">:</p>
+                                <input className="border-b-2 px-[10px] w-[50px] px-[10px]" {...register("positionNum")} type="number" />
+                                <p className="ml-[5px]">명</p>
+                                <button onClick={()=> setValue("positionToggle" , false )} className="ml-[20px] bg-blue-100 text-blue-400 rounded-lg px-[15px] py-[5px]">인원만 입력하기</button>
+                            </span>
+                            ) : (
+                                <span className="flex mt-[10px] items-center">
+                                    <input className="border-b-2 px-[10px] w-[50px] px-[10px]" {...register("total")} type="number" />
+                                    <p className="ml-[5px]">명</p>
+                                    <button onClick={()=> setValue("positionToggle" , true )} className="ml-[20px] bg-blue-100 text-blue-400 rounded-lg px-[15px] py-[5px]">포지션 : 인원으로 입력하기</button>
+                                </span>
+                            )}
+                            
+                            
+                            {getValues("positionToggle")===true && positionList.length > 0 && (
                                 positionList?.map((elem , index) => (
-                                    <div  key={index} className="flex items-center justify-between bg-slate-200 px-[10px] w-[200px] lg:w-[300px] xl:w-[400px]  h-[30px] mt-[10px]">
+                                    <div  key={index} className="flex items-center justify-between border-2 border-blue-500 rounded-lg py-[2px] px-[10px] w-[200px] lg:w-[300px] xl:w-[343px] text-blue-500 my-[20px]">
                                     <i className="fa-solid fa-link"></i>
                                     <p>{elem.position}</p> 
                                     {/* <p>{elem.positionNum}명</p> */}
-                                    <span className="flex items-center">
+                                    <span className="flex items-center ">
                                         <span onClick={() => {
                                             const newElem = {
                                                 position : elem.position,
@@ -426,24 +446,26 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 ))
                                 
                             )}
-                            <button className="border w-[25px] h-[25px] rounded-lg mt-[40px]"
-                            onClick={ () => {
-
-                               if (positionList.find((elem) => elem.position === getValues("position")) || (positionList.find((elem) => elem.position === "아무나") && getValues("position")==="")){
-
-                                setValue("position","");
-                                setValue("positionNum" ,"");
-                                return;
-                               } 
-                                const newPosition = {
-                                    position : getValues("position") !== ""  ? getValues("position") :"아무나",
-                                    positionNum : +getValues("positionNum"),
-                                }
-                                setPositionList( prev => [...prev , newPosition]);
-                                setValue("position","");
-                                setValue("positionNum" ,"");
-                            
-                            }}>+</button>
+                            {getValues("positionToggle")===true && (
+                                <button className="flex items-center justify-center text-[25px] w-[27px] h-[27px] rounded-lg bg-blue-100 text-blue-400 mt-[20px]"
+                                onClick={ () => {
+    
+                                   if (positionList.find((elem) => elem.position === getValues("position")) || (positionList.find((elem) => elem.position === "아무나") && getValues("position")==="")){
+    
+                                    setValue("position","");
+                                    setValue("positionNum" ,"");
+                                    return;
+                                   } 
+                                    const newPosition = {
+                                        position : getValues("position") !== ""  ? getValues("position") :"아무나",
+                                        positionNum : +getValues("positionNum"),
+                                    }
+                                    setPositionList( prev => [...prev , newPosition]);
+                                    setValue("position","");
+                                    setValue("positionNum" ,"");
+                                
+                                }}>+</button>
+                            )}
                         </div>
                         <div className="w-[800px] h-[250px] mt-[20px] px-[100px]">
                             <span className="flex">
@@ -452,7 +474,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                             </span>
                             <span className="flex mt-[10px]">
                                 <p className="w-[110px]">신청 방법 안내</p>
-                                <textarea className="p-[10px] w-full h-[200px] border-2 rounded-lg ml-[20px]" placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요.&#13;&#10;예시) 메일 제목은 '리쿠르팅 접수'로 해주시고 본인의 작업물이 담긴 포트폴리오를 10장 이하의 분량의 pdf로 보내주세요."/>
+                                <textarea className="p-[10px] w-full h-[50px] border-2 rounded-lg ml-[20px]" placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."/>
                             </span>
                             
                         </div>
