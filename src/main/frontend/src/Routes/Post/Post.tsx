@@ -97,12 +97,13 @@ place-items-center
 `;
 
 const Container = tw.div`
+bg-slate-100
 min-w-[480px]`;
 
 
 
-const FormModifyOKIcon = tw.i`
-fa-solid fa-check text-[15px] text-black mr-[5px]
+const FormCancelIcon = tw.i`
+fa-solid fa-xmark text-[15px] text-black ml-[5px] mt-[1px]
 `
 
 export interface IPost {
@@ -424,12 +425,12 @@ function Post() {
           <Container>
             <Banner src="/img/postBannerReal.png"></Banner>
             
-          <div>
-            <div className=" flex justify-between items-center px-[50px] border-black border-b-2 w-full h-[60px]">
-              <div className="w-full flex justify-evenly">
+          <div className="">
+            <div className=" flex justify-between items-center px-[50px]  w-full h-[60px] bg-white">
+              <div className="w-full flex justify-center">
                 {Categories.map((category, index) => (
                 
-                <button id="categoryButton" onClick={onClick} className={`${selectedCategory === category ? 'text-black' :'text-gray-400'}`} key={index}>
+                <button id="categoryButton" onClick={onClick} className={`${selectedCategory === category ? 'text-black' :'text-gray-400'} mx-[40px]`} key={index}>
                   {category}
                 </button>
                 ))}
@@ -438,9 +439,9 @@ function Post() {
                   
                   
             </div>
-              <div className="flex h-[60px] justify-between px-[50px] border-b-2 border-black">
+              <div className="flex h-[60px] justify-between px-[50px] ">
                 <div className="flex  items-center">
-                  <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] border-2 border-black">
+                  {/* <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] border-2 border-black">
                     {Majors.map((major, index) => (
                       <option key={index}>
                         {major}
@@ -453,41 +454,50 @@ function Post() {
                         {grade}
                       </option>
                     ))}
-                  </select>
-                  <span className="flex items-center">
-                    <p className="ml-[50px]">키워드</p>
-                    <input value={keywordInput} id="keywordInput" onChange={onChange} type="text" className="w-[100px] ml-[20px] px-[10px] border-2 border-black rounded-lg"/>
-                    <button className="ml-[20px] border border-black px-[5px] rounded-lg bg-black text-white">추가</button>
+                  </select> */}
+                  <span className="flex items-center ">
+                    <p className="">필터링 키워드</p>
+                    <input value={keywordInput} id="keywordInput" onChange={onChange} type="text" className="w-[170px] ml-[20px] px-[10px] border-b border-black bg-slate-100" placeholder="키워드를 입력해주세요"/>
+                    <button className="mx-[20px] border border-black px-[5px] rounded-lg bg-black text-white">추가</button>
                   </span>
                   <span>
-                      <div className="w-full ml-[50px] flex items-center">
+                      <div className="w-full flex items-center ">
                     {selectedKeywords.map((keyword , index) => (
                       <button id="deleteKeywordButton" onClick={onClick} 
-                      key={index} className="text-[14px] flex items-center border-2 h-[25px] border-black rounded-lg text-center px-[10px] mr-[30px]">
-                        <FormModifyOKIcon />
+                      key={index} className="text-[16px] bg-white flex items-center h-[30px] border-0 rounded-lg text-center px-[10px] mr-[30px]">
+                        
                         {keyword}
+                        <FormCancelIcon/>
                         </button>))}
                         
 
-                      {keywords.map( ( keyword, index) => (
-                        !selectedKeywords.includes(keyword as never) &&(<button id="insertKeywordButton" onClick={onClick} key={index} className="text-[14px] flex items-center border-2 h-[25px] border-black rounded-lg text-center px-[10px] mr-[30px] ">
-                          <p>{keyword}</p>
-                          </button>)
-                        
-                      ))}
+                      
                       
 
                     </div>
+                    
                   </span>
+                 
                 </div>
-              
+                
             
               
-                <button id="allFilterDelete" onClick={onClick}>
+                {/* <button id="allFilterDelete" onClick={onClick}>
                       필터 전체 삭제 버튼
-                </button>
+                </button> */}
               
             </div>
+            <div className="flex h-[60px] items-center mx-[20px] items-center">
+              <p className="ml-[90px] mr-[20px]">추천 키워드 </p>
+            {keywords.map( ( keyword, index) => (
+                        !selectedKeywords.includes(keyword as never) &&(<button id="insertKeywordButton" onClick={onClick} key={index} className="text-gray-400 text-[16px] bg-white flex items-center h-[30px] border-0 rounded-lg text-center px-[10px] mr-[30px] ">
+                          <p>{keyword}</p>
+                          <i className="fa-solid fa-plus ml-[5px] mt-[1px] text-[10px]"></i>
+                          </button>)
+                        
+                      ))}
+            </div>
+            
           </div>
 
             {/* keyword */}
@@ -603,10 +613,24 @@ function Post() {
 
             <SortBox>
               <div className="flex items-center justify-between w-[350px]">
-                <div className="flex">
+                {/* <div className="flex">
                 내 전공 관련글만 보기
                   <input type="checkBox" className=" ml-[10px] mt-[4px] w-[20px] h-[20px] bg-[#eeeeee]" />
-                </div>
+                </div> */}
+                <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] ">
+                    {Majors.map((major, index) => (
+                      <option key={index}>
+                        {major}
+                      </option>
+                    ))}
+                  </select>
+                  <select ref={gradeRef} id="gradeSelect" onInput={onInput} className="mx-[50px] px-[10px]">
+                    {Grades.map((grade,index)=> (
+                      <option key={index}>
+                        {grade}
+                      </option>
+                    ))}
+                  </select>
                 <div className="flex items-center">
                   {/* <SortTitle>Sort by</SortTitle> */}
                   <SortSelect id="sortSelect" className="vertical-center" onInput={onInput} value={order}>
@@ -619,8 +643,8 @@ function Post() {
               </div>
               
               <Link to="/add">
-                <button className="text-[12px] md:text-[16px] text-white border border-black py-[5px] bg-black px-[20px] ">
-                  모집글 쓰기
+                <button className="text-[12px] md:text-[15px] border border-black py-[5px] bg-white px-[20px] rounded-lg">
+                  모집글 작성하기
                 </button>
               </Link>
             </SortBox>
