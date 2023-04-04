@@ -21,7 +21,7 @@ public class PostThumbnailResponse {
 
     public PostThumbnailResponse(final Thumbnail thumbnail, String email) {
         this.id = thumbnail.getPost().getId();
-        this.postTypes = Utils.toArray(thumbnail.getPost().getPostTypes());
+        this.postTypes = Utils.toArray(thumbnail.getPost().getPostTypes(), ",");
         this.title = thumbnail.getTitle();
         this.summary = thumbnail.getSummary();
         this.tags = thumbnail.getTags();

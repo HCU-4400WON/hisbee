@@ -19,7 +19,7 @@ public class PostSearchFilter {
                             Integer limit) {
         this.page = page;
         this.type = (Objects.isNull(type)) ? "" : type;
-        this.keywords = Utils.toArray(keywords);
+        this.keywords = Utils.toArray(keywords, ",");
         this.orderBy = (Objects.isNull(orderBy)) ? OrderBy.RECENT : orderBy;
         this.limit = limit;
     }

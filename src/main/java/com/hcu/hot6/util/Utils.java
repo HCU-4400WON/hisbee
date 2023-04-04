@@ -15,16 +15,16 @@ public class Utils {
         return java.sql.Timestamp.valueOf(e);
     }
 
-    public static List<String> toArray(String s) {
+    public static List<String> toArray(String s, String delim) {
         if (s == null) {
             return List.of();
         }
-        return List.of(s.split(","));
+        return List.of(s.split(delim));
     }
 
-    public static String toString(List<String> list) {
+    public static String toString(List<String> list, String delim) {
         return String.join(
-                ",",
+                delim,
                 Optional.ofNullable(list)
                         .orElse(List.of())
         );

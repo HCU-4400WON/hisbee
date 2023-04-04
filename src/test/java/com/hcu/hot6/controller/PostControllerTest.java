@@ -253,7 +253,7 @@ public class PostControllerTest {
                 PostReadOneResponse.class);
 
         assertThat(response.getContent()).isEqualTo("content");
-        assertThat(response.getPostEnd()).isEqualTo("2023-03-02T00:00");
+        assertThat(response.getRecruitEnd()).isEqualTo("2023-03-02T00:00");
         assertThat(response.isVerified()).isFalse();
     }
 
@@ -284,7 +284,7 @@ public class PostControllerTest {
                 PostReadOneResponse.class);
 
         assertThat(response.getContent()).isEqualTo("content");
-        assertThat(response.getPostEnd()).isEqualTo("2023-03-02T00:00");
+        assertThat(response.getRecruitEnd()).isEqualTo("2023-03-02T00:00");
         assertThat(response.isVerified()).isTrue();
     }
 

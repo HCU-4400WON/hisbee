@@ -17,7 +17,7 @@ public class PostCreationRequest {
     @NotNull
     private String title;
     private String summary;
-    private String tags;
+    private List<String> tags;
 
     // Metadata
     @NotNull

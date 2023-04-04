@@ -63,7 +63,7 @@ public class Post {
     private LocalDateTime lastModifiedDate;
 
     public Post(PostCreationRequest request, Member author) {
-        this.postTypes = Utils.toString(request.getPostTypes());
+        this.postTypes = Utils.toString(request.getPostTypes(), ",");
         this.content = request.getContent();
         this.contact = request.getContact();
         this.keywords = String.join(
@@ -72,8 +72,8 @@ public class Post {
                         .orElse(List.of())
         );
         this.contactDetails = request.getContactDetails();
-        this.targetYears = Utils.toString(request.getYears());
-        this.targetDepartment = Utils.toString(request.getDepartments());
+        this.targetYears = Utils.toString(request.getYears(), ",");
+        this.targetDepartment = Utils.toString(request.getDepartments(), ",");
         this.views = 0L;
         this.isAutoClose = false;
         registerAuthor(author);

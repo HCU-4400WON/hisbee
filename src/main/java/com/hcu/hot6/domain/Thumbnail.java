@@ -43,7 +43,7 @@ public class Thumbnail {
     public Thumbnail(PostCreationRequest request) {
         this.title = request.getTitle();
         this.summary = request.getSummary();
-        this.tags = request.getTags();
+        this.tags = Utils.toString(request.getTags(), ";");
         this.recruitStart = Utils.toLocalDateTime(request.getRecruitStart());
         this.recruitEnd = Utils.toLocalDateTime(request.getRecruitEnd());
         this.projectStart = Utils.toLocalDateTime(request.getProjectStart());
