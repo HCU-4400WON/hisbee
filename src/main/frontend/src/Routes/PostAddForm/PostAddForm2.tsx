@@ -262,7 +262,23 @@ const inputRef = useRef<HTMLInputElement | null>(null);
     
         
   }
+  const [optionalFoldToggle, setOptionalFoldToggle] = useState<boolean[]>([false, false ,false, false]);
 
+  const optionalFoldText = [
+    { first : "모집 대상의 " ,
+    accent : "지원 조건을 설정하고" ,
+    last : "싶다면?"},
+    { first : "검색에 잘 걸리도록 " ,
+    accent : "검색 키워드 추가" ,
+    last : "하기!"},
+    { first : "모임 목적, 활동 내용 등 자세한 " ,
+    accent : "내용 작성" ,
+    last : "을 해보세요"},
+    { first : "" ,
+    accent : "포스터" ,
+    last : "가 있다면 업로드 해주세요!"},
+    
+  ]
 
   
     return(
@@ -298,7 +314,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                 
                 
             <form onSubmit={handleSubmit(onSubmit)} className="px-[20px]">
-                <div className="bg-slate-100 p-[50px] rounded-[5%] mb-[50px]">
+                <div className="bg-slate-100 p-[50px] rounded-3xl mb-[50px]">
                 
                 <div className="flex justify-between w-full relative">
                     <p className="text-[20px] font-main">
@@ -564,10 +580,28 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                 </div>
 
             </div>
-                <div>
+                
+                {/* 선택 옵션 접었을 때 */}
+                
+                {!optionalFoldToggle[0] && (
+                    <div className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]">
+                    {optionalFoldText[0].first} &nbsp; <span className={`text-blue-500`}>{optionalFoldText[0].accent}</span>&nbsp;{optionalFoldText[0].last}
+                    <i className="fa-solid fa-caret-down ml-[10px] text-[25px]" onClick={
+                        () => setOptionalFoldToggle(prev => [true , ...prev.slice(1)])
+                    }></i>
+                    
+                </div>
+                )}
+
+
+                {optionalFoldToggle[0] && (
+                    <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
+                    <i className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]" onClick={
+                        () => setOptionalFoldToggle(prev => [false , ...prev.slice(1)])
+                    }></i>
                     <p className="text-[20px] font-main">모집 대상 조건 설정하기</p>
                     <p className="mt-[10px]">모집글들을 필터링할 때 쓰이는 정보이니 채워주시면 좋습니다.</p>
-
+                    
                     <div className="w-full">
                         <div className="flex border">
                             {/* {Grades.map((grade,index) => (
@@ -686,36 +720,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                                 <i className="fa-solid fa-chevron-right ml-[10px]"></i>
                                             </button>
 
-                                            {/* <input type="checkBox" {...register("majors")} value={key} className="mr-[10px]" onClick={(e : any) => 
-                                            {
-                                                
-                                                if(e.target.checked){
-                                                    // 상관없음 체크 된 상황, 큰 카테고리 체크하였을 때 상관없음 체크 해제
-                                                    // if(getValues("majors").includes("상관없음" as never)){
-                                                    //     setValue("majors" , [Object.keys(major)[0] as never]);
-                                                    // }
-                                                    // 큰 카테고리와 하위 카테고리 체크
-                                                    const inputList = document.querySelectorAll(`#majors${index}`);
-                                                    for(let i = 0 ; i < inputList.length ; ++i){
-                                                        (inputList[i] as any).checked  = true;
-                                                    }
-                                                }else{
-                                                    const inputList = document.querySelectorAll(`#majors${index}`);
-                                                    for(let i = 0 ; i < inputList.length ; ++i){
-                                                        (inputList[i] as any) .checked  = false;
-                                                    }
-                                                }
-                                            }
-                                            } /> */}
-                                            {/* <p className="mr-[10px]">{key}</p> */}
-                                            {/* {values.length !== 0 && clicked===false && <i onClick={(e : any) => {
-                                                e.currentTarget.className === "fa-solid fa-chevron-up" ? 
-                                                e.currentTarget.className="fa-solid fa-chevron-down" : 
-                                                e.currentTarget.className="fa-solid fa-chevron-up"
-                                                setVisible( prev => [...prev.slice(0,index) , !prev[index] , ...prev.slice(index+1)])
-                                                }} className="fa-solid fa-chevron-down"></i>}  */}   
-
-
+                                           
 
 {visible[index] && ( values.map((value : string , idx : number) => (
                                             <span key={idx} className="pl-[20px] flex items-center">
@@ -733,17 +738,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                                         btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailUnSelectedBUTTON}`;
                                                     }
                                                 }}>{value}</button>
-                                                {/* <input type="checkBox" id={`majors${index}`} {...register("majors")} value={value} className="mx-[10px]" */}
-                                                
-                                                
-                                                 {/* onClick={() => { */}
-                                                    {/* //상관없음 체크 되었을 때, 하위 카테고리 체크시 상관없음 체크 해제 */}
-                                                    {/* // if(getValues("majors").includes("상관없음" as never)){ */}
-                                                    {/* //     setValue("majors" , [value as never]); */}
-                                                    {/* // } */}
-                                                {/* // }} */}
-                                                {/* // /> */}
-                                                {/* <p>{value}</p> */}
+                                               
                                             </span>
                                         
                                                     ))
@@ -761,9 +756,9 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                         </div>
                         </div>
                     </div>
-                </div>
-                
-                {/* 지원 자격 */}
+
+
+                            {/* 지원 자격 */}
 
                 <div className="mt-[20px] w-[700px]">
                     <p className="mb-[10px] text-[18px] ">지원 자격</p>
@@ -779,47 +774,86 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                     )}
                 </div>
 
-                <div>
-                    <p className="text-[20px] font-main mt-[50px]">검색 키워드 입력</p>
-                    <p className="mt-[10px]">모집글과 관련된 키워드를 입력해주세요</p>
-                    <p className="my-[10px]">키워드</p>
-                    <div className="flex items-center">
-                        
-   
-                        {["categories", "keywordsFirstLine" , "keywordsSecondLine"].map((elem ) => (
-                            getValues(elem as any)?.map((v : string,index : number) => (
-                            <span key={index} className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}>
-                                <p>{v}</p>
-                            </span>))
-                            
-                        ))}
-                        {keywords.map( (keyword , index) => ( 
+                </div>
+                )}
+                
+                
+                
+                
+                {!optionalFoldToggle[1] && (
+                    <div className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]">
+                    {optionalFoldText[1].first} &nbsp; <span className={`text-blue-500`}>{optionalFoldText[1].accent}</span>&nbsp;{optionalFoldText[1].last}
+                    <i className="fa-solid fa-caret-down ml-[10px] text-[25px]" onClick={
+                        () => setOptionalFoldToggle(prev => [prev[0] , true,  ...prev.slice(2)])
+                    }></i>
+                    
+                </div>
+                )}           
+
+
+                {optionalFoldToggle[1] && (
+                    <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
+                    <i className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]" onClick={
+                        () => setOptionalFoldToggle(prev => [prev[0] , false,  ...prev.slice(2)])
+                    }></i>
+
+                <p className="text-[20px] font-main">검색 키워드 입력</p>
+                <p className="mt-[10px]">모집글과 관련된 키워드를 입력해주세요</p>
+                <p className="my-[10px]">키워드</p>
+                <div className="flex items-center">
+                    
+
+                    {["categories", "keywordsFirstLine" , "keywordsSecondLine"].map((elem ) => (
+                        getValues(elem as any)?.map((v : string,index : number) => (
                         <span key={index} className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}>
-                            <p className="mr-[10px]">{keyword}</p>
-                            <i className="fa-solid fa-xmark mt-[2px] text-gray-400" onClick={ () =>
-                                setKeywords(prev => [...prev.slice(0,index) , ...prev.slice(index+1)])
-                            }></i>
-                        </span>
-                        ))}
-                    </div>
-
-                    <div className="">
-                        <p className="mr-[20px] my-[10px]">키워드 입력</p>
-                        <input type="text" className="w-[300px] border-b-2 h-[40px] px-[10px]" placeholder="엔터키로 키워드를 등록하세요" {...register("keyword")}/>
-                        <button className=" ml-[20px] bg-black text-white px-[10px]" onClick={ () => {
-                            
-                            //  중복이나 공백 제거 하는 if문 추가해야함
-
-                            // await setKeywords( prev => [...prev , getValues("keyword")])
-                            setKeywords( prev => [...prev , getValues("keyword")])
-                            setValue("keyword" , "");
-                        }}> 생성 </button>
-                    </div>
-
+                            <p>{v}</p>
+                        </span>))
+                        
+                    ))}
+                    {keywords.map( (keyword , index) => ( 
+                    <span key={index} className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}>
+                        <p className="mr-[10px]">{keyword}</p>
+                        <i className="fa-solid fa-xmark mt-[2px] text-gray-400" onClick={ () =>
+                            setKeywords(prev => [...prev.slice(0,index) , ...prev.slice(index+1)])
+                        }></i>
+                    </span>
+                    ))}
                 </div>
 
-                <div>
-                    <p className="text-[20px] font-main mt-[50px]">자유 내용 입력</p>
+                <div className="">
+                    <p className="mr-[20px] my-[10px]">키워드 입력</p>
+                    <input type="text" className="w-[300px] border-b-2 h-[40px] px-[10px]" placeholder="엔터키로 키워드를 등록하세요" {...register("keyword")}/>
+                    <button className=" ml-[20px] bg-black text-white px-[10px]" onClick={ () => {
+                        
+                        //  중복이나 공백 제거 하는 if문 추가해야함
+
+                        // await setKeywords( prev => [...prev , getValues("keyword")])
+                        setKeywords( prev => [...prev , getValues("keyword")])
+                        setValue("keyword" , "");
+                    }}> 생성 </button>
+                </div>
+
+            </div>
+                )}
+                    
+
+                    {!optionalFoldToggle[2] && (
+                    <div className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]">
+                    {optionalFoldText[2].first} &nbsp; <span className={`text-blue-500`}>{optionalFoldText[2].accent}</span>&nbsp;{optionalFoldText[2].last}
+                    <i className="fa-solid fa-caret-down ml-[10px] text-[25px]" onClick={
+                        () => setOptionalFoldToggle(prev => [...prev.slice(0,2) , true,  prev[3]])
+                    }></i>
+                    
+                </div>
+                )}           
+
+
+                {optionalFoldToggle[2] && (
+                    <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
+                    <i className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]" onClick={
+                        () => setOptionalFoldToggle(prev => [...prev.slice(0,2) , false,  prev[3]])
+                    }></i>
+                    <p className="text-[20px] font-main">자유 내용 입력</p>
                     <p className="mt-[10px] mb-[20px]">모임의 목적,활동 내용 등에 대한 자세한 내용을 자유롭게 작성해주세요!</p>
                     <MyBlock>
                     <Editor
@@ -850,8 +884,26 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                     </MyBlock>
                     
             </div>
+                )}
 
-            <div>
+                
+{!optionalFoldToggle[3] && (
+                    <div className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]">
+                    {optionalFoldText[3].first} &nbsp; <span className={`text-blue-500`}>{optionalFoldText[3].accent}</span>&nbsp;{optionalFoldText[3].last}
+                    <i className="fa-solid fa-caret-down ml-[10px] text-[25px]" onClick={
+                        () => setOptionalFoldToggle(prev => [...prev.slice(0,3) , true])
+                    }></i>
+                    
+                </div>
+                )}           
+
+
+                {optionalFoldToggle[3] && (
+                    <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
+                    <i className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]" onClick={
+                        () => setOptionalFoldToggle(prev => [...prev.slice(0,3) , false])
+                    }></i>
+                    {/* <div> */}
                 <p className="text-[20px] font-main">포스터 등록</p>
                 <p className="mt-[10px]">포스터가 있다면 업로드해주세요! 모집글 페이지 및 포스터 모아보기 페이지에서 보여집니다.</p>
                 
@@ -893,9 +945,12 @@ const inputRef = useRef<HTMLInputElement | null>(null);
 
                     </div> */}
             </div>
-            <div className="flex justify-end mt-[50px]">
+            
+                    )}
+                <div className="flex justify-end mt-[50px]">
             <button className="text-white bg-black text-[20px] px-[20px]"> 제출하기</button>
             </div>
+            
             </form>
         
         </div>
