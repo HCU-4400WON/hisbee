@@ -7,6 +7,11 @@ import lombok.Getter;
 @Builder
 public class PositionForm {
 
+    public PositionForm(String name, int count) {
+        this.name = name;
+        this.count = count;
+    }
+
     private String name;
     private int count;
 }

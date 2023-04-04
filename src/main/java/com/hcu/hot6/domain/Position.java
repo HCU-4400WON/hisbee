@@ -1,12 +1,8 @@
 package com.hcu.hot6.domain;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.hcu.hot6.domain.request.PositionForm;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-import java.util.Arrays;
 
 @Getter
 @Entity
@@ -20,4 +16,8 @@ public class Position {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
+
+    public PositionForm toResponse() {
+        return new PositionForm(name, count);
+    }
 }
