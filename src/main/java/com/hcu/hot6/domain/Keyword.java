@@ -1,10 +1,15 @@
 package com.hcu.hot6.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Keyword {
 
@@ -16,4 +21,13 @@ public class Keyword {
 
     private Long count;
     private boolean isCategory;
+
+    public Keyword(String name) {
+        this.name = name;
+        this.count = 0L;
+    }
+
+    public void countUp() {
+        count++;
+    }
 }

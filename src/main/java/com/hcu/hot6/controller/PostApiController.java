@@ -7,6 +7,7 @@ import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.domain.response.PostFilterResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
+import com.hcu.hot6.service.KeywordService;
 import com.hcu.hot6.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.Objects;
 public class PostApiController {
 
     private final PostService postService;
+    private final KeywordService keywordService;
 
     /**
      * 모집글 게시(CREATE)
@@ -33,6 +35,8 @@ public class PostApiController {
 
         String email = user.getName();
         PostCreationResponse response = postService.createPost(request, email);
+        keywordService.addKeywords(request.getKeywords(), request.getTags());
+
         return ResponseEntity.ok(response);
     }
 
