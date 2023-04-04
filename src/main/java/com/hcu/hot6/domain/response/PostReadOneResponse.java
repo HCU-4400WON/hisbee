@@ -26,31 +26,27 @@ public class PostReadOneResponse {
     private Date recruitEnd;
     private Date projectStart;
     private List<String> durations;
+    private List<String> postTypes;
     private List<String> tags;
-    private boolean isClosed;
-    private boolean isArchived;
 
     // Post
     private String author;
-    private List<String> postTypes;
-    private String contact;
-
-    // Post optional
     private String content;
+    private String contact;
     private String contactDetails;
-    private List<String> targetYears;
-    private List<String> targetDepartment;
-    private List<String> keywords;
     private List<PositionForm> positions;
-    private List<String> postURL;
-
-
+    private List<String> years;
+    private List<String> departments;
+    private List<String> keywords;
+    private List<String> posterPaths;
     private int nBookmark;
     private Long views;
+    private boolean isVerified;
+    private boolean isClosed;
+    private boolean isArchived;
+    private boolean hasLiked;
     private Date createdDate;
     private Date lastModifiedDate;
-    private boolean isVerified;
-    private boolean hasLiked;
 
     public PostReadOneResponse(Post post, String email) {
         final Thumbnail thumbnail = post.getThumbnail();
@@ -71,13 +67,13 @@ public class PostReadOneResponse {
         this.contact = post.getContact();
         this.content = post.getContent();
         this.contactDetails = post.getContactDetails();
-        this.targetYears = toArray(post.getTargetYears(), ",");
-        this.targetDepartment = toArray(post.getTargetDepartment(), ",");
+        this.years = toArray(post.getTargetYears(), ",");
+        this.departments = toArray(post.getTargetDepartment(), ",");
         this.keywords = toArray(post.getKeywords(), ",");
         this.positions = post.getPositions().stream()
                 .map(Position::toResponse)
                 .toList();
-        this.postURL = post.getPosters().stream()
+        this.posterPaths = post.getPosters().stream()
                 .map(Poster::getPostURL)
                 .toList();
 
