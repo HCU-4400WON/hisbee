@@ -60,7 +60,7 @@ public class Post {
     private LocalDateTime createdDate;
 
     @LastModifiedDate
-    private LocalDateTime lastModifiedDated;
+    private LocalDateTime lastModifiedDate;
 
     public Post(PostCreationRequest request, Member author) {
         this.postTypes = Utils.toString(request.getPostTypes());

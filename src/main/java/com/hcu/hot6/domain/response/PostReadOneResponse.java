@@ -7,7 +7,6 @@ import com.hcu.hot6.domain.Thumbnail;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -66,7 +65,7 @@ public class PostReadOneResponse {
         this.recruitEnd = toDate(thumbnail.getRecruitEnd());
         this.projectStart = toDate(thumbnail.getProjectStart());
         this.durations = Arrays.asList(thumbnail.getDurations().split(","));
-        this.thumbKeywords = Arrays.asList(thumbnail.getKeywords().split(";")); // 프론트에서 각 라인별로 ,로 구분 후 나타내기
+        this.thumbKeywords = Arrays.asList(thumbnail.getTags().split(";")); // 프론트에서 각 라인별로 ,로 구분 후 나타내기
         this.isClosed = thumbnail.isClosed();
         this.isArchived = thumbnail.isArchived();
 
@@ -89,7 +88,7 @@ public class PostReadOneResponse {
         this.counts = positionCounts;
 
         List<String> urlList = new ArrayList<>();
-        for(Poster poster : posterList){
+        for (Poster poster : posterList) {
             urlList.add(poster.getPostURL());
         }
         this.postURL = urlList;
@@ -99,7 +98,7 @@ public class PostReadOneResponse {
         this.createdDate = toDate(post.getCreatedDate());
         this.lastModifiedDate = toDate(post.getLastModifiedDate());
         this.isVerified = email.equals(post.getAuthor().getEmail());
-        this.hasLiked = post.getLikes().stream()
-                .anyMatch(member -> email.equals(member.getEmail()));
+        this.hasLiked = post.getBookmarks().stream()
+                .anyMatch(bookmark -> email.equals(bookmark.getMember().getEmail()));
     }
 }
