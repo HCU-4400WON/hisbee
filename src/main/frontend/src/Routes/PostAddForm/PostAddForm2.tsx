@@ -254,7 +254,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
   }
     return(
         <div className="p-[50px]">
-            <div className="flex justify-between border-b-2 pb-[20px]">
+            <div className="flex justify-between pb-[20px]">
                 <span className="flex w-[210px] items-center justify-between">
                     <Link to="/post">
                         <div className="">
@@ -263,7 +263,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                     </Link>
                     <p className="md:text-[25px] text-[20px] font-unique">모집글 작성하기</p>
                 </span>
-                <div className="flex justify-between items-center">
+                {/* <div className="flex justify-between items-center">
                     
                     <div className="flex h-[40px] items-end">
                     {[ "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)" ,"radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)" , "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)"].map((color,index) => (
@@ -274,16 +274,22 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                         }}
                     />
                     ))}
-                        </div>
                     </div>
+                    </div> */}
 
                 </div>
 
-                <p className="flex justify-end text-[#ff0000] mt-[20px]">
-                    * 표시는 필수 입력 내용입니다.
-                </p>
+            
+                    
+                
+                
                 
             <form onSubmit={handleSubmit(onSubmit)} className="px-[20px]">
+                <div className="bg-slate-100 p-[50px] rounded-[5%] mb-[50px]">
+                
+                <p className="flex justify-end text-[#0000ff] ">
+                    필수 작성란입니다.
+                </p>
                 <p className="text-[20px] font-main">
                     썸네일 제작
                 </p>
@@ -292,19 +298,22 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                 </p>
 
                 <div className="w-full h-[400px] flex items-center justify-between my-[20px] ">
-                    <div className="w-[400px] bg-[#eeeeee] p-[30px]">
+                    <div className="w-[400px] bg-white p-[30px]">
                         <div className="mb-[30px]">
                         <span className="flex items-center justify-between mb-[20px]">
                             <span className="flex items-center">
                                 {/* <input className="w-[70px] px-[10px] rounded-full mr-[20px]" placeholder="일정 입력"/> */}
                                 {/* <input className="w-[70px] px-[5px] rounded-full " placeholder="모집유형1"/> */}
-                                <span  className="px-[10px] rounded-full mr-[20px] bg-white">
+                                <span  className="px-[10px] rounded-full mr-[20px] bg-gray-200 font-light">
                                 {getValues("durationIndex") === "0" ? 
                                         "상시 모집"
                                  : new Date(getValues("postStart")!) > new Date() ?
                                  "모집 예정" :
-                                 dateDifference(getValues("postEnd")!) === 0 ?
+                                 getValues("postEnd")==="" ?
+                                 "상시 모집"
+                                 :dateDifference(getValues("postEnd")!) === 0 ?
                                  "오늘 마감"
+
                                   : "D-"+ dateDifference(getValues("postEnd")! )}
                                 </span>
 
@@ -314,13 +323,13 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                         </span>
                         
                         
-                        <input className="w-[340px] text-[20px] py-[5px] px-[15px] mb-[10px]" {...register("title")} type="text" placeholder="제목을 입력해주세요" />
+                        <input className="w-[340px] text-[20px] py-[5px] px-[15px] mb-[10px] border-b-2" {...register("title")} type="text" placeholder="제목을 입력해주세요" />
                         <textarea id="subTitle" onKeyDown={textareaResize} onKeyUp={textareaResize} className="notes w-[340px] text-[15px] px-[15px] pt-[5px]" {...register("subTitle")} placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요" />
 
                         </div>
                         <div className="flex items-center">
                         {getValues("categories").length !==0 && getValues("categories").map((category : string, index : number) => 
-                                    <div className={` py-[5px] mb-[20px] px-[15px] rounded-full mr-[10px] ${LightMainBLUE}`} key={index}>{category}</div>
+                                    <div className={` py-[1px] mb-[20px] px-[15px] rounded-full mr-[10px] ${LightMainBLUE}`} key={index}>{category}</div>
                         )}
                         </div>
                         {[{array:"keywordsFirstLine" , str : "firstKeyword"} , {array:"keywordsSecondLine" , str : "secondKeyword"} ,].map( (lineObj , index) => (
@@ -337,7 +346,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 if(getValues(lineObj.str as any) === "") return;
                                 setValue(lineObj.array as any , await [...getValues(lineObj.array as any), getValues(lineObj.str as any)] as never );
                                 setValue(lineObj.str as any , "");
-                            }} className="px-[10px] bg-white ml-[5px] rounded-full"> + </button>
+                            }} className={`px-[10px] bg-white ml-[5px] rounded-full ${MainBLUE} text-blue-500`}> + </button>
                         </div>
                         ))}
                         
@@ -370,15 +379,17 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                         {getValues("durationIndex") === "1" && (<span className="pl-[30px] mb-[200px]">
                             <span className="flex items-center mb-[10px]">
                                 <p className="mx-[15px]">시작</p>
-                                <input type="date" {...register("postStart")}/>
+                                <input className="w-[140px]" type="date" {...register("postStart")}/>
                             </span>
                             
                             <span className="flex items-center">
                                 <p className="mx-[15px]">마감</p>
-                                <input type="date" {...register("postEnd")}/>
+                                <input type="date" className="w-[140px]" {...register("postEnd")}/>
                             </span>
+                            <button className="ml-[80px] mt-[20px] bg-blue-100 text-blue-400 rounded-lg px-[15px] py-[5px]"
+                            onClick={() => setValue("postEnd" , "")}>마감일 미설정</button>
                         </span>)}
-                        <button></button>
+                        
                         
                         
                     </div>
@@ -423,7 +434,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                     <p className="text-[20px] font-main">모집글 필수 내용</p>
                     <p className="mt-[10px]">모집글을 완성하기 위한 최소한의 내용을 적어주세요!</p>
                     <div className="flex">
-                        <div className="w-[400px] h-[250px]  mt-[20px]">
+                        <div className="w-[400px] mt-[20px]">
                             <p className="">모집 인원</p>
                             
                             {getValues("positionToggle") === true ? (
@@ -500,7 +511,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 
                             )}
                         </div>
-                        <div className="w-[800px] h-[300px] mt-[20px] px-[100px]">
+                        <div className="w-[800px] mt-[20px] px-[100px]">
                             <span className="flex items-start">
                                 <p className="w-[130px] mt-[8px]">신청 방법</p>
                                 <input type="text" className="w-full border-b-2 h-[40px] ml-[20px] px-[10px]" placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."/>
@@ -517,7 +528,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                 
                 </div>
 
-
+            </div>
                 <div>
                     <p className="text-[20px] font-main">모집 대상 조건 설정하기</p>
                     <p className="mt-[10px]">모집글들을 필터링할 때 쓰이는 정보이니 채워주시면 좋습니다.</p>
@@ -817,7 +828,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
             <button className="text-white bg-black text-[20px] px-[20px]"> 제출하기</button>
             </div>
             </form>
-
+        
         </div>
     )
 }
