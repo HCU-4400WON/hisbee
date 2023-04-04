@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
-
+import "./textarea.css";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertToRaw } from "draft-js";
@@ -17,6 +17,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { storage } from "../../firebase";
+import { get } from "http";
 
 const MyBlock = styled.div`
 
@@ -33,6 +34,11 @@ const MyBlock = styled.div`
     border-radius: 2px !important;
   }
 `;
+
+const SeletedBUTTON = "border-2 border-blue-300 bg-blue-200"
+const UnSelectedBUTTON = "bg-gray-200 text-gray-400"
+const MainBLUE = "bg-blue-200";
+const LightMainBLUE = "bg-blue-100";
 
 const converter = (what : string , info ?: string | Date) => {
         
@@ -83,7 +89,7 @@ defaultValues: {
 
 } });
 
-watch(["categories", "durationIndex" , "postStart" , "postEnd" , "position" , "positionNum" , "keyword" , "keywordsFirstLine" , "keywordsSecondLine" , "positionToggle" ]);
+watch(["categories", "durationIndex" , "postStart" , "postEnd" , "position" , "positionNum" , "keyword" , "keywordsFirstLine" , "keywordsSecondLine" , "positionToggle" , "grades"]);
 
 interface IPositionList {
     position : string,
@@ -224,7 +230,28 @@ const inputRef = useRef<HTMLInputElement | null>(null);
   const [majorToggle, setMajorToggle] = useState<boolean>(false);
 
 
+  const textareaResize = (e : React.FormEvent<HTMLTextAreaElement>) => {
 
+    const targetId  = e.currentTarget.id;
+    const targetValue = e.currentTarget.value;
+    if(targetId === "subTitle" && targetValue.split('\n').length > 2) {
+        let modifiedText = targetValue.split("\n").slice(0,2);
+        e.currentTarget.value= modifiedText.join("\n");
+        return;
+    }
+    else if(targetId === "registerMethod" && targetValue.split('\n').length > 5){
+        let modifiedText = targetValue.split("\n").slice(0,5);
+        e.currentTarget.value= modifiedText.join("\n");
+        return;
+    }
+    
+
+
+        e.currentTarget.style.height = "10px";
+        e.currentTarget.style.height = (12+e.currentTarget.scrollHeight)+"px"
+    
+        
+  }
     return(
         <div className="p-[50px]">
             <div className="flex justify-between border-b-2 pb-[20px]">
@@ -275,7 +302,9 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 {getValues("durationIndex") === "0" ? 
                                         "상시 모집"
                                  : new Date(getValues("postStart")!) > new Date() ?
-                                 "모집 예정"
+                                 "모집 예정" :
+                                 dateDifference(getValues("postEnd")!) === 0 ?
+                                 "오늘 마감"
                                   : "D-"+ dateDifference(getValues("postEnd")! )}
                                 </span>
 
@@ -285,13 +314,13 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                         </span>
                         
                         
-                        <input className="w-[340px] text-[20px] py-[5px] px-[15px] mb-[10px]" {...register("title")} type="text" placeholder="모집글 제목을 입력하세요" />
-                        <textarea className="w-[340px] text-[15px] px-[15px] pt-[5px]" {...register("subTitle")} placeholder="모집글 제목을 입력하세요" />
+                        <input className="w-[340px] text-[20px] py-[5px] px-[15px] mb-[10px]" {...register("title")} type="text" placeholder="제목을 입력해주세요" />
+                        <textarea id="subTitle" onKeyDown={textareaResize} onKeyUp={textareaResize} className="notes w-[340px] text-[15px] px-[15px] pt-[5px]" {...register("subTitle")} placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요" />
 
                         </div>
                         <div className="flex items-center">
                         {getValues("categories").length !==0 && getValues("categories").map((category : string, index : number) => 
-                                    <div className="bg-purple-200 py-[5px] mb-[20px] px-[15px] rounded-full mr-[10px]" key={index}>{category}</div>
+                                    <div className={` py-[5px] mb-[20px] px-[15px] rounded-full mr-[10px] ${LightMainBLUE}`} key={index}>{category}</div>
                         )}
                         </div>
                         {[{array:"keywordsFirstLine" , str : "firstKeyword"} , {array:"keywordsSecondLine" , str : "secondKeyword"} ,].map( (lineObj , index) => (
@@ -299,11 +328,11 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                             {/* firstLine Keyword */}
                             
                             {getValues(lineObj.array as any)?.map( (keyword : string,index : number) => (
-                                <div key={index} className="text-[15px] px-[15px] py-[1px] rounded-full border-2 border-purple-300 bg-purple-200 mr-[10px]">
+                                <div key={index} className={`text-[15px] px-[15px] py-[1px] rounded-full mr-[10px] ${LightMainBLUE}`}>
                                     {keyword}
                                 </div>
                             ))}
-                            <input type="text" className="py-[2px] px-[15px] w-[110px] rounded-full" {...register(lineObj.str as any)} placeholder="키워드 입력"/>
+                            <input type="text" className={`py-[2px] px-[15px] w-[110px] rounded-full ${MainBLUE}`}{...register(lineObj.str as any)} placeholder="키워드 입력"/>
                             <button onClick={async() => {
                                 if(getValues(lineObj.str as any) === "") return;
                                 setValue(lineObj.array as any , await [...getValues(lineObj.array as any), getValues(lineObj.str as any)] as never );
@@ -330,13 +359,13 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                         <span className="flex mt-[20px]">
                             {/* <input type="radio" {...register("durationIndex")} value="0" className="mr-[10px]"/> */}
                             {/* <p>상시 모집</p> */}
-                            <button className={`${getValues("durationIndex") === "0" ? 'bg-purple-200 border-2 border-purple-300' : 'bg-gray-200'} px-[15px] py-[8px] rounded-lg`} onClick={() => setValue("durationIndex" , '0')}>상시 모집</button>
+                            <button className={`${getValues("durationIndex") === "0" ? SeletedBUTTON : UnSelectedBUTTON} px-[15px] py-[8px] rounded-lg`} onClick={() => setValue("durationIndex" , '0')}>상시 모집</button>
                         </span>
 
                         <span className="flex mt-[20px] mb-[0px]">
                             {/* <input {...register("durationIndex")} type="radio" value="1" className="mr-[10px]"/> */}
                             {/* <p>기간 설정</p> */}
-                            <button className={`${getValues("durationIndex") === "1" ? 'bg-purple-200 border-2 border-purple-300' : 'bg-gray-200'} px-[15px] py-[8px] rounded-lg`} onClick={() => setValue("durationIndex", "1")}>기간 설정</button>
+                            <button className={`${getValues("durationIndex") === "1" ? SeletedBUTTON : UnSelectedBUTTON} px-[15px] py-[8px] rounded-lg`} onClick={() => setValue("durationIndex", "1")}>기간 설정</button>
                         </span>
                         {getValues("durationIndex") === "1" && (<span className="pl-[30px] mb-[200px]">
                             <span className="flex items-center mb-[10px]">
@@ -363,7 +392,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 (<span key={index} className="flex items-center mt-[20px]">
                                     {/* <input {...register("categories")} value={category} type="checkBox" className="mx-[10px]" /> */}
                                     {/* <p>{category}</p> */}
-                                    <button className={`${getValues("categories").includes(category as never) ? 'bg-purple-200 border-2 border-purple-300' : 'bg-gray-200'} px-[15px] py-[8px] rounded-lg`} onClick={
+                                    <button className={`${getValues("categories").includes(category as never) ? SeletedBUTTON : UnSelectedBUTTON} px-[15px] py-[8px] rounded-lg`} onClick={
                                         async() => {
                                             const gv = getValues("categories");
                                             const gvIdx = gv.indexOf(category as never);
@@ -450,31 +479,36 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 <button className="flex items-center justify-center text-[25px] w-[27px] h-[27px] rounded-lg bg-blue-100 text-blue-400 mt-[20px]"
                                 onClick={ () => {
     
-                                   if (positionList.find((elem) => elem.position === getValues("position")) || (positionList.find((elem) => elem.position === "아무나") && getValues("position")==="")){
+                                //    if (positionList.find((elem) => elem.position === getValues("position")) || (positionList.find((elem) => elem.position === "아무나") && getValues("position")==="")){
     
-                                    setValue("position","");
-                                    setValue("positionNum" ,"");
-                                    return;
-                                   } 
-                                    const newPosition = {
-                                        position : getValues("position") !== ""  ? getValues("position") :"아무나",
-                                        positionNum : +getValues("positionNum"),
-                                    }
-                                    setPositionList( prev => [...prev , newPosition]);
-                                    setValue("position","");
-                                    setValue("positionNum" ,"");
-                                
+                                //     setValue("position","");
+                                //     setValue("positionNum" ,"");
+                                //     return;
+                                //    } 
+                            if(getValues("position") !== ""){
+                                const newPosition = {
+                                    position : getValues("position") ,
+                                    positionNum : +getValues("positionNum"),
+                                }
+                                setPositionList( prev => [...prev , newPosition]);
+                                setValue("position","");
+                                setValue("positionNum" ,"");
+                            
+                            }
+                                 
                                 }}>+</button>
+                                
                             )}
                         </div>
-                        <div className="w-[800px] h-[250px] mt-[20px] px-[100px]">
-                            <span className="flex">
-                                <p className="w-[110px]">신청 방법</p>
-                                <input type="text" className="w-full border-2 rounded-lg ml-[20px] px-[10px]" placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."/>
+                        <div className="w-[800px] h-[300px] mt-[20px] px-[100px]">
+                            <span className="flex items-start">
+                                <p className="w-[130px] mt-[8px]">신청 방법</p>
+                                <input type="text" className="w-full border-b-2 h-[40px] ml-[20px] px-[10px]" placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."/>
                             </span>
-                            <span className="flex mt-[10px]">
-                                <p className="w-[110px]">신청 방법 안내</p>
-                                <textarea className="p-[10px] w-full h-[50px] border-2 rounded-lg ml-[20px]" placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."/>
+                            <span className="flex mt-[10px] items-start">
+                                <p className="w-[130px] mt-[8px]">신청 방법 안내</p>
+                                <textarea id="registerMethod" onKeyDown={textareaResize} 
+                                    onKeyUp={textareaResize} className="notes px-[10px] vertical-center w-full ml-[20px]" placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."/>
                             </span>
                             
                         </div>
@@ -488,8 +522,8 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                     <p className="text-[20px] font-main">모집 대상 조건 설정하기</p>
                     <p className="mt-[10px]">모집글들을 필터링할 때 쓰이는 정보이니 채워주시면 좋습니다.</p>
 
-                    <div className="flex w-full">
-                        <div className="flex flex-col w-[300px] border h-[400px]">
+                    <div className="w-full">
+                        <div className="flex border">
                             {/* {Grades.map((grade,index) => (
                                 <span key={index} className="flex items-center mt-[10px]">
                                     <input type="checkBox" {...register("grades")} value={grade} className="mx-[10px]" onClick = {
@@ -508,46 +542,55 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 </span>
                             ))} */}
 
+{/* 학년 중복선택  */}
+            <span className="py-[20px]">
+             <span className="flex items-center text-[20px] mb-[10px]">학년 <p className="ml-[10px] text-[15px] text-gray-400">중복 선택 가능</p></span>
 
-    <span className={`flex items-center mt-[10px] ${gradeToggle && ('text-gray-400')}`}>
-    {gradeToggle ? (
-        <input type="checkBox" {...register("grades")} value="상관없음" disabled className="mx-[10px]"></input>
-    ) : (<input type="checkBox" {...register("grades")} value="상관없음" checked className="mx-[10px]"></input>)}
-    
-    <p>상관없음</p>
-    </span>
+                <div className="flex">
+                
+                    <button onClick={()=> {
+                    setGradeToggle(false);
+                    // setValue("grades" , ["상관없음" as never])
+                    }} value="상관없음" className={`border-2 px-[15px] py-[5px] rounded-lg ${!gradeToggle ? SeletedBUTTON  : UnSelectedBUTTON}`}>상관 없음</button>
 
-<span className="flex items-center mt-[10px]">
-                            <p className="mx-[10px]">학년 선택하기</p>
-    <i className={gradeToggle ? `fa-solid fa-chevron-up` :`fa-solid fa-chevron-down`} onClick={() => {
-        if(gradeToggle) setValue("grades" , ["상관없음"] as any);
-        else setValue("grades" , []);
-        setGradeToggle(prev => !prev);
-        console.log(getValues("grades"))
-    }
-    }></i>
-</span>
-                            {gradeToggle && (
+                    {/* <p className="mx-[10px]">학년 선택하기</p> */}
+                    {!gradeToggle && (
+
+                        <button className={`border-2 ${gradeToggle ? SeletedBUTTON  : UnSelectedBUTTON} px-[15px] py-[5px] rounded-lg ml-[10px]`} onClick={() => {
+                            if(gradeToggle) setValue("grades" , ["상관없음"] as any);
+                            else setValue("grades" , []);
+                            setGradeToggle(true);
+                            console.log(getValues("grades"))
+                        }
+                        }>학년 설정</button>
+                    ) }
+
+                {gradeToggle && (
                                 <>
                                 {Grades.map((grade,index) => (
-                                    <span key={index} className="flex items-center mt-[10px]">
-                                        <input type="checkBox" {...register("grades")} value={grade} className="mx-[10px]" onClick = {
-                                            (e : any) => {
-                                                // if(index === 0 && e.target.checked){
-                                                //     setValue("grades", [grade as never]);
-                                                // }
-                                                // else if( index!== 0 && getValues("grades").includes("상관없음" as never)){
-                                                //     // e.preventDefault();
-                                                //     setValue("grades", [grade as never]);
-                                                //     return;
-                                                // }
+                                        <button value={grade} key={index} className={`ml-[10px] border-2 px-[15px] py-[5px] rounded-lg ${!gradeToggle ? SeletedBUTTON  : UnSelectedBUTTON}`} onClick = {
+                                            (e: any) => {
+                                                const gV = getValues("grades");
+                                                const gvIdx = gV.indexOf(grade as never);
+                                                const btn = e.currentTarget;
+                                                if(gvIdx === -1){
+                                                    setValue("grades" , [...gV , grade as never] );
+                                                    btn.className = `border-2 px-[15px] py-[5px] rounded-lg ml-[10px] ${SeletedBUTTON}`;
+                                                } 
+                                                else {
+                                                    setValue("grades" , [...gV.slice(0,gvIdx) , ...gV.slice(gvIdx+1)]);
+                                                    btn.className = `border-2 px-[15px] py-[5px] rounded-lg ml-[10px] ${UnSelectedBUTTON}`;
+                                                }
                                             }
-                                        } />
-                                        <p>{grade}</p>
-                                    </span>
+                                        } >{grade}</button>
                                 ))}
                                 </>
                             )}
+                </div>
+                    
+            </span>
+
+                            
                             
                         </div>
 
@@ -555,24 +598,29 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                         <div className="w-full grid grid-cols-5 border">
 
                             <div>
+                            <span className="flex items-center text-[20px] my-[10px]">전공 <p className="ml-[10px] text-[15px] text-gray-400">중복 선택 가능</p></span>
+                                
                             <span className={`flex items-start mt-[10px] ${majorToggle && ('text-gray-400')}`}>
-                            {majorToggle ? (
-                                <input type="checkBox" {...register("majors")} value="상관없음" disabled className="mx-[10px] mt-[5px]"></input>
-                            ) : (<input type="checkBox" {...register("majors")} value="상관없음" checked className="mx-[10px] mt-[5px]"></input>)}
                             
-                            <p>상관없음</p>
+                                <button onClick={()=> {
+                                    setMajorToggle(false);
+                                    // setValue("grades" , ["상관없음" as never])
+                                    }} value="상관없음" className={`border-2 px-[15px] py-[5px] rounded-lg ${!majorToggle ? SeletedBUTTON  : UnSelectedBUTTON}`}>상관 없음</button>
+                                
+                                {!majorToggle && (
+
+                                    <button className={`border-2 ${majorToggle ? SeletedBUTTON  : UnSelectedBUTTON} px-[15px] py-[5px] rounded-lg ml-[10px]`} onClick={() => {
+                                        if(majorToggle) setValue("majors" , ["상관없음"] as any);
+                                        else setValue("majors", []);
+                                        setMajorToggle(true);
+                                        console.log(getValues("majors"))
+                                    }
+                                    }>전공 선택</button>
+                                    ) }
                             </span>
 
 
-                            <span className="flex items-center mt-[10px]">
-                                <p className="mx-[10px]">전공 선택하기</p>
-                                <i className={majorToggle ? `fa-solid fa-chevron-up` :`fa-solid fa-chevron-down`} onClick={() => {
-                                    if(majorToggle) setValue("majors" , ["상관없음"] as any);
-                                    else setValue("majors", []);
-                                    setMajorToggle(prev => !prev);
-                                }
-                                }></i>
-                            </span>
+                            
                             </div>
                             {majorToggle && (
 
@@ -642,35 +690,48 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                     </div>
                 </div>
                 
+                {/* 지원 자격 */}
+
+                <div className="mt-[20px]">
+                    <p className="mb-[10px] text-[18px]">지원 자격</p>
+                    <textarea id="registerMethod" onKeyDown={textareaResize} 
+                                    onKeyUp={textareaResize} className="notes w-full px-[10px]"
+                                    placeholder="지원자 자격에 대해 자유롭게 작성해주세요." />
+                </div>
+
                 <div>
-                    <p className="text-[20px] font-main mt-[50px]">검색 키워드 입력하기</p>
+                    <p className="text-[20px] font-main mt-[50px]">검색 키워드 입력</p>
                     <p className="mt-[10px]">모집글과 관련된 키워드를 입력해주세요</p>
-                    
-                    <div className="flex">
-                        <p className="mt-[10px]">키워드</p>
-                        {["categories", "keywordsFirstLine" , "keywordsSecondLine" , "keywordsThirdLine"].map((elem ) => (
+                    <p className="my-[10px]">키워드</p>
+                    <div className="flex items-center">
+                        
+   
+                        {["categories", "keywordsFirstLine" , "keywordsSecondLine"].map((elem ) => (
                             getValues(elem as any)?.map((v : string,index : number) => (
-                            <span key={index}>
+                            <span key={index} className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}>
                                 <p>{v}</p>
                             </span>))
                             
                         ))}
                         {keywords.map( (keyword , index) => ( 
-                        <span key={index} className="flex px-[20px]">
-                            <p>{keyword}</p>
-                            <i className="fa-solid fa-xmark" onClick={ () =>
+                        <span key={index} className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}>
+                            <p className="mr-[10px]">{keyword}</p>
+                            <i className="fa-solid fa-xmark mt-[2px] text-gray-400" onClick={ () =>
                                 setKeywords(prev => [...prev.slice(0,index) , ...prev.slice(index+1)])
                             }></i>
                         </span>
                         ))}
                     </div>
 
-                    <div className="flex  mt-[10px]">
-                        <p className="mr-[20px]">키워드 입력</p>
-                        <input type="text" className="w-[300px] border-2 rounded-lg" {...register("keyword")}/>
-                        <button className="ml-[20px] bg-black text-white  px-[10px]" onClick={ async() => {
+                    <div className="">
+                        <p className="mr-[20px] my-[10px]">키워드 입력</p>
+                        <input type="text" className="w-[300px] border-b-2 h-[40px] px-[10px]" placeholder="엔터키로 키워드를 등록하세요" {...register("keyword")}/>
+                        <button className=" ml-[20px] bg-black text-white px-[10px]" onClick={ () => {
                             
-                            await setKeywords( prev => [...prev , getValues("keyword")])
+                            //  중복이나 공백 제거 하는 if문 추가해야함
+
+                            // await setKeywords( prev => [...prev , getValues("keyword")])
+                            setKeywords( prev => [...prev , getValues("keyword")])
                             setValue("keyword" , "");
                         }}> 생성 </button>
                     </div>
@@ -678,7 +739,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                 </div>
 
                 <div>
-                    <p className="text-[20px] font-main mt-[50px]">내용 입력하기</p>
+                    <p className="text-[20px] font-main mt-[50px]">자유 내용 입력</p>
                     <p className="mt-[10px] mb-[20px]">모임의 목적,활동 내용 등에 대한 자세한 내용을 자유롭게 작성해주세요!</p>
                     <MyBlock>
                     <Editor
@@ -711,8 +772,8 @@ const inputRef = useRef<HTMLInputElement | null>(null);
             </div>
 
             <div>
-                <p className="text-[20px] font-main">포스터 업로드하기</p>
-                <p className="mt-[10px]">포스터를 제작하셨다면 업로드해주세요! 모집글 상세보기 페이지 및 포스터 모아보기 페이지에서 보여집니다.</p>
+                <p className="text-[20px] font-main">포스터 등록</p>
+                <p className="mt-[10px]">포스터가 있다면 업로드해주세요! 모집글 페이지 및 포스터 모아보기 페이지에서 보여집니다.</p>
                 
                 <input
                   className="hidden"
@@ -722,9 +783,9 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                   onChange={onImageChange}
                 />
                 <div className=" items-center justify-between flex left-[30px] top-[20px] w-[90%] md:w-[190px]">
-                    <i className="fa-solid fa-panorama w-[40px]"
+                    {/* <i className="fa-solid fa-panorama w-[40px]"
                       onClick={onUploadImageButtonClick}
-                    ></i>
+                    ></i> */}
                    
                   </div>
                   <div className="grid grid-cols-3">
