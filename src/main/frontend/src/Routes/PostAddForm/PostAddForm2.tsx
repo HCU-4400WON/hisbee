@@ -18,6 +18,8 @@ import {
 } from "firebase/storage";
 import { storage } from "../../firebase";
 import { get } from "http";
+import Thumbnail from "./Thumbnail";
+import { IPostExample, PostExamples } from "./PostExamples";
 
 const MyBlock = styled.div`
 
@@ -228,7 +230,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [gradeToggle ,setGradeToggle] = useState<boolean>(false);
   const [majorToggle, setMajorToggle] = useState<boolean>(false);
-
+  const [postExampleToggle , setPostExampleToggle] = useState<boolean>(false);
 
   const textareaResize = (e : React.FormEvent<HTMLTextAreaElement>) => {
 
@@ -252,6 +254,9 @@ const inputRef = useRef<HTMLInputElement | null>(null);
     
         
   }
+
+
+  
     return(
         <div className="p-[50px]">
             <div className="flex justify-between pb-[20px]">
@@ -287,12 +292,33 @@ const inputRef = useRef<HTMLInputElement | null>(null);
             <form onSubmit={handleSubmit(onSubmit)} className="px-[20px]">
                 <div className="bg-slate-100 p-[50px] rounded-[5%] mb-[50px]">
                 
-                <p className="flex justify-end text-[#0000ff] ">
-                    필수 작성란입니다.
-                </p>
-                <p className="text-[20px] font-main">
-                    썸네일 제작
-                </p>
+                <div className="flex justify-between w-full relative">
+                    <p className="text-[20px] font-main">
+                        필수 작성 내용
+                    </p>
+                    {!postExampleToggle && (
+                        <button className=" bg-white py-[5px] text-[16px] px-[15px] border-2 border-blue-500 text-blue-500 rounded-lg" onClick={() => ( setPostExampleToggle(true))}>다른 모집글은 어떻게 작성되었는지 살펴보세요!</button>
+                    )}
+                    {postExampleToggle && (
+                        <div className="w-[600px] rounded-xl overflow-hidden absolute right-0">
+                        <div className="w-[600px] h-[50px] flex px-[20px] justify-between items-center bg-white">
+                            <p>다른 모집글은 어떻게 작성되었는지 살펴보세요!</p>
+                            <button onClick={()=> setPostExampleToggle(false)}>닫기</button>
+                        </div>
+                        <div className="w-600px h-[300px] bg-gray-200 flex items-center overflow-scroll">
+                        {postExampleToggle && (PostExamples[getValues("categories").length===0 ? "선택안됨" : getValues("categories")[0] ] as IPostExample[])?.map((postExample : IPostExample , index : number) => (
+                            
+                                <Thumbnail {...postExample} key={index} />
+                            
+                        ))}
+                        </div>
+                    </div>
+                    )}
+                    
+                    {/* <p className="flex justify-end text-[#0000ff] ">
+                        필수 작성란입니다.
+                    </p> */}
+                </div>
                 <p className="mt-[10px]">
                     썸네일을 보고 무슨 모집글인지  알기 쉽도록 만들어주세요!
                 </p>
@@ -422,20 +448,20 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                             </div>
                             <div className="flex flex-col justify-end">
                             {getValues("categories").includes("기타 모임" as never) && (
-                                        <input type="text" id="categoryETC" className="border-b-2 h-[40px] border-gray-400 w-full px-[10px]" placeholder="모집 유형을 입력해주세요"/>
+                                        <input type="text" id="categoryETC" className="border-b-2 h-[35px] border-gray-400 w-full px-[10px] bg-slate-100" placeholder="모집 유형을 입력해주세요"/>
                                     )}
                             </div>
                         </div>
                     </div>
                 </div>
-                <button className="mb-[70px] py-[10px] text-[16px] px-[15px] border-2 border-blue-500 text-blue-500 rounded-lg">다른 모집글은 어떻게 작성되었는지 살펴보세요!</button>
+                
                          
                 <div>
-                    <p className="text-[20px] font-main">모집글 필수 내용</p>
-                    <p className="mt-[10px]">모집글을 완성하기 위한 최소한의 내용을 적어주세요!</p>
+                    {/* <p className="text-[20px] font-main">모집글 필수 내용</p> */}
+                    <p className="mt-[10px]">지원에 ㅍ</p>
                     <div className="flex">
                         <div className="w-[400px] mt-[20px]">
-                            <p className="">모집 인원</p>
+                            <p>모집 인원</p>
                             
                             {getValues("positionToggle") === true ? (
                                 <span className="flex mt-[10px] items-center">
