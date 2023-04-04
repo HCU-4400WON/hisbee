@@ -16,6 +16,9 @@ public class Utils {
     }
 
     public static List<String> toArray(String s) {
+        if (s == null) {
+            return List.of();
+        }
         return List.of(s.split(","));
     }
 

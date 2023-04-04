@@ -5,6 +5,7 @@ import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.QPost;
 import com.hcu.hot6.domain.enums.OrderBy;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.NullExpression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -12,7 +13,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -42,7 +42,8 @@ public class PostRepository {
     public List<Post> findAll(PostSearchFilter filter, long offset) {
         return query.selectFrom(post)
                 .where(
-                        eqSearch(filter.getSearch())
+                        eqType(filter.getType()),
+                        eqKeywords(filter.getKeywords())
                 )
                 .offset(offset)
                 .limit(Pagination.LIMIT)
@@ -53,7 +54,8 @@ public class PostRepository {
     public List<Post> findAll(PostSearchFilter filter) {
         return query.selectFrom(post)
                 .where(
-                        eqSearch(filter.getSearch())
+                        eqType(filter.getType()),
+                        eqKeywords(filter.getKeywords())
                 )
                 .orderBy(orderCond(filter.getOrderBy()))
                 .fetch();
@@ -63,50 +65,43 @@ public class PostRepository {
         return query.select(post.count())
                 .from(post)
                 .where(
-                        eqSearch(filter.getSearch())
+                        eqType(filter.getType()),
+                        eqKeywords(filter.getKeywords())
                 )
                 .fetchOne();
     }
 
-    /*Todo: 키워드 필터링 테스트 미완*/
-    private BooleanExpression eqSearch(String keyword) {
-        //return (Strings.isBlank(keyword)) ? null : post.title.contains(keyword); // 기존 코드
-        if(Strings.isBlank(keyword)) return null;
-
-        String[] searchTokens = keyword.split(","); // 검색할 키워드 ,(콤마)로 분류
-
-        int flag = 0;   // 키워드 포함 안됨 -> 필터링에서 걸러짐
-        BooleanExpression be = null;
-        for(int i=0; i<searchTokens.length; i++){   // 검색할 키워드 중, 하나라도 포함하고 있는 게시글인 fetch
-            be = eqSearchOne(searchTokens[i]);
-            if(be != null) {
-                flag = 1;
-                break;
-            }
-        }
-
-        if(flag == 0) return null;  // 검색할 키워드 중, 아무것도 포함하고 있지 않은 게시글은 걸러짐
-        return be;
-
+    private BooleanExpression eqType(String type) {
+        return post.postTypes.contains(type);
     }
 
-    private BooleanExpression eqSearchOne(String token){
-        return post.keywordList.contains("," + token + ",");
+    private BooleanBuilder eqKeywords(List<String> keywords) {
+        var builder = new BooleanBuilder();
+
+        return builder
+                .or(
+                        keywords.stream()
+                                .map(post.keywords::contains)
+                                .reduce(BooleanExpression::or)
+                                .orElse(null))
+                .or(
+                        keywords.stream()
+                                .map(post.thumbnail.tags::contains)
+                                .reduce(BooleanExpression::or)
+                                .orElse(null)
+                );
     }
 
     private OrderSpecifier<?> orderCond(OrderBy orderBy) {
         switch (orderBy) {
             case RECENT -> {
-                return post.period.createdDate.desc();
+                return post.createdDate.desc();
             }
             case LIKES -> {
-                return post.likes.size().desc();
-            }
-            case MEMBER -> {
-                return post.remaining.asc();
+                return post.bookmarks.size().desc();
             }
             case END -> {
-                return post.period.postEnd.asc();
+                return post.thumbnail.recruitEnd.asc();
             }
         }
         return new OrderSpecifier<>(
