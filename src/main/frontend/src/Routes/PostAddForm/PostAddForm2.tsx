@@ -37,10 +37,17 @@ const MyBlock = styled.div`
   }
 `;
 
-const SeletedBUTTON = "border-2 border-blue-300 bg-blue-200"
-const UnSelectedBUTTON = "bg-gray-200 text-gray-400"
+
 const MainBLUE = "bg-blue-200";
 const LightMainBLUE = "bg-blue-100";
+
+const FunctionBUTTON = `${LightMainBLUE} text-blue-600 rounded-lg px-[15px] py-[8px]`;
+const DetailSelectedBUTTON = `border-2 border-blue-300 ${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
+const DetailUnSelectedBUTTON = `${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
+
+const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8px] rounded-lg`
+const MajorUnSelectedBUTTON = `${MainBLUE} px-[15px] py-[8px] rounded-lg`
+const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg`
 
 const converter = (what : string , info ?: string | Date) => {
         
@@ -139,7 +146,7 @@ interface IPositionList {
         {"콘텐츠융합디자인학부" : ["시각디자인" , "제품디자인"]},            
     ]
         
-    const [visible, setVisible] = useState<Boolean[]>(Array.from({length : Majors.length}, ()=>true));
+    const [visible, setVisible] = useState<Boolean[]>(Array.from({length : Majors.length}, ()=>false));
     
     const [keywords , setKeywords] = useState<string[] | []>([]);
 
@@ -231,6 +238,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
   const [gradeToggle ,setGradeToggle] = useState<boolean>(false);
   const [majorToggle, setMajorToggle] = useState<boolean>(false);
   const [postExampleToggle , setPostExampleToggle] = useState<boolean>(false);
+  const [registerToggle , setRegisterToggle] = useState<boolean>(false);
 
   const textareaResize = (e : React.FormEvent<HTMLTextAreaElement>) => {
 
@@ -297,7 +305,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                         필수 작성 내용
                     </p>
                     {!postExampleToggle && (
-                        <button className=" bg-white py-[5px] text-[16px] px-[15px] border-2 border-blue-500 text-blue-500 rounded-lg" onClick={() => ( setPostExampleToggle(true))}>다른 모집글은 어떻게 작성되었는지 살펴보세요!</button>
+                        <button className= {`bg-white py-[5px] text-[16px] px-[15px] border-2 border-blue-500 text-blue-500 rounded-lg`} onClick={() => ( setPostExampleToggle(true))}>다른 모집글은 어떻게 작성되었는지 살펴보세요!</button>
                     )}
                     {postExampleToggle && (
                         <div className="w-[600px] rounded-xl overflow-hidden absolute right-0">
@@ -394,13 +402,13 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                         <span className="flex mt-[20px]">
                             {/* <input type="radio" {...register("durationIndex")} value="0" className="mr-[10px]"/> */}
                             {/* <p>상시 모집</p> */}
-                            <button className={`${getValues("durationIndex") === "0" ? SeletedBUTTON : UnSelectedBUTTON} px-[15px] py-[8px] rounded-lg`} onClick={() => setValue("durationIndex" , '0')}>상시 모집</button>
+                            <button className={`${getValues("durationIndex") === "0" ? MajorSeletedBUTTON : UnSelectedBUTTON} px-[15px] py-[8px] rounded-lg`} onClick={() => setValue("durationIndex" , '0')}>상시 모집</button>
                         </span>
 
                         <span className="flex mt-[20px] mb-[0px]">
                             {/* <input {...register("durationIndex")} type="radio" value="1" className="mr-[10px]"/> */}
                             {/* <p>기간 설정</p> */}
-                            <button className={`${getValues("durationIndex") === "1" ? SeletedBUTTON : UnSelectedBUTTON} px-[15px] py-[8px] rounded-lg`} onClick={() => setValue("durationIndex", "1")}>기간 설정</button>
+                            <button className={`${getValues("durationIndex") === "1" ? MajorSeletedBUTTON : UnSelectedBUTTON} px-[15px] py-[8px] rounded-lg`} onClick={() => setValue("durationIndex", "1")}>기간 설정</button>
                         </span>
                         {getValues("durationIndex") === "1" && (<span className="pl-[30px] mb-[200px]">
                             <span className="flex items-center mb-[10px]">
@@ -412,7 +420,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 <p className="mx-[15px]">마감</p>
                                 <input type="date" className="w-[140px]" {...register("postEnd")}/>
                             </span>
-                            <button className="ml-[80px] mt-[20px] bg-blue-100 text-blue-400 rounded-lg px-[15px] py-[5px]"
+                            <button className={` ${FunctionBUTTON} ml-[80px] mt-[20px] `}
                             onClick={() => setValue("postEnd" , "")}>마감일 미설정</button>
                         </span>)}
                         
@@ -429,7 +437,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 (<span key={index} className="flex items-center mt-[20px]">
                                     {/* <input {...register("categories")} value={category} type="checkBox" className="mx-[10px]" /> */}
                                     {/* <p>{category}</p> */}
-                                    <button className={`${getValues("categories").includes(category as never) ? SeletedBUTTON : UnSelectedBUTTON} px-[15px] py-[8px] rounded-lg`} onClick={
+                                    <button className={`${getValues("categories").includes(category as never) ? MajorSeletedBUTTON : UnSelectedBUTTON} px-[15px] py-[8px] rounded-lg`} onClick={
                                         async() => {
                                             const gv = getValues("categories");
                                             const gvIdx = gv.indexOf(category as never);
@@ -458,8 +466,20 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                          
                 <div>
                     {/* <p className="text-[20px] font-main">모집글 필수 내용</p> */}
-                    <p className="mt-[10px]">지원에 ㅍ</p>
+                    <p className="mt-[10px]">지원에 필요한 정보를 채워주세요!</p>
                     <div className="flex">
+                    <div className="w-[600px] mt-[20px] mr-[100px]">
+                            <span className="flex items-start">
+                                <p className="w-[130px] mt-[8px]">신청 방법</p>
+                                <input type="text" className="w-full border-b-2 h-[40px] ml-[20px] px-[10px]" placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."/>
+                            </span>
+                            <span className="flex mt-[10px] items-start">
+                                <p className="w-[130px] mt-[8px]">신청 안내</p>
+                                <textarea id="registerMethod" onKeyDown={textareaResize} 
+                                    onKeyUp={textareaResize} className="notes px-[10px] vertical-center w-full ml-[20px]" placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."/>
+                            </span>
+                            
+                        </div>
                         <div className="w-[400px] mt-[20px]">
                             <p>모집 인원</p>
                             
@@ -476,7 +496,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 <span className="flex mt-[10px] items-center">
                                     <input className="border-b-2 px-[10px] w-[50px] px-[10px]" {...register("total")} type="number" />
                                     <p className="ml-[5px]">명</p>
-                                    <button onClick={()=> setValue("positionToggle" , true )} className="ml-[20px] bg-blue-100 text-blue-400 rounded-lg px-[15px] py-[5px]">포지션 : 인원으로 입력하기</button>
+                                    <button onClick={()=> setValue("positionToggle" , true )} className={`ml-[20px] ${FunctionBUTTON}`}>포지션: 인원으로 입력하기</button>
                                 </span>
                             )}
                             
@@ -537,18 +557,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 
                             )}
                         </div>
-                        <div className="w-[800px] mt-[20px] px-[100px]">
-                            <span className="flex items-start">
-                                <p className="w-[130px] mt-[8px]">신청 방법</p>
-                                <input type="text" className="w-full border-b-2 h-[40px] ml-[20px] px-[10px]" placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."/>
-                            </span>
-                            <span className="flex mt-[10px] items-start">
-                                <p className="w-[130px] mt-[8px]">신청 방법 안내</p>
-                                <textarea id="registerMethod" onKeyDown={textareaResize} 
-                                    onKeyUp={textareaResize} className="notes px-[10px] vertical-center w-full ml-[20px]" placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."/>
-                            </span>
-                            
-                        </div>
+                       
                     </div>
 
                 
@@ -584,92 +593,100 @@ const inputRef = useRef<HTMLInputElement | null>(null);
              <span className="flex items-center text-[20px] mb-[10px]">학년 <p className="ml-[10px] text-[15px] text-gray-400">중복 선택 가능</p></span>
 
                 <div className="flex">
-                
+                            <div className="flex">
+
+                            </div>
                     <button onClick={()=> {
-                    setGradeToggle(false);
-                    // setValue("grades" , ["상관없음" as never])
-                    }} value="상관없음" className={`border-2 px-[15px] py-[5px] rounded-lg ${!gradeToggle ? SeletedBUTTON  : UnSelectedBUTTON}`}>상관 없음</button>
+                        setGradeToggle(false);
+                        setValue("grades" , ["상관없음" as never])
+                        }} value="상관없음" className={`border-2 px-[15px] py-[5px] rounded-lg ${!gradeToggle ? MajorSeletedBUTTON  : UnSelectedBUTTON}`}>상관 없음</button>
 
-                    {/* <p className="mx-[10px]">학년 선택하기</p> */}
-                    {!gradeToggle && (
+                        {/* <p className="mx-[10px]">학년 선택하기</p> */}
+                            {!gradeToggle && (
 
-                        <button className={`border-2 ${gradeToggle ? SeletedBUTTON  : UnSelectedBUTTON} px-[15px] py-[5px] rounded-lg ml-[10px]`} onClick={() => {
-                            if(gradeToggle) setValue("grades" , ["상관없음"] as any);
-                            else setValue("grades" , []);
-                            setGradeToggle(true);
-                            console.log(getValues("grades"))
-                        }
-                        }>학년 설정</button>
-                    ) }
+                                <button className={`border-2 ${gradeToggle ? MajorSeletedBUTTON  : UnSelectedBUTTON} px-[15px] py-[5px] rounded-lg ml-[10px]`} onClick={() => {
+                                    // if(gradeToggle) setValue("grades" , ["상관없음"] as any);
+                                    setValue("grades" , []);
+                                    setGradeToggle(true);
+                                    console.log(getValues("grades"))
+                                }
+                                }>학년 설정</button>
+                            ) }
 
-                {gradeToggle && (
-                                <>
-                                {Grades.map((grade,index) => (
-                                        <button value={grade} key={index} className={`ml-[10px] border-2 px-[15px] py-[5px] rounded-lg ${!gradeToggle ? SeletedBUTTON  : UnSelectedBUTTON}`} onClick = {
-                                            (e: any) => {
-                                                const gV = getValues("grades");
-                                                const gvIdx = gV.indexOf(grade as never);
-                                                const btn = e.currentTarget;
-                                                if(gvIdx === -1){
-                                                    setValue("grades" , [...gV , grade as never] );
-                                                    btn.className = `border-2 px-[15px] py-[5px] rounded-lg ml-[10px] ${SeletedBUTTON}`;
-                                                } 
-                                                else {
-                                                    setValue("grades" , [...gV.slice(0,gvIdx) , ...gV.slice(gvIdx+1)]);
-                                                    btn.className = `border-2 px-[15px] py-[5px] rounded-lg ml-[10px] ${UnSelectedBUTTON}`;
+                                {gradeToggle && (
+                                    <>
+                                    {Grades.map((grade,index) => (
+                                            <button value={grade} key={index} className={`ml-[10px] px-[15px] py-[5px] rounded-lg ${!gradeToggle ? MajorSeletedBUTTON  : MajorUnSelectedBUTTON}`} onClick = {
+                                                (e: any) => {
+                                                    const gV = getValues("grades");
+                                                    const gvIdx = gV.indexOf(grade as never);
+                                                    const btn = e.currentTarget;
+                                                    if(gvIdx === -1){
+                                                        setValue("grades" , [...gV , grade as never] );
+                                                        btn.className = ` px-[15px] py-[5px] rounded-lg ml-[10px] ${MajorSeletedBUTTON}`;
+                                                    } 
+                                                    else {
+                                                        setValue("grades" , [...gV.slice(0,gvIdx) , ...gV.slice(gvIdx+1)]);
+                                                        btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${MajorUnSelectedBUTTON}`;
+                                                    }
                                                 }
-                                            }
-                                        } >{grade}</button>
-                                ))}
-                                </>
-                            )}
-                </div>
+                                            } >{grade}</button>
+                                    ))}
+                                    </>
+                                )}
+                            </div>
                     
-            </span>
+                         </span>
 
                             
                             
                         </div>
-
+                        <span className="flex items-center text-[20px] my-[10px]">전공 <p className="ml-[10px] text-[15px] text-gray-400">중복 선택 가능</p></span>
+                        <div className="flex">
+                            
                         
-                        <div className="w-full grid grid-cols-5 border">
-
-                            <div>
-                            <span className="flex items-center text-[20px] my-[10px]">전공 <p className="ml-[10px] text-[15px] text-gray-400">중복 선택 가능</p></span>
-                                
                             <span className={`flex items-start mt-[10px] ${majorToggle && ('text-gray-400')}`}>
                             
                                 <button onClick={()=> {
                                     setMajorToggle(false);
-                                    // setValue("grades" , ["상관없음" as never])
-                                    }} value="상관없음" className={`border-2 px-[15px] py-[5px] rounded-lg ${!majorToggle ? SeletedBUTTON  : UnSelectedBUTTON}`}>상관 없음</button>
+                                    setValue("grades" , ["상관없음" as never])
+                                    }} value="상관없음" className={`border-2 px-[15px] min-w-[120px] py-[5px] rounded-lg ${!majorToggle ? MajorSeletedBUTTON  : UnSelectedBUTTON}`}>상관 없음</button>
                                 
                                 {!majorToggle && (
 
-                                    <button className={`border-2 ${majorToggle ? SeletedBUTTON  : UnSelectedBUTTON} px-[15px] py-[5px] rounded-lg ml-[10px]`} onClick={() => {
-                                        if(majorToggle) setValue("majors" , ["상관없음"] as any);
-                                        else setValue("majors", []);
+                                    <button className={`border-2 ${MajorUnSelectedBUTTON}  w-[120px] px-[15px] py-[5px] rounded-lg ml-[10px]`} onClick={() => {
+                                        // if(majorToggle) setValue("majors" , ["상관없음"] as any);
+                                        setValue("majors", []);
                                         setMajorToggle(true);
-                                        console.log(getValues("majors"))
                                     }
                                     }>전공 선택</button>
                                     ) }
                             </span>
+                            
+                        
 
+                        <div className="w-full grid grid-cols-2">
 
                             
-                            </div>
                             {majorToggle && (
 
                                 <>
-                                {Majors.map((major,index) => {
+                                {Majors?.map((major,index) => {
                                 const key = Object.keys(major)[0];
                                 const values = Object.values(major)[0];
                                 let clicked = false;
                                 return(
                                     <div className="flex flex-col">
                                         <span key={index} className="flex items-center px-[20px] py-[10px]">
-                                            <input type="checkBox" {...register("majors")} value={key} className="mr-[10px]" onClick={(e : any) => 
+                                            <button key={index} onClick={(e) => {
+
+                                                setVisible( prev => [...prev.slice(0,index) , !prev[index] , ...prev.slice(index+1)])
+                                            }} className={`${visible[index] ? MajorSeletedBUTTON  : MajorUnSelectedBUTTON} flex items-center px-[15px] py-[5px] rounded-lg ml-[10px]`} >
+                                                <p>{Object.keys(major)}</p>
+                                                <i className="fa-solid fa-chevron-right ml-[10px]"></i>
+                                            </button>
+
+                                            {/* <input type="checkBox" {...register("majors")} value={key} className="mr-[10px]" onClick={(e : any) => 
                                             {
                                                 
                                                 if(e.target.checked){
@@ -689,34 +706,52 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                                     }
                                                 }
                                             }
-                                            } />
-                                            <p className="mr-[10px]">{key}</p>
-                                            {values.length !== 0 && clicked===false && <i onClick={(e : any) => {
+                                            } /> */}
+                                            {/* <p className="mr-[10px]">{key}</p> */}
+                                            {/* {values.length !== 0 && clicked===false && <i onClick={(e : any) => {
                                                 e.currentTarget.className === "fa-solid fa-chevron-up" ? 
                                                 e.currentTarget.className="fa-solid fa-chevron-down" : 
                                                 e.currentTarget.className="fa-solid fa-chevron-up"
                                                 setVisible( prev => [...prev.slice(0,index) , !prev[index] , ...prev.slice(index+1)])
-                                                }} className="fa-solid fa-chevron-down"></i>} 
+                                                }} className="fa-solid fa-chevron-down"></i>}  */}   
 
-                                            
-                                        </span>
-                                        {visible[index] && ( values.map((value : string , idx : number) => (
+
+
+{visible[index] && ( values.map((value : string , idx : number) => (
                                             <span key={idx} className="pl-[20px] flex items-center">
-                                                <input type="checkBox" id={`majors${index}`} {...register("majors")} value={value} className="mx-[10px]"
-                                                // onClick={() => {
-                                                    //상관없음 체크 되었을 때, 하위 카테고리 체크시 상관없음 체크 해제
-                                                    // if(getValues("majors").includes("상관없음" as never)){
-                                                    //     setValue("majors" , [value as never]);
-                                                    // }
-                                                // }}
-                                                />
-                                                <p>{value}</p>
+                                              {/* check point */}
+                                                <button className={`${DetailUnSelectedBUTTON}`} onClick={(e)=> {
+                                                    const gV = getValues("majors");
+                                                    const gvIdx = gV.indexOf(value as never);
+                                                    const btn = e.currentTarget;
+                                                    if(gvIdx === -1){
+                                                        setValue("majors" , [...gV , value as never] );
+                                                        btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailSelectedBUTTON}`;
+                                                    } 
+                                                    else {
+                                                        setValue("majors" , [...gV.slice(0,gvIdx) , ...gV.slice(gvIdx+1)]);
+                                                        btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailUnSelectedBUTTON}`;
+                                                    }
+                                                }}>{value}</button>
+                                                {/* <input type="checkBox" id={`majors${index}`} {...register("majors")} value={value} className="mx-[10px]" */}
+                                                
+                                                
+                                                 {/* onClick={() => { */}
+                                                    {/* //상관없음 체크 되었을 때, 하위 카테고리 체크시 상관없음 체크 해제 */}
+                                                    {/* // if(getValues("majors").includes("상관없음" as never)){ */}
+                                                    {/* //     setValue("majors" , [value as never]); */}
+                                                    {/* // } */}
+                                                {/* // }} */}
+                                                {/* // /> */}
+                                                {/* <p>{value}</p> */}
                                             </span>
                                         
                                                     ))
                                                     
                                                 
                                             )}
+                                        </span>
+                                        
                                     </div>
                                 );
                             }
@@ -724,16 +759,24 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                             )}
                             
                         </div>
+                        </div>
                     </div>
                 </div>
                 
                 {/* 지원 자격 */}
 
-                <div className="mt-[20px]">
-                    <p className="mb-[10px] text-[18px]">지원 자격</p>
+                <div className="mt-[20px] w-[700px]">
+                    <p className="mb-[10px] text-[18px] ">지원 자격</p>
+                    
+                    {registerToggle ? (
+                    <div className="flex">
                     <textarea id="registerMethod" onKeyDown={textareaResize} 
                                     onKeyUp={textareaResize} className="notes w-full px-[10px]"
                                     placeholder="지원자 자격에 대해 자유롭게 작성해주세요." />
+                                    <button  onClick={() => (setRegisterToggle(false))} className={`${UnSelectedBUTTON} ml-[20px] w-[80px] h-[40px]`}>접기</button>
+                                    </div>) : (
+                                        <button onClick={() => (setRegisterToggle(true))} className={`${FunctionBUTTON}`}>필드 추가</button>
+                                    )}
                 </div>
 
                 <div>
