@@ -115,7 +115,7 @@ public class PostControllerTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(new Date())
+                .recruitEnd(new Date())
                 .projectStart(new Date())
                 .build();
 
@@ -156,7 +156,7 @@ public class PostControllerTest {
                 // .title("title") # missing title
                 .content("content")
                 .contact("contact")
-                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .recruitEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build();
 
@@ -185,7 +185,7 @@ public class PostControllerTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .recruitEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build();
 
@@ -210,7 +210,7 @@ public class PostControllerTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .recruitEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build();
 
@@ -236,7 +236,7 @@ public class PostControllerTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .recruitEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build();
 
@@ -264,7 +264,7 @@ public class PostControllerTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .recruitEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build();
 
@@ -297,7 +297,7 @@ public class PostControllerTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .recruitEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build();
 
@@ -326,7 +326,7 @@ public class PostControllerTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .recruitEnd(Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build(), TEST_EMAIL);
 
@@ -353,7 +353,7 @@ public class PostControllerTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
+                .recruitEnd(Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
                 .projectStart(Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build(), TEST_EMAIL);
 
@@ -382,7 +382,7 @@ public class PostControllerTest {
                 .title("title")
                 .content("content")
                 .contact("contact")
-                .postEnd(new Date())
+                .recruitEnd(new Date())
                 .projectStart(new Date())
                 .build(), "lifeIsGood@test.com");
 
