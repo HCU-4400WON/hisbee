@@ -13,26 +13,42 @@ import java.util.List;
 @Builder
 public class PostCreationRequest {
 
+    // Thumbnail
     @NotNull
     private String title;
-    private String content;
-    @NotNull
-    private String contact;
+    private String summary;
+    private List<String> tags;
 
-    private int total;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    // Metadata
     @NotNull
-    private Date postStart;
+    private List<String> postTypes;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull
-    private Date postEnd;
+    private Date recruitStart;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull
+    private Date recruitEnd;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull
     private Date projectStart;
 
-    private List<String> keywords;
+    @NotNull
     private List<Duration> durations;
+
+    @NotNull
+    private List<PositionForm> positions;
+
+    @NotNull
+    private String contact;
+
+    // Optional fields
+    private String contactDetails;
+    private String content;
+    private List<String> years;
+    private List<String> departments;
+    private List<String> keywords;
+    private List<String> posterPaths;
 }

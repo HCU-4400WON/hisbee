@@ -35,7 +35,6 @@ class PoolRepositoryTest {
         PoolSearchFilter filter = PoolSearchFilter.builder()
                 .page(1)
                 .department(Department.CSEE)
-                .position(Position.DEVELOPER)
                 .grade("1")
                 .build();
 
@@ -49,7 +48,6 @@ class PoolRepositoryTest {
             member.update(MemberRequest.builder()
                     .nickname("username")
                     .department(Department.CSEE)
-                    .position(Position.DEVELOPER)
                     .grade("1")
                     .isPublic(true)
                     .build());
@@ -64,7 +62,6 @@ class PoolRepositoryTest {
         PoolSearchFilter filter = PoolSearchFilter.builder()
                 .page(1)
                 .department(Department.CSEE)
-                .position(Position.DEVELOPER)
                 .grade("1")
                 .build();
         Random random = new Random();
@@ -79,7 +76,6 @@ class PoolRepositoryTest {
             member.update(MemberRequest.builder()
                     .nickname("username")
                     .department(Department.CSEE)
-                    .position(Position.DEVELOPER)
                     .grade("1")
                     .isPublic(true)
                     .build());
@@ -96,7 +92,6 @@ class PoolRepositoryTest {
             member.update(MemberRequest.builder()
                     .nickname("username")
                     .department(Department.CSEE)
-                    .position(Position.DEVELOPER)
                     .grade("2")
                     .isPublic(true)
                     .build());

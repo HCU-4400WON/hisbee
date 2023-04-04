@@ -1,6 +1,9 @@
 package com.hcu.hot6.repository;
 
-import com.hcu.hot6.domain.*;
+import com.hcu.hot6.domain.Department;
+import com.hcu.hot6.domain.Member;
+import com.hcu.hot6.domain.Pagination;
+import com.hcu.hot6.domain.QMember;
 import com.hcu.hot6.domain.filter.PoolSearchFilter;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -21,7 +24,6 @@ public class PoolRepository {
         return query.selectFrom(qMember)
                 .where(
                         eqDepartment(filter.getDepartment()),
-                        eqPosition(filter.getPosition()),
                         eqGrade(filter.getGrade()),
                         qMember.isPublic
                 ).limit(Pagination.LIMIT)
@@ -35,7 +37,6 @@ public class PoolRepository {
                 .from(qMember)
                 .where(
                         eqDepartment(filter.getDepartment()),
-                        eqPosition(filter.getPosition()),
                         eqGrade(filter.getGrade()),
                         qMember.isPublic
                 ).fetchOne();
@@ -43,10 +44,6 @@ public class PoolRepository {
 
     private BooleanExpression eqDepartment(Department department) {
         return (department == null) ? null : qMember.department.eq(department);
-    }
-
-    private BooleanExpression eqPosition(Position position) {
-        return (position == null) ? null : qMember.position.eq(position);
     }
 
     private BooleanExpression eqGrade(String grade) {

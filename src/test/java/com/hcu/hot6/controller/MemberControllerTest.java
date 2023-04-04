@@ -1,7 +1,8 @@
 package com.hcu.hot6.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hcu.hot6.domain.*;
+import com.hcu.hot6.domain.Department;
+import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.response.MemberProfileResponse;
 import com.hcu.hot6.domain.response.MemberResponse;
@@ -21,7 +22,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -165,7 +165,6 @@ class MemberControllerTest {
                         .grade("1학년")
                         .contact("contact")
                         .department(Department.CSEE)
-                        .position(Position.DEVELOPER)
                         .club("club")
                         .externalLinks("link")
                         .posts(new ArrayList<>())
@@ -188,7 +187,6 @@ class MemberControllerTest {
         // then
         assertThat(res.getEmail()).isEqualTo(TEST_EMAIL);
         assertThat(res.getDepartment()).isEqualTo(Department.CSEE);
-        assertThat(res.getPosition()).isEqualTo(Position.DEVELOPER);
     }
 
     @Test
@@ -203,27 +201,9 @@ class MemberControllerTest {
                         .grade("1학년")
                         .contact("contact")
                         .department(Department.CSEE)
-                        .position(Position.DEVELOPER)
                         .club("")
                         .externalLinks("")
-                        .posts(List.of(Project.builder()
-                                .dtype("P")
-                                .title("title")
-                                .content("content")
-                                .contact("contact")
-                                .author(Member.builder()
-                                        .uid("1")
-                                        .email(TEST_EMAIL)
-                                        .pictureUrl("picture")
-                                        .build())
-                                .period(Period.ByPeriodBuilder()
-                                        .postEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0))
-                                        .projectStart(LocalDateTime.of(2023, 3, 10, 0, 0, 0))
-                                        .projectEnd(LocalDateTime.of(2023, 7, 2, 0, 0, 0))
-                                        .build())
-                                .maxDeveloper(3)
-                                .maxDesigner(1)
-                                .build()))
+                        .posts(List.of())
                         .likes(new ArrayList<>())
                         .build()));
 
@@ -243,10 +223,8 @@ class MemberControllerTest {
         // then
         assertThat(res.getEmail()).isEqualTo(TEST_EMAIL);
         assertThat(res.getDepartment()).isEqualTo(Department.CSEE);
-        assertThat(res.getPosition()).isEqualTo(Position.DEVELOPER);
 
         assertThat(res.getPosts().size()).isEqualTo(1);
-        assertThat(res.getPosts().get(0).getMaxDeveloper()).isEqualTo(3);
 
         assertThat(res.getClub()).isEmpty();
         assertThat(res.getExternalLinks()).isEmpty();
@@ -269,27 +247,9 @@ class MemberControllerTest {
                         .grade("1")
                         .contact("contact")
                         .department(Department.CSEE)
-                        .position(Position.DEVELOPER)
                         .club("club")
                         .externalLinks("link")
-                        .posts(List.of(Project.builder()
-                                .dtype("P")
-                                .title("title")
-                                .content("content")
-                                .contact("contact")
-                                .author(Member.builder()
-                                        .uid("1")
-                                        .email(TEST_EMAIL)
-                                        .pictureUrl("picture")
-                                        .build())
-                                .period(Period.ByPeriodBuilder()
-                                        .postEnd(LocalDateTime.of(2023, 3, 2, 0, 0, 0))
-                                        .projectStart(LocalDateTime.of(2023, 3, 10, 0, 0, 0))
-                                        .projectEnd(LocalDateTime.of(2023, 7, 2, 0, 0, 0))
-                                        .build())
-                                .maxDeveloper(3)
-                                .maxDesigner(1)
-                                .build()))
+                        .posts(List.of())
                         .likes(new ArrayList<>())
                         .build());
 

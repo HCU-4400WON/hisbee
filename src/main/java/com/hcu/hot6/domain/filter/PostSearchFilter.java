@@ -1,9 +1,11 @@
 package com.hcu.hot6.domain.filter;
 
 import com.hcu.hot6.domain.enums.OrderBy;
+import com.hcu.hot6.util.Utils;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -11,17 +13,20 @@ public class PostSearchFilter {
 
     @Builder
     public PostSearchFilter(Integer page,
-                            String search,
+                            String type,
+                            String keywords,
                             OrderBy orderBy,
                             Integer limit) {
         this.page = page;
-        this.search = search;
+        this.type = (Objects.isNull(type)) ? "" : type;
+        this.keywords = Utils.toArray(keywords, ",");
         this.orderBy = (Objects.isNull(orderBy)) ? OrderBy.RECENT : orderBy;
         this.limit = limit;
     }
 
     private final Integer page;
-    private final String search;
+    private final String type;
+    private final List<String> keywords;
     private final OrderBy orderBy;
     private final Integer limit;
 }
