@@ -6,7 +6,6 @@ import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
-import com.hcu.hot6.domain.response.KeywordSearchedResponse;
 import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.domain.response.PostFilterResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
@@ -17,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -36,8 +36,8 @@ public class PostService {
 
         return PostCreationResponse.builder()
                 .id(post.getId())
-                .title(post.getTitle())
-                .createdDate(post.getPeriod().getCreatedDate())
+                .title(post.getThumbnail().getTitle())
+                .createdDate(post.getCreatedDate())
                 .build();
     }
 
@@ -66,19 +66,27 @@ public class PostService {
 
     public PostFilterResponse readFilteredPost(PostSearchFilter filter, String email) {
         if (Objects.isNull(filter.getPage())) {
-            var postResponseList = postRepository.findAll(filter).stream()
-                    .map(post -> post.toResponse(email))
+            var thumbnailResponses = postRepository.findAll(filter).stream()
+                    .map(post -> post.getThumbnail().toResponse(email))
                     .toList();
 
-            return new PostFilterResponse(-1, postResponseList);
+            return new PostFilterResponse(
+                    thumbnailResponses.size(),
+                    List.of(),
+                    thumbnailResponses
+            );
         }
         var pagination = new Pagination(filter.getPage(), postRepository.count(filter));
         var postResponseList = postRepository.findAll(filter, pagination.getOffset())
                 .stream()
-                .map(post -> post.toResponse(email))
+                .map(post -> post.getThumbnail().toResponse(email))
                 .toList();
 
-        return new PostFilterResponse(pagination.getTotal(), postResponseList);
+        return new PostFilterResponse(
+                pagination.getTotal(),
+                List.of(),
+                postResponseList
+        );
     }
 
     @Transactional

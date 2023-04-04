@@ -3,12 +3,16 @@ package com.hcu.hot6.domain;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
+import com.hcu.hot6.util.Utils;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +20,7 @@ import java.util.Optional;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(value = AuditingEntityListener.class)
 public class Post {
 
     @Id
@@ -23,12 +28,9 @@ public class Post {
     @Column(name = "post_id")
     private Long id;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     private Member author;
-    @NotNull
     private String postTypes;   // keyword. "," 콤마로 구분
-    @NotNull
     private String contact;
 
     // 필수 아닌 필드
@@ -38,17 +40,15 @@ public class Post {
     private String targetDepartment;    // 다중선택 가능. "," 콤마로 구분
 
     @OneToMany(mappedBy = "post")
-    @JoinColumn(name="bookmark_id")
-    private List<Bookmark> bookmarks;
-    @OneToMany(mappedBy = "post")
-    @JoinColumn(name="position_id")
-    private List<Position> positions;
+    private List<Bookmark> bookmarks = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    @JoinColumn(name = "poster_id")
-    private List<Poster> posters;
+    private List<Position> positions = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post")
+    private List<Poster> posters = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "thumbnail_id")
     private Thumbnail thumbnail;
 
@@ -56,13 +56,14 @@ public class Post {
     private Long views;                 // 조회수
     private boolean isAutoClose;
 
-    @ManyToMany
-    @JoinTable(name = "PostLike",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "member_id"))
-    private List<Member> likes = new ArrayList<>();
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDated;
 
     public Post(PostCreationRequest request, Member author) {
+        this.postTypes = Utils.toString(request.getPostTypes());
         this.content = request.getContent();
         this.contact = request.getContact();
         this.keywords = String.join(
@@ -70,41 +71,33 @@ public class Post {
                 Optional.ofNullable(request.getKeywords())
                         .orElse(List.of())
         );
+        this.contactDetails = request.getContactDetails();
+        this.targetYears = Utils.toString(request.getYears());
+        this.targetDepartment = Utils.toString(request.getDepartments());
+        this.views = 0L;
+        this.isAutoClose = false;
         registerAuthor(author);
-    }
-
-    private String arrayToString(List<Duration> durations) {
-        List<String> list = durations.stream()
-                .map(Enum::name)
-                .toList();
-
-        return String.join(
-                ",",
-                Optional.of(list)
-                        .orElse(List.of())
-        );
+        createThumbnail(new Thumbnail(request));
     }
 
     //=== 연관관계 메서드 ===//
+
+    private void createThumbnail(Thumbnail thumbnail) {
+        this.thumbnail = thumbnail;
+        thumbnail.setPost(this);
+    }
+
     private void registerAuthor(Member author) {
         this.author = author;
         author.getPosts().add(this);
     }
 
     public Post addBookmark(Member member) {
-        if (this.likes.contains(member)) {
-            throw new IllegalArgumentException("Already liked the post.");
-        }
-        this.likes.add(member);
-        return this;
+        return null;
     }
 
     public Post delBookmark(Member member) {
-        if (!this.likes.contains(member)) {
-            throw new IllegalArgumentException("No match member found: " + member);
-        }
-        this.likes.remove(member);
-        return this;
+        return null;
     }
 
     public void update(PostUpdateRequest request) {

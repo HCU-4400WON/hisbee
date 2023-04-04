@@ -9,5 +9,6 @@ import java.util.List;
 @Getter
 public class PostFilterResponse {
     private final long total;
-    private final List<PostReadOneResponse> posts;
+    private final List<String> relatedKeywords;
+    private final List<PostThumbnailResponse> posts;
 }
