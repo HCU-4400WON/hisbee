@@ -18,6 +18,8 @@ public class PostThumbnailResponse {
     private Long views;
     private Date createdDate;
     private boolean hasLiked;
+    private Date recruitStart;
+    private Date recruitEnd;
 
     public PostThumbnailResponse(final Thumbnail thumbnail, String email) {
         this.id = thumbnail.getPost().getId();
@@ -29,5 +31,7 @@ public class PostThumbnailResponse {
         this.createdDate = Utils.toDate(thumbnail.getPost().getCreatedDate());
         this.hasLiked = thumbnail.getPost().getBookmarks().stream()
                 .anyMatch(bookmark -> email.equals(bookmark.getMember().getEmail()));
+        this.recruitStart = Utils.toDate(thumbnail.getRecruitStart());
+        this.recruitEnd = Utils.toDate(thumbnail.getRecruitEnd());
     }
 }
