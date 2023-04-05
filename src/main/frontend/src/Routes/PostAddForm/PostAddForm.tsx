@@ -500,6 +500,9 @@ function PostAddForm() {
     mentee : "멘티",
   }
 
+
+
+
   return (
     <>
       {isLoginCheckLoading ||
@@ -508,6 +511,48 @@ function PostAddForm() {
       mentoringMutateLoading ? (
         <LoadingAnimation />
       ) : (
+
+        <>
+{/* Preview */}
+
+        <div className="w-full h-[600px] flex items-center justify-between px-[100px]">
+          <div className="w-[400px] h-[400px] bg-[#eeeeee] p-[30px]">
+            <div className="mb-[70px]">
+              <span className="flex items-center justify-between mb-[20px]">
+            <input className="w-[70px] p-[5px] rounded-full " placeholder="일정 입력"/>
+            <i className="fa-regular fa-heart text-[23px] text-gray-400"></i>
+            </span>
+            <input className="w-[340px] text-[20px] p-[5px] mb-[10px]" type="text" placeholder="모집글 제목을 입력하세요" />
+            <input className="w-[340px] text-[15px] px-[5px] p-[2px] mb-[10px]" type="text" placeholder="모집글 제목을 입력하세요" />
+
+            </div>
+            <div className=" mb-[10px]">
+              <input type="text" className="px-[5px] w-[100px]" placeholder="키워드 입력"/>
+            </div>
+            <div className=" mb-[10px]">
+              <input type="text" className="px-[5px] w-[100px]" placeholder="키워드 입력"/>
+            </div>
+            <div className=" mb-[10px]">
+              <input type="text" className="px-[5px] w-[100px]" placeholder="키워드 입력"/>
+            </div>
+            
+            
+          </div>
+
+
+
+        <div className="w-[400px] h-[400px] border">
+          
+        </div>
+
+        <div className="w-[400px] h-[400px] border">
+
+        </div>
+        </div>
+
+
+
+
         <form
           onSubmit={handleSubmit(onValid as any)}
           className="md:text-[16px] text-[13px] md:w-[1470px] md:px-[100px] px-[30px] py-[50px] pb-[100px] relative"
@@ -789,6 +834,8 @@ function PostAddForm() {
             value="올리기"
           />
         </form>
+        </>
+        
       )}
     </>
   );
