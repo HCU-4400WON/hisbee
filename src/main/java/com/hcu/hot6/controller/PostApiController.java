@@ -1,14 +1,13 @@
 package com.hcu.hot6.controller;
 
 import com.hcu.hot6.domain.enums.OrderBy;
-import com.hcu.hot6.domain.enums.PostType;
-import com.hcu.hot6.domain.enums.PostTypeDetails;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.domain.response.PostFilterResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
+import com.hcu.hot6.service.KeywordService;
 import com.hcu.hot6.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +23,7 @@ import java.util.Objects;
 public class PostApiController {
 
     private final PostService postService;
+    private final KeywordService keywordService;
 
     /**
      * 모집글 게시(CREATE)
@@ -35,6 +35,8 @@ public class PostApiController {
 
         String email = user.getName();
         PostCreationResponse response = postService.createPost(request, email);
+        keywordService.addKeywords(request.getKeywords(), request.getTags());
+
         return ResponseEntity.ok(response);
     }
 
@@ -62,8 +64,9 @@ public class PostApiController {
     @PutMapping("/posts/{postId}")
     public ResponseEntity<PostReadOneResponse> updatePost(
             @PathVariable Long postId,
-            @RequestBody PostUpdateRequest request) {
-        return ResponseEntity.ok(postService.updatePost(postId, request));
+            @RequestBody PostUpdateRequest request,
+            @AuthenticationPrincipal OAuth2User user) {
+        return ResponseEntity.ok(postService.updatePost(postId, request, user.getName()));
     }
 
     /**
@@ -71,31 +74,26 @@ public class PostApiController {
      */
     @GetMapping("/posts")
     public ResponseEntity<PostFilterResponse> readFilteredPost(@RequestParam(required = false) Integer page,
-                                                               @RequestParam(required = false) String search,
+                                                               @RequestParam(required = false) String type,
+                                                               @RequestParam(required = false) String keywords,
                                                                @RequestParam(required = false, value = "order") OrderBy orderBy,
-                                                               @RequestParam(required = false) PostType type,
-                                                               @RequestParam(required = false) PostTypeDetails position,
-                                                               @RequestParam(required = false, value = "pay") Boolean hasPay,
                                                                @RequestParam(required = false) Integer limit,
                                                                @AuthenticationPrincipal OAuth2User user) {
         String email = (Objects.isNull(user)) ? "" : user.getName();
         PostSearchFilter filter = PostSearchFilter.builder()
                 .page(page)
-                .search(search)
-                .orderBy(orderBy)
                 .type(type)
-                .typeDetails(position)
-                .hasPay(hasPay)
+                .keywords(keywords)
+                .orderBy(orderBy)
                 .limit(limit)
                 .build();
-
-        if (filter.isNotValid()) {
-            throw new IllegalArgumentException();
-        }
 
         return ResponseEntity.ok(postService.readFilteredPost(filter, email));
     }
 
+    /**
+     * 키워드 겁색
+     */
     @PostMapping("/posts/{postId}/likes")
     public ResponseEntity<PostReadOneResponse> doBookmark(@PathVariable Long postId,
                                                           @AuthenticationPrincipal OAuth2User user) {

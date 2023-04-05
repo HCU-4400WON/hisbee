@@ -2,7 +2,6 @@ package com.hcu.hot6.domain.response;
 
 import com.hcu.hot6.domain.Department;
 import com.hcu.hot6.domain.Member;
-import com.hcu.hot6.domain.Position;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +19,6 @@ public class MemberProfileResponse {
         this.nickname = member.getNickname();
         this.isPublic = member.isPublic();
         this.department = member.getDepartment();
-        this.position = member.getPosition();
         this.bio = member.getBio();
         this.grade = member.getGrade();
         this.contact = member.getContact();
@@ -33,10 +31,6 @@ public class MemberProfileResponse {
                 ? List.of()
                 : Arrays.asList(member.getExternalLinks().split(","));
 
-        this.likes = member.getLikes()
-                .stream()
-                .map(post -> post.toResponse(email))
-                .collect(Collectors.toList());
         this.posts = member.getPosts()
                 .stream()
                 .map(post -> post.toResponse(email))
@@ -48,12 +42,10 @@ public class MemberProfileResponse {
     private final String nickname;
     private final Boolean isPublic;
     private final Department department;
-    private final Position position;
     private final String bio;
     private final String grade;
     private final String contact;
     private final List<String> club;
     private final List<String> externalLinks;
-    private final List<PostReadOneResponse> likes;
     private final List<PostReadOneResponse> posts;
 }

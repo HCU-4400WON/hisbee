@@ -3,127 +3,106 @@ package com.hcu.hot6.domain;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
+import com.hcu.hot6.util.Utils;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-import net.minidev.json.annotate.JsonIgnore;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Entity
 @Getter
-@SuperBuilder
-@Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DiscriminatorColumn(name = "dtype")
-public abstract class Post {
+@EntityListeners(value = AuditingEntityListener.class)
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
     private Long id;
 
-    @Column(name = "dtype", insertable = false, updatable = false)
-    private String dtype;
-
-    @NotNull
-    private String title;
-    private String content;
-    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member author;
+    private String postTypes;   // keyword. "," 콤마로 구분
     private String contact;
 
-    @Embedded
-    private Period period;
+    // 필수 아닌 필드
+    private String content;
+    private String contactDetails;
+    private String targetYears;         // 다중선택 가능. "," 콤마로 구분
+    private String targetDepartment;    // 다중선택 가능. "," 콤마로 구분
 
-    private int total;
-    private int currTotal;
-    private int remaining;
-    private boolean isCompleted;
+    @OneToMany(mappedBy = "post")
+    private List<Bookmark> bookmarks = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    @NotNull
-    @JoinColumn(name = "author_id")
-    private Member author;
+    @OneToMany(mappedBy = "post")
+    private List<Position> positions = new ArrayList<>();
 
-    @ManyToMany
-    @JsonIgnore
-    @JoinTable(name = "PostLike",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "member_id"))
-    @Builder.Default
-    private List<Member> likes = new ArrayList<>();
+    @OneToMany(mappedBy = "post")
+    private List<Poster> posters = new ArrayList<>();
 
-    public static Optional<Post> determinePostType(PostCreationRequest request, Member author) {
-        switch (request.getDtype()) {
-            case "P" -> {
-                return Optional.of(new Project(request, author));
-            }
-            case "S" -> {
-                return Optional.of(new Study(request, author));
-            }
-            case "M" -> {
-                return Optional.of(new Mentoring(request, author));
-            }
-        }
-        return Optional.empty();
-    }
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "thumbnail_id")
+    private Thumbnail thumbnail;
 
-    public Post(PostCreationRequest request, Member author, int total) {
-        this.title = request.getTitle();
+    private String keywords;            // 추가 설명 키워드. "," 콤마로 구분
+    private Long views;                 // 조회수
+    private boolean isAutoClose;
+
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
+
+    public Post(PostCreationRequest request, Member author) {
+        this.postTypes = Utils.toString(request.getPostTypes(), ",");
         this.content = request.getContent();
         this.contact = request.getContact();
-        this.period = Period.ByPeriodBuilder()
-                .postEnd(LocalDateTime.ofInstant(request.getPostEnd().toInstant(), ZoneId.systemDefault()))
-                .projectStart(LocalDateTime.ofInstant(request.getProjectStart().toInstant(), ZoneId.systemDefault()))
-                .projectEnd(LocalDateTime.ofInstant(request.getProjectEnd().toInstant(), ZoneId.systemDefault()))
-                .build();
-        this.total = total;
+        this.keywords = String.join(
+                ",",
+                Optional.ofNullable(request.getKeywords())
+                        .orElse(List.of())
+        );
+        this.contactDetails = request.getContactDetails();
+        this.targetYears = Utils.toString(request.getYears(), ",");
+        this.targetDepartment = Utils.toString(request.getDepartments(), ",");
+        this.views = 0L;
+        this.isAutoClose = false;
         registerAuthor(author);
+        createThumbnail(new Thumbnail(request));
     }
 
     //=== 연관관계 메서드 ===//
+
+    private void createThumbnail(Thumbnail thumbnail) {
+        this.thumbnail = thumbnail;
+        thumbnail.setPost(this);
+    }
+
     private void registerAuthor(Member author) {
         this.author = author;
         author.getPosts().add(this);
     }
 
     public Post addBookmark(Member member) {
-        if (this.likes.contains(member)) {
-            throw new IllegalArgumentException("Already liked the post.");
-        }
-        this.likes.add(member);
-        member.getLikes().add(this);
-        return this;
+        return null;
     }
 
     public Post delBookmark(Member member) {
-        if (!this.likes.contains(member)) {
-            throw new IllegalArgumentException("No match member found: " + member);
-        }
-        this.likes.remove(member);
-        member.getLikes().remove(this);
-        return this;
+        return null;
     }
 
-    protected void updatePost(PostUpdateRequest request, int total, int currTotal) {
-        this.title = request.getTitle();
+    public void update(PostUpdateRequest request) {
         this.content = request.getContent();
         this.contact = request.getContact();
-        this.period.setPostEnd(LocalDateTime.ofInstant(request.getPostEnd().toInstant(), ZoneId.systemDefault()));
-        this.period.setProjectStart(LocalDateTime.ofInstant(request.getProjectStart().toInstant(), ZoneId.systemDefault()));
-        this.period.setProjectEnd(LocalDateTime.ofInstant(request.getProjectEnd().toInstant(), ZoneId.systemDefault()));
-        this.total = total;
-        this.currTotal = currTotal;
-        this.remaining = total - currTotal;
-        this.isCompleted = total == currTotal;
     }
 
     public PostReadOneResponse toResponse(String email) {

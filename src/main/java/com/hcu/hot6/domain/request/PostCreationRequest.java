@@ -1,49 +1,54 @@
 package com.hcu.hot6.domain.request;
 
+import com.hcu.hot6.domain.Duration;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
 public class PostCreationRequest {
 
-    @NotNull
-    private String dtype;
+    // Thumbnail
     @NotNull
     private String title;
-    private String content;
-    @NotNull
-    private String contact;
+    private String summary;
+    private List<String> tags;
 
-    @PositiveOrZero
-    private int maxMentor;
-    @PositiveOrZero
-    private int maxMentee;
-    @PositiveOrZero
-    private int maxMember;
-    @PositiveOrZero
-    private int maxDeveloper;
-    @PositiveOrZero
-    private int maxPlanner;
-    @PositiveOrZero
-    private int maxDesigner;
+    // Metadata
+    @NotNull
+    private List<String> postTypes;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull
-    private Date postEnd;
+    private Date recruitStart;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull
+    private Date recruitEnd;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull
     private Date projectStart;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+
     @NotNull
-    private Date projectEnd;
+    private List<Duration> durations;
 
-    private boolean hasPay;
+    @NotNull
+    private List<PositionForm> positions;
 
+    @NotNull
+    private String contact;
 
+    // Optional fields
+    private String contactDetails;
+    private String content;
+    private List<String> years;
+    private List<String> departments;
+    private List<String> keywords;
+    private List<String> posterPaths;
 }

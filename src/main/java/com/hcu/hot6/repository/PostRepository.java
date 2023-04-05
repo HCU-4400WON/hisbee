@@ -1,11 +1,11 @@
 package com.hcu.hot6.repository;
 
-import com.hcu.hot6.domain.*;
+import com.hcu.hot6.domain.Pagination;
+import com.hcu.hot6.domain.Post;
+import com.hcu.hot6.domain.QPost;
 import com.hcu.hot6.domain.enums.OrderBy;
-import com.hcu.hot6.domain.enums.PostType;
-import com.hcu.hot6.domain.enums.PostTypeDetails;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
-import com.querydsl.core.types.EntityPath;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.NullExpression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -13,11 +13,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -27,9 +25,6 @@ public class PostRepository {
     private final EntityManager em;
     private final JPAQueryFactory query;
     private final QPost post = QPost.post;
-    private final QProject project = QProject.project;
-    private final QMentoring mentoring = QMentoring.mentoring;
-    private final QStudy study = QStudy.study;
 
     public void save(Post post) {
         em.persist(post);
@@ -45,15 +40,10 @@ public class PostRepository {
     }
 
     public List<Post> findAll(PostSearchFilter filter, long offset) {
-        var entityPath = getEntityPath(filter.getType());
-
         return query.selectFrom(post)
-                .join(entityPath)
                 .where(
                         eqType(filter.getType()),
-                        eqSearch(filter.getSearch()),
-                        eqPosition(filter.getTypeDetails()),
-                        eqPay(filter.getType(), filter.getHasPay())
+                        eqKeywords(filter.getKeywords())
                 )
                 .offset(offset)
                 .limit(Pagination.LIMIT)
@@ -62,116 +52,56 @@ public class PostRepository {
     }
 
     public List<Post> findAll(PostSearchFilter filter) {
-        var entityPath = getEntityPath(filter.getType());
-
         return query.selectFrom(post)
-                .join(entityPath)
                 .where(
                         eqType(filter.getType()),
-                        eqSearch(filter.getSearch()),
-                        eqPosition(filter.getTypeDetails()),
-                        eqPay(filter.getType(), filter.getHasPay())
+                        eqKeywords(filter.getKeywords())
                 )
                 .orderBy(orderCond(filter.getOrderBy()))
                 .fetch();
     }
 
     public Long count(PostSearchFilter filter) {
-        var entityPath = getEntityPath(filter.getType());
-
         return query.select(post.count())
                 .from(post)
-                .join(entityPath)
                 .where(
                         eqType(filter.getType()),
-                        eqSearch(filter.getSearch()),
-                        eqPosition(filter.getTypeDetails()),
-                        eqPay(filter.getType(), filter.getHasPay())
+                        eqKeywords(filter.getKeywords())
                 )
                 .fetchOne();
     }
 
-    private EntityPath<?> getEntityPath(PostType type) {
-        if (Objects.isNull(type)) return post;
-
-        switch (type) {
-            case PROJECT -> {
-                return project;
-            }
-            case STUDY -> {
-                return study;
-            }
-            case MENTORING -> {
-                return mentoring;
-            }
-        }
-        return post;
+    private BooleanExpression eqType(String type) {
+        return post.postTypes.contains(type);
     }
 
-    private BooleanExpression eqType(PostType type) {
-        return (Objects.isNull(type)) ? null : post.dtype.eq(type.getAbbr());
-    }
+    private BooleanBuilder eqKeywords(List<String> keywords) {
+        var builder = new BooleanBuilder();
 
-    private BooleanExpression eqSearch(String keyword) {
-        return (Strings.isBlank(keyword)) ? null : post.title.contains(keyword);
-    }
-
-    private BooleanExpression eqPosition(PostTypeDetails position) {
-        if (Objects.isNull(position)) return null;
-
-        switch (position) {
-            case PLANNER -> {
-                return project.maxPlanner.gt(0);
-            }
-            case DESIGNER -> {
-                return project.maxDesigner.gt(0);
-            }
-            case DEVELOPER -> {
-                return project.maxDeveloper.gt(0);
-            }
-            case MENTOR -> {
-                return mentoring.maxMentor.gt(0);
-            }
-            case MENTEE -> {
-                return mentoring.maxMentee.gt(0);
-            }
-            case MEMBER -> {
-                return study.maxMember.gt(0);
-            }
-        }
-        return null;
-    }
-
-    private BooleanExpression eqPay(PostType type, Boolean hasPay) {
-        if (Objects.isNull(hasPay)) return null;
-
-        switch (type) {
-            case PROJECT -> {
-                return project.hasPay.eq(hasPay);
-            }
-            case MENTORING -> {
-                return mentoring.hasPay.eq(hasPay);
-            }
-            case STUDY -> {
-                return null;
-            }
-        }
-        return null;
+        return builder
+                .or(
+                        keywords.stream()
+                                .map(post.keywords::contains)
+                                .reduce(BooleanExpression::or)
+                                .orElse(null))
+                .or(
+                        keywords.stream()
+                                .map(post.thumbnail.tags::contains)
+                                .reduce(BooleanExpression::or)
+                                .orElse(null)
+                );
     }
 
     private OrderSpecifier<?> orderCond(OrderBy orderBy) {
         switch (orderBy) {
             case RECENT -> {
-                return post.period.postStart.desc();
+                return post.createdDate.desc();
             }
             case LIKES -> {
-                return post.likes.size().desc();
-            }
-            case MEMBER -> {
-                return post.remaining.asc();
+                return post.bookmarks.size().desc();
             }
             case END -> {
-                return post.period.projectEnd.asc();
+                return post.thumbnail.recruitEnd.asc();
             }
         }
         return new OrderSpecifier<>(

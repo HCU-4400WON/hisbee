@@ -8,19 +8,18 @@ import com.hcu.hot6.domain.request.MemberRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(SpringExtension.class)
 @Transactional
 @SpringBootTest
+@ActiveProfiles("dev")
 class PoolRepositoryTest {
 
     @PersistenceContext
@@ -36,7 +35,6 @@ class PoolRepositoryTest {
         PoolSearchFilter filter = PoolSearchFilter.builder()
                 .page(1)
                 .department(Department.CSEE)
-                .position(Position.DEVELOPER)
                 .grade("1")
                 .build();
 
@@ -50,7 +48,6 @@ class PoolRepositoryTest {
             member.update(MemberRequest.builder()
                     .nickname("username")
                     .department(Department.CSEE)
-                    .position(Position.DEVELOPER)
                     .grade("1")
                     .isPublic(true)
                     .build());
@@ -65,7 +62,6 @@ class PoolRepositoryTest {
         PoolSearchFilter filter = PoolSearchFilter.builder()
                 .page(1)
                 .department(Department.CSEE)
-                .position(Position.DEVELOPER)
                 .grade("1")
                 .build();
         Random random = new Random();
@@ -80,7 +76,6 @@ class PoolRepositoryTest {
             member.update(MemberRequest.builder()
                     .nickname("username")
                     .department(Department.CSEE)
-                    .position(Position.DEVELOPER)
                     .grade("1")
                     .isPublic(true)
                     .build());
@@ -97,7 +92,6 @@ class PoolRepositoryTest {
             member.update(MemberRequest.builder()
                     .nickname("username")
                     .department(Department.CSEE)
-                    .position(Position.DEVELOPER)
                     .grade("2")
                     .isPublic(true)
                     .build());

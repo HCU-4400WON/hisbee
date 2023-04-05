@@ -1,6 +1,8 @@
 package com.hcu.hot6.service;
 
-import com.hcu.hot6.domain.*;
+import com.hcu.hot6.domain.Member;
+import com.hcu.hot6.domain.Pagination;
+import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
@@ -14,8 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZoneId;
-import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -30,15 +31,13 @@ public class PostService {
     public PostCreationResponse createPost(PostCreationRequest request, String email) {
         Member author = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Author is not registered"));
-
-        Post post = Post.determinePostType(request, author)
-                .orElseThrow(IllegalArgumentException::new);
+        Post post = new Post(request, author);
         postRepository.save(post);
 
         return PostCreationResponse.builder()
                 .id(post.getId())
-                .title(post.getTitle())
-                .dtype(request.getDtype())
+                .title(post.getThumbnail().getTitle())
+                .createdDate(post.getCreatedDate())
                 .build();
     }
 
@@ -56,78 +55,38 @@ public class PostService {
     }
 
     @Transactional
-    public PostReadOneResponse updatePost(Long postId, PostUpdateRequest request) {
+    public PostReadOneResponse updatePost(Long postId,
+                                          PostUpdateRequest request,
+                                          String email) {
         Post post = postRepository.findOne(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not found."));
-
-        switch (request.getDtype()) {
-            case "P" -> ((Project) post).updateProject(request);
-            case "S" -> ((Study) post).updateStudy(request);
-            case "M" -> ((Mentoring) post).updateMentoring(request);
-        }
-        return responseOne(post);
-    }
-
-    private PostReadOneResponse responseOne(Post post) {
-        PostReadOneResponse response = new PostReadOneResponse();
-
-        response.setDtype(post.getDtype());
-        response.setId(post.getId());
-        response.setTitle(post.getTitle());
-        response.setContent(post.getContent());
-        response.setContact(post.getContact());
-        response.setPostStart(Date.from(post.getPeriod().getPostStart().atZone(ZoneId.systemDefault()).toInstant()));
-        response.setPostEnd(Date.from(post.getPeriod().getPostEnd().atZone(ZoneId.systemDefault()).toInstant()));
-        response.setProjectStart(Date.from(post.getPeriod().getProjectStart().atZone(ZoneId.systemDefault()).toInstant()));
-        response.setProjectEnd(Date.from(post.getPeriod().getProjectEnd().atZone(ZoneId.systemDefault()).toInstant()));
-        response.setWriter(post.getAuthor().getNickname());
-
-        if (post.getDtype().compareTo("M") == 0) {
-            Mentoring mentoring = (Mentoring) post;
-
-            response.setMaxMentor(mentoring.getMaxMentor());
-            response.setMaxMentee(mentoring.getMaxMentee());
-
-            response.setCurrMentor(mentoring.getCurrMentor());
-            response.setCurrMentee(mentoring.getCurrMentee());
-
-            response.setHasPay(mentoring.isHasPay());
-        } else if (post.getDtype().compareTo("P") == 0) {
-            Project project = (Project) post;
-
-            response.setMaxDeveloper(project.getMaxDeveloper());
-            response.setMaxPlanner(project.getMaxPlanner());
-            response.setMaxDesigner(project.getMaxDesigner());
-
-            response.setCurrDeveloper(project.getCurrDeveloper());
-            response.setCurrPlanner(project.getCurrPlanner());
-            response.setCurrDesigner(project.getCurrDesigner());
-
-            response.setHasPay(project.isHasPay());
-        } else if (post.getDtype().compareTo("S") == 0) {
-            Study study = (Study) post;
-
-            response.setMaxMember(study.getMaxMember());
-            response.setCurrMember(study.getCurrMember());
-        }
-        return response;
+        post.update(request);
+        return post.toResponse(email);
     }
 
     public PostFilterResponse readFilteredPost(PostSearchFilter filter, String email) {
         if (Objects.isNull(filter.getPage())) {
-            var postResponseList = postRepository.findAll(filter).stream()
-                    .map(post -> post.toResponse(email))
+            var thumbnailResponses = postRepository.findAll(filter).stream()
+                    .map(post -> post.getThumbnail().toResponse(email))
                     .toList();
 
-            return new PostFilterResponse(-1, postResponseList);
+            return new PostFilterResponse(
+                    thumbnailResponses.size(),
+                    List.of(),
+                    thumbnailResponses
+            );
         }
         var pagination = new Pagination(filter.getPage(), postRepository.count(filter));
         var postResponseList = postRepository.findAll(filter, pagination.getOffset())
                 .stream()
-                .map(post -> post.toResponse(email))
+                .map(post -> post.getThumbnail().toResponse(email))
                 .toList();
 
-        return new PostFilterResponse(pagination.getTotal(), postResponseList);
+        return new PostFilterResponse(
+                pagination.getTotal(),
+                List.of(),
+                postResponseList
+        );
     }
 
     @Transactional

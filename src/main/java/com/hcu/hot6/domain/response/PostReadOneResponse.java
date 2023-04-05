@@ -1,103 +1,88 @@
 package com.hcu.hot6.domain.response;
 
-import com.hcu.hot6.domain.Mentoring;
+import com.hcu.hot6.domain.Position;
 import com.hcu.hot6.domain.Post;
-import com.hcu.hot6.domain.Project;
-import com.hcu.hot6.domain.Study;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.hcu.hot6.domain.Poster;
+import com.hcu.hot6.domain.Thumbnail;
+import com.hcu.hot6.domain.request.PositionForm;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
-@Data
-@AllArgsConstructor
+import static com.hcu.hot6.util.Utils.toArray;
+import static com.hcu.hot6.util.Utils.toDate;
+
+@Getter
 @NoArgsConstructor
 public class PostReadOneResponse {
-
-    private String dtype;
     private Long id;
+
+    // Thumbnail
     private String title;
+    private String summary;
+    private Date recruitStart;
+    private Date recruitEnd;
+    private Date projectStart;
+    private List<String> durations;
+    private List<String> postTypes;
+    private List<String> tags;
+
+    // Post
+    private String author;
     private String content;
     private String contact;
-    private Date postStart;
-    private Date postEnd;
-    private Date projectStart;
-    private Date projectEnd;
-    private String writer;
-
-    private int maxDeveloper;
-    private int maxPlanner;
-    private int maxDesigner;
-    private int currDeveloper;
-    private int currPlanner;
-    private int currDesigner;
-
-    private int maxMember;
-    private int currMember;
-
-    private int maxMentor;
-    private int maxMentee;
-    private int currMentor;
-    private int currMentee;
-
-    private boolean hasPay;
+    private String contactDetails;
+    private List<PositionForm> positions;
+    private List<String> years;
+    private List<String> departments;
+    private List<String> keywords;
+    private List<String> posterPaths;
+    private int nBookmark;
+    private Long views;
     private boolean isVerified;
+    private boolean isClosed;
+    private boolean isArchived;
     private boolean hasLiked;
-
-    private int nLiked;
+    private Date createdDate;
+    private Date lastModifiedDate;
 
     public PostReadOneResponse(Post post, String email) {
-        this.dtype = post.getDtype();
+        final Thumbnail thumbnail = post.getThumbnail();
+
         this.id = post.getId();
-        this.title = post.getTitle();
-        this.content = post.getContent();
+        this.title = thumbnail.getTitle();
+        this.summary = thumbnail.getSummary();
+        this.recruitStart = toDate(thumbnail.getRecruitStart());
+        this.recruitEnd = toDate(thumbnail.getRecruitEnd());
+        this.projectStart = toDate(thumbnail.getProjectStart());
+        this.durations = toArray(thumbnail.getDurations(), ",");
+        this.tags = toArray(thumbnail.getTags(), ";"); // 프론트에서 각 라인별로 ,로 구분 후 나타내기
+        this.isClosed = thumbnail.isClosed();
+        this.isArchived = thumbnail.isArchived();
+
+        this.author = post.getAuthor().getNickname();
+        this.postTypes = toArray(post.getPostTypes(), ",");
         this.contact = post.getContact();
-        this.writer = post.getAuthor().getNickname();
-        this.postStart = java.sql.Timestamp.valueOf(post.getPeriod().getPostStart());
-        this.postEnd = java.sql.Timestamp.valueOf(post.getPeriod().getPostEnd());
-        this.projectStart = java.sql.Timestamp.valueOf(post.getPeriod().getProjectStart());
-        this.projectEnd = java.sql.Timestamp.valueOf(post.getPeriod().getProjectEnd());
+        this.content = post.getContent();
+        this.contactDetails = post.getContactDetails();
+        this.years = toArray(post.getTargetYears(), ",");
+        this.departments = toArray(post.getTargetDepartment(), ",");
+        this.keywords = toArray(post.getKeywords(), ",");
+        this.positions = post.getPositions().stream()
+                .map(Position::toResponse)
+                .toList();
+        this.posterPaths = post.getPosters().stream()
+                .map(Poster::getPostURL)
+                .toList();
 
+        this.nBookmark = post.getBookmarks().size();
+        this.views = post.getViews();
+        this.createdDate = toDate(post.getCreatedDate());
+        this.lastModifiedDate = toDate(post.getLastModifiedDate());
         this.isVerified = email.equals(post.getAuthor().getEmail());
-        this.hasLiked = post.getLikes().stream()
-                .anyMatch(member -> email.equals(member.getEmail()));
-
-        this.nLiked = post.getLikes().size();
-
-        switch (dtype) {
-            case "P" -> {
-                Project project = (Project) post;
-
-                this.maxDesigner = project.getMaxDesigner();
-                this.maxDeveloper = project.getMaxDeveloper();
-                this.maxPlanner = project.getMaxPlanner();
-
-                this.currDesigner = project.getCurrDesigner();
-                this.currDeveloper = project.getCurrDeveloper();
-                this.currPlanner = project.getCurrPlanner();
-
-                this.hasPay = project.isHasPay();
-            }
-            case "S" -> {
-                Study study = (Study) post;
-
-                this.maxMember = study.getMaxMember();
-                this.currMember = study.getCurrMember();
-            }
-            case "M" -> {
-                Mentoring mentoring = (Mentoring) post;
-
-                this.maxMentor = mentoring.getMaxMentor();
-                this.maxMentee = mentoring.getMaxMentee();
-
-                this.currMentor = mentoring.getCurrMentor();
-                this.currMentee = mentoring.getCurrMentee();
-
-                this.hasPay = mentoring.isHasPay();
-            }
-        }
+        this.hasLiked = post.getBookmarks().stream()
+                .anyMatch(bookmark -> email.equals(bookmark.getMember().getEmail()));
     }
-
-    //Todo: isCompleted를 반환할 것인지 상의 -> 반환 한다면 tag 형식으로 표시하면 좋을 것 같음.
 }

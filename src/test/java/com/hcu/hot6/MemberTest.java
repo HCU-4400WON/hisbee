@@ -25,7 +25,6 @@ public class MemberTest {
                 .nickname("User1")
                 .isPublic(false)
                 .department(Department.ICT)
-                .position(Position.PLANNER)
                 .bio("안녕하세요. 저는 00학번 ICT학부 000입니다.")
                 .grade("2학년")
                 .club("MIC")
@@ -37,7 +36,6 @@ public class MemberTest {
         assertThat(member.getNickname()).isEqualTo("User1");
         assertThat(member.isPublic()).isEqualTo(false);
         assertThat(member.getDepartment()).isEqualTo(Department.ICT);
-        assertThat(member.getPosition()).isEqualTo(Position.PLANNER);
         assertThat(member.getBio()).isEqualTo("안녕하세요. 저는 00학번 ICT학부 000입니다.");
         assertThat(member.getGrade()).isEqualTo("2학년");
         assertThat(member.getClub()).isEqualTo("MIC");
