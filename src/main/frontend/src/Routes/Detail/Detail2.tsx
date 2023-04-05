@@ -98,20 +98,17 @@ const Grid = tw.div`
 grid 
 md:grid-cols-2  
 grid-cols-1
-border-t-2 
-border-b-2 
 border-gray-300 
-md:h-[250px]
-h-[450px]
-py-[20px] 
+py-[30px] 
 items-center
 w-full
+
 `;
 
 const GridItem = tw.div`
 flex 
-items-center 
-h-[30px] 
+items-start
+h-[50px]
 
 
 `;
@@ -621,9 +618,11 @@ function Detail2() {
               </GoBackButton>
             </GoBackSpan>
 
+
+
             <Form onSubmit={handleSubmit(onValid as any)}>
               <FormHeader>
-                {isModifying ? (
+                {/* {isModifying ? (
                   <>
                     <FormTitleInput
                       type="text"
@@ -642,15 +641,83 @@ function Detail2() {
                     />
                     <Validation message={formState.errors.title?.message} />
                   </>
-                ) : (
+                ) : ( */}
                   <FormTitle >{dataExample?.title}</FormTitle>
-                )}
-              </FormHeader>
+                {/* )} */}
 
+              </FormHeader>
+                
+              <FormAuthorNButtonRow >
+                <FormAuthorSpan className="flex justify-between w-full">
+                  <WriterSpan>
+                    <WriteInfo>{dataExample?.summary}</WriteInfo>
+                  </WriterSpan>
+
+                  <WriterSpan>
+                    <WriteInfo className="">
+                      
+                    <span className="mx-[10px] text-gray-600">{dataExample?.author}</span>
+                    </WriteInfo>
+                    <WriteInfo className="">
+                      
+                      <span className="ml-[10px]">{datetimeToString(dataExample?.createdDate)}</span>
+                    </WriteInfo>
+                    <WriteInfo className="">
+                    <i className="fa-regular fa-eye mr-[5px]"></i>
+                    {dataExample?.views}
+                    </WriteInfo>
+                    <WriteInfo className="">
+                    <i className="fa-regular fa-heart mr-[5px]"></i>
+                    {dataExample?.nBookmark}
+                    </WriteInfo>
+                    
+                  </WriterSpan>
+                  
+                  {/* <WriteDateSpan className="flex w-[200px] md:w-[auto]">
+                  <WriteInfo className="">작성일</WriteInfo>
+                  <WriteInfo className="text-gray-500">
+                    
+                    {dateConverter(dataExample?.postStart as Date)}
+                    
+                  </WriteInfo>
+                  </WriteDateSpan> */}
+                  
+                </FormAuthorSpan>
+
+                {/* <FormButtonDiv>
+                  {dataExample?.verified && (
+                    <>
+                      {isModifying ? (
+                        <FormModifyOKButton
+                          id="modify"
+                        >
+                          <FormModifyOKIcon />
+                        </FormModifyOKButton>
+                      ) : (
+                        <FormModifyButton
+                          id="modify"
+                          onClick={onBtnClick}
+                        >
+                          <FormModifyIcon />
+                        </FormModifyButton>
+                      )}
+
+                      <FormDeleteButton
+                        id="delete"
+                        onClick={onBtnClick}
+                        
+                      >
+                        <FormDeleteIcon />
+                      </FormDeleteButton>
+                    </>
+                  )}
+                </FormButtonDiv> */}
+              </FormAuthorNButtonRow>
               
               {/* 요약정보 */}
-              <div className="bg-gray-100 rounded-xl p-[50px]">
-                <p className="text-[25px]">요약정보</p>
+              <div className="bg-gray-100 rounded-3xl p-[50px] mt-[10px]">
+                <p className="text-[23px]">요약정보</p>
+
               <Grid>
                 <GridItem>
                   <ItemTitle>모집 기간</ItemTitle>
@@ -659,9 +726,9 @@ function Detail2() {
                       {datetimeToString(dataExample?.recruitStart as Date)}
                     </>
                   </ItemText>
-                  <ItemText className="mx-[10px] ml-[20px]">~</ItemText>
+                  <ItemText className="mx-[10px]">~</ItemText>
                   <ItemText>
-                    <ItemText>
+                    <ItemText className="text-blue-500">
                         {/* 수정과 벨리데이션 */}
                       
                         
@@ -674,8 +741,8 @@ function Detail2() {
                 <GridItem>
                   <ItemTitle>학년</ItemTitle>
 
-                  <ItemText>
-                    {dataExample?.years.length ===0 ? "학년 무관" : dataExample?.years.map((year) => year)}
+                  <ItemText className="text-blue-500">
+                    {dataExample?.years.length ===0 ? "학년 무관" : dataExample?.years.map((year) => year + " ")}
                   </ItemText>
                 </GridItem>
                 <GridItem>
@@ -697,10 +764,10 @@ function Detail2() {
                 </GridItem>
                 <GridItem>
                   <ItemTitle>전공</ItemTitle>
-                  <ItemText>
+                  <ItemText className="text-blue-500">
                     
                     { dataExample?.departments.length ===0 ? "전공 무관" : dataExample?.departments.map((department) => (
-                        department
+                        department + " "
                     ))}
                   </ItemText>
                   
@@ -708,7 +775,6 @@ function Detail2() {
                 <GridItem>
                   <ItemTitle>신청 방법</ItemTitle>
                   <a href={dataExample?.contact} className="md:w-full w-[200px] text-[13px] md:text-[17px] font-medium">
-                    
                     {dataExample?.contact}
                   </a>
                 </GridItem>
@@ -738,19 +804,21 @@ function Detail2() {
               </Grid>
               </div>
             {/* 키워드들 */}
-            <div className="flex">
+            <div className="flex mt-[30px] mb-[60px] flex px-[50px]">
                 
                 {(dataExample?.keywords.map((keyword: string,index: number) => (
-                    <button key={index}>{keyword}</button>
+                    <button className="bg-blue-100 py-[5px] px-[15px] rounded-lg mx-[5px]" key={index}>{keyword}</button>
                 )))}
             </div>
 
 
-              
+{/*               
               <div dangerouslySetInnerHTML={{ __html: editorString }}
               
-              ></div>
-              {dataExample?.content}
+              ></div> */}
+              <div className="px-[50px] text-[20px]"> 
+                {dataExample?.content}
+              </div>
             </Form>
 
             <div className="min-w-[40px] md:min-w-[100px] "></div>
