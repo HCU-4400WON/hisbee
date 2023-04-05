@@ -15,6 +15,7 @@ import Footer from "./Footer";
 import BlankPage from "Routes/BlankPage/BlankPage";
 import PrivateRoute from "./PrivateRoute";
 import PostAddForm2 from "Routes/PostAddForm/PostAddForm2";
+import Detail2 from "Routes/Detail/Detail2";
 
 function Router() {
   return (
@@ -63,6 +64,8 @@ function Router() {
           path="add2"
           element={<PrivateRoute component={<PostAddForm2 />} />}
         ></Route>
+         <Route path="post2/:id" element={<Detail2 />}></Route>
+        
         <Route path="*" element={<Main />}></Route>
 
         {/* <Route path="post/:id" element={<Detail />}></Route>

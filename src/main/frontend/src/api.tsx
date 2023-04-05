@@ -967,3 +967,56 @@ export const loginCheckApi = () => {
   });
   return response;
 };
+
+
+
+
+
+///////////////////////////////////////////////
+// version 2 api
+
+export interface IPosition{
+  name : string,
+  count : number,
+}
+
+export interface ITags{
+  firstLine : string,
+  secondLine : string,
+}
+
+export interface IReadOnePost {
+  id: number;
+  title: string;
+  summary : string;
+  recruitStart : Date;
+  recruitEnd : Date;
+  projectStart : Date;
+  durations : string[];
+  postTypes : string[];
+  tags : ITags;
+  author : string;
+  content: string;
+  contact: string;
+  contactDetails: string;
+  positions: IPosition[];
+  years : string[];
+  departments: string[];
+  keywords: string[];
+  posterPaths : string[];
+  nBookmark : number;
+  views : number;
+  hasLiked : boolean;
+  verified : boolean;
+  isClosed: boolean;
+  isArchived : boolean;
+  createdDate : Date;
+  lastModifiedDate : Date;
+  // 지원 자격
+}
+
+export interface IReadAllPosts {
+  total: number;
+  relatedKeywords: string[],
+  posts: IReadOnePost[];
+}

@@ -19,6 +19,8 @@ import { Link } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import Card from "Routes/Post/Card";
+import Thumbnail from "./Thumbnail";
+import { PostExamples } from "Routes/PostAddForm/PostExamples";
 
 const Banner = tw.img`
 bg-gradient-to-r from-gray-300 to-gray-500
@@ -97,8 +99,11 @@ place-items-center
 `;
 
 const Container = tw.div`
-bg-slate-100
-min-w-[480px]`;
+bg-gray-100
+min-w-[480px]
+pb-[100px]
+
+`;
 
 
 
@@ -331,7 +336,7 @@ function Post() {
 
   const [selectedMajor , setSelectedMajor ] = useState<string | "">("");
   const [selectedGrade , setSelectedGrade] = useState<string | "">("");
-  const [selectedCategory , setSelectedCategory] = useState<string | "">(""); // about category
+  const [selectedCategory , setSelectedCategory] = useState<string | "">("전체"); // about category
   const [keywordInput , setKeywordInput] = useState<string | "">("");
   const [keywords , setKeywords] = useState<string[] | []>(["프로젝트" , "스터디" , "멘토링" , "밥고" , "팀 프로젝트"]);
   const [selectedKeywords , setSelectedKeywords] = useState<string[] | []>([]);
@@ -372,7 +377,7 @@ function Post() {
 
     if(selectedId ==="categoryButton"){
       setSelectedCategory(selectedValue);
-
+      setSelectedKeywords([]);
       console.log(selectedValue);
 
     }
@@ -409,12 +414,19 @@ function Post() {
    
   }
 
-  const Categories = ["동아리" , "학회" , "공모전/대회" , "스터디" , "프로젝트" , "학술모임" , "운동/게임/취미" , "기타"];
+  const Categories = ["전체" ,"동아리" , "학회" , "공모전/대회" , "스터디" , "프로젝트" , "학술모임" , "운동/게임/취미" , "기타"];
   const Majors =  ["모든 전공" ,"글로벌리더십학부" , "국제어문학부" , "경영경제학부" , "법학부" , "커뮤니케이션학부" , "공간환경시스템공학부" , "기계제어공학부" , "콘텐츠융합디자인학부" , "생명과학부" , "전산전자공학부" , "상담심리사회복지학부" , "ICT창업학부"];
   const Grades = ["모든 학년", "23학번 새내기" , "1학년" , "2학년" , "3학년" , "4학년" , "9학기 이상"];
 
   const majorRef = useRef<HTMLSelectElement>(null);
   const gradeRef = useRef<HTMLSelectElement>(null);
+
+  const onKeyPress = async(e : React.KeyboardEvent<HTMLInputElement>) => {
+    if(e.key === 'Enter'){
+      setSelectedKeywords(prev => [...prev , keywordInput]); 
+      setKeywords(prev => [...prev , keywordInput]); 
+    }
+  }
   return (
     <>
       {isLoading || isLoginCheckLoading ? (
@@ -426,7 +438,7 @@ function Post() {
             <Banner src="/img/postBannerReal.png"></Banner>
             
           <div className="">
-            <div className=" flex justify-between items-center px-[50px]  w-full h-[60px] bg-white">
+            <div className="flex justify-between items-center px-[50px] w-full h-[60px] bg-white">
               <div className="w-full flex justify-center">
                 {Categories.map((category, index) => (
                 
@@ -457,11 +469,17 @@ function Post() {
                   </select> */}
                   <span className="flex items-center ">
                     <p className="">필터링 키워드</p>
-                    <input value={keywordInput} id="keywordInput" onChange={onChange} type="text" className="w-[170px] ml-[20px] px-[10px] border-b border-black bg-slate-100" placeholder="키워드를 입력해주세요"/>
-                    <button className="mx-[20px] border border-black px-[5px] rounded-lg bg-black text-white">추가</button>
+                    <input value={keywordInput} id="keywordInput" onKeyPress={onKeyPress} onChange={onChange} type="text" className="w-[280px] ml-[20px] px-[10px] border-b border-gray-400 bg-gray-100 mr-[30px]"  placeholder="키워드로 원하는 모집글만 볼 수 있어요."/>
+                    
                   </span>
                   <span>
                       <div className="w-full flex items-center ">
+                        {selectedCategory !== "전체" && (
+                          <button id="deleteKeywordButton"
+                          className="text-[16px] bg-white flex items-center h-[30px] border-0 rounded-lg text-center px-[10px] mr-[30px]">
+                            {selectedCategory}
+                            </button>
+                        )}
                     {selectedKeywords.map((keyword , index) => (
                       <button id="deleteKeywordButton" onClick={onClick} 
                       key={index} className="text-[16px] bg-white flex items-center h-[30px] border-0 rounded-lg text-center px-[10px] mr-[30px]">
@@ -617,14 +635,14 @@ function Post() {
                 내 전공 관련글만 보기
                   <input type="checkBox" className=" ml-[10px] mt-[4px] w-[20px] h-[20px] bg-[#eeeeee]" />
                 </div> */}
-                <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] ">
+                <select ref={majorRef} id="majorSelect" onInput={onInput} className="mr-[20px] px-[10px] bg-gray-200 py-[10px] rounded-lg text-center">
                     {Majors.map((major, index) => (
                       <option key={index}>
                         {major}
                       </option>
                     ))}
                   </select>
-                  <select ref={gradeRef} id="gradeSelect" onInput={onInput} className="mx-[50px] px-[10px]">
+                  <select ref={gradeRef} id="gradeSelect" onInput={onInput} className="mr-[20px] px-[10px] bg-gray-200 py-[10px] rounded-lg text-center">
                     {Grades.map((grade,index)=> (
                       <option key={index}>
                         {grade}
@@ -633,7 +651,7 @@ function Post() {
                   </select>
                 <div className="flex items-center">
                   {/* <SortTitle>Sort by</SortTitle> */}
-                  <SortSelect id="sortSelect" className="vertical-center" onInput={onInput} value={order}>
+                  <SortSelect id="sortSelect" className="px-[10px] bg-gray-200 py-[10px] rounded-lg text-center" onInput={onInput} value={order}>
                     <option id="recent" value="recent">최신 순</option>
                     <option id="likes" value="likes">찜 많은 순</option>
                     <option id="member" value="member">모집 인원 마감 임박</option>
@@ -642,8 +660,8 @@ function Post() {
                 </div>
               </div>
               
-              <Link to="/add">
-                <button className="text-[12px] md:text-[15px] border border-black py-[5px] bg-white px-[20px] rounded-lg">
+              <Link to="/add2">
+                <button className="text-[12px] md:text-[15px] text-white py-[5px] bg-blue-600 px-[20px] rounded-lg py-[10px]">
                   모집글 작성하기
                 </button>
               </Link>
@@ -651,62 +669,69 @@ function Post() {
 
             {/* { ( */}
             <PostGrid>
-              {(posts?.posts.length as number) > 0 &&
+              {/* {(posts?.posts.length as number) > 0 &&
                 (posts as IPosts).posts.map((post, index) => (
                   <Card key={index} post={post} refetch={refetch} index={index}  />
-                ))}
+                ))} */}
+{PostExamples.선택안됨?.map((postExample) => (
+              <Thumbnail {...postExample}/>
+))}
+  
             </PostGrid>
-            {/* )} */}
+            
 
-            {posts?.total === 0 ? (
+            {posts?.total === 0 && (
               <div className="flex justify-center items-center w-full h-[50px] text-[20px] ">
-                {/* <div className="flex items-center w-[300px] border-2 bg-[#eeeeee] rounded-lg h-[150px] justify-center items-center"> */}
+                
                 <i className="fa-solid fa-triangle-exclamation text-yellow-500 ">
                   &nbsp;
                 </i>
                 <p className="font-bold">게시물이 존재하지 않습니다.</p>
               </div>
-            ) : (
-              <div className="flex justify-center items-center w-full h-[100px]  ">
-                <button
-                  id="prev"
-                  onClick={onPageClick}
-                  className="w-[70px] h-[30px] flex justify-center items-center "
-                >
-                  <i className="fa-solid fa-circle-left text-[30px]"></i>
-                </button>
+            ) 
 
-                {Array.from(
-                  {
-                    length: Math.ceil(
-                      (Number(posts?.total)) / POSTS_PER_PAGE
-                    ),
-                  },
-                  (v, i) => i + 1
-                )
-                  .slice(prevPage, nextPage - 1)
-                  .map((page) => (
-                    <button
-                      id={page + ""}
-                      onClick={onPageClick}
-                      className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold hover:opacity-70
-                     ${page === nowPage && "opacity-30"} `}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                {/* </>
-              )} */}
+            // : (
+              // <div className="flex justify-center items-center w-full h-[100px]  ">
+              //   <button
+              //     id="prev"
+              //     onClick={onPageClick}
+              //     className="w-[70px] h-[30px] flex justify-center items-center "
+              //   >
+              //     <i className="fa-solid fa-circle-left text-[30px]"></i>
+              //   </button>
 
-                <button
-                  id="next"
-                  onClick={onPageClick}
-                  className="w-[70px] h-[30px] flex justify-center items-center"
-                >
-                  <i className="fa-solid fa-circle-right text-[30px]"></i>
-                </button>
-              </div>
-            )}
+              //   {Array.from(
+              //     {
+              //       length: Math.ceil(
+              //         (Number(posts?.total)) / POSTS_PER_PAGE
+              //       ),
+              //     },
+              //     (v, i) => i + 1
+              //   )
+              //     .slice(prevPage, nextPage - 1)
+              //     .map((page) => (
+              //       <button
+              //         id={page + ""}
+              //         onClick={onPageClick}
+              //         className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold hover:opacity-70
+              //        ${page === nowPage && "opacity-30"} `}
+              //       >
+              //         {page}
+              //       </button>
+              //     ))}
+              //   {/* </>
+              // )} */}
+
+              //   <button
+              //     id="next"
+              //     onClick={onPageClick}
+              //     className="w-[70px] h-[30px] flex justify-center items-center"
+              //   >
+              //     <i className="fa-solid fa-circle-right text-[30px]"></i>
+              //   </button>
+              // </div>
+            // )
+            }
           </Container>
         </>
       )}

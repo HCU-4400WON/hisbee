@@ -19,10 +19,10 @@ import {
 import { storage } from "../../firebase";
 import { get } from "http";
 import Thumbnail from "./Thumbnail";
-import { IPostExample, PostExamples } from "./PostExamples";
+import { convertDateToString, converter, IPostExample, PostExamples } from "./PostExamples";
 
 const MyBlock = styled.div`
-
+    background-color: white;
   .wrapper-class {
     margin: 0 auto;
     margin-bottom: 4rem;
@@ -49,26 +49,9 @@ const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8
 const MajorUnSelectedBUTTON = `${MainBLUE} px-[15px] py-[8px] rounded-lg`
 const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg`
 
-const converter = (what : string , info ?: string | Date) => {
-        
-    if(what === "year"){
-        let year = ((info as Date).getFullYear() + "").padStart(2, "0");
-        let month = (((info as Date).getMonth() +1) + "").padStart(2, "0");
-        let date = ((info as Date).getDate() + "").padStart(2,"0");
-        let convertedDate = year + "-" + month + "-" + date;
-        // console.log("이거? " ,convertedDate);
-        return convertedDate;
-    }
-}
 
-const dateDifference = (end : string) => {
-    const date1 = new Date(converter("year" , new Date())! );
-    const date2 = new Date(end);
 
-    const diffDate = date1.getTime() - date2.getTime();
 
-    return Math.abs(diffDate / (1000 * 60 * 60 * 24));
-}
 
 function PostAddForm2(){
     
@@ -221,6 +204,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
           console.log("File available at", downloadURL);
           setImageURL(downloadURL);
           setImageURLList(prev => [...prev , downloadURL]);
+          setPosterUploadList(prev => [...prev.slice(0,prev.length-1)]);
           
         //   setValue("poster", downloadURL);
           
@@ -280,7 +264,12 @@ const inputRef = useRef<HTMLInputElement | null>(null);
     
   ]
 
+  const [posterUploadList , setPosterUploadList] = useState<number[]>([0,1,2]);
+
   
+    
+  
+
     return(
         <div className="p-[50px]">
             <div className="flex justify-between pb-[20px]">
@@ -321,7 +310,8 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                         필수 작성 내용
                     </p>
                     {!postExampleToggle && (
-                        <button className= {`bg-white py-[5px] text-[16px] px-[15px] border-2 border-blue-500 text-blue-500 rounded-lg`} onClick={() => ( setPostExampleToggle(true))}>다른 모집글은 어떻게 작성되었는지 살펴보세요!</button>
+                        <button type="button" className= {`bg-white py-[5px] text-[16px] px-[15px] border-2 border-blue-500 text-blue-500 rounded-lg`} onClick={(e) => (
+                            setPostExampleToggle(true))}>다른 모집글은 어떻게 작성되었는지 살펴보세요!</button>
                     )}
                     {postExampleToggle && (
                         <div className="w-[600px] rounded-xl overflow-hidden absolute right-0">
@@ -355,7 +345,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 {/* <input className="w-[70px] px-[10px] rounded-full mr-[20px]" placeholder="일정 입력"/> */}
                                 {/* <input className="w-[70px] px-[5px] rounded-full " placeholder="모집유형1"/> */}
                                 <span  className="px-[10px] rounded-full mr-[20px] bg-gray-200 font-light">
-                                {getValues("durationIndex") === "0" ? 
+                                {/* {getValues("durationIndex") === "0" ? 
                                         "상시 모집"
                                  : new Date(getValues("postStart")!) > new Date() ?
                                  "모집 예정" :
@@ -364,7 +354,9 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                  :dateDifference(getValues("postEnd")!) === 0 ?
                                  "오늘 마감"
 
-                                  : "D-"+ dateDifference(getValues("postEnd")! )}
+                                  : "D-"+ dateDifference(getValues("postEnd")! )} */}
+                                  {getValues("durationIndex")==="0" ? "상시 모집" :
+                                  convertDateToString(getValues("postStart"), getValues("postEnd"))}
                                 </span>
 
                                 
@@ -374,7 +366,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                         
                         
                         <input className="w-[340px] text-[20px] py-[5px] px-[15px] mb-[10px] border-b-2" {...register("title")} type="text" placeholder="제목을 입력해주세요" />
-                        <textarea id="subTitle" onKeyDown={textareaResize} onKeyUp={textareaResize} className="notes w-[340px] text-[15px] px-[15px] pt-[5px]" {...register("subTitle")} placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요" />
+                        <textarea id="subTitle" onKeyPress={textareaResize} onKeyUp={textareaResize} className="notes w-[340px] text-[15px] px-[15px] pt-[5px]" {...register("subTitle")} placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요" />
 
                         </div>
                         <div className="flex items-center">
@@ -391,12 +383,22 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                     {keyword}
                                 </div>
                             ))}
-                            <input type="text" className={`py-[2px] px-[15px] w-[110px] rounded-full ${MainBLUE}`}{...register(lineObj.str as any)} placeholder="키워드 입력"/>
-                            <button onClick={async() => {
-                                if(getValues(lineObj.str as any) === "") return;
-                                setValue(lineObj.array as any , await [...getValues(lineObj.array as any), getValues(lineObj.str as any)] as never );
-                                setValue(lineObj.str as any , "");
-                            }} className={`px-[10px] bg-white ml-[5px] rounded-full ${MainBLUE} text-blue-500`}> + </button>
+                            <input type="text" className={`py-[2px] px-[15px] w-[110px] rounded-full ${MainBLUE}`}{...register(lineObj.str as any)} onKeyPress={
+                            async(e : React.KeyboardEvent<HTMLInputElement>) => {
+                                if(e.key==="Enter"){
+                                    if(getValues(lineObj.str as any) === "") return;
+                                    setValue(lineObj.array as any , await [...getValues(lineObj.array as any), getValues(lineObj.str as any)] as never );
+                                    setValue(lineObj.str as any , "");
+                                }
+                                
+                            }} placeholder="키워드 입력"/>
+                            <button onClick={
+                                async() => {
+                                    if(getValues(lineObj.str as any) === "") return;
+                                    setValue(lineObj.array as any , await [...getValues(lineObj.array as any), getValues(lineObj.str as any)] as never );
+                                    setValue(lineObj.str as any , "");
+                                }     
+                            } className={`px-[10px] bg-white ml-[5px] rounded-full ${MainBLUE} text-blue-500`}> + </button>
                         </div>
                         ))}
                         
@@ -491,8 +493,8 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                             </span>
                             <span className="flex mt-[10px] items-start">
                                 <p className="w-[130px] mt-[8px]">신청 안내</p>
-                                <textarea id="registerMethod" onKeyDown={textareaResize} 
-                                    onKeyUp={textareaResize} className="notes px-[10px] vertical-center w-full ml-[20px]" placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."/>
+                                <textarea id="registerMethod" onKeyPress={textareaResize} 
+                                    onKeyUp={textareaResize} className="notes px-[10px] vertical-center w-full ml-[20px] " placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."/>
                             </span>
                             
                         </div>
@@ -603,7 +605,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                     <p className="mt-[10px]">모집글들을 필터링할 때 쓰이는 정보이니 채워주시면 좋습니다.</p>
                     
                     <div className="w-full">
-                        <div className="flex border">
+                        <div className="flex">
                             {/* {Grades.map((grade,index) => (
                                 <span key={index} className="flex items-center mt-[10px]">
                                     <input type="checkBox" {...register("grades")} value={grade} className="mx-[10px]" onClick = {
@@ -688,7 +690,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                                 
                                 {!majorToggle && (
 
-                                    <button className={`border-2 ${MajorUnSelectedBUTTON}  w-[120px] px-[15px] py-[5px] rounded-lg ml-[10px]`} onClick={() => {
+                                    <button className={`border-2 ${UnSelectedBUTTON}  w-[120px] px-[15px] py-[5px] rounded-lg ml-[10px]`} onClick={() => {
                                         // if(majorToggle) setValue("majors" , ["상관없음"] as any);
                                         setValue("majors", []);
                                         setMajorToggle(true);
@@ -765,7 +767,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                     
                     {registerToggle ? (
                     <div className="flex">
-                    <textarea id="registerMethod" onKeyDown={textareaResize} 
+                    <textarea id="registerMethod" onKeyPress={textareaResize} 
                                     onKeyUp={textareaResize} className="notes w-full px-[10px]"
                                     placeholder="지원자 자격에 대해 자유롭게 작성해주세요." />
                                     <button  onClick={() => (setRegisterToggle(false))} className={`${UnSelectedBUTTON} ml-[20px] w-[80px] h-[40px]`}>접기</button>
@@ -822,15 +824,12 @@ const inputRef = useRef<HTMLInputElement | null>(null);
 
                 <div className="">
                     <p className="mr-[20px] my-[10px]">키워드 입력</p>
-                    <input type="text" className="w-[300px] border-b-2 h-[40px] px-[10px]" placeholder="엔터키로 키워드를 등록하세요" {...register("keyword")}/>
-                    <button className=" ml-[20px] bg-black text-white px-[10px]" onClick={ () => {
-                        
-                        //  중복이나 공백 제거 하는 if문 추가해야함
-
-                        // await setKeywords( prev => [...prev , getValues("keyword")])
-                        setKeywords( prev => [...prev , getValues("keyword")])
-                        setValue("keyword" , "");
-                    }}> 생성 </button>
+                    <input type="text" className="w-[300px] border-b-2 h-[40px] px-[10px]" placeholder="엔터키로 키워드를 등록하세요" onKeyPress={ async(e) => {
+                        if(e.key==="Enter"){
+                            await setKeywords( prev => [...prev , getValues("keyword")])
+                            setValue("keyword" , "");
+                        }
+                    }} {...register("keyword")}/>
                 </div>
 
             </div>
@@ -897,7 +896,7 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                 </div>
                 )}           
 
-
+                    {/* 포스터 등록 */}
                 {optionalFoldToggle[3] && (
                     <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
                     <i className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]" onClick={
@@ -914,27 +913,43 @@ const inputRef = useRef<HTMLInputElement | null>(null);
                   ref={inputRef}
                   onChange={onImageChange}
                 />
-                <div className=" items-center justify-between flex left-[30px] top-[20px] w-[90%] md:w-[190px]">
+                {/* <div className=" items-center justify-between flex left-[30px] top-[20px] w-[90%] md:w-[190px]"> */}
                     {/* <i className="fa-solid fa-panorama w-[40px]"
                       onClick={onUploadImageButtonClick}
                     ></i> */}
                    
-                  </div>
-                  <div className="grid grid-cols-3">
+                  {/* </div> */}
+                  <div className="flex">
                   {imageURLList?.map((imageUrl : string , index : number) => (
                     
-                    <span>
-                   <img className="w-[400px] border-2 mt-[30px]" src={imageUrl} key={index}
-                   ></img>
-                   <button onClick={ () => {
+                    
+                        <div className="relative mt-[30px] mr-[30px]">
+                   <img className="w-[400px]" src={imageUrl} key={index}
+                   />
+                   <button className="absolute right-0 top-0" onClick={ () => {
                     setImageURLList(prev => [...prev.slice(0,index) , ...prev.slice(index+1)]);
-                   }}>delete</button>
-                   </span>
+                    setPosterUploadList(prev => [...prev , prev.length])
+                   }}><i className="fa-solid fa-square-xmark text-[30px] text-gray-700 opacity-50"></i></button>
+                   </div>
+                   
                     
                 ))}
-                <div onClick={onUploadImageButtonClick} className="w-[400px] h-[400px] border-2 border-gray-300 mt-[30px] flex justify-center items-center">
-                        <i className="fa-solid fa-plus text-gray-300 text-[40px]"></i>
-                    </div>
+                    
+                    
+                    {posterUploadList.map( (posterUploadBox,index) => (
+                        <div key={index} onClick={onUploadImageButtonClick} className="mr-[30px] w-[100px] h-[100px] border border-black mt-[30px] flex justify-center items-center rounded-xl">
+                            <i className="fa-solid fa-plus text-black text-[30px] "></i>      
+                        </div>
+                    ) )}
+                            
+                    
+                            
+                            
+                        
+                    
+                    
+                    
+                    
                 </div>
                 
                   {/* <div className="flex justify-center">

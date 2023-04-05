@@ -1,9 +1,11 @@
-import { convertDateToString, IPostExample } from "./PostExamples";
+import { convertDateToString, IPostExample } from "Routes/PostAddForm/PostExamples";
+
 
 
 
 
 function Thumbnail({postStart , postEnd , title, subTitle , categories , keywordsFirstLine , keywordsSecondLine , Likes} : IPostExample){
+
     const duration = convertDateToString(postStart,postEnd);
     // const duration = "D-12";
     // const title = "iF공모전 참여할 콘디생 모집";
@@ -13,7 +15,7 @@ function Thumbnail({postStart , postEnd , title, subTitle , categories , keyword
     // const keywordsSecondLine = ["5학기 이상"];
     // const Likes = 15;
 
-    return(<div className="min-w-[310px] h-[260px] p-[15px] bg-white rounded-xl border mx-[20px]">
+    return(<div className="min-w-[310px] h-[260px] mb-[50px] p-[15px] bg-white rounded-xl border mx-[20px]">
         <div className="flex justify-between">
             <span className="px-[10px] py-[1px] rounded-full bg-gray-200 text-[13px]">
                 <p>{duration}</p>
