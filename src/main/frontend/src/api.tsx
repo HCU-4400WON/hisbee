@@ -774,6 +774,8 @@ export const readOnePost = async (id: number) => {
   }
 };
 
+
+
 export const createMentoring = async (data: IMentoring) => {
   const TOKEN = localStorage.getItem("key");
   const response = axios.post("http://localhost:8080/posts", data, {
@@ -1020,3 +1022,33 @@ export interface IReadAllPosts {
   relatedKeywords: string[],
   posts: IReadOnePost[];
 }
+
+export interface ICreatePost {
+  "title": string;
+	"summary"?: string;
+	"tags": ITags;
+	"postTypes": string[];
+	"recruitStart"?: Date;
+	"recruitEnd"?: Date;
+	"projectStart"?: Date; 
+	"positions": IPosition[]; // positions : 없을 경우 "전체", 인원 : ~ 로 넣어서 요청해주기
+	"contact": string;
+	
+  // Optional
+  "durations"?: string[];
+	"contactDetails"?: string;
+	"content"?: string; // 텍스트 에디터 변환 코드가 들어갈 예정
+	"years"?: string[];
+	"departments"?: string[];
+	"keywords" ?: string[];
+	"posterPaths" ?: string[];
+}
+
+export const createPost = async (data : ICreatePost) => {
+  const TOKEN = localStorage.getItem("key");
+  const response = axios.post("http://localhost:8080/posts", data, {
+    headers: { Authorization: `Bearer ${TOKEN}` },
+    withCredentials: true,
+  });
+  return response;
+};
