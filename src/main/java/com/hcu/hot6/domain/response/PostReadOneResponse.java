@@ -39,7 +39,7 @@ public class PostReadOneResponse {
     private List<String> departments;
     private List<String> keywords;
     private List<String> posterPaths;
-    private int nBookmark;
+    private int nLike;
     private Long views;
     private boolean isVerified;
     private boolean isClosed;
@@ -77,12 +77,12 @@ public class PostReadOneResponse {
                 .map(Poster::getPostURL)
                 .toList();
 
-        this.nBookmark = post.getBookmarks().size();
+        this.nLike = post.getLikes().size();
         this.views = post.getViews();
         this.createdDate = toDate(post.getCreatedDate());
         this.lastModifiedDate = toDate(post.getLastModifiedDate());
         this.isVerified = email.equals(post.getAuthor().getEmail());
-        this.hasLiked = post.getBookmarks().stream()
+        this.hasLiked = post.getLikes().stream()
                 .anyMatch(bookmark -> email.equals(bookmark.getMember().getEmail()));
     }
 }

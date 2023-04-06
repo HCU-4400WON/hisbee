@@ -24,11 +24,9 @@ public class PostCreationRequest {
     private List<String> postTypes;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull
     private Date recruitStart;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull
     private Date recruitEnd;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
