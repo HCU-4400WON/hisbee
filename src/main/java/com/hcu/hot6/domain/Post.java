@@ -40,7 +40,7 @@ public class Post {
     private String targetDepartment;    // 다중선택 가능. "," 콤마로 구분
 
     @OneToMany(mappedBy = "post")
-    private List<Like> likes = new ArrayList<>();
+    private List<Likes> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
     private List<Position> positions = new ArrayList<>();

@@ -4,6 +4,7 @@ import com.hcu.hot6.domain.Keyword;
 import com.hcu.hot6.repository.KeywordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class KeywordService {
 
     private final KeywordRepository keywordRepository;
