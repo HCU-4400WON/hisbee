@@ -98,7 +98,7 @@ public class PostRepository {
                 return post.createdDate.desc();
             }
             case LIKES -> {
-                return post.bookmarks.size().desc();
+                return post.likes.size().desc();
             }
             case END -> {
                 return post.thumbnail.recruitEnd.asc();
