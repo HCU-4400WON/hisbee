@@ -204,8 +204,8 @@ export const PostDetailExample = {
   recruitStart: new Date("2023-04-03"),
   recruitEnd: new Date("2023-04-13"),
   projectStart: new Date("2023-05-13"),
-  durations: ["봄학기 , 가을학기"],
-  postTypes: ["학회 , 학술모임"],
+  durations: ["봄학기", "가을학기"],
+  postTypes: ["학회", "학술모임"],
   tags: ["1,2", "3,4"],
   author: "아프지마 도트 잠보",
   content: `🪙 시각디자인 학회 도트 1&2학년 리쿠르팅 🪙

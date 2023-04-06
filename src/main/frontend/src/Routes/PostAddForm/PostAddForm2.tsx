@@ -1,3 +1,4 @@
+import tw from "tailwind-styled-components";
 import { async } from "@firebase/util";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -39,6 +40,10 @@ const MyBlock = styled.div`
     padding: 10px !important;
     border-radius: 2px !important;
   }
+`;
+
+const ExplainText = tw.p`
+text-blue-600 text-[18px]
 `;
 
 const MainBLUE = "bg-blue-200";
@@ -263,11 +268,9 @@ function PostAddForm2() {
     false,
     false,
     false,
-    false,
   ]);
 
   const optionalFoldText = [
-    { first: "모집 대상의 ", accent: "지원 조건을 설정하고", last: "싶다면?" },
     { first: "검색에 잘 걸리도록 ", accent: "검색 키워드 추가", last: "하기!" },
     {
       first: "모임 목적, 활동 내용 등 자세한 ",
@@ -279,6 +282,17 @@ function PostAddForm2() {
 
   const [posterUploadList, setPosterUploadList] = useState<number[]>([0, 1, 2]);
 
+  const durations = [
+    "봄학기",
+    "가을학기",
+    "여름방학",
+    "겨울방학",
+    "1년",
+    "1학기",
+    "2학기",
+    "3학기",
+    "4학기",
+  ];
   return (
     <div className="p-[50px]">
       <div className="flex justify-between pb-[20px]">
@@ -310,7 +324,9 @@ function PostAddForm2() {
       <form onSubmit={handleSubmit(onSubmit)} className="px-[20px]">
         <div className="bg-slate-100 p-[50px] rounded-3xl mb-[50px]">
           <div className="flex justify-between w-full relative">
-            <p className="text-[20px] font-main">필수 작성 내용</p>
+            <ExplainText className="">
+              썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
+            </ExplainText>
             {!postExampleToggle && (
               <button
                 type="button"
@@ -328,7 +344,7 @@ function PostAddForm2() {
                     닫기
                   </button>
                 </div>
-                <div className="w-600px h-[300px] bg-gray-200 flex items-center overflow-scroll">
+                <div className="w-[600px] h-[300px] bg-gray-200 flex items-center overflow-scroll">
                   {postExampleToggle &&
                     (
                       PostExamples[
@@ -347,12 +363,9 @@ function PostAddForm2() {
                         필수 작성란입니다.
                     </p> */}
           </div>
-          <p className="mt-[10px]">
-            썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
-          </p>
 
-          <div className="w-full h-[400px] flex items-center justify-between my-[20px] ">
-            <div className="w-[400px] bg-white p-[30px]">
+          <div className="w-full h-[400px] flex items-center justify-between mb-[20px] ">
+            <div className="w-[400px] h-[350px] rounded-[20px] bg-white p-[30px]">
               <div className="mb-[30px]">
                 <span className="flex items-center justify-between mb-[20px]">
                   <span className="flex items-center">
@@ -565,159 +578,421 @@ function PostAddForm2() {
               </div>
             </div>
           </div>
+        </div>
 
-          <div>
-            {/* <p className="text-[20px] font-main">모집글 필수 내용</p> */}
-            <p className="mt-[10px]">지원에 필요한 정보를 채워주세요!</p>
-            <div className="flex">
-              <div className="w-[600px] mt-[20px] mr-[100px]">
-                <span className="flex items-start">
-                  <p className="w-[130px] mt-[8px]">신청 방법</p>
-                  <input
-                    type="text"
-                    className="w-full border-b-2 h-[40px] ml-[20px] px-[10px]"
-                    placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
-                  />
-                </span>
-                <span className="flex mt-[10px] items-start">
-                  <p className="w-[130px] mt-[8px]">신청 안내</p>
-                  <textarea
-                    id="registerMethod"
-                    onKeyPress={textareaResize}
-                    onKeyUp={textareaResize}
-                    className="notes px-[10px] vertical-center w-full ml-[20px] h-[65px]"
-                    placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
-                  />
-                </span>
-              </div>
-              <div className="w-[400px] mt-[20px]">
-                <p>모집 인원</p>
+        <div className="bg-slate-100 p-[50px] mb-[50px] rounded-[20px]">
+          {/* <p className="text-[20px] font-main">모집글 필수 내용</p> */}
 
-                {getValues("positionToggle") === true ? (
-                  <span className="flex mt-[10px] items-center">
-                    <div></div>
-                    <input
-                      className="border-b-2 px-[10px] w-[100px]"
-                      {...register("position")}
-                      placeholder="포지션"
-                      type="text"
-                    />
-                    <p className="mx-[10px] text-gray-400">:</p>
-                    <input
-                      className="border-b-2 px-[10px] w-[50px] px-[10px]"
-                      {...register("positionNum")}
-                      type="number"
-                    />
-                    <p className="ml-[5px]">명</p>
-                    <button
-                      onClick={() => setValue("positionToggle", false)}
-                      className="ml-[20px] bg-blue-100 text-blue-400 rounded-lg px-[15px] py-[5px]"
-                    >
-                      인원만 입력하기
-                    </button>
-                  </span>
-                ) : (
-                  <span className="flex mt-[10px] items-center">
-                    <input
-                      className="border-b-2 px-[10px] w-[80px]"
-                      {...register("total")}
-                      type="number"
-                      placeholder="(선택)"
-                    />
-                    <p className="ml-[5px]">명</p>
-                    <button
-                      onClick={() => setValue("positionToggle", true)}
-                      className={`ml-[20px] ${FunctionBUTTON}`}
-                    >
-                      포지션: 인원으로 입력하기
-                    </button>
-                  </span>
-                )}
+          <p className="text-blue-600 text-[18px]">
+            지원에 필요한 정보를 채워주세요!
+          </p>
 
-                {getValues("positionToggle") === true &&
-                  positionList.length > 0 &&
-                  positionList?.map((elem, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between border-2 border-blue-500 rounded-lg py-[2px] px-[10px] w-[200px] lg:w-[300px] xl:w-[343px] text-blue-500 my-[20px]"
-                    >
-                      <i className="fa-solid fa-link"></i>
-                      <p>{elem.position}</p>
-                      {/* <p>{elem.positionNum}명</p> */}
-                      <span className="flex items-center ">
-                        <span
+          <div className="flex items-center justify-between mt-[20px] mb-[80px]">
+            <span className="flex items-start w-[45%]">
+              <p className="w-[130px] mt-[8px]">신청 방법</p>
+              <input
+                type="text"
+                className="w-full border-b-2 h-[40px] ml-[20px] px-[10px]"
+                placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
+              />
+            </span>
+
+            <span className="flex mt-[10px] items-start w-[45%]">
+              <p className="w-[130px] mt-[8px]">신청 안내</p>
+              <textarea
+                id="registerMethod"
+                onKeyPress={textareaResize}
+                onKeyUp={textareaResize}
+                className="notes px-[10px] vertical-center w-full ml-[20px] h-[65px]"
+                placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
+              />
+            </span>
+          </div>
+
+          {/* 모집 대상의 지원 조건을 설정해보세요 */}
+
+          <div className="relative bg-gray-100 rounded-3xl my-[50px] mb-[80px]">
+            <ExplainText>모집 대상의 지원 조건을 설정해보세요!</ExplainText>
+            <div className="flex justify-between">
+              <div className="w-[45%] ">
+                <div className="flex  ">
+                  {/* 학년 중복선택  */}
+                  <span className="py-[20px]">
+                    <span className="flex items-center text-[20px] mb-[10px]">
+                      학년{" "}
+                      <p className="ml-[10px] text-[15px] text-gray-400">
+                        중복 선택 가능
+                      </p>
+                    </span>
+
+                    <div className="flex">
+                      <div className="flex"></div>
+                      <button
+                        onClick={() => {
+                          setGradeToggle(false);
+                          setValue("grades", ["상관없음" as never]);
+                        }}
+                        value="상관없음"
+                        className={`border-2 px-[15px] py-[5px] rounded-lg ${
+                          !gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
+                        }`}
+                      >
+                        상관 없음
+                      </button>
+
+                      {/* <p className="mx-[10px]">학년 선택하기</p> */}
+                      {!gradeToggle && (
+                        <button
+                          className={`border-2 ${
+                            gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
+                          } px-[15px] py-[5px] rounded-lg ml-[10px]`}
                           onClick={() => {
-                            const newElem = {
-                              position: elem.position,
-                              positionNum: elem.positionNum + 1,
-                            };
-                            setPositionList((prev) => [
-                              ...prev.slice(0, index),
-                              newElem,
-                              ...prev.slice(index + 1),
-                            ]);
+                            // if(gradeToggle) setValue("grades" , ["상관없음"] as any);
+                            setValue("grades", []);
+                            setGradeToggle(true);
+                            console.log(getValues("grades"));
                           }}
                         >
-                          +
-                        </span>
-                        <p className="mx-[10px]">{elem.positionNum}명</p>
-                        <span
-                          onClick={() => {
-                            const newElem = {
-                              position: elem.position,
-                              positionNum: elem.positionNum - 1,
-                            };
-                            setPositionList((prev) => [
-                              ...prev.slice(0, index),
-                              newElem,
-                              ...prev.slice(index + 1),
-                            ]);
-                          }}
-                        >
-                          -
-                        </span>
-                      </span>
-                      <i
-                        className="fa-regular fa-trash-can"
-                        onClick={() =>
-                          setPositionList((prev) => [
-                            ...prev.slice(0, index),
-                            ...prev.slice(index + 1),
-                          ])
-                        }
-                      ></i>
+                          학년 설정
+                        </button>
+                      )}
+
+                      {gradeToggle && (
+                        <>
+                          {Grades.map((grade, index) => (
+                            <button
+                              value={grade}
+                              key={index}
+                              className={`ml-[10px] px-[15px] py-[5px] rounded-lg ${
+                                !gradeToggle
+                                  ? MajorSeletedBUTTON
+                                  : MajorUnSelectedBUTTON
+                              }`}
+                              onClick={(e: any) => {
+                                const gV = getValues("grades");
+                                const gvIdx = gV.indexOf(grade as never);
+                                const btn = e.currentTarget;
+                                if (gvIdx === -1) {
+                                  setValue("grades", [...gV, grade as never]);
+                                  btn.className = ` px-[15px] py-[5px] rounded-lg ml-[10px] ${MajorSeletedBUTTON}`;
+                                } else {
+                                  setValue("grades", [
+                                    ...gV.slice(0, gvIdx),
+                                    ...gV.slice(gvIdx + 1),
+                                  ]);
+                                  btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${MajorUnSelectedBUTTON}`;
+                                }
+                              }}
+                            >
+                              {grade}
+                            </button>
+                          ))}
+                        </>
+                      )}
                     </div>
-                  ))}
-                {getValues("positionToggle") === true && (
-                  <button
-                    className="flex items-center justify-center text-[25px] w-[27px] h-[27px] rounded-lg bg-blue-100 text-blue-400 mt-[20px]"
-                    onClick={() => {
-                      //    if (positionList.find((elem) => elem.position === getValues("position")) || (positionList.find((elem) => elem.position === "아무나") && getValues("position")==="")){
-
-                      //     setValue("position","");
-                      //     setValue("positionNum" ,"");
-                      //     return;
-                      //    }
-                      if (getValues("position") !== "") {
-                        const newPosition = {
-                          position: getValues("position"),
-                          positionNum: +getValues("positionNum"),
-                        };
-                        setPositionList((prev) => [...prev, newPosition]);
-                        setValue("position", "");
-                        setValue("positionNum", "");
-                      }
-                    }}
+                  </span>
+                </div>
+                <span className="flex items-center text-[20px] my-[10px]">
+                  전공{" "}
+                  <p className="ml-[10px] text-[15px] text-gray-400">
+                    중복 선택 가능
+                  </p>
+                </span>
+                <div className="flex">
+                  <span
+                    className={`flex items-start mt-[10px] ${
+                      majorToggle && "text-gray-400"
+                    }`}
                   >
-                    +
+                    <button
+                      onClick={() => {
+                        setMajorToggle(false);
+                        setValue("grades", ["상관없음" as never]);
+                      }}
+                      value="상관없음"
+                      className={`border-2 px-[15px] min-w-[120px] py-[5px] rounded-lg ${
+                        !majorToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
+                      }`}
+                    >
+                      상관 없음
+                    </button>
+
+                    {!majorToggle && (
+                      <button
+                        className={`border-2 ${UnSelectedBUTTON}  w-[120px] px-[15px] py-[5px] rounded-lg ml-[10px]`}
+                        onClick={() => {
+                          // if(majorToggle) setValue("majors" , ["상관없음"] as any);
+                          setValue("majors", []);
+                          setMajorToggle(true);
+                        }}
+                      >
+                        전공 선택
+                      </button>
+                    )}
+                  </span>
+
+                  <div className="w-full grid grid-cols-2">
+                    {majorToggle && (
+                      <>
+                        {Majors?.map((major, index) => {
+                          const key = Object.keys(major)[0];
+                          const values = Object.values(major)[0];
+                          let clicked = false;
+                          return (
+                            <div className="flex flex-col">
+                              <span
+                                key={index}
+                                className="flex items-center px-[20px] py-[10px]"
+                              >
+                                <button
+                                  key={index}
+                                  onClick={(e) => {
+                                    setVisible((prev) => [
+                                      ...prev.slice(0, index),
+                                      !prev[index],
+                                      ...prev.slice(index + 1),
+                                    ]);
+                                  }}
+                                  className={`${
+                                    visible[index]
+                                      ? MajorSeletedBUTTON
+                                      : MajorUnSelectedBUTTON
+                                  } flex items-center px-[15px] py-[5px] rounded-lg ml-[10px]`}
+                                >
+                                  <p>{Object.keys(major)}</p>
+                                  <i className="fa-solid fa-chevron-right ml-[10px]"></i>
+                                </button>
+
+                                {visible[index] &&
+                                  values.map((value: string, idx: number) => (
+                                    <span
+                                      key={idx}
+                                      className="pl-[20px] flex items-center"
+                                    >
+                                      {/* check point */}
+                                      <button
+                                        className={`${DetailUnSelectedBUTTON}`}
+                                        onClick={(e) => {
+                                          const gV = getValues("majors");
+                                          const gvIdx = gV.indexOf(
+                                            value as never
+                                          );
+                                          const btn = e.currentTarget;
+                                          if (gvIdx === -1) {
+                                            setValue("majors", [
+                                              ...gV,
+                                              value as never,
+                                            ]);
+                                            btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailSelectedBUTTON}`;
+                                          } else {
+                                            setValue("majors", [
+                                              ...gV.slice(0, gvIdx),
+                                              ...gV.slice(gvIdx + 1),
+                                            ]);
+                                            btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailUnSelectedBUTTON}`;
+                                          }
+                                        }}
+                                      >
+                                        {value}
+                                      </button>
+                                    </span>
+                                  ))}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+              {/* 지원 자격 */}
+
+              <div className="mt-[20px] w-[45%] flex">
+                <p className="mb-[10px] w-[100px] text-[18px]">지원 자격</p>
+                <textarea
+                  id="registerDeserve"
+                  onKeyPress={textareaResize}
+                  onKeyUp={textareaResize}
+                  className="notes w-full px-[10px]"
+                  placeholder="지원자 자격에 대해 자유롭게 작성해주세요."
+                />
+
+                {/* {registerToggle ? (
+                  <div className="flex">
+                    <textarea
+                      id="registerDeserve"
+                      onKeyPress={textareaResize}
+                      onKeyUp={textareaResize}
+                      className="notes w-full px-[10px]"
+                      placeholder="지원자 자격에 대해 자유롭게 작성해주세요."
+                    />
+                    <button
+                      onClick={() => setRegisterToggle(false)}
+                      className={`${UnSelectedBUTTON} ml-[20px] w-[80px] h-[40px]`}
+                    >
+                      접기
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setRegisterToggle(true)}
+                    className={`${FunctionBUTTON}`}
+                  >
+                    필드 추가
                   </button>
-                )}
+                )} */}
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full">
+            <div className="  mt-[20px]">
+              <ExplainText className="mt-[10px]">
+                모집에 관한 추가 정보도 알려주세요!{" "}
+                <span className=" ml-[10px] text-gray-400">
+                  선택 입력 사항이에요 :)
+                </span>{" "}
+              </ExplainText>
+
+              {/* 모집에 관한 추가 정보도 알려주세요 Row */}
+              <div className="flex items-center justify-between">
+                {/* 모집인원 */}
+                <div className="w-[50%]">
+                  <p className="mt-[20px]">모집 인원</p>
+                  {getValues("positionToggle") === true ? (
+                    <span className="flex mt-[10px] items-center">
+                      <div></div>
+                      <input
+                        className="border-b-2 px-[10px] w-[100px]"
+                        {...register("position")}
+                        placeholder="포지션"
+                        type="text"
+                      />
+                      <p className="mx-[10px] text-gray-400">:</p>
+                      <input
+                        className="border-b-2 px-[10px] w-[50px] px-[10px]"
+                        {...register("positionNum")}
+                        type="number"
+                      />
+                      <p className="ml-[5px]">명</p>
+                      <button
+                        onClick={() => setValue("positionToggle", false)}
+                        className="ml-[20px] bg-blue-100 text-blue-400 rounded-lg px-[15px] py-[5px]"
+                      >
+                        인원만 입력하기
+                      </button>
+                    </span>
+                  ) : (
+                    <span className="flex mt-[10px] items-center">
+                      <input
+                        className="border-b-2 px-[10px] w-[80px]"
+                        {...register("total")}
+                        type="number"
+                        placeholder="(선택)"
+                      />
+                      <p className="ml-[5px]">명</p>
+                      <button
+                        onClick={() => setValue("positionToggle", true)}
+                        className={`ml-[20px] ${FunctionBUTTON}`}
+                      >
+                        포지션: 인원으로 입력하기
+                      </button>
+                    </span>
+                  )}
+
+                  {getValues("positionToggle") === true &&
+                    positionList.length > 0 &&
+                    positionList?.map((elem, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between border-2 border-blue-500 rounded-lg py-[2px] px-[10px] w-[200px] lg:w-[300px] xl:w-[343px] text-blue-500 my-[20px]"
+                      >
+                        <i className="fa-solid fa-link"></i>
+                        <p>{elem.position}</p>
+                        {/* <p>{elem.positionNum}명</p> */}
+                        <span className="flex items-center ">
+                          <span
+                            onClick={() => {
+                              const newElem = {
+                                position: elem.position,
+                                positionNum: elem.positionNum + 1,
+                              };
+                              setPositionList((prev) => [
+                                ...prev.slice(0, index),
+                                newElem,
+                                ...prev.slice(index + 1),
+                              ]);
+                            }}
+                          >
+                            +
+                          </span>
+                          <p className="mx-[10px]">{elem.positionNum}명</p>
+                          <span
+                            onClick={() => {
+                              const newElem = {
+                                position: elem.position,
+                                positionNum: elem.positionNum - 1,
+                              };
+                              setPositionList((prev) => [
+                                ...prev.slice(0, index),
+                                newElem,
+                                ...prev.slice(index + 1),
+                              ]);
+                            }}
+                          >
+                            -
+                          </span>
+                        </span>
+                        <i
+                          className="fa-regular fa-trash-can"
+                          onClick={() =>
+                            setPositionList((prev) => [
+                              ...prev.slice(0, index),
+                              ...prev.slice(index + 1),
+                            ])
+                          }
+                        ></i>
+                      </div>
+                    ))}
+                  {getValues("positionToggle") === true && (
+                    <button
+                      className="flex items-center justify-center text-[25px] w-[27px] h-[27px] rounded-lg bg-blue-100 text-blue-400 mt-[20px]"
+                      onClick={() => {
+                        //    if (positionList.find((elem) => elem.position === getValues("position")) || (positionList.find((elem) => elem.position === "아무나") && getValues("position")==="")){
+
+                        //     setValue("position","");
+                        //     setValue("positionNum" ,"");
+                        //     return;
+                        //    }
+                        if (getValues("position") !== "") {
+                          const newPosition = {
+                            position: getValues("position"),
+                            positionNum: +getValues("positionNum"),
+                          };
+                          setPositionList((prev) => [...prev, newPosition]);
+                          setValue("position", "");
+                          setValue("positionNum", "");
+                        }
+                      }}
+                    >
+                      +
+                    </button>
+                  )}
+                </div>
+                {/* 활동 기간 */}
+                <div className="w-[45%] ">
+                  <p className="">활동 기간</p>
+                  <select className="mt-[20px]">
+                    {durations.map((duration, index) => (
+                      <option key={index}>{duration}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* 선택 옵션 접었을 때 */}
 
         {!optionalFoldToggle[0] && (
           <div className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]">
@@ -729,7 +1004,7 @@ function PostAddForm2() {
             <i
               className="fa-solid fa-caret-down ml-[10px] text-[25px]"
               onClick={() =>
-                setOptionalFoldToggle((prev) => [true, ...prev.slice(1)])
+                setOptionalFoldToggle((prev) => [true, prev[1], prev[2]])
               }
             ></i>
           </div>
@@ -740,288 +1015,7 @@ function PostAddForm2() {
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
               onClick={() =>
-                setOptionalFoldToggle((prev) => [false, ...prev.slice(1)])
-              }
-            ></i>
-            <p className="text-[20px] font-main">모집 대상 조건 설정하기</p>
-            <p className="mt-[10px]">
-              모집글들을 필터링할 때 쓰이는 정보이니 채워주시면 좋습니다.
-            </p>
-
-            <div className="w-full">
-              <div className="flex">
-                {/* {Grades.map((grade,index) => (
-                                <span key={index} className="flex items-center mt-[10px]">
-                                    <input type="checkBox" {...register("grades")} value={grade} className="mx-[10px]" onClick = {
-                                        (e : any) => {
-                                            if(index === 0 && e.target.checked){
-                                                setValue("grades", [grade as never]);
-                                            }
-                                            else if( index!== 0 && getValues("grades").includes("상관없음" as never)){
-                                                // e.preventDefault();
-                                                setValue("grades", [grade as never]);
-                                                return;
-                                            }
-                                        }
-                                    } />
-                                    <p>{grade}</p>
-                                </span>
-                            ))} */}
-
-                {/* 학년 중복선택  */}
-                <span className="py-[20px]">
-                  <span className="flex items-center text-[20px] mb-[10px]">
-                    학년{" "}
-                    <p className="ml-[10px] text-[15px] text-gray-400">
-                      중복 선택 가능
-                    </p>
-                  </span>
-
-                  <div className="flex">
-                    <div className="flex"></div>
-                    <button
-                      onClick={() => {
-                        setGradeToggle(false);
-                        setValue("grades", ["상관없음" as never]);
-                      }}
-                      value="상관없음"
-                      className={`border-2 px-[15px] py-[5px] rounded-lg ${
-                        !gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
-                      }`}
-                    >
-                      상관 없음
-                    </button>
-
-                    {/* <p className="mx-[10px]">학년 선택하기</p> */}
-                    {!gradeToggle && (
-                      <button
-                        className={`border-2 ${
-                          gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
-                        } px-[15px] py-[5px] rounded-lg ml-[10px]`}
-                        onClick={() => {
-                          // if(gradeToggle) setValue("grades" , ["상관없음"] as any);
-                          setValue("grades", []);
-                          setGradeToggle(true);
-                          console.log(getValues("grades"));
-                        }}
-                      >
-                        학년 설정
-                      </button>
-                    )}
-
-                    {gradeToggle && (
-                      <>
-                        {Grades.map((grade, index) => (
-                          <button
-                            value={grade}
-                            key={index}
-                            className={`ml-[10px] px-[15px] py-[5px] rounded-lg ${
-                              !gradeToggle
-                                ? MajorSeletedBUTTON
-                                : MajorUnSelectedBUTTON
-                            }`}
-                            onClick={(e: any) => {
-                              const gV = getValues("grades");
-                              const gvIdx = gV.indexOf(grade as never);
-                              const btn = e.currentTarget;
-                              if (gvIdx === -1) {
-                                setValue("grades", [...gV, grade as never]);
-                                btn.className = ` px-[15px] py-[5px] rounded-lg ml-[10px] ${MajorSeletedBUTTON}`;
-                              } else {
-                                setValue("grades", [
-                                  ...gV.slice(0, gvIdx),
-                                  ...gV.slice(gvIdx + 1),
-                                ]);
-                                btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${MajorUnSelectedBUTTON}`;
-                              }
-                            }}
-                          >
-                            {grade}
-                          </button>
-                        ))}
-                      </>
-                    )}
-                  </div>
-                </span>
-              </div>
-              <span className="flex items-center text-[20px] my-[10px]">
-                전공{" "}
-                <p className="ml-[10px] text-[15px] text-gray-400">
-                  중복 선택 가능
-                </p>
-              </span>
-              <div className="flex">
-                <span
-                  className={`flex items-start mt-[10px] ${
-                    majorToggle && "text-gray-400"
-                  }`}
-                >
-                  <button
-                    onClick={() => {
-                      setMajorToggle(false);
-                      setValue("grades", ["상관없음" as never]);
-                    }}
-                    value="상관없음"
-                    className={`border-2 px-[15px] min-w-[120px] py-[5px] rounded-lg ${
-                      !majorToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
-                    }`}
-                  >
-                    상관 없음
-                  </button>
-
-                  {!majorToggle && (
-                    <button
-                      className={`border-2 ${UnSelectedBUTTON}  w-[120px] px-[15px] py-[5px] rounded-lg ml-[10px]`}
-                      onClick={() => {
-                        // if(majorToggle) setValue("majors" , ["상관없음"] as any);
-                        setValue("majors", []);
-                        setMajorToggle(true);
-                      }}
-                    >
-                      전공 선택
-                    </button>
-                  )}
-                </span>
-
-                <div className="w-full grid grid-cols-2">
-                  {majorToggle && (
-                    <>
-                      {Majors?.map((major, index) => {
-                        const key = Object.keys(major)[0];
-                        const values = Object.values(major)[0];
-                        let clicked = false;
-                        return (
-                          <div className="flex flex-col">
-                            <span
-                              key={index}
-                              className="flex items-center px-[20px] py-[10px]"
-                            >
-                              <button
-                                key={index}
-                                onClick={(e) => {
-                                  setVisible((prev) => [
-                                    ...prev.slice(0, index),
-                                    !prev[index],
-                                    ...prev.slice(index + 1),
-                                  ]);
-                                }}
-                                className={`${
-                                  visible[index]
-                                    ? MajorSeletedBUTTON
-                                    : MajorUnSelectedBUTTON
-                                } flex items-center px-[15px] py-[5px] rounded-lg ml-[10px]`}
-                              >
-                                <p>{Object.keys(major)}</p>
-                                <i className="fa-solid fa-chevron-right ml-[10px]"></i>
-                              </button>
-
-                              {visible[index] &&
-                                values.map((value: string, idx: number) => (
-                                  <span
-                                    key={idx}
-                                    className="pl-[20px] flex items-center"
-                                  >
-                                    {/* check point */}
-                                    <button
-                                      className={`${DetailUnSelectedBUTTON}`}
-                                      onClick={(e) => {
-                                        const gV = getValues("majors");
-                                        const gvIdx = gV.indexOf(
-                                          value as never
-                                        );
-                                        const btn = e.currentTarget;
-                                        if (gvIdx === -1) {
-                                          setValue("majors", [
-                                            ...gV,
-                                            value as never,
-                                          ]);
-                                          btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailSelectedBUTTON}`;
-                                        } else {
-                                          setValue("majors", [
-                                            ...gV.slice(0, gvIdx),
-                                            ...gV.slice(gvIdx + 1),
-                                          ]);
-                                          btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailUnSelectedBUTTON}`;
-                                        }
-                                      }}
-                                    >
-                                      {value}
-                                    </button>
-                                  </span>
-                                ))}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* 지원 자격 */}
-
-            <div className="mt-[20px] w-[700px]">
-              <p className="mb-[10px] text-[18px] ">지원 자격</p>
-
-              {registerToggle ? (
-                <div className="flex">
-                  <textarea
-                    id="registerDeserve"
-                    onKeyPress={textareaResize}
-                    onKeyUp={textareaResize}
-                    className="notes w-full px-[10px]"
-                    placeholder="지원자 자격에 대해 자유롭게 작성해주세요."
-                  />
-                  <button
-                    onClick={() => setRegisterToggle(false)}
-                    className={`${UnSelectedBUTTON} ml-[20px] w-[80px] h-[40px]`}
-                  >
-                    접기
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setRegisterToggle(true)}
-                  className={`${FunctionBUTTON}`}
-                >
-                  필드 추가
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-
-        {!optionalFoldToggle[1] && (
-          <div className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]">
-            {optionalFoldText[1].first} &nbsp;{" "}
-            <span className={`text-blue-500`}>
-              {optionalFoldText[1].accent}
-            </span>
-            &nbsp;{optionalFoldText[1].last}
-            <i
-              className="fa-solid fa-caret-down ml-[10px] text-[25px]"
-              onClick={() =>
-                setOptionalFoldToggle((prev) => [
-                  prev[0],
-                  true,
-                  ...prev.slice(2),
-                ])
-              }
-            ></i>
-          </div>
-        )}
-
-        {optionalFoldToggle[1] && (
-          <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
-            <i
-              className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
-              onClick={() =>
-                setOptionalFoldToggle((prev) => [
-                  prev[0],
-                  false,
-                  ...prev.slice(2),
-                ])
+                setOptionalFoldToggle((prev) => [false, prev[1], prev[2]])
               }
             ></i>
 
@@ -1080,36 +1074,28 @@ function PostAddForm2() {
           </div>
         )}
 
-        {!optionalFoldToggle[2] && (
+        {!optionalFoldToggle[1] && (
           <div className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]">
-            {optionalFoldText[2].first} &nbsp;{" "}
+            {optionalFoldText[1].first} &nbsp;{" "}
             <span className={`text-blue-500`}>
-              {optionalFoldText[2].accent}
+              {optionalFoldText[1].accent}
             </span>
-            &nbsp;{optionalFoldText[2].last}
+            &nbsp;{optionalFoldText[1].last}
             <i
               className="fa-solid fa-caret-down ml-[10px] text-[25px]"
               onClick={() =>
-                setOptionalFoldToggle((prev) => [
-                  ...prev.slice(0, 2),
-                  true,
-                  prev[3],
-                ])
+                setOptionalFoldToggle((prev) => [prev[0], true, prev[2]])
               }
             ></i>
           </div>
         )}
 
-        {optionalFoldToggle[2] && (
+        {optionalFoldToggle[1] && (
           <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
               onClick={() =>
-                setOptionalFoldToggle((prev) => [
-                  ...prev.slice(0, 2),
-                  false,
-                  prev[3],
-                ])
+                setOptionalFoldToggle((prev) => [prev[0], false, prev[2]])
               }
             ></i>
             <p className="text-[20px] font-main">자유 내용 입력</p>
@@ -1147,29 +1133,29 @@ function PostAddForm2() {
           </div>
         )}
 
-        {!optionalFoldToggle[3] && (
+        {!optionalFoldToggle[2] && (
           <div className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]">
-            {optionalFoldText[3].first} &nbsp;{" "}
+            {optionalFoldText[2].first} &nbsp;{" "}
             <span className={`text-blue-500`}>
-              {optionalFoldText[3].accent}
+              {optionalFoldText[2].accent}
             </span>
-            &nbsp;{optionalFoldText[3].last}
+            &nbsp;{optionalFoldText[2].last}
             <i
               className="fa-solid fa-caret-down ml-[10px] text-[25px]"
               onClick={() =>
-                setOptionalFoldToggle((prev) => [...prev.slice(0, 3), true])
+                setOptionalFoldToggle((prev) => [prev[0], prev[1], true])
               }
             ></i>
           </div>
         )}
 
         {/* 포스터 등록 */}
-        {optionalFoldToggle[3] && (
+        {optionalFoldToggle[2] && (
           <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
               onClick={() =>
-                setOptionalFoldToggle((prev) => [...prev.slice(0, 3), false])
+                setOptionalFoldToggle((prev) => [prev[0], prev[1], false])
               }
             ></i>
             {/* <div> */}
