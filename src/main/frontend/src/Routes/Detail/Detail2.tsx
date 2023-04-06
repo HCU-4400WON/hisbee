@@ -503,9 +503,6 @@ function Detail2() {
   const [imageURL, setImageURL] = useState<string>("");
   const [progressPercent, setProgressPercent] = useState<number>(0);
   const onImageChange = async (file: any) => {
-    // return new Promise((resolve, reject) => {
-    //   resolve({ data: { link: "www.naver.com" } });
-    // });
     console.log(file);
     let newImage: any;
     // file.preventDefault();
@@ -601,26 +598,6 @@ function Detail2() {
 
               <Form onSubmit={handleSubmit(onValid as any)}>
                 <FormHeader>
-                  {/* {isModifying ? (
-                  <>
-                    <FormTitleInput
-                      type="text"
-                      {...register("title", {
-                        required: "필수 항목 입니다",
-                        minLength: {
-                          value: 3,
-                          message: "제목이 너무 짧습니다",
-                        },
-                        maxLength: {
-                          value: 30,
-                          message: "제목이 너무 깁니다",
-                        },
-                      })}
-                      placeholder="3~30자 이내"
-                    />
-                    <Validation message={formState.errors.title?.message} />
-                  </>
-                ) : ( */}
                   <FormTitle>{dataExample?.title}</FormTitle>
                   {/* )} */}
                 </FormHeader>
@@ -651,45 +628,7 @@ function Detail2() {
                         {dataExample?.nBookmark}
                       </WriteInfo>
                     </WriterSpan>
-
-                    {/* <WriteDateSpan className="flex w-[200px] md:w-[auto]">
-                  <WriteInfo className="">작성일</WriteInfo>
-                  <WriteInfo className="text-gray-500">
-                    
-                    {dateConverter(dataExample?.postStart as Date)}
-                    
-                  </WriteInfo>
-                  </WriteDateSpan> */}
                   </FormAuthorSpan>
-
-                  {/* <FormButtonDiv>
-                  {dataExample?.verified && (
-                    <>
-                      {isModifying ? (
-                        <FormModifyOKButton
-                          id="modify"
-                        >
-                          <FormModifyOKIcon />
-                        </FormModifyOKButton>
-                      ) : (
-                        <FormModifyButton
-                          id="modify"
-                          onClick={onBtnClick}
-                        >
-                          <FormModifyIcon />
-                        </FormModifyButton>
-                      )}
-
-                      <FormDeleteButton
-                        id="delete"
-                        onClick={onBtnClick}
-                        
-                      >
-                        <FormDeleteIcon />
-                      </FormDeleteButton>
-                    </>
-                  )}
-                </FormButtonDiv> */}
                 </FormAuthorNButtonRow>
 
                 {/* 요약정보 */}
@@ -764,14 +703,15 @@ function Detail2() {
                       <ItemText>4학기 이상</ItemText>
                     </GridItem>
                     <GridItem>
+                      <ItemTitle>신청 안내</ItemTitle>
+                      <ItemText className="pr-[40px]">
+                        {dataExample?.contactDetails}
+                      </ItemText>
+                    </GridItem>
+                    <GridItem>
                       <ItemTitle>지원 자격</ItemTitle>
 
                       <ItemText>새내기라면 누구든지 환영~ (하드코딩)</ItemText>
-                    </GridItem>
-
-                    <GridItem>
-                      <ItemTitle>신청 안내</ItemTitle>
-                      <ItemText>{dataExample?.contactDetails}</ItemText>
                     </GridItem>
                   </Grid>
                 </div>
@@ -798,11 +738,6 @@ function Detail2() {
                       )
                   )}
                 </div>
-
-                {/*               
-              <div dangerouslySetInnerHTML={{ __html: editorString }}
-              
-              ></div> */}
                 <div className="px-[50px] text-[20px]">
                   {dataExample?.content}
                 </div>
