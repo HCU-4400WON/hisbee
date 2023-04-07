@@ -34,6 +34,7 @@ public class PostReadOneResponse {
     private String content;
     private String contact;
     private String contactDetails;
+    private String qualifications;
     private List<PositionForm> positions;
     private List<String> years;
     private List<String> departments;
@@ -67,6 +68,7 @@ public class PostReadOneResponse {
         this.contact = post.getContact();
         this.content = post.getContent();
         this.contactDetails = post.getContactDetails();
+        this.qualifications = post.getQualifications();
         this.years = toArray(post.getTargetYears(), ",");
         this.departments = toArray(post.getTargetDepartment(), ",");
         this.keywords = toArray(post.getKeywords(), ",");

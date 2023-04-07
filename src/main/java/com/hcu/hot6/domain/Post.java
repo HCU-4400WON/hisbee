@@ -36,6 +36,7 @@ public class Post {
     // 필수 아닌 필드
     private String content;
     private String contactDetails;
+    private String qualifications;
     private String targetYears;         // 다중선택 가능. "," 콤마로 구분
     private String targetDepartment;    // 다중선택 가능. "," 콤마로 구분
 
@@ -72,6 +73,7 @@ public class Post {
                         .orElse(List.of())
         );
         this.contactDetails = request.getContactDetails();
+        this.qualifications = request.getQualifications();
         this.targetYears = Utils.toString(request.getYears(), ",");
         this.targetDepartment = Utils.toString(request.getDepartments(), ",");
         this.views = 0L;

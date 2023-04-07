@@ -45,6 +45,7 @@ public class PostCreationRequest {
     // Optional fields
     private String contactDetails;
     private String content;
+    private String qualifications;
     private List<String> years;
     private List<String> departments;
     private List<String> keywords;
