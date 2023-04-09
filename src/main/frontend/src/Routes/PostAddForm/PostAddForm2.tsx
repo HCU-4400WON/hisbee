@@ -97,6 +97,8 @@ function PostAddForm2() {
       qualification: "",
       positionToggle: false,
       total: "",
+      keywordsFirstLine: [],
+      keywordsSecondLine: [],
 
       // poster : "",
     },
@@ -132,6 +134,8 @@ function PostAddForm2() {
   watch([
     "postTypes",
     // "durationIndex",
+    "firstKeyword",
+    "secondKeyword",
     "recruitStart",
     "recruitEnd",
     "positionName",

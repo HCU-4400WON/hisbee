@@ -60,12 +60,12 @@ function Router() {
           path="/footer"
           element={<PrivateRoute component={<Footer />} />}
         ></Route>
-        <Route
+        {/* <Route
           path="add2"
           element={<PrivateRoute component={<PostAddForm2 />} />}
-        ></Route>
+        ></Route> */}
 
-        {/* <Route path="add2" element={<PostAddForm2 />}></Route> */}
+        <Route path="add2" element={<PostAddForm2 />}></Route>
         <Route path="post2/:id" element={<Detail2 />}></Route>
 
         <Route path="*" element={<Main />}></Route>
