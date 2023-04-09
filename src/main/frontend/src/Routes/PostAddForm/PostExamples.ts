@@ -17,7 +17,7 @@ export const dateDifference = (end: string) => {
 
   const diffDate = date1.getTime() - date2.getTime();
 
-  return (-1 * diffDate) / (1000 * 60 * 60 * 24);
+  return Math.abs(diffDate / (1000 * 60 * 60 * 24));
 };
 
 // D-Day 를 상시모집 과 같은 스트링으로 바꿔줌
@@ -29,8 +29,6 @@ export const convertDateToString = (postStart: any, postEnd: any) => {
     return "상시 모집";
   } else if (dateDifference(postEnd!) === 0) {
     return "오늘 마감";
-  } else if (dateDifference(postEnd!) < 0) {
-    return "모집 마감";
   } else {
     return "D-" + dateDifference(postEnd!);
   }
@@ -146,52 +144,6 @@ export const PostExamples: IPostExamples = {
       Likes: 21,
       postStart: "2023-04-03",
       postEnd: "2023-04-09",
-    },
-  ],
-  프로젝트: [
-    {
-      title: "웹 서비스 프로젝트",
-      subTitle: "방학 동안 포트폴리오 함께 만들자!",
-      categories: ["프로젝트", "학술모임"],
-      keywordsFirstLine: ["웹/앱", "리액트", "자바"],
-      keywordsSecondLine: ["전공 무관 누구든지"],
-      Likes: 5,
-      postStart: "2023-05-08",
-      postEnd: "2023-05-09",
-    },
-    {
-      title: "한동대 주최 해커톤, 놀이톤",
-      subTitle:
-        "한동대학교에서 주최하는 두 번째 해커톤인 놀이톤에 여러분을 초대합니다.",
-      categories: ["프로젝트"],
-      keywordsFirstLine: ["한동대", "포스텍"],
-      keywordsSecondLine: ["기획자", "디자이너", "개발자"],
-      Likes: 35,
-      postStart: "2023-04-03",
-      postEnd: "2023-04-11",
-    },
-  ],
-  학회: [
-    {
-      title: "시각디자인 학회 도트 리쿠르팅",
-      subTitle:
-        "도트는 그래픽,편집,타이포 등 다양한 분야의 디자인을 실험적으로 연구하는 학회입니다.",
-      categories: ["학회"],
-      keywordsFirstLine: ["시각디자인", "2전공 가능", "콘디 학회"],
-      keywordsSecondLine: ["1,2학년 리쿠르팅"],
-      Likes: 21,
-      postStart: "2023-04-03",
-      postEnd: "2023-04-09",
-    },
-    {
-      title: "웹 서비스 프로젝트",
-      subTitle: "방학 동안 포트폴리오 함께 만들자!",
-      categories: ["프로젝트", "학술모임"],
-      keywordsFirstLine: ["웹/앱", "리액트", "자바"],
-      keywordsSecondLine: ["전공 무관 누구든지"],
-      Likes: 5,
-      postStart: "2023-05-08",
-      postEnd: "2023-05-09",
     },
   ],
 };
