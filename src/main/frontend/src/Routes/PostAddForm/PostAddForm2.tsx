@@ -26,6 +26,7 @@ import {
   IPostExample,
   PostExamples,
 } from "./PostExamples";
+import { ICreatePost } from "api";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -69,57 +70,121 @@ function PostAddForm2() {
   } = useForm({
     mode: "onSubmit",
     defaultValues: {
-      categories: [],
-      //   durationIndex: "0",
-      postStart: converter("year", new Date()),
-      postEnd: converter("year", new Date()),
       title: "",
-      subTitle: "",
-      keywordsFirstLine: [],
-      keywordsSecondLine: [],
-      // keywordsThirdLine : [],
-      position: "",
-      positionNum: "",
-      grades: [],
-      majors: [],
+      summary: "",
+      first: [],
+      second: [],
+      postTypes: [],
+
+      recruitStart: converter("year", new Date()), // string
+      recruitEnd: converter("year", new Date()), // string
+      projectStart: "",
+      durations: [],
+
+      positions: [],
+      positionName: "",
+      positionCount: "",
+      contact: "",
+      contactDetails: "",
+      content: "",
+      years: [],
+      departments: [],
       keyword: "",
+      keywords: [],
       firstKeyword: "",
       secondKeyword: "",
+      qualification: "",
       positionToggle: false,
       total: "",
+
       // poster : "",
     },
   });
 
+  interface ISubmitDate {
+    title: string;
+    summary?: string;
+    first?: string[];
+    second?: string[];
+    postTypes: string[];
+    recruitStart: string; // string
+    recruitEnd?: string; // string
+    projectStart?: string;
+    durations?: string[];
+    positions?: string[];
+    positionName?: string;
+    positionCount?: string;
+    contact: string;
+    contactDetails?: string;
+    content?: string;
+    years?: string[];
+    departments?: string[];
+    keyword?: "";
+    keywords?: string[];
+    firstKeyword?: string;
+    secondKeyword?: string;
+    qualification?: string;
+    positionToggle?: boolean;
+    total?: string;
+  }
+
   watch([
-    "categories",
+    "postTypes",
     // "durationIndex",
-    "postStart",
-    "postEnd",
-    "position",
-    "positionNum",
+    "recruitStart",
+    "recruitEnd",
+    "positionName",
+    "positionCount",
     "keyword",
-    "keywordsFirstLine",
-    "keywordsSecondLine",
+    "first",
+    "second",
     "positionToggle",
-    "grades",
+    "years",
+    "keywords",
   ]);
 
   interface IPositionList {
     position: string;
-    positionNum: number;
+    positionCount: number;
   }
 
   const [positionList, setPositionList] = useState<IPositionList[] | []>([]);
 
-  // const categoriesWatch = watch("categories");
+  // const postTypesWatch = watch("postTypes");
   // https://dotorimook.github.io/post/2020-10-05-rhf-watch-vs-getvalues/
 
-  const onSubmit = () => {
-    console.log(getValues("grades"));
-    console.log(getValues("majors"));
+  const onSubmit = (data: ISubmitDate) => {
+    console.log(getValues("years"));
+    console.log(getValues("departments"));
     console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
     console.log(imageURL);
+
+    console.log(data);
+
+    const newPost = {
+      title: data.title,
+      summary: data?.summary,
+
+      tags: {
+        first: data?.first,
+        second: data?.second,
+      },
+      postTypes: data?.postTypes,
+      recruitStart: data?.recruitStart,
+      recruitEnd: data?.recruitEnd,
+      projectStart: data?.projectStart,
+      durations: data?.durations,
+      positions: data?.positions,
+      contact: data?.contact,
+      contactDetails: data?.contactDetails,
+      content: data?.content,
+      years: data?.years,
+      departments: data?.departments,
+      keywords: data?.keywords,
+      posterPath: imageURLList,
+    };
+
+    console.log(newPost);
   };
 
   const Categories = [
@@ -132,14 +197,6 @@ function PostAddForm2() {
     "전공 스터디",
     "기타 모임",
   ];
-
-  // const onClick = (e : React.FormEvent<HTMLButtonElement>) => {
-  //     const selectedId = e.currentTarget.id;
-
-  // // }
-  // const onDelete = (id : number) => {
-  //     ;
-  // }
 
   const Grades = [
     "23학번 새내기",
@@ -168,7 +225,7 @@ function PostAddForm2() {
     Array.from({ length: Majors.length }, () => false)
   );
 
-  const [keywords, setKeywords] = useState<string[] | []>([]);
+  //   const [keywords, setKeywords] = useState<string[] | []>([]);
 
   const [firstKeywords, setFirstKeywords] = useState<string[]>();
 
@@ -246,7 +303,7 @@ function PostAddForm2() {
   const textareaResize = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const targetId = e.currentTarget.id;
     const targetValue = e.currentTarget.value;
-    if (targetId === "subTitle" && targetValue.split("\n").length > 2) {
+    if (targetId === "summary" && targetValue.split("\n").length > 2) {
       let modifiedText = targetValue.split("\n").slice(0, 2);
       e.currentTarget.value = modifiedText.join("\n");
       return;
@@ -259,7 +316,7 @@ function PostAddForm2() {
       return;
     }
 
-    if (targetId === "subTitle" || targetId === "registerMethod")
+    if (targetId === "summary" || targetId === "registerMethod")
       e.currentTarget.style.height = "50px";
     else e.currentTarget.style.height = "10px";
     e.currentTarget.style.height = 12 + e.currentTarget.scrollHeight + "px";
@@ -308,7 +365,7 @@ function PostAddForm2() {
 
       {/* form */}
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit as any)}>
         <div className="bg-slate-100 p-[50px] rounded-3xl mb-[50px]">
           <div className="flex justify-between w-full relative">
             <ExplainText>
@@ -334,9 +391,9 @@ function PostAddForm2() {
                   {postExampleToggle &&
                     (
                       PostExamples[
-                        getValues("categories").length === 0
+                        getValues("postTypes").length === 0
                           ? "선택안됨"
-                          : getValues("categories")[0]
+                          : getValues("postTypes")[0]
                       ] as IPostExample[]
                     )?.map((postExample: IPostExample, index: number) => (
                       <Thumbnail {...postExample} key={index} />
@@ -352,8 +409,8 @@ function PostAddForm2() {
               <span className="flex items-center justify-between mb-[20px]">
                 <span className="px-[10px] rounded-full mr-[20px] bg-gray-200 font-light">
                   {convertDateToString(
-                    getValues("postStart"),
-                    getValues("postEnd")
+                    getValues("recruitStart"),
+                    getValues("recruitEnd")
                   )}
                 </span>
                 <i className="fa-regular fa-heart text-[23px] text-gray-400"></i>
@@ -368,17 +425,17 @@ function PostAddForm2() {
               />
               {/* 썸네일 부제목 */}
               <textarea
-                id="subTitle"
+                id="summary"
                 onKeyPress={textareaResize}
                 onKeyUp={textareaResize}
                 className="notes w-[340px] text-[15px] px-[15px] pt-[5px] h-[65px] mb-[30px]"
-                {...register("subTitle")}
+                {...register("summary")}
                 placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요"
               />
 
               <div className="flex items-center">
-                {getValues("categories").length !== 0 &&
-                  getValues("categories").map(
+                {getValues("postTypes").length !== 0 &&
+                  getValues("postTypes").map(
                     (category: string, index: number) => (
                       <div
                         className={` py-[1px] mb-[10px] px-[15px] rounded-full mr-[10px] ${LightMainBLUE}`}
@@ -390,8 +447,8 @@ function PostAddForm2() {
                   )}
               </div>
               {[
-                { array: "keywordsFirstLine", str: "firstKeyword" },
-                { array: "keywordsSecondLine", str: "secondKeyword" },
+                { array: "first", str: "firstKeyword" },
+                { array: "second", str: "secondKeyword" },
               ].map((lineObj, index) => (
                 <div key={index} className="flex mb-[10px] items-center">
                   {/* firstLine Keyword */}
@@ -457,7 +514,7 @@ function PostAddForm2() {
                   <input
                     className="w-[140px] px-[5px]"
                     type="date"
-                    {...register("postStart")}
+                    {...register("recruitStart")}
                   />
                 </span>
 
@@ -466,12 +523,12 @@ function PostAddForm2() {
                   <input
                     type="date"
                     className="w-[140px] px-[5px]"
-                    {...register("postEnd")}
+                    {...register("recruitEnd")}
                   />
                 </span>
                 <button
                   className={` ${FunctionBUTTON} ml-[65px] mt-[20px] `}
-                  onClick={() => setValue("postEnd", "")}
+                  onClick={() => setValue("recruitEnd", "")}
                 >
                   마감일 미설정
                 </button>
@@ -488,22 +545,22 @@ function PostAddForm2() {
                 <div className="grid grid-cols-2 w-[300px]">
                   {Categories.map((category, index) => (
                     <span key={index} className="flex items-center mt-[20px]">
-                      {/* <input {...register("categories")} value={category} type="checkBox" className="mx-[10px]" /> */}
+                      {/* <input {...register("postTypes")} value={category} type="checkBox" className="mx-[10px]" /> */}
                       {/* <p>{category}</p> */}
                       <button
                         className={`${
-                          getValues("categories").includes(category as never)
+                          getValues("postTypes").includes(category as never)
                             ? MajorSeletedBUTTON
                             : UnSelectedBUTTON
                         } px-[15px] py-[8px] rounded-lg`}
                         onClick={async () => {
-                          const gv = getValues("categories");
+                          const gv = getValues("postTypes");
                           const gvIdx = gv.indexOf(category as never);
                           if (
                             !gv.includes(category as never) &&
                             gv.length < 2
                           ) {
-                            await setValue("categories", [
+                            await setValue("postTypes", [
                               ...gv,
                               category as never,
                             ]);
@@ -513,7 +570,7 @@ function PostAddForm2() {
                             gv.includes(category as never) &&
                             gv.length <= 2
                           ) {
-                            setValue("categories", [
+                            setValue("postTypes", [
                               ...gv.slice(0, gvIdx),
                               ...gv.slice(gvIdx + 1),
                             ]);
@@ -526,7 +583,7 @@ function PostAddForm2() {
                   ))}
                 </div>
                 <div className="flex flex-col justify-end">
-                  {getValues("categories").includes("기타 모임" as never) && (
+                  {getValues("postTypes").includes("기타 모임" as never) && (
                     <input
                       type="text"
                       id="categoryETC"
@@ -554,6 +611,7 @@ function PostAddForm2() {
                 type="text"
                 className="w-full border-b-2 h-[40px] ml-[20px] px-[10px]"
                 placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
+                {...register("contact")}
               />
             </span>
 
@@ -565,6 +623,7 @@ function PostAddForm2() {
                 onKeyUp={textareaResize}
                 className="notes px-[10px] vertical-center w-full ml-[20px] h-[65px]"
                 placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
+                {...register("contactDetails")}
               />
             </span>
           </div>
@@ -589,7 +648,7 @@ function PostAddForm2() {
                   <button
                     onClick={() => {
                       setGradeToggle(false);
-                      setValue("grades", ["상관없음" as never]);
+                      setValue("years", ["상관없음" as never]);
                     }}
                     value="상관없음"
                     className={`border-2 px-[15px] py-[5px] rounded-lg ${
@@ -605,10 +664,10 @@ function PostAddForm2() {
                         gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
                       } px-[15px] py-[5px] rounded-lg ml-[10px]`}
                       onClick={() => {
-                        // if(gradeToggle) setValue("grades" , ["상관없음"] as any);
-                        setValue("grades", []);
+                        // if(gradeToggle) setValue("years" , ["상관없음"] as any);
+                        setValue("years", []);
                         setGradeToggle(true);
-                        console.log(getValues("grades"));
+                        console.log(getValues("years"));
                       }}
                     >
                       학년 설정
@@ -627,16 +686,16 @@ function PostAddForm2() {
                               : MajorUnSelectedBUTTON
                           }`}
                           onClick={(e: any) => {
-                            const gV = getValues("grades");
+                            const gV = getValues("years");
                             const gvIdx = gV.indexOf(grade as never);
                             const btn = e.currentTarget;
                             if (gvIdx === -1) {
-                              setValue("grades", [...gV, grade as never]);
+                              setValue("years", [...gV!, grade as never]);
                               btn.className = ` px-[15px] py-[5px] rounded-lg ml-[10px] ${MajorSeletedBUTTON}`;
                             } else {
-                              setValue("grades", [
-                                ...gV.slice(0, gvIdx),
-                                ...gV.slice(gvIdx + 1),
+                              setValue("years", [
+                                ...gV!.slice(0, gvIdx),
+                                ...gV!.slice(gvIdx + 1),
                               ]);
                               btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${MajorUnSelectedBUTTON}`;
                             }
@@ -660,6 +719,7 @@ function PostAddForm2() {
                   onKeyUp={textareaResize}
                   className="notes w-full px-[10px]"
                   placeholder="지원자 자격에 대해 자유롭게 작성해주세요."
+                  {...register("qualification")}
                 />
               </div>
             </div>
@@ -681,7 +741,7 @@ function PostAddForm2() {
                   <button
                     onClick={() => {
                       setMajorToggle(false);
-                      setValue("grades", ["상관없음" as never]);
+                      setValue("years", ["상관없음" as never]);
                     }}
                     value="상관없음"
                     className={`border-2 px-[15px] min-w-[120px] py-[5px] rounded-lg ${
@@ -695,8 +755,8 @@ function PostAddForm2() {
                     <button
                       className={`border-2 ${UnSelectedBUTTON}  w-[120px] px-[15px] py-[5px] rounded-lg ml-[10px]`}
                       onClick={() => {
-                        // if(majorToggle) setValue("majors" , ["상관없음"] as any);
-                        setValue("majors", []);
+                        // if(majorToggle) setValue("departments" , ["상관없음"] as any);
+                        setValue("departments", []);
                         setMajorToggle(true);
                       }}
                     >
@@ -747,21 +807,21 @@ function PostAddForm2() {
                                     <button
                                       className={`${DetailUnSelectedBUTTON}`}
                                       onClick={(e) => {
-                                        const gV = getValues("majors");
+                                        const gV = getValues("departments");
                                         const gvIdx = gV.indexOf(
                                           value as never
                                         );
                                         const btn = e.currentTarget;
                                         if (gvIdx === -1) {
-                                          setValue("majors", [
+                                          setValue("departments", [
                                             ...gV,
                                             value as never,
                                           ]);
                                           btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailSelectedBUTTON}`;
                                         } else {
-                                          setValue("majors", [
-                                            ...gV.slice(0, gvIdx),
-                                            ...gV.slice(gvIdx + 1),
+                                          setValue("departments", [
+                                            ...gV!.slice(0, gvIdx),
+                                            ...gV!.slice(gvIdx + 1),
                                           ]);
                                           btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailUnSelectedBUTTON}`;
                                         }
@@ -783,7 +843,7 @@ function PostAddForm2() {
           </div>
 
           <div className="w-full">
-            <ExplainText className="">
+            <ExplainText>
               모집에 관한 추가 정보도 알려주세요!{" "}
               <span className=" ml-[10px] text-gray-400">
                 선택 입력 사항이에요 :)
@@ -800,14 +860,14 @@ function PostAddForm2() {
                     <div></div>
                     <input
                       className="border-b-2 px-[10px] w-[100px]"
-                      {...register("position")}
+                      {...register("positionName")}
                       placeholder="포지션"
                       type="text"
                     />
                     <p className="mx-[10px] text-gray-400">:</p>
                     <input
                       className="border-b-2 px-[10px] w-[50px] px-[10px]"
-                      {...register("positionNum")}
+                      {...register("positionCount")}
                       type="number"
                     />
                     <p className="ml-[5px]">명</p>
@@ -845,13 +905,13 @@ function PostAddForm2() {
                     >
                       <i className="fa-solid fa-link"></i>
                       <p>{elem.position}</p>
-                      {/* <p>{elem.positionNum}명</p> */}
+                      {/* <p>{elem.positionCount}명</p> */}
                       <span className="flex items-center ">
                         <span
                           onClick={() => {
                             const newElem = {
                               position: elem.position,
-                              positionNum: elem.positionNum + 1,
+                              positionCount: elem.positionCount + 1,
                             };
                             setPositionList((prev) => [
                               ...prev.slice(0, index),
@@ -862,12 +922,12 @@ function PostAddForm2() {
                         >
                           +
                         </span>
-                        <p className="mx-[10px]">{elem.positionNum}명</p>
+                        <p className="mx-[10px]">{elem.positionCount}명</p>
                         <span
                           onClick={() => {
                             const newElem = {
                               position: elem.position,
-                              positionNum: elem.positionNum - 1,
+                              positionCount: elem.positionCount - 1,
                             };
                             setPositionList((prev) => [
                               ...prev.slice(0, index),
@@ -897,17 +957,19 @@ function PostAddForm2() {
                       //    if (positionList.find((elem) => elem.position === getValues("position")) || (positionList.find((elem) => elem.position === "아무나") && getValues("position")==="")){
 
                       //     setValue("position","");
-                      //     setValue("positionNum" ,"");
+                      //     setValue("positionCount" ,"");
                       //     return;
                       //    }
-                      if (getValues("position") !== "") {
+                      if (getValues("positionName") !== "") {
                         const newPosition = {
-                          position: getValues("position"),
-                          positionNum: +getValues("positionNum"),
+                          position: getValues("positionName"),
+                          positionCount: +getValues("positionCount")!,
                         };
-                        setPositionList((prev) => [...prev, newPosition]);
-                        setValue("position", "");
-                        setValue("positionNum", "");
+                        setPositionList(
+                          (prev) => [...prev, newPosition] as any
+                        );
+                        setValue("positionName", "");
+                        setValue("positionCount", "");
                       }
                     }}
                   >
@@ -957,18 +1019,17 @@ function PostAddForm2() {
             <p className="mt-[10px]">모집글과 관련된 키워드를 입력해주세요</p>
             <p className="my-[10px]">키워드</p>
             <div className="flex items-center">
-              {["categories", "keywordsFirstLine", "keywordsSecondLine"].map(
-                (elem) =>
-                  getValues(elem as any)?.map((v: string, index: number) => (
-                    <span
-                      key={index}
-                      className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
-                    >
-                      <p>{v}</p>
-                    </span>
-                  ))
+              {["postTypes", "first", "second"].map((elem) =>
+                getValues(elem as any)?.map((v: string, index: number) => (
+                  <span
+                    key={index}
+                    className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
+                  >
+                    <p>{v}</p>
+                  </span>
+                ))
               )}
-              {keywords.map((keyword, index) => (
+              {getValues("keywords")!.map((keyword: string, index: number) => (
                 <span
                   key={index}
                   className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
@@ -977,9 +1038,9 @@ function PostAddForm2() {
                   <i
                     className="fa-solid fa-xmark mt-[2px] text-gray-400"
                     onClick={() =>
-                      setKeywords((prev) => [
-                        ...prev.slice(0, index),
-                        ...prev.slice(index + 1),
+                      setValue("keywords", [
+                        ...getValues("keywords")!.slice(0, index),
+                        ...getValues("keywords")!.slice(index + 1),
                       ])
                     }
                   ></i>
@@ -995,9 +1056,9 @@ function PostAddForm2() {
                 placeholder="엔터키로 키워드를 등록하세요"
                 onKeyPress={async (e) => {
                   if (e.key === "Enter") {
-                    await setKeywords((prev) => [
-                      ...prev,
-                      getValues("keyword"),
+                    setValue("keywords", [
+                      ...getValues("keywords")!,
+                      getValues("keyword" as never),
                     ]);
                     setValue("keyword", "");
                   }
