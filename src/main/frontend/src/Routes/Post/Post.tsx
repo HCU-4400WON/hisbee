@@ -5,6 +5,7 @@ import {
   createMentoring,
   deleteLikePost,
   departments,
+  IReadAllPosts,
   loginCheckApi,
   posts,
   readPosts,
@@ -248,21 +249,30 @@ function Post() {
     data: posts,
     isLoading,
     refetch,
-  } = useQuery<IPosts>(
+  } = useQuery<IReadAllPosts>(
     [
-      "PostsPostFiltered",
+      "FilteredPosts",
 
       [nowPage, search, order, filterCategory, filterPosition, filterPay],
     ],
     () =>
       readPosts(
+        // page:
         nowPage + "",
+        // search:
         search,
+        // order:
         order,
+        // type:
         filterCategory === "" ? null : filterCategory,
-        filterPosition === "" ? null : filterPosition,
-        filterPay === "" ? null : filterPay,
-        null
+        // limit:
+        "12",
+        // keywords:
+        selectedKeywords
+
+        // filterPosition === "" ? null : filterPosition,
+        // filterPay === "" ? null : filterPay,
+        // null
       ),
     {
       onSuccess: (posts) => {

@@ -705,20 +705,22 @@ export const readPosts = async (
   search: string | null,
   order: string | null,
   type: string | null,
-  position: string | null,
-  pay: string | null,
-  limit: string | null
+  limit: string | null,
+  keywords: string[] | null
+  // position: string | null,
+  // pay: string | null,
 ) => {
   try {
     const TOKEN = localStorage.getItem("key");
 
     let paramPage = "";
-    let paramSearch = "";
     let paramOrder = "";
     let paramType = "";
-    let paramPosition = "";
-    let paramPay = "";
     let paramLimit = "";
+    let paramKeywords = "";
+    let paramSearch = "";
+    // let paramPosition = "";
+    // let paramPay = "";
 
     if (page) {
       paramPage = `&page=${page}`;
@@ -732,19 +734,28 @@ export const readPosts = async (
     if (type) {
       paramType = `&type=${type}`;
     }
-    if (position) {
-      paramPosition = `&position=${position}`;
-    }
-    if (pay) {
-      if (pay === "yes") paramPay = `&pay=yes`;
-      else if (pay === "no") paramPay = `&pay=no`;
-    }
+    // if (position) {
+    //   paramPosition = `&position=${position}`;
+    // }
+    // if (pay) {
+    //   if (pay === "yes") paramPay = `&pay=yes`;
+    //   else if (pay === "no") paramPay = `&pay=no`;
+    // }
     if (limit) {
       paramLimit = `&limit=${limit}`;
     }
+    if (search) {
+      paramSearch = `&search=${search}`;
+    }
+    if (keywords && keywords.length !== 0) {
+      paramKeywords = keywords.join(",");
+    }
 
     const response = await axios.get(
-      `http://localhost:8080/posts?${paramPage}${paramSearch}${paramOrder}${paramType}${paramPosition}${paramPay}${paramLimit}`,
+      // `http://localhost:8080/posts?${paramPage}${paramSearch}${paramOrder}${paramType}${paramPosition}${paramPay}${paramLimit}`,
+
+      `http://localhost:8080/posts?${paramPage}${paramOrder}${paramType}${paramLimit}${paramKeywords}`,
+      // `http://localhost:8080/posts?${paramPage}${paramSearch}${paramOrder}${paramType}${paramLimit}${paramKeywords}`,
       {
         headers: { Authorization: `Bearer ${TOKEN}` },
         withCredentials: true,
@@ -995,7 +1006,8 @@ export interface IReadOnePost {
   content: string;
   contact: string;
   contactDetails: string;
-  positions: IPosition[];
+  // positions: IPosition[];
+  targetCount: string;
   years: string[];
   departments: string[];
   keywords: string[];
