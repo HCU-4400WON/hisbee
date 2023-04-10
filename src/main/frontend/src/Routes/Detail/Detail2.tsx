@@ -334,6 +334,22 @@ function Detail2() {
   //       },
   //     }
   //   );
+
+  const { isLoading, data, refetch, isSuccess } = useQuery<IReadOnePost>(
+    ["readOnePost", id],
+    () => readOnePost(+(id as any)),
+    {
+      onSuccess: (data) => {
+        console.log("모집글 하나 읽어오기 성공 : ", data);
+      },
+      onError: () => {
+        console.log("존재하지 않는 게시물입니다.");
+        alert("존재하지 않는 게시물입니다.");
+        navigate(-1);
+      },
+    }
+  );
+
   const { register, handleSubmit, setError, formState, setValue } = useForm({
     mode: "onSubmit",
   });
@@ -582,172 +598,166 @@ function Detail2() {
 
   return (
     <>
-      {
-        //   isLoading||
-        isLoginCheckLoading ? (
-          <LoadingAnimation />
-        ) : (
-          <>
-            {isPostDeleteModal && <PostDeleteModal postId={dataExample?.id} />}
-            <Container>
-              <GoBackSpan>
-                <GoBackButton onClick={() => navigate(-1)}>
-                  <GoBackIcon></GoBackIcon>
-                </GoBackButton>
-              </GoBackSpan>
+      {isLoading || isLoginCheckLoading ? (
+        <LoadingAnimation />
+      ) : (
+        <>
+          {isPostDeleteModal && <PostDeleteModal postId={dataExample?.id} />}
+          <Container>
+            <GoBackSpan>
+              <GoBackButton onClick={() => navigate(-1)}>
+                <GoBackIcon></GoBackIcon>
+              </GoBackButton>
+            </GoBackSpan>
 
-              <Form onSubmit={handleSubmit(onValid as any)}>
-                <FormHeader>
-                  <FormTitle>{dataExample?.title}</FormTitle>
-                  {/* )} */}
-                </FormHeader>
+            <Form onSubmit={handleSubmit(onValid as any)}>
+              <FormHeader>
+                <FormTitle>{dataExample?.title}</FormTitle>
+                {/* )} */}
+              </FormHeader>
 
-                <FormAuthorNButtonRow>
-                  <FormAuthorSpan className="flex justify-between w-full">
-                    <WriterSpan>
-                      <WriteInfo>{dataExample?.summary}</WriteInfo>
-                    </WriterSpan>
+              <FormAuthorNButtonRow>
+                <FormAuthorSpan className="flex justify-between w-full">
+                  <WriterSpan>
+                    <WriteInfo>{dataExample?.summary}</WriteInfo>
+                  </WriterSpan>
 
-                    <WriterSpan>
-                      <WriteInfo className="">
-                        <span className="mx-[10px] text-gray-600">
-                          {dataExample?.author}
-                        </span>
-                      </WriteInfo>
-                      <WriteInfo className="">
-                        <span className="ml-[10px]">
-                          {datetimeToString(dataExample?.createdDate)}
-                        </span>
-                      </WriteInfo>
-                      <WriteInfo className="">
-                        <i className="fa-regular fa-eye mr-[5px]"></i>
-                        {dataExample?.views}
-                      </WriteInfo>
-                      <WriteInfo className="">
-                        <i className="fa-regular fa-heart mr-[5px]"></i>
-                        {dataExample?.nBookmark}
-                      </WriteInfo>
-                    </WriterSpan>
-                  </FormAuthorSpan>
-                </FormAuthorNButtonRow>
+                  <WriterSpan>
+                    <WriteInfo className="">
+                      <span className="mx-[10px] text-gray-600">
+                        {dataExample?.author}
+                      </span>
+                    </WriteInfo>
+                    <WriteInfo className="">
+                      <span className="ml-[10px]">
+                        {datetimeToString(dataExample?.createdDate)}
+                      </span>
+                    </WriteInfo>
+                    <WriteInfo className="">
+                      <i className="fa-regular fa-eye mr-[5px]"></i>
+                      {dataExample?.views}
+                    </WriteInfo>
+                    <WriteInfo className="">
+                      <i className="fa-regular fa-heart mr-[5px]"></i>
+                      {dataExample?.nBookmark}
+                    </WriteInfo>
+                  </WriterSpan>
+                </FormAuthorSpan>
+              </FormAuthorNButtonRow>
 
-                {/* 요약정보 */}
-                <div className="bg-gray-100 rounded-3xl">
-                  <Grid>
-                    <GridItem>
-                      <ItemTitle>모집 기간</ItemTitle>
-                      <ItemText>
-                        <>
-                          {datetimeToString(dataExample?.recruitStart as Date)}
-                        </>
-                      </ItemText>
-                      <ItemText className="mx-[10px]">~</ItemText>
-                      <ItemText>
-                        <ItemText className="text-blue-500">
-                          {/* 수정과 벨리데이션 */}
-
-                          {datetimeToString(dataExample?.recruitStart as Date)}
-
-                          {/* )} */}
-                        </ItemText>
-                      </ItemText>
-                    </GridItem>
-                    <GridItem>
-                      <ItemTitle>학년</ItemTitle>
-
+              {/* 요약정보 */}
+              <div className="bg-gray-100 rounded-3xl">
+                <Grid>
+                  <GridItem>
+                    <ItemTitle>모집 기간</ItemTitle>
+                    <ItemText>
+                      <>{datetimeToString(dataExample?.recruitStart as Date)}</>
+                    </ItemText>
+                    <ItemText className="mx-[10px]">~</ItemText>
+                    <ItemText>
                       <ItemText className="text-blue-500">
-                        {dataExample?.years.length === 0
-                          ? "학년 무관"
-                          : dataExample?.years.map((year) => year + " ")}
+                        {/* 수정과 벨리데이션 */}
+
+                        {datetimeToString(dataExample?.recruitStart as Date)}
+
+                        {/* )} */}
                       </ItemText>
-                    </GridItem>
-                    <GridItem>
-                      <ItemTitle>모집 인원</ItemTitle>
-                      {dataExample?.positions.length === 1 &&
-                      dataExample?.positions[0].name === "전체" ? (
-                        <ItemText>
-                          {dataExample?.positions[0].count + "명"}
+                    </ItemText>
+                  </GridItem>
+                  <GridItem>
+                    <ItemTitle>학년</ItemTitle>
+
+                    <ItemText className="text-blue-500">
+                      {dataExample?.years.length === 0
+                        ? "학년 무관"
+                        : dataExample?.years.map((year) => year + " ")}
+                    </ItemText>
+                  </GridItem>
+                  <GridItem>
+                    <ItemTitle>모집 인원</ItemTitle>
+                    {dataExample?.positions.length === 1 &&
+                    dataExample?.positions[0].name === "전체" ? (
+                      <ItemText>
+                        {dataExample?.positions[0].count + "명"}
+                      </ItemText>
+                    ) : (
+                      dataExample?.positions.map((position, index) => (
+                        <ItemText key={index}>
+                          {position.name} : {position.count}{" "}
+                          {index !== dataExample?.positions.length - 1 && " / "}
                         </ItemText>
-                      ) : (
-                        dataExample?.positions.map((position, index) => (
-                          <ItemText key={index}>
-                            {position.name} : {position.count}{" "}
-                            {index !== dataExample?.positions.length - 1 &&
-                              " / "}
-                          </ItemText>
-                        ))
-                      )}
-                    </GridItem>
-                    <GridItem>
-                      <ItemTitle>전공</ItemTitle>
-                      <ItemText className="text-blue-500">
-                        {dataExample?.departments.length === 0
-                          ? "전공 무관"
-                          : dataExample?.departments.map(
-                              (department) => department + " "
-                            )}
-                      </ItemText>
-                    </GridItem>
-                    <GridItem>
-                      <ItemTitle>신청 방법</ItemTitle>
-                      <a
-                        href="http://google.com"
-                        className="md:w-full w-[200px] text-[13px] md:text-[17px] font-bold underline"
-                      >
-                        {dataExample?.contact}
-                      </a>
-                    </GridItem>
-                    <GridItem>
-                      <ItemTitle>활동 기간</ItemTitle>
-
-                      <ItemText>4학기 이상</ItemText>
-                    </GridItem>
-                    <GridItem>
-                      <ItemTitle>신청 안내</ItemTitle>
-                      <ItemText className="pr-[40px]">
-                        {dataExample?.contactDetails}
-                      </ItemText>
-                    </GridItem>
-                    <GridItem>
-                      <ItemTitle>지원 자격</ItemTitle>
-
-                      <ItemText>새내기라면 누구든지 환영~ (하드코딩)</ItemText>
-                    </GridItem>
-                  </Grid>
-                </div>
-                {/* 키워드들 */}
-
-                <div className="mt-[30px] mb-[60px] px-[50px]">
-                  {dataExample?.postTypes.map((postType, index) => (
-                    <button
-                      key={index}
-                      className="bg-blue-200 py-[5px] px-[15px] rounded-lg mx-[5px]"
+                      ))
+                    )}
+                  </GridItem>
+                  <GridItem>
+                    <ItemTitle>전공</ItemTitle>
+                    <ItemText className="text-blue-500">
+                      {dataExample?.departments.length === 0
+                        ? "전공 무관"
+                        : dataExample?.departments.map(
+                            (department) => department + " "
+                          )}
+                    </ItemText>
+                  </GridItem>
+                  <GridItem>
+                    <ItemTitle>신청 방법</ItemTitle>
+                    <a
+                      href="http://google.com"
+                      className="md:w-full w-[200px] text-[13px] md:text-[17px] font-bold underline"
                     >
-                      {postType}
-                    </button>
-                  ))}
-                  {dataExample?.keywords.map(
-                    (keyword: string, index: number) =>
-                      dataExample?.postTypes.indexOf(keyword) === -1 && (
-                        <button
-                          className="bg-blue-100 py-[5px] px-[15px] rounded-lg mx-[5px] mb-[10px]"
-                          key={index}
-                        >
-                          {keyword}
-                        </button>
-                      )
-                  )}
-                </div>
-                <div className="px-[50px] text-[20px]">
-                  {dataExample?.content}
-                </div>
-              </Form>
+                      {dataExample?.contact}
+                    </a>
+                  </GridItem>
+                  <GridItem>
+                    <ItemTitle>활동 기간</ItemTitle>
 
-              <div className="min-w-[40px] md:min-w-[100px] "></div>
-            </Container>
-          </>
-        )
-      }
+                    <ItemText>4학기 이상</ItemText>
+                  </GridItem>
+                  <GridItem>
+                    <ItemTitle>신청 안내</ItemTitle>
+                    <ItemText className="pr-[40px]">
+                      {dataExample?.contactDetails}
+                    </ItemText>
+                  </GridItem>
+                  <GridItem>
+                    <ItemTitle>지원 자격</ItemTitle>
+
+                    <ItemText>새내기라면 누구든지 환영~ (하드코딩)</ItemText>
+                  </GridItem>
+                </Grid>
+              </div>
+              {/* 키워드들 */}
+
+              <div className="mt-[30px] mb-[60px] px-[50px]">
+                {dataExample?.postTypes.map((postType, index) => (
+                  <button
+                    key={index}
+                    className="bg-blue-200 py-[5px] px-[15px] rounded-lg mx-[5px]"
+                  >
+                    {postType}
+                  </button>
+                ))}
+                {dataExample?.keywords.map(
+                  (keyword: string, index: number) =>
+                    dataExample?.postTypes.indexOf(keyword) === -1 && (
+                      <button
+                        className="bg-blue-100 py-[5px] px-[15px] rounded-lg mx-[5px] mb-[10px]"
+                        key={index}
+                      >
+                        {keyword}
+                      </button>
+                    )
+                )}
+              </div>
+              <div className="px-[50px] text-[20px]">
+                {dataExample?.content}
+              </div>
+            </Form>
+
+            <div className="min-w-[40px] md:min-w-[100px] "></div>
+          </Container>
+        </>
+      )}
     </>
   );
 }

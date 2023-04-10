@@ -977,8 +977,8 @@ export interface IPosition {
 }
 
 export interface ITags {
-  first: string;
-  second: string;
+  first: string[];
+  second: string[];
 }
 
 export interface IReadOnePost {
@@ -1025,7 +1025,7 @@ export interface ICreatePost {
   recruitStart: Date;
   recruitEnd?: Date;
   projectStart?: Date;
-  positions: IPosition[]; // positions : 없을 경우 "전체", 인원 : ~ 로 넣어서 요청해주기
+  targetCount?: string; // positions : 없을 경우 "전체", 인원 : ~ 로 넣어서 요청해주기
   contact: string;
 
   // Optional
