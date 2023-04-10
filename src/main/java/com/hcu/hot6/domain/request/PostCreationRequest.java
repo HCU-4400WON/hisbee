@@ -37,7 +37,7 @@ public class PostCreationRequest {
     private List<Duration> durations;
 
     @NotNull
-    private List<PositionForm> positions;
+    private String targetCount;
 
     @NotNull
     private String contact;

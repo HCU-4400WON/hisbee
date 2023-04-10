@@ -1,7 +1,6 @@
 package com.hcu.hot6.domain.request;
 
 import com.hcu.hot6.domain.Department;
-import com.hcu.hot6.domain.Position;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +19,7 @@ public class MemberRequest {
 
     private String bio;
     private Department department;
-    private Position position;
+    //private Position position;
     private String grade;
     private String contact;
     private List<String> club;
