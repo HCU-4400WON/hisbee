@@ -1020,9 +1020,9 @@ export interface IReadAllPosts {
 export interface ICreatePost {
   title: string;
   summary?: string;
-  tags: ITags;
+  tags?: ITags;
   postTypes: string[];
-  recruitStart?: Date;
+  recruitStart: Date;
   recruitEnd?: Date;
   projectStart?: Date;
   positions: IPosition[]; // positions : 없을 경우 "전체", 인원 : ~ 로 넣어서 요청해주기

@@ -97,8 +97,8 @@ function PostAddForm2() {
       qualification: "",
       positionToggle: false,
       total: "",
-      keywordsFirstLine: [],
-      keywordsSecondLine: [],
+      // first: [],
+      // second: [],
 
       // poster : "",
     },
@@ -166,27 +166,66 @@ function PostAddForm2() {
 
     console.log(data);
 
+    {
+      /* positionToggle - T , Total = 0 이면 안보냄 */
+    }
+    {
+      /* positionToggle - T , Total != 0 이면 total을 보냄  */
+    }
+    {
+      /* positionToggle - F , position 부분 비어있으면 total 보냄 */
+    }
+    {
+      /* posoitionToggle - F , position 부분 있으면 position:인원 보냄 */
+    }
+    let newPosition;
+    if (data.positionToggle) {
+      if (data.total === "" || data.total === "0") {
+        newPosition = {
+          name: "",
+          count: 0,
+        };
+      } else {
+        newPosition = {
+          name: "",
+          count: data.total,
+        };
+      }
+    } else {
+      if (data.positions?.length === 0) {
+        newPosition = {
+          name: "",
+          count: 0,
+        };
+      } else {
+        newPosition = data.positions;
+      }
+    }
+
     const newPost = {
       title: data.title,
-      summary: data?.summary,
+      summary: data?.summary !== "" ? data?.summary : null,
 
       tags: {
         first: data?.first,
         second: data?.second,
       },
       postTypes: data?.postTypes,
-      recruitStart: data?.recruitStart,
-      recruitEnd: data?.recruitEnd,
-      projectStart: data?.projectStart,
-      durations: data?.durations,
-      positions: data?.positions,
-      contact: data?.contact,
-      contactDetails: data?.contactDetails,
-      content: data?.content,
-      years: data?.years,
-      departments: data?.departments,
-      keywords: data?.keywords,
-      posterPath: imageURLList,
+      recruitStart:
+        data?.recruitStart === ""
+          ? converter("year", new Date())
+          : data?.recruitStart,
+      recruitEnd: data?.recruitEnd !== "" ? data?.recruitEnd : null,
+      projectStart: data?.projectStart !== "" ? data?.projectStart : null,
+      durations: data?.durations?.length !== 0 ? data?.durations : null,
+      positions: newPosition,
+      contact: data?.contact !== "" ? data?.contact : null,
+      contactDetails: data?.contactDetails !== "" ? data?.contactDetails : null,
+      content: data?.content !== "" ? data?.content : null,
+      years: data?.years?.length !== 0 ? data?.years : null,
+      departments: data?.departments?.length !== 0 ? data?.departments : null,
+      keywords: data?.keywords?.length !== 0 ? data?.keywords : null,
+      posterPath: imageURLList?.length !== 0 ? imageURLList : null,
     };
 
     console.log(newPost);
@@ -350,15 +389,7 @@ function PostAddForm2() {
   {
     /* 활동 기간 */
   }
-  {
-    /* <div className="w-[45%] ">
-<p className="">활동 기간</p>
-<select className="mt-[20px]">
-  {durations.map((duration, index) => (
-    <option key={index}>{duration}</option>
-  ))}
-</select>
-</div>
+
   const durations = [
     "봄학기",
     "가을학기",
@@ -369,8 +400,7 @@ function PostAddForm2() {
     "2학기",
     "3학기",
     "4학기",
-  ]; */
-  }
+  ];
 
   return (
     <div className="p-[50px]">
@@ -403,7 +433,9 @@ function PostAddForm2() {
       <form onSubmit={handleSubmit(onSubmit as any)} className="px-[20px]">
         <div className="bg-slate-100 p-[50px] rounded-3xl mb-[50px]">
           <div className="flex justify-between w-full relative">
-            <p className="text-[20px] font-main">필수 작성 내용</p>
+            <p className="text-[20px] font-main">
+              썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
+            </p>
             {!postExampleToggle && (
               <button
                 type="button"
@@ -440,9 +472,9 @@ function PostAddForm2() {
                         필수 작성란입니다.
                     </p> */}
           </div>
-          <p className="mt-[10px]">
+          {/* <p className="mt-[10px]">
             썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
-          </p>
+          </p> */}
 
           <div className="w-full h-[400px] flex items-center justify-between my-[20px] ">
             <div className="w-[400px] bg-white p-[30px]">
@@ -501,8 +533,8 @@ function PostAddForm2() {
                   )}
               </div>
               {[
-                { array: "keywordsFirstLine", str: "firstKeyword" },
-                { array: "keywordsSecondLine", str: "secondKeyword" },
+                { array: "first", str: "firstKeyword" },
+                { array: "second", str: "secondKeyword" },
               ].map((lineObj, index) => (
                 <div key={index} className="flex mb-[10px] items-center">
                   {/* firstLine Keyword */}
@@ -960,144 +992,154 @@ function PostAddForm2() {
               </div>
             </div>
 
-            <div className="my-[20px]">
-              {/* <div className="w-[400px] mt-[20px]"> */}
-              <p>모집 인원</p>
+            <div className="my-[20px] flex w-[full] items-center justify-between mt-[40px]">
+              <div className="w-[45%]">
+                <p>모집 인원</p>
 
-              {getValues("positionToggle") === true ? (
-                <span className="flex mt-[10px] items-center">
-                  <div></div>
-                  <input
-                    className="border-b-2 px-[10px] w-[100px]"
-                    {...register("positionName")}
-                    placeholder="포지션"
-                    type="text"
-                  />
-                  <p className="mx-[10px] text-gray-400">:</p>
-                  <input
-                    className="border-b-2 px-[10px] w-[50px] px-[10px]"
-                    {...register("positionCount")}
-                    type="number"
-                  />
-                  <p className="ml-[5px]">명</p>
-                  <button
-                    onClick={() => setValue("positionToggle", false)}
-                    className="ml-[20px] bg-blue-100 text-blue-400 rounded-lg px-[15px] py-[5px]"
-                  >
-                    인원만 입력하기
-                  </button>
-                </span>
-              ) : (
-                <span className="flex mt-[10px] items-center">
-                  <input
-                    className="border-b-2 px-[10px] w-[50px] px-[10px]"
-                    {...register("total")}
-                    type="number"
-                  />
-                  <p className="ml-[5px]">명</p>
-                  <button
-                    onClick={() => setValue("positionToggle", true)}
-                    className={`ml-[20px] ${FunctionBUTTON}`}
-                  >
-                    포지션: 인원으로 입력하기
-                  </button>
-                </span>
-              )}
+                {getValues("positionToggle") === true ? (
+                  <span className="flex mt-[10px] items-center">
+                    <div></div>
+                    <input
+                      className="border-b-2 px-[10px] w-[100px]"
+                      {...register("positionName")}
+                      placeholder="포지션"
+                      type="text"
+                    />
+                    <p className="mx-[10px] text-gray-400">:</p>
+                    <input
+                      className="border-b-2 px-[10px] w-[50px] px-[10px]"
+                      {...register("positionCount")}
+                      type="number"
+                    />
+                    <p className="ml-[5px]">명</p>
+                    <button
+                      onClick={() => setValue("positionToggle", false)}
+                      className="ml-[20px] bg-blue-100 text-blue-400 rounded-lg px-[15px] py-[5px]"
+                    >
+                      인원만 입력하기
+                    </button>
+                  </span>
+                ) : (
+                  <span className="flex mt-[10px] items-center">
+                    <input
+                      className="border-b-2 px-[10px] w-[50px] px-[10px]"
+                      {...register("total")}
+                      type="number"
+                    />
+                    <p className="ml-[5px]">명</p>
+                    <button
+                      onClick={() => setValue("positionToggle", true)}
+                      className={`ml-[20px] ${FunctionBUTTON}`}
+                    >
+                      포지션: 인원으로 입력하기
+                    </button>
+                  </span>
+                )}
 
-              {getValues("positionToggle") === true &&
-                getValues("positions").length > 0 &&
-                getValues("positions")?.map((elem: any, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between border-2 border-blue-500 rounded-lg py-[2px] px-[10px] w-[200px] lg:w-[300px] xl:w-[343px] text-blue-500 my-[20px]"
-                  >
-                    <i className="fa-solid fa-link"></i>
-                    <p>{elem.positionName}</p>
-                    {/* <p>{elem.positionCount}명</p> */}
-                    <span className="flex items-center ">
-                      <span
-                        onClick={() => {
-                          const newElem = {
-                            positionName: elem.positionName,
-                            positionCount: elem.positionCount + 1,
-                          };
+                {getValues("positionToggle") === true &&
+                  getValues("positions").length > 0 &&
+                  getValues("positions")?.map((elem: any, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between border-2 border-blue-500 rounded-lg py-[2px] px-[10px] w-[200px] lg:w-[300px] xl:w-[343px] text-blue-500 my-[20px]"
+                    >
+                      <i className="fa-solid fa-link"></i>
+                      <p>{elem.positionName}</p>
+                      {/* <p>{elem.positionCount}명</p> */}
+                      <span className="flex items-center ">
+                        <span
+                          onClick={() => {
+                            const newElem = {
+                              positionName: elem.positionName,
+                              positionCount: elem.positionCount + 1,
+                            };
+                            setValue(
+                              "positions",
+
+                              [
+                                ...getValues("positions").slice(0, index),
+                                newElem,
+                                ...getValues("positions").slice(index + 1),
+                              ] as never
+                            );
+                          }}
+                        >
+                          +
+                        </span>
+                        <p className="mx-[10px]">{elem.positionCount}명</p>
+                        <span
+                          onClick={() => {
+                            const newElem = {
+                              positionName: elem.positionName,
+                              positionCount: elem.positionCount - 1,
+                            };
+                            setValue(
+                              "positions",
+
+                              [
+                                ...getValues("positions").slice(0, index),
+                                newElem,
+                                ...getValues("positions").slice(index + 1),
+                              ] as never
+                            );
+                          }}
+                        >
+                          -
+                        </span>
+                      </span>
+                      <i
+                        className="fa-regular fa-trash-can"
+                        onClick={() =>
                           setValue(
                             "positions",
 
                             [
                               ...getValues("positions").slice(0, index),
-                              newElem,
+
                               ...getValues("positions").slice(index + 1),
                             ] as never
-                          );
-                        }}
-                      >
-                        +
-                      </span>
-                      <p className="mx-[10px]">{elem.positionCount}명</p>
-                      <span
-                        onClick={() => {
-                          const newElem = {
-                            positionName: elem.positionName,
-                            positionCount: elem.positionCount - 1,
-                          };
-                          setValue(
-                            "positions",
+                          )
+                        }
+                      ></i>
+                    </div>
+                  ))}
+                {getValues("positionToggle") === true && (
+                  <button
+                    className="flex items-center justify-center text-[25px] w-[27px] h-[27px] rounded-lg bg-blue-100 text-blue-400 mt-[20px]"
+                    onClick={() => {
+                      //    if (positions.find((elem) => elem.position === getValues("position")) || (positions.find((elem) => elem.position === "아무나") && getValues("position")==="")){
 
-                            [
-                              ...getValues("positions").slice(0, index),
-                              newElem,
-                              ...getValues("positions").slice(index + 1),
-                            ] as never
-                          );
-                        }}
-                      >
-                        -
-                      </span>
-                    </span>
-                    <i
-                      className="fa-regular fa-trash-can"
-                      onClick={() =>
-                        setValue(
-                          "positions",
-
-                          [
-                            ...getValues("positions").slice(0, index),
-
-                            ...getValues("positions").slice(index + 1),
-                          ] as never
-                        )
+                      //     setValue("position","");
+                      //     setValue("positionCount" ,"");
+                      //     return;
+                      //    }
+                      if (getValues("positionName") !== "") {
+                        const newPosition = {
+                          positionName: getValues("positionName"),
+                          positionCount: +getValues("positionCount"),
+                        };
+                        setValue("positions", [
+                          ...getValues("positions"),
+                          newPosition,
+                        ] as never);
+                        setValue("positionName", "");
+                        setValue("positionCount", "");
                       }
-                    ></i>
-                  </div>
-                ))}
-              {getValues("positionToggle") === true && (
-                <button
-                  className="flex items-center justify-center text-[25px] w-[27px] h-[27px] rounded-lg bg-blue-100 text-blue-400 mt-[20px]"
-                  onClick={() => {
-                    //    if (positions.find((elem) => elem.position === getValues("position")) || (positions.find((elem) => elem.position === "아무나") && getValues("position")==="")){
+                    }}
+                  >
+                    +
+                  </button>
+                )}
+              </div>
 
-                    //     setValue("position","");
-                    //     setValue("positionCount" ,"");
-                    //     return;
-                    //    }
-                    if (getValues("positionName") !== "") {
-                      const newPosition = {
-                        positionName: getValues("positionName"),
-                        positionCount: +getValues("positionCount"),
-                      };
-                      setValue("positions", [
-                        ...getValues("positions"),
-                        newPosition,
-                      ] as never);
-                      setValue("positionName", "");
-                      setValue("positionCount", "");
-                    }
-                  }}
-                >
-                  +
-                </button>
-              )}
+              <div className="w-[45%] ">
+                <p className="">활동 기간</p>
+                <select className="mt-[20px]">
+                  {durations.map((duration, index) => (
+                    <option key={index}>{duration}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         )}
@@ -1139,16 +1181,15 @@ function PostAddForm2() {
             <p className="mt-[10px]">모집글과 관련된 키워드를 입력해주세요</p>
             <p className="my-[10px]">키워드</p>
             <div className="flex items-center">
-              {["postTypes", "keywordsFirstLine", "keywordsSecondLine"].map(
-                (elem) =>
-                  getValues(elem as any)?.map((v: string, index: number) => (
-                    <span
-                      key={index}
-                      className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
-                    >
-                      <p>{v}</p>
-                    </span>
-                  ))
+              {["postTypes", "first", "second"].map((elem) =>
+                getValues(elem as any)?.map((v: string, index: number) => (
+                  <span
+                    key={index}
+                    className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
+                  >
+                    <p>{v}</p>
+                  </span>
+                ))
               )}
               {getValues("keywords").map((keyword, index) => (
                 <span
