@@ -27,7 +27,7 @@ import {
   IPostExample,
   PostExamples,
 } from "./PostExamples";
-import { ICreatePost } from "api";
+import { departments, ICreatePost } from "api";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -146,6 +146,8 @@ function PostAddForm2() {
     "positionToggle",
     "years",
     "keywords",
+    "departments",
+    "years",
   ]);
 
   interface IPositionList {
@@ -329,7 +331,11 @@ function PostAddForm2() {
   ]);
 
   const optionalFoldText = [
-    { first: "모집 대상의 ", accent: "지원 조건을 설정하고", last: "싶다면?" },
+    {
+      first: "",
+      accent: "지원 자격, 인원, 활동 기간",
+      last: "등 모임에 관한 추가적인 정보도 알려주세요!",
+    },
     { first: "검색에 잘 걸리도록 ", accent: "검색 키워드 추가", last: "하기!" },
     {
       first: "모임 목적, 활동 내용 등 자세한 ",
@@ -654,165 +660,27 @@ function PostAddForm2() {
           <div>
             {/* <p className="text-[20px] font-main">모집글 필수 내용</p> */}
             <p className="mt-[10px]">지원에 필요한 정보를 채워주세요!</p>
-            <div className="flex">
-              <div className="w-[600px] mt-[20px] mr-[100px]">
-                <span className="flex items-start">
-                  <p className="w-[130px] mt-[8px]">신청 방법</p>
-                  <input
-                    type="text"
-                    className="w-full border-b-2 h-[40px] ml-[20px] px-[10px]"
-                    placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
-                  />
-                </span>
-                <span className="flex mt-[10px] items-start">
-                  <p className="w-[130px] mt-[8px]">신청 안내</p>
-                  <textarea
-                    id="registerMethod"
-                    onKeyPress={textareaResize}
-                    onKeyUp={textareaResize}
-                    className="notes px-[10px] vertical-center w-full ml-[20px] "
-                    placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
-                  />
-                </span>
-              </div>
-              <div className="w-[400px] mt-[20px]">
-                <p>모집 인원</p>
-
-                {getValues("positionToggle") === true ? (
-                  <span className="flex mt-[10px] items-center">
-                    <div></div>
-                    <input
-                      className="border-b-2 px-[10px] w-[100px]"
-                      {...register("positionName")}
-                      placeholder="포지션"
-                      type="text"
-                    />
-                    <p className="mx-[10px] text-gray-400">:</p>
-                    <input
-                      className="border-b-2 px-[10px] w-[50px] px-[10px]"
-                      {...register("positionCount")}
-                      type="number"
-                    />
-                    <p className="ml-[5px]">명</p>
-                    <button
-                      onClick={() => setValue("positionToggle", false)}
-                      className="ml-[20px] bg-blue-100 text-blue-400 rounded-lg px-[15px] py-[5px]"
-                    >
-                      인원만 입력하기
-                    </button>
-                  </span>
-                ) : (
-                  <span className="flex mt-[10px] items-center">
-                    <input
-                      className="border-b-2 px-[10px] w-[50px] px-[10px]"
-                      {...register("total")}
-                      type="number"
-                    />
-                    <p className="ml-[5px]">명</p>
-                    <button
-                      onClick={() => setValue("positionToggle", true)}
-                      className={`ml-[20px] ${FunctionBUTTON}`}
-                    >
-                      포지션: 인원으로 입력하기
-                    </button>
-                  </span>
-                )}
-
-                {getValues("positionToggle") === true &&
-                  getValues("positions").length > 0 &&
-                  getValues("positions")?.map((elem: any, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between border-2 border-blue-500 rounded-lg py-[2px] px-[10px] w-[200px] lg:w-[300px] xl:w-[343px] text-blue-500 my-[20px]"
-                    >
-                      <i className="fa-solid fa-link"></i>
-                      <p>{elem.positionName}</p>
-                      {/* <p>{elem.positionCount}명</p> */}
-                      <span className="flex items-center ">
-                        <span
-                          onClick={() => {
-                            const newElem = {
-                              positionName: elem.positionName,
-                              positionCount: elem.positionCount + 1,
-                            };
-                            setValue(
-                              "positions",
-
-                              [
-                                ...getValues("positions").slice(0, index),
-                                newElem,
-                                ...getValues("positions").slice(index + 1),
-                              ] as never
-                            );
-                          }}
-                        >
-                          +
-                        </span>
-                        <p className="mx-[10px]">{elem.positionCount}명</p>
-                        <span
-                          onClick={() => {
-                            const newElem = {
-                              positionName: elem.positionName,
-                              positionCount: elem.positionCount - 1,
-                            };
-                            setValue(
-                              "positions",
-
-                              [
-                                ...getValues("positions").slice(0, index),
-                                newElem,
-                                ...getValues("positions").slice(index + 1),
-                              ] as never
-                            );
-                          }}
-                        >
-                          -
-                        </span>
-                      </span>
-                      <i
-                        className="fa-regular fa-trash-can"
-                        onClick={() =>
-                          setValue(
-                            "positions",
-
-                            [
-                              ...getValues("positions").slice(0, index),
-
-                              ...getValues("positions").slice(index + 1),
-                            ] as never
-                          )
-                        }
-                      ></i>
-                    </div>
-                  ))}
-                {getValues("positionToggle") === true && (
-                  <button
-                    className="flex items-center justify-center text-[25px] w-[27px] h-[27px] rounded-lg bg-blue-100 text-blue-400 mt-[20px]"
-                    onClick={() => {
-                      //    if (positions.find((elem) => elem.position === getValues("position")) || (positions.find((elem) => elem.position === "아무나") && getValues("position")==="")){
-
-                      //     setValue("position","");
-                      //     setValue("positionCount" ,"");
-                      //     return;
-                      //    }
-                      if (getValues("positionName") !== "") {
-                        const newPosition = {
-                          positionName: getValues("positionName"),
-                          positionCount: +getValues("positionCount"),
-                        };
-                        setValue("positions", [
-                          ...getValues("positions"),
-                          newPosition,
-                        ] as never);
-                        setValue("positionName", "");
-                        setValue("positionCount", "");
-                      }
-                    }}
-                  >
-                    +
-                  </button>
-                )}
-              </div>
+            <div className="flex items-center w-full justify-between">
+              {/* <div className="w-[600px] mt-[20px] mr-[100px]"> */}
+              <span className="flex items-start w-[45%]">
+                <p className="w-[130px] mt-[8px]">신청 방법</p>
+                <input
+                  type="text"
+                  className="w-full border-b-2 h-[40px] ml-[20px] px-[10px]"
+                  placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
+                />
+              </span>
+              <span className="flex mt-[10px] items-start w-[45%]">
+                <p className="w-[130px] mt-[8px]">신청 안내</p>
+                <textarea
+                  id="registerMethod"
+                  onKeyPress={textareaResize}
+                  onKeyUp={textareaResize}
+                  className="notes px-[10px] vertical-center w-full ml-[20px] "
+                  placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
+                />
+              </span>
+              {/* </div> */}
             </div>
           </div>
         </div>
@@ -832,6 +700,22 @@ function PostAddForm2() {
                 setOptionalFoldToggle((prev) => [true, ...prev.slice(1)])
               }
             ></i>
+            {getValues("departments").length === 0 ? (
+              <div className={`ml-[30px] ${FunctionBUTTON}`}>전공 무관</div>
+            ) : (
+              getValues("departments").map((department) => (
+                <div className={`ml-[30px] ${FunctionBUTTON}`}>
+                  {department}
+                </div>
+              ))
+            )}
+            {getValues("years").length === 0 ? (
+              <div className={`ml-[30px] ${FunctionBUTTON}`}>학년 무관</div>
+            ) : (
+              getValues("years").map((year) => (
+                <div className={`ml-[30px] ${FunctionBUTTON}`}>{year}</div>
+              ))
+            )}
           </div>
         )}
 
@@ -869,80 +753,97 @@ function PostAddForm2() {
                             ))} */}
 
                 {/* 학년 중복선택  */}
-                <span className="py-[20px]">
-                  <span className="flex items-center text-[20px] mb-[10px]">
-                    학년{" "}
-                    <p className="ml-[10px] text-[15px] text-gray-400">
-                      중복 선택 가능
-                    </p>
-                  </span>
+                <div className="py-[20px] flex w-full justify-between items-center ">
+                  <div className="w-[45%]">
+                    <span className="flex items-center text-[20px] mb-[10px]">
+                      학년{" "}
+                      <p className="ml-[10px] text-[15px] text-gray-400">
+                        중복 선택 가능
+                      </p>
+                    </span>
 
-                  <div className="flex">
-                    <div className="flex"></div>
-                    <button
-                      onClick={() => {
-                        setGradeToggle(false);
-                        setValue("years", ["상관없음" as never]);
-                      }}
-                      value="상관없음"
-                      className={`border-2 px-[15px] py-[5px] rounded-lg ${
-                        !gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
-                      }`}
-                    >
-                      상관 없음
-                    </button>
-
-                    {/* <p className="mx-[10px]">학년 선택하기</p> */}
-                    {!gradeToggle && (
+                    <div className="flex ">
+                      <div className="flex"></div>
                       <button
-                        className={`border-2 ${
-                          gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
-                        } px-[15px] py-[5px] rounded-lg ml-[10px]`}
                         onClick={() => {
-                          // if(gradeToggle) setValue("years" , ["상관없음"] as any);
-                          setValue("years", []);
-                          setGradeToggle(true);
-                          console.log(getValues("years"));
+                          setGradeToggle(false);
+                          setValue("years", ["상관없음" as never]);
                         }}
+                        value="상관없음"
+                        className={`border-2 px-[15px] py-[5px] rounded-lg ${
+                          !gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
+                        }`}
                       >
-                        학년 설정
+                        상관 없음
                       </button>
-                    )}
 
-                    {gradeToggle && (
-                      <>
-                        {Grades.map((grade, index) => (
-                          <button
-                            value={grade}
-                            key={index}
-                            className={`ml-[10px] px-[15px] py-[5px] rounded-lg ${
-                              !gradeToggle
-                                ? MajorSeletedBUTTON
-                                : MajorUnSelectedBUTTON
-                            }`}
-                            onClick={(e: any) => {
-                              const gV = getValues("years");
-                              const gvIdx = gV.indexOf(grade as never);
-                              const btn = e.currentTarget;
-                              if (gvIdx === -1) {
-                                setValue("years", [...gV, grade as never]);
-                                btn.className = ` px-[15px] py-[5px] rounded-lg ml-[10px] ${MajorSeletedBUTTON}`;
-                              } else {
-                                setValue("years", [
-                                  ...gV.slice(0, gvIdx),
-                                  ...gV.slice(gvIdx + 1),
-                                ]);
-                                btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${MajorUnSelectedBUTTON}`;
-                              }
-                            }}
-                          >
-                            {grade}
-                          </button>
-                        ))}
-                      </>
-                    )}
+                      {/* <p className="mx-[10px]">학년 선택하기</p> */}
+                      {!gradeToggle && (
+                        <button
+                          className={`border-2 ${
+                            gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
+                          } px-[15px] py-[5px] rounded-lg ml-[10px]`}
+                          onClick={() => {
+                            // if(gradeToggle) setValue("years" , ["상관없음"] as any);
+                            setValue("years", []);
+                            setGradeToggle(true);
+                            console.log(getValues("years"));
+                          }}
+                        >
+                          학년 설정
+                        </button>
+                      )}
+
+                      {gradeToggle && (
+                        <>
+                          {Grades.map((grade, index) => (
+                            <button
+                              value={grade}
+                              key={index}
+                              className={`ml-[10px] px-[15px] py-[5px] rounded-lg ${
+                                !gradeToggle
+                                  ? MajorSeletedBUTTON
+                                  : MajorUnSelectedBUTTON
+                              }`}
+                              onClick={(e: any) => {
+                                const gV = getValues("years");
+                                const gvIdx = gV.indexOf(grade as never);
+                                const btn = e.currentTarget;
+                                if (gvIdx === -1) {
+                                  setValue("years", [...gV, grade as never]);
+                                  btn.className = ` px-[15px] py-[5px] rounded-lg ml-[10px] ${MajorSeletedBUTTON}`;
+                                } else {
+                                  setValue("years", [
+                                    ...gV.slice(0, gvIdx),
+                                    ...gV.slice(gvIdx + 1),
+                                  ]);
+                                  btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${MajorUnSelectedBUTTON}`;
+                                }
+                              }}
+                            >
+                              {grade}
+                            </button>
+                          ))}
+                        </>
+                      )}
+                    </div>
                   </div>
-                </span>
+
+                  {/* 지원 자격 */}
+
+                  <div className="mt-[20px] w-[45%]">
+                    <p className="mb-[10px] text-[18px] ">지원 자격</p>
+                    <div className="flex">
+                      <textarea
+                        id="registerMethod"
+                        onKeyPress={textareaResize}
+                        onKeyUp={textareaResize}
+                        className="notes w-full px-[10px]"
+                        placeholder="지원자 자격에 대해 자유롭게 작성해주세요."
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
               <span className="flex items-center text-[20px] my-[10px]">
                 전공{" "}
@@ -1059,33 +960,142 @@ function PostAddForm2() {
               </div>
             </div>
 
-            {/* 지원 자격 */}
+            <div className="my-[20px]">
+              {/* <div className="w-[400px] mt-[20px]"> */}
+              <p>모집 인원</p>
 
-            <div className="mt-[20px] w-[700px]">
-              <p className="mb-[10px] text-[18px] ">지원 자격</p>
-
-              {registerToggle ? (
-                <div className="flex">
-                  <textarea
-                    id="registerMethod"
-                    onKeyPress={textareaResize}
-                    onKeyUp={textareaResize}
-                    className="notes w-full px-[10px]"
-                    placeholder="지원자 자격에 대해 자유롭게 작성해주세요."
+              {getValues("positionToggle") === true ? (
+                <span className="flex mt-[10px] items-center">
+                  <div></div>
+                  <input
+                    className="border-b-2 px-[10px] w-[100px]"
+                    {...register("positionName")}
+                    placeholder="포지션"
+                    type="text"
                   />
+                  <p className="mx-[10px] text-gray-400">:</p>
+                  <input
+                    className="border-b-2 px-[10px] w-[50px] px-[10px]"
+                    {...register("positionCount")}
+                    type="number"
+                  />
+                  <p className="ml-[5px]">명</p>
                   <button
-                    onClick={() => setRegisterToggle(false)}
-                    className={`${UnSelectedBUTTON} ml-[20px] w-[80px] h-[40px]`}
+                    onClick={() => setValue("positionToggle", false)}
+                    className="ml-[20px] bg-blue-100 text-blue-400 rounded-lg px-[15px] py-[5px]"
                   >
-                    접기
+                    인원만 입력하기
                   </button>
-                </div>
+                </span>
               ) : (
+                <span className="flex mt-[10px] items-center">
+                  <input
+                    className="border-b-2 px-[10px] w-[50px] px-[10px]"
+                    {...register("total")}
+                    type="number"
+                  />
+                  <p className="ml-[5px]">명</p>
+                  <button
+                    onClick={() => setValue("positionToggle", true)}
+                    className={`ml-[20px] ${FunctionBUTTON}`}
+                  >
+                    포지션: 인원으로 입력하기
+                  </button>
+                </span>
+              )}
+
+              {getValues("positionToggle") === true &&
+                getValues("positions").length > 0 &&
+                getValues("positions")?.map((elem: any, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between border-2 border-blue-500 rounded-lg py-[2px] px-[10px] w-[200px] lg:w-[300px] xl:w-[343px] text-blue-500 my-[20px]"
+                  >
+                    <i className="fa-solid fa-link"></i>
+                    <p>{elem.positionName}</p>
+                    {/* <p>{elem.positionCount}명</p> */}
+                    <span className="flex items-center ">
+                      <span
+                        onClick={() => {
+                          const newElem = {
+                            positionName: elem.positionName,
+                            positionCount: elem.positionCount + 1,
+                          };
+                          setValue(
+                            "positions",
+
+                            [
+                              ...getValues("positions").slice(0, index),
+                              newElem,
+                              ...getValues("positions").slice(index + 1),
+                            ] as never
+                          );
+                        }}
+                      >
+                        +
+                      </span>
+                      <p className="mx-[10px]">{elem.positionCount}명</p>
+                      <span
+                        onClick={() => {
+                          const newElem = {
+                            positionName: elem.positionName,
+                            positionCount: elem.positionCount - 1,
+                          };
+                          setValue(
+                            "positions",
+
+                            [
+                              ...getValues("positions").slice(0, index),
+                              newElem,
+                              ...getValues("positions").slice(index + 1),
+                            ] as never
+                          );
+                        }}
+                      >
+                        -
+                      </span>
+                    </span>
+                    <i
+                      className="fa-regular fa-trash-can"
+                      onClick={() =>
+                        setValue(
+                          "positions",
+
+                          [
+                            ...getValues("positions").slice(0, index),
+
+                            ...getValues("positions").slice(index + 1),
+                          ] as never
+                        )
+                      }
+                    ></i>
+                  </div>
+                ))}
+              {getValues("positionToggle") === true && (
                 <button
-                  onClick={() => setRegisterToggle(true)}
-                  className={`${FunctionBUTTON}`}
+                  className="flex items-center justify-center text-[25px] w-[27px] h-[27px] rounded-lg bg-blue-100 text-blue-400 mt-[20px]"
+                  onClick={() => {
+                    //    if (positions.find((elem) => elem.position === getValues("position")) || (positions.find((elem) => elem.position === "아무나") && getValues("position")==="")){
+
+                    //     setValue("position","");
+                    //     setValue("positionCount" ,"");
+                    //     return;
+                    //    }
+                    if (getValues("positionName") !== "") {
+                      const newPosition = {
+                        positionName: getValues("positionName"),
+                        positionCount: +getValues("positionCount"),
+                      };
+                      setValue("positions", [
+                        ...getValues("positions"),
+                        newPosition,
+                      ] as never);
+                      setValue("positionName", "");
+                      setValue("positionCount", "");
+                    }
+                  }}
                 >
-                  필드 추가
+                  +
                 </button>
               )}
             </div>
@@ -1333,10 +1343,10 @@ function PostAddForm2() {
                     </div> */}
           </div>
         )}
-        <div className="flex justify-end mt-[50px]">
-          <button className="text-white bg-black text-[20px] px-[20px]">
+        <div className="flex justify-center mt-[50px]">
+          <button className="text-white bg-blue-500  text-[18px] px-[20px] py-[8px] rounded-lg">
             {" "}
-            제출하기
+            모집글 등록하기
           </button>
         </div>
       </form>
