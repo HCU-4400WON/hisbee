@@ -45,7 +45,7 @@ public class Member {
     private boolean isRegistered = true;
 
     @OneToMany(mappedBy = "member")
-    private List<Bookmark> bookmarks = new ArrayList<>();
+    private List<Likes> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "author", orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
