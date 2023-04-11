@@ -63,7 +63,7 @@ const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8
 const MajorUnSelectedBUTTON = `${MainBLUE} px-[15px] py-[8px] rounded-lg`;
 const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg`;
 
-function PostAddForm2() {
+function PostModifyForm() {
   const {
     register,
     watch,
@@ -183,23 +183,24 @@ function PostAddForm2() {
           if (
             ((error as AxiosError).response as AxiosResponse).status === 401
           ) {
-            // alert("로그인이 필요합니다.");
-            // setIsLoginModal(true);
-            // setIsLogin(false);
-            // if (localStorage.getItem("key")) localStorage.removeItem("key");
-            // navigate("/");
+            alert("로그인이 필요합니다.");
+            setIsLoginModal(true);
+            setIsLogin(false);
+            if (localStorage.getItem("key")) localStorage.removeItem("key");
+            navigate("/");
           }
         },
       }
     );
 
-  const onSubmit = (data: ISubmitDate, e: any) => {
+  const onSubmit = (data: ISubmitDate) => {
     console.log(getValues("years"));
     console.log(getValues("departments"));
     console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
     console.log(imageURL);
 
-    console.log("데이터");
+    console.log(data);
+
     {
       /* positionToggle - T , Total = 0 이면 안보냄 */
     }
@@ -240,57 +241,30 @@ function PostAddForm2() {
       title: data.title,
       summary: data?.summary !== "" ? data?.summary : null,
 
-      tags:
-        // data?.first ,
-        // data?.second,
-        ["dd", "dd"],
+      tags: {
+        first: data?.first,
+        second: data?.second,
+      },
       postTypes: data?.postTypes,
       recruitStart:
         data?.recruitStart === ""
           ? converter("year", new Date())
           : data?.recruitStart,
       recruitEnd: data?.recruitEnd !== "" ? data?.recruitEnd : null,
-      // projectStart: data?.projectStart !== "" ? data?.projectStart : null,
-      projectStart: "2023-04-11", // optional로 바뀌어야 함
-      // durations: data?.durations?.length !== 0 ? data?.durations : [],
-      // targetCount: data?.positionToggle ? null : data?.targetCount,
-      targetCount: "10명",
+      projectStart: data?.projectStart !== "" ? data?.projectStart : null,
+      durations: data?.durations?.length !== 0 ? data?.durations : null,
+      targetCount: data?.positionToggle ? null : data?.targetCount,
       // positions: newPosition,
-      contact: "11",
-      durations: ["봄학기", "여름방학"],
-      // contact: data?.contact !== "" ? data?.contact : null,
+      contact: data?.contact !== "" ? data?.contact : null,
       contactDetails: data?.contactDetails !== "" ? data?.contactDetails : null,
       content: data?.content !== "" ? data?.content : null,
       years: data?.years?.length !== 0 ? data?.years : null,
       departments: data?.departments?.length !== 0 ? data?.departments : null,
       keywords: data?.keywords?.length !== 0 ? data?.keywords : null,
-      posterPaths: imageURLList?.length !== 0 ? imageURLList : null,
+      posterPath: imageURLList?.length !== 0 ? imageURLList : null,
     };
 
     console.log(newPost);
-    // createPostMutate(newPost as any);
-
-    const nPost = {
-      title: "시각디자인 학회 도트 리쿠르팅",
-      summary:
-        "도트는 그래픽, 편집, 타이포 등 다양한 분야의 디자인을 실험적으로 연구하는 학회입니다.",
-      tags: ["콘디,콘디2전공가능", "재학생"],
-      postTypes: ["학회", "학술모임"],
-      recruitStart: "2023-04-02",
-      recruitEnd: "2023-04-16",
-      projectStart: "2023-05-01",
-      durations: ["봄학기", "여름방학"],
-      targetCount: "전체00명",
-      contact: "ccdot@gmail.com",
-      contactDetails: null,
-      // contactDetails: "포트폴리오 제출 필수",
-      // content: "시각디자인 학회 도트에서 신입 학회원을 모집합니다! ...",
-      // years: ["1학년", "2학년"],
-      departments: ["콘텐츠디자인융합학부"],
-      keywords: ["포트폴리오필수", "2학기필수"],
-      posterPaths: ["https://firebasestorage.googleapis.com/v0/b/..."],
-    };
-    console.log(nPost);
     createPostMutate(newPost as any);
   };
 
@@ -512,10 +486,7 @@ function PostAddForm2() {
               <div className="w-[600px] rounded-xl overflow-hidden absolute right-0">
                 <div className="w-[600px] h-[50px] flex px-[20px] justify-between items-center bg-white">
                   <p>다른 모집글은 어떻게 작성되었는지 살펴보세요!</p>
-                  <button
-                    type="button"
-                    onClick={() => setPostExampleToggle(false)}
-                  >
+                  <button onClick={() => setPostExampleToggle(false)}>
                     닫기
                   </button>
                 </div>
@@ -623,7 +594,6 @@ function PostAddForm2() {
                       e: React.KeyboardEvent<HTMLInputElement>
                     ) => {
                       if (e.key === "Enter") {
-                        e.preventDefault();
                         if (getValues(lineObj.str as any) === "") return;
                         setValue(
                           lineObj.array as any,
@@ -638,7 +608,6 @@ function PostAddForm2() {
                     placeholder="키워드 입력"
                   />
                   <button
-                    type="button"
                     onClick={async () => {
                       if (getValues(lineObj.str as any) === "") return;
                       setValue(
@@ -688,7 +657,6 @@ function PostAddForm2() {
                   />
                 </span>
                 <button
-                  type="button"
                   className={` ${FunctionBUTTON} ml-[80px] mt-[20px] `}
                   onClick={() => setValue("recruitEnd", "")}
                 >
@@ -710,7 +678,6 @@ function PostAddForm2() {
                       {/* <input {...register("postTypes")} value={category} type="checkBox" className="mx-[10px]" /> */}
                       {/* <p>{category}</p> */}
                       <button
-                        type="button"
                         className={`${
                           getValues("postTypes")?.includes(category as never)
                             ? MajorSeletedBUTTON
@@ -867,7 +834,6 @@ function PostAddForm2() {
                     <div className="flex ">
                       <div className="flex"></div>
                       <button
-                        type="button"
                         onClick={() => {
                           setGradeToggle(false);
                           setValue("years", ["상관없음" as never]);
@@ -883,7 +849,6 @@ function PostAddForm2() {
                       {/* <p className="mx-[10px]">학년 선택하기</p> */}
                       {!gradeToggle && (
                         <button
-                          type="button"
                           className={`border-2 ${
                             gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
                           } px-[15px] py-[5px] rounded-lg ml-[10px]`}
@@ -902,7 +867,6 @@ function PostAddForm2() {
                         <>
                           {Grades.map((grade, index) => (
                             <button
-                              type="button"
                               value={grade}
                               key={index}
                               className={`ml-[10px] px-[15px] py-[5px] rounded-lg ${
@@ -963,7 +927,6 @@ function PostAddForm2() {
                   }`}
                 >
                   <button
-                    type="button"
                     onClick={() => {
                       setMajorToggle(false);
                       setValue("years", ["상관없음" as never]);
@@ -978,7 +941,6 @@ function PostAddForm2() {
 
                   {!majorToggle && (
                     <button
-                      type="button"
                       className={`border-2 ${UnSelectedBUTTON}  w-[120px] px-[15px] py-[5px] rounded-lg ml-[10px]`}
                       onClick={() => {
                         // if(majorToggle) setValue("departments" , ["상관없음"] as any);
@@ -1005,7 +967,6 @@ function PostAddForm2() {
                               className="flex items-center px-[20px] py-[10px]"
                             >
                               <button
-                                type="button"
                                 key={index}
                                 onClick={(e) => {
                                   setVisible((prev) => [
@@ -1032,7 +993,6 @@ function PostAddForm2() {
                                   >
                                     {/* check point */}
                                     <button
-                                      type="button"
                                       className={`${DetailUnSelectedBUTTON}`}
                                       onClick={(e) => {
                                         const gV = getValues("departments");
@@ -1078,7 +1038,6 @@ function PostAddForm2() {
                 </div>
                 <div className="flex">
                   <button
-                    type="button"
                     className={`${
                       getValues("positionToggle")
                         ? UnSelectedBUTTON
@@ -1089,7 +1048,6 @@ function PostAddForm2() {
                     상관 없음
                   </button>
                   <button
-                    type="button"
                     className={` ml-[10px] ${
                       !getValues("positionToggle")
                         ? UnSelectedBUTTON
@@ -1194,7 +1152,6 @@ function PostAddForm2() {
                 placeholder="엔터키로 키워드를 등록하세요"
                 onKeyPress={async (e) => {
                   if (e.key === "Enter") {
-                    e.preventDefault();
                     await setValue("keywords", [
                       ...getValues("keywords"),
                       getValues("keyword") as never,
@@ -1327,7 +1284,6 @@ function PostAddForm2() {
                 <div className="relative mt-[30px] mr-[30px]">
                   <img className="w-[400px]" src={imageUrl} key={index} />
                   <button
-                    type="button"
                     className="absolute right-0 top-0"
                     onClick={() => {
                       setImageURLList((prev) => [
@@ -1363,10 +1319,7 @@ function PostAddForm2() {
           </div>
         )}
         <div className="flex justify-center mt-[50px]">
-          <button
-            type="submit"
-            className="text-white bg-blue-500  text-[18px] px-[20px] py-[8px] rounded-lg"
-          >
+          <button className="text-white bg-blue-500  text-[18px] px-[20px] py-[8px] rounded-lg">
             {" "}
             모집글 등록하기
           </button>
@@ -1376,4 +1329,4 @@ function PostAddForm2() {
   );
 }
 
-export default PostAddForm2;
+export default PostModifyForm;

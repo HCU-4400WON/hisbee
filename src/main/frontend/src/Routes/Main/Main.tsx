@@ -10,6 +10,8 @@ import {
   deleteLikePost,
   IPost,
   IPosts,
+  IReadAllPosts,
+  IReadOnePost,
   loginCheckApi,
   readPosts,
 } from "api";
@@ -363,7 +365,7 @@ function Main() {
     data: postslikes,
     isLoading: isLikesLoading,
     refetch: likesRefetch,
-  } = useQuery<IPosts>(["PostsMainFiltered", ["likes", LIMIT]], () =>
+  } = useQuery<IReadAllPosts>(["PostsMainFiltered", ["likes", LIMIT]], () =>
     // readPosts(null, null, ORDER[0], null, null, null, LIMIT + "")
     readPosts(null, null, ORDER[0], null, LIMIT + "", null)
   );
@@ -371,7 +373,7 @@ function Main() {
     data: postsrecent,
     isLoading: isRecentLoading,
     refetch: recentRefetch,
-  } = useQuery<IPosts>(["PostsMainFiltered", ["recent", LIMIT]], () =>
+  } = useQuery<IReadAllPosts>(["PostsMainFiltered", ["recent", LIMIT]], () =>
     // readPosts(null, null, ORDER[1], null, null, null, LIMIT + "")
     readPosts(null, null, ORDER[1], null, LIMIT + "", null)
   );
@@ -379,7 +381,7 @@ function Main() {
     data: postsmember,
     isLoading: isMemberLoading,
     refetch: memberRefetch,
-  } = useQuery<IPosts>(["PostsMainFiltered", ["member", LIMIT]], () =>
+  } = useQuery<IReadAllPosts>(["PostsMainFiltered", ["member", LIMIT]], () =>
     // readPosts(null, null, ORDER[2], null, null, null, LIMIT + "")
     readPosts(null, null, ORDER[2], null, LIMIT + "", null)
   );
@@ -387,7 +389,7 @@ function Main() {
     data: postsend,
     isLoading: isEndLoading,
     refetch: endRefetch,
-  } = useQuery<IPosts>(["PostsMainFiltered", ["end", LIMIT]], () =>
+  } = useQuery<IReadAllPosts>(["PostsMainFiltered", ["end", LIMIT]], () =>
     // readPosts(null, null, ORDER[3], null, null, null, LIMIT + "")
     readPosts(null, null, ORDER[3], null, LIMIT + "", null)
   );
@@ -517,7 +519,7 @@ function Main() {
           <Banner src="/img/mainBannerReal.png"></Banner>
 
           {[postslikes, postsrecent, postsmember, postsend]?.map(
-            (posts?: IPosts, idx?: any) => (
+            (posts?: IReadAllPosts, idx?: any) => (
               <PostCategory className="mb-[350px]">
                 <TitleRow>
                   <TitleSpan>
@@ -549,7 +551,7 @@ function Main() {
                             indexs[idx] * OFFSET,
                             indexs[idx] * OFFSET + OFFSET
                           )
-                          .map((post: IPost) => (
+                          .map((post: IReadOnePost) => (
                             <PostItem
                               custom={{ windowSize, leaving }}
                               variants={postsVariants}
@@ -565,8 +567,8 @@ function Main() {
                                   //   ? "bg-[#e0c3f8]"
                                   //   : post?.dtype === "S"
                                   //   ? "bg-[#c7c7c7]"
-                                  //   : "bg-[#bdc9f2]"
-                                  dtypeToStyle[post?.dtype].bdColor
+                                  "bg-[#bdc9f2]"
+                                  // dtypeToStyle[post?.dtype].bdColor
                                 }`}
                               >
                                 <PostCategorySpan>
@@ -579,7 +581,8 @@ function Main() {
                                     //     : "text-blue-400"
                                     // } `}
                                     className={`${
-                                      dtypeToStyle[post?.dtype].color
+                                      // dtypeToStyle[post?.dtype].color
+                                      "text-blue-400"
                                     }`}
                                   >
                                     {/* {post?.dtype === "P"
@@ -587,7 +590,8 @@ function Main() {
                                       : post?.dtype === "S"
                                       ? "스터디"
                                       : "멘토링"} */}
-                                    {dtypeToStyle[post?.dtype].text}
+                                    {/* {dtypeToStyle[post?.dtype].text} */}
+                                    {post?.postTypes}
                                   </PostCategoryLabel>
                                 </PostCategorySpan>
                                 <HeartSpan>
@@ -608,7 +612,7 @@ function Main() {
                                   >
                                     {/* {post.likenum} */}
                                   </HeartIcon>
-                                  &nbsp; {post?.nliked}
+                                  &nbsp; {post?.nlike}
                                 </HeartSpan>
                               </PostContentFirstRow>
 
@@ -623,53 +627,53 @@ function Main() {
 
                                   {/* ThirdRow */}
                                   <PostDate>
-                                    {(new Date(post?.projectEnd).getTime() -
-                                      new Date(post?.projectStart).getTime()) /
+                                    {(new Date(post?.recruitEnd).getTime() -
+                                      new Date(post?.recruitStart).getTime()) /
                                       (1000 * 24 * 60 * 60) >=
                                     365 ? (
                                       <PostDatePlan>
                                         {Math.floor(
                                           (new Date(
-                                            post?.projectEnd
+                                            post?.recruitEnd
                                           ).getTime() -
                                             new Date(
-                                              post?.projectStart
+                                              post?.recruitStart
                                             ).getTime()) /
                                             (1000 * 24 * 60 * 60 * 365)
                                         )}
                                         {""}년 플랜
                                       </PostDatePlan>
-                                    ) : (new Date(post?.projectEnd).getTime() -
+                                    ) : (new Date(post?.recruitEnd).getTime() -
                                         new Date(
-                                          post?.projectStart
+                                          post?.recruitStart
                                         ).getTime()) /
                                         (1000 * 24 * 60 * 60) >=
                                       30 ? (
                                       <PostDatePlan>
                                         {Math.floor(
                                           (new Date(
-                                            post?.projectEnd
+                                            post?.recruitEnd
                                           ).getTime() -
                                             new Date(
-                                              post?.projectStart
+                                              post?.recruitStart
                                             ).getTime()) /
                                             (1000 * 24 * 60 * 60 * 30)
                                         )}
                                         {""}달 플랜
                                       </PostDatePlan>
-                                    ) : (new Date(post?.projectEnd).getTime() -
+                                    ) : (new Date(post?.recruitEnd).getTime() -
                                         new Date(
-                                          post?.projectStart
+                                          post?.recruitStart
                                         ).getTime()) /
                                         (1000 * 24 * 60 * 60) >=
                                       7 ? (
                                       <PostDatePlan>
                                         {Math.floor(
                                           (new Date(
-                                            post?.projectEnd
+                                            post?.recruitEnd
                                           ).getTime() -
                                             new Date(
-                                              post?.projectStart
+                                              post?.recruitStart
                                             ).getTime()) /
                                             (1000 * 24 * 60 * 60 * 7)
                                         )}
@@ -679,10 +683,10 @@ function Main() {
                                       <PostDatePlan>
                                         {Math.floor(
                                           (new Date(
-                                            post?.projectEnd
+                                            post?.recruitEnd
                                           ).getTime() -
                                             new Date(
-                                              post?.projectStart
+                                              post?.recruitStart
                                             ).getTime()) /
                                             (1000 * 24 * 60 * 60)
                                         )}
@@ -692,15 +696,15 @@ function Main() {
                                     <p className="mx-[7px] pb-0.5">|</p>
                                     <PostDateStart>
                                       {" "}
-                                      {new Date(post?.projectStart).getMonth()}
+                                      {new Date(post?.recruitStart).getMonth()}
                                       월{" "}
-                                      {new Date(post?.projectStart).getDate()}일
+                                      {new Date(post?.recruitStart).getDate()}일
                                       시작
                                     </PostDateStart>
                                   </PostDate>
 
                                   {/* lastRow */}
-                                  <PostPerson>
+                                  {/* <PostPerson>
                                     <PostPersonTotal>
                                       {post?.dtype === "P"
                                         ? post?.maxDesigner +
@@ -751,7 +755,7 @@ function Main() {
                                         )}
                                       </>
                                     )}
-                                  </PostPerson>
+                                  </PostPerson> */}
                                 </PostMainPart>
                               </Link>
                             </PostItem>

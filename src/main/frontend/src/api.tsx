@@ -749,6 +749,7 @@ export const readPosts = async (
     }
     if (keywords && keywords.length !== 0) {
       paramKeywords = keywords.join(",");
+      console.log(paramKeywords);
     }
 
     const response = await axios.get(
@@ -1032,7 +1033,8 @@ export interface IReadAllPosts {
 export interface ICreatePost {
   title: string;
   summary?: string;
-  tags?: ITags;
+  // tags?: ITags;
+  tags?: string[];
   postTypes: string[];
   recruitStart: string;
   recruitEnd?: string;

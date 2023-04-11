@@ -179,6 +179,19 @@ function Post() {
   //   }
   // };
 
+  const [selectedMajor, setSelectedMajor] = useState<string | "">("");
+  const [selectedGrade, setSelectedGrade] = useState<string | "">("");
+  const [selectedCategory, setSelectedCategory] = useState<string | "">("전체"); // about category
+  const [keywordInput, setKeywordInput] = useState<string | "">("");
+  const [keywords, setKeywords] = useState<string[] | []>([
+    "프로젝트",
+    "스터디",
+    "멘토링",
+    "밥고",
+    "팀 프로젝트",
+  ]);
+  const [selectedKeywords, setSelectedKeywords] = useState<string[] | []>([]);
+
   useEffect(() => {
     console.log(filterCategory, filterPosition, filterPay);
   }, [filterCategory, filterPosition, filterPay]);
@@ -244,6 +257,7 @@ function Post() {
     // refetch();
   }, [search, order, filterCategory, filterPosition, filterPay]);
 
+  const [LIMIT, useLIMIT] = useState<number>(12);
   // [사이에 필터링을 추가하기]
   const {
     data: posts,
@@ -253,7 +267,7 @@ function Post() {
     [
       "FilteredPosts",
 
-      [nowPage, search, order, filterCategory, filterPosition, filterPay],
+      [nowPage, search, order, selectedCategory, LIMIT + "", selectedKeywords],
     ],
     () =>
       readPosts(
@@ -264,12 +278,11 @@ function Post() {
         // order:
         order,
         // type:
-        filterCategory === "" ? null : filterCategory,
+        selectedCategory === "전체" ? null : selectedCategory,
         // limit:
-        "12",
+        LIMIT + "",
         // keywords:
         selectedKeywords
-
         // filterPosition === "" ? null : filterPosition,
         // filterPay === "" ? null : filterPay,
         // null
@@ -335,19 +348,6 @@ function Post() {
   useEffect(() => {
     loginCheckMutate();
   }, []);
-
-  const [selectedMajor, setSelectedMajor] = useState<string | "">("");
-  const [selectedGrade, setSelectedGrade] = useState<string | "">("");
-  const [selectedCategory, setSelectedCategory] = useState<string | "">("전체"); // about category
-  const [keywordInput, setKeywordInput] = useState<string | "">("");
-  const [keywords, setKeywords] = useState<string[] | []>([
-    "프로젝트",
-    "스터디",
-    "멘토링",
-    "밥고",
-    "팀 프로젝트",
-  ]);
-  const [selectedKeywords, setSelectedKeywords] = useState<string[] | []>([]);
 
   const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
     const selectedId = event.currentTarget.id;
@@ -488,7 +488,7 @@ function Post() {
                 </div>
               </div>
               <div className="flex h-[60px] justify-between px-[50px] ">
-                <div className="flex  items-center">
+                <div className="flex items-center">
                   {/* <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] border-2 border-black">
                     {Majors.map((major, index) => (
                       <option key={index}>
