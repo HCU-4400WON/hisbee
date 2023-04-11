@@ -36,6 +36,7 @@ import {
   PostExamples,
 } from "Routes/PostAddForm/PostExamples";
 import { DragControls } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const Container = tw.div`
 md:w-[1470px] 
@@ -223,7 +224,6 @@ function Detail2() {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   const { id } = useParams();
-
   const datetimeToString = (datetime: Date) => {
     return `${new Date(datetime).getFullYear()}-${(
       new Date(datetime).getMonth() +
@@ -610,7 +610,9 @@ function Detail2() {
                 <GoBackIcon></GoBackIcon>
               </GoBackButton>
             </GoBackSpan>
-
+            <Link to={`/modify/${id}`} state={data}>
+              <button>수정</button>
+            </Link>
             <Form onSubmit={handleSubmit(onValid as any)}>
               <FormHeader>
                 <FormTitle>{data?.title}</FormTitle>

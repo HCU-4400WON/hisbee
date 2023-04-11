@@ -2,12 +2,12 @@ import tw from "tailwind-styled-components";
 import { async } from "@firebase/util";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import "./textarea.css";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { EditorState, convertToRaw } from "draft-js";
+import { EditorState, convertToRaw, ContentState } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import styled from "styled-components";
 
@@ -27,11 +27,12 @@ import {
   IPostExample,
   PostExamples,
 } from "./PostExamples";
-import { createPost, departments, ICreatePost } from "api";
+import { createPost, departments, ICreatePost, IReadOnePost } from "api";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
 import { useSetRecoilState } from "recoil";
 import { isLoginModalState, isLoginState } from "components/atom";
+import htmlToDraft from "html-to-draftjs";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -64,6 +65,8 @@ const MajorUnSelectedBUTTON = `${MainBLUE} px-[15px] py-[8px] rounded-lg`;
 const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg`;
 
 function PostModifyForm() {
+  const { state } = useLocation();
+
   const {
     register,
     watch,
@@ -75,33 +78,34 @@ function PostModifyForm() {
   } = useForm({
     mode: "onSubmit",
     defaultValues: {
-      title: "",
-      summary: "",
-      first: [],
-      second: [],
-      postTypes: [],
-
-      recruitStart: converter("year", new Date()), // string
-      recruitEnd: converter("year", new Date()), // string
+      title: state?.title ? state?.title : "",
+      summary: state?.summary ? state?.title : "",
+      first: state?.tags?.first,
+      second: state?.tags?.second,
+      postTypes: state?.postTypes,
+      recruitStart: converter("dateTime", state?.recruitStart), // string
+      recruitEnd: converter("dateTime", new Date()), // string
       projectStart: "",
-      durations: [],
-
+      durations: state?.durations,
       // positions: [],
       // positionName: "",
       // positionCount: "",
-      contact: "",
-      targetCount: "",
-      contactDetails: "",
-      content: "",
-      years: [],
-      departments: [],
+      contact: state?.contact,
+      targetCount: state?.targetCount,
+      contactDetails: state?.contactDetails,
+      //   content: state?.content,
+      // content 부분 변환
+      //
+      years: state?.years,
+      departments: state?.departments,
       keyword: "",
-      keywords: [],
+      keywords: state?.keywords,
       firstKeyword: "",
       secondKeyword: "",
-      qualification: "",
+      qualifications: state?.qualifications,
       positionToggle: false,
       total: "",
+
       // first: [],
       // second: [],
 
@@ -132,7 +136,7 @@ function PostModifyForm() {
     keywords?: string[];
     firstKeyword?: string;
     secondKeyword?: string;
-    qualification?: string;
+    qualifications?: string;
     positionToggle?: boolean;
     total?: string;
   }
@@ -183,24 +187,23 @@ function PostModifyForm() {
           if (
             ((error as AxiosError).response as AxiosResponse).status === 401
           ) {
-            alert("로그인이 필요합니다.");
-            setIsLoginModal(true);
-            setIsLogin(false);
-            if (localStorage.getItem("key")) localStorage.removeItem("key");
-            navigate("/");
+            // alert("로그인이 필요합니다.");
+            // setIsLoginModal(true);
+            // setIsLogin(false);
+            // if (localStorage.getItem("key")) localStorage.removeItem("key");
+            // navigate("/");
           }
         },
       }
     );
 
-  const onSubmit = (data: ISubmitDate) => {
+  const onSubmit = (data: ISubmitDate, e: any) => {
     console.log(getValues("years"));
     console.log(getValues("departments"));
     console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
     console.log(imageURL);
 
-    console.log(data);
-
+    console.log("데이터");
     {
       /* positionToggle - T , Total = 0 이면 안보냄 */
     }
@@ -240,10 +243,9 @@ function PostModifyForm() {
     const newPost = {
       title: data.title,
       summary: data?.summary !== "" ? data?.summary : null,
-
       tags: {
-        first: data?.first,
-        second: data?.second,
+        first: data?.first?.length === 0 ? [] : data?.first,
+        second: data?.second?.length === 0 ? [] : data?.second,
       },
       postTypes: data?.postTypes,
       recruitStart:
@@ -251,20 +253,62 @@ function PostModifyForm() {
           ? converter("year", new Date())
           : data?.recruitStart,
       recruitEnd: data?.recruitEnd !== "" ? data?.recruitEnd : null,
-      projectStart: data?.projectStart !== "" ? data?.projectStart : null,
-      durations: data?.durations?.length !== 0 ? data?.durations : null,
-      targetCount: data?.positionToggle ? null : data?.targetCount,
+
+      // projectStart: data?.projectStart !== "" ? data?.projectStart : null,
+      projectStart: "2023-04-11", // optional로 바뀌어야 함
+      // durations: data?.durations?.length !== 0 ? data?.durations : [],
+      // durations: data?.durations,
+      durations: [],
+
+      // targetCount: data?.positionToggle ? null : data?.targetCount,
+      targetCount: "10명",
       // positions: newPosition,
-      contact: data?.contact !== "" ? data?.contact : null,
+      contact: "11",
+
+      // contact: data?.contact !== "" ? data?.contact : null,
       contactDetails: data?.contactDetails !== "" ? data?.contactDetails : null,
-      content: data?.content !== "" ? data?.content : null,
+      content:
+        draftToHtml(convertToRaw(editorState.getCurrentContent())) ===
+        "<p></p>\n"
+          ? null
+          : draftToHtml(convertToRaw(editorState.getCurrentContent())),
       years: data?.years?.length !== 0 ? data?.years : null,
       departments: data?.departments?.length !== 0 ? data?.departments : null,
-      keywords: data?.keywords?.length !== 0 ? data?.keywords : null,
-      posterPath: imageURLList?.length !== 0 ? imageURLList : null,
+      keywords: [
+        ...data?.postTypes,
+        ...(data?.first as string[] | []),
+        ...(data?.second as string[] | []),
+        ...(data?.keywords as string[] | []),
+      ],
+      posterPaths: imageURLList?.length !== 0 ? imageURLList : null,
     };
 
     console.log(newPost);
+    // createPostMutate(newPost as any);
+
+    const nPost = {
+      title: "시각디자인 학회 도트 리쿠르팅",
+      summary:
+        "도트는 그래픽, 편집, 타이포 등 다양한 분야의 디자인을 실험적으로 연구하는 학회입니다.",
+      tags: {
+        first: ["콘디,콘디2전공가능"],
+        second: ["재학생"],
+      },
+      postTypes: ["학회", "학술모임"],
+      recruitStart: "2023-04-02",
+      recruitEnd: "2023-04-16",
+      projectStart: "2023-05-01",
+      durations: ["봄학기", "여름방학"],
+      targetCount: "전체00명",
+      contact: "ccdot@gmail.com",
+      contactDetails: "포트폴리오 제출 필수",
+      content: "시각디자인 학회 도트에서 신입 학회원을 모집합니다! ...",
+      years: ["1학년", "2학년"],
+      departments: ["콘텐츠디자인융합학부"],
+      keywords: ["포트폴리오필수", "2학기필수"],
+      posterPaths: ["https://firebasestorage.googleapis.com/v0/b/…"],
+    };
+    console.log(nPost);
     createPostMutate(newPost as any);
   };
 
@@ -310,17 +354,38 @@ function PostModifyForm() {
 
   // useState로 상태관리하기 초기값은 EditorState.createEmpty()
   // EditorState의 비어있는 ContentState 기본 구성으로 새 개체를 반환 => 이렇게 안하면 상태 값을 나중에 변경할 수 없음.
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [editorState, setEditorState] = useState(() => {
+    const contentDraft = htmlToDraft(state?.content);
+    const { contentBlocks, entityMap } = contentDraft;
+    const contentState = ContentState.createFromBlockArray(
+      contentBlocks,
+      entityMap
+    );
+    return EditorState.createWithContent(contentState);
+  });
 
   const onEditorStateChange = (editorState: any) => {
     // editorState에 값 설정
     setEditorState(editorState);
   };
 
+  //   const contentDraft = htmlToDraft(state?.content);
+  //     const { contentBlocks, entityMap } = contentDraft;
+  //         const contentState = ContentState.createFromBlockArray(
+  //           contentBlocks,
+  //           entityMap
+  //         );
+  //         const editorState = EditorState.createWithContent(contentState);
+
+  //     setEditorState(editorState);
+  // setEditorString(state.content);
+
   // content : draftToHtml(convertToRaw(editorState.getCurrentContent();
 
   const [imageURL, setImageURL] = useState<string>("");
-  const [imageURLList, setImageURLList] = useState<string[] | []>([]);
+  const [imageURLList, setImageURLList] = useState<string[] | []>(
+    state?.posterPaths
+  );
   const inputRef = useRef<HTMLInputElement | null>(null);
   const onUploadImageButtonClick = useCallback(() => {
     if (!inputRef.current) {
@@ -486,7 +551,10 @@ function PostModifyForm() {
               <div className="w-[600px] rounded-xl overflow-hidden absolute right-0">
                 <div className="w-[600px] h-[50px] flex px-[20px] justify-between items-center bg-white">
                   <p>다른 모집글은 어떻게 작성되었는지 살펴보세요!</p>
-                  <button onClick={() => setPostExampleToggle(false)}>
+                  <button
+                    type="button"
+                    onClick={() => setPostExampleToggle(false)}
+                  >
                     닫기
                   </button>
                 </div>
@@ -494,9 +562,9 @@ function PostModifyForm() {
                   {postExampleToggle &&
                     (
                       PostExamples[
-                        getValues("postTypes").length === 0
+                        getValues("postTypes")?.length === 0
                           ? "선택안됨"
-                          : getValues("postTypes")[0]
+                          : (getValues("postTypes") as never)[0]
                       ] as IPostExample[]
                     )?.map((postExample: IPostExample, index: number) => (
                       <Thumbnail {...postExample} key={index} />
@@ -594,6 +662,7 @@ function PostModifyForm() {
                       e: React.KeyboardEvent<HTMLInputElement>
                     ) => {
                       if (e.key === "Enter") {
+                        e.preventDefault();
                         if (getValues(lineObj.str as any) === "") return;
                         setValue(
                           lineObj.array as any,
@@ -608,6 +677,7 @@ function PostModifyForm() {
                     placeholder="키워드 입력"
                   />
                   <button
+                    type="button"
                     onClick={async () => {
                       if (getValues(lineObj.str as any) === "") return;
                       setValue(
@@ -657,6 +727,7 @@ function PostModifyForm() {
                   />
                 </span>
                 <button
+                  type="button"
                   className={` ${FunctionBUTTON} ml-[80px] mt-[20px] `}
                   onClick={() => setValue("recruitEnd", "")}
                 >
@@ -678,6 +749,7 @@ function PostModifyForm() {
                       {/* <input {...register("postTypes")} value={category} type="checkBox" className="mx-[10px]" /> */}
                       {/* <p>{category}</p> */}
                       <button
+                        type="button"
                         className={`${
                           getValues("postTypes")?.includes(category as never)
                             ? MajorSeletedBUTTON
@@ -737,6 +809,7 @@ function PostModifyForm() {
                   type="text"
                   className="w-full border-b-2 h-[40px] ml-[20px] px-[10px]"
                   placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
+                  {...register("contact")}
                 />
               </span>
               <span className="flex mt-[10px] items-start w-[45%]">
@@ -747,6 +820,7 @@ function PostModifyForm() {
                   onKeyUp={textareaResize}
                   className="notes px-[10px] vertical-center w-full ml-[20px] "
                   placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
+                  {...register("contactDetails")}
                 />
               </span>
               {/* </div> */}
@@ -772,17 +846,21 @@ function PostModifyForm() {
             {getValues("departments").length === 0 ? (
               <div className={`ml-[30px] ${FunctionBUTTON}`}>전공 무관</div>
             ) : (
-              getValues("departments").map((department) => (
-                <div className={`ml-[30px] ${FunctionBUTTON}`}>
-                  {department}
-                </div>
-              ))
+              getValues("departments").map(
+                (department: string, index: number) => (
+                  <div key={index} className={`ml-[30px] ${FunctionBUTTON}`}>
+                    {department}
+                  </div>
+                )
+              )
             )}
             {getValues("years").length === 0 ? (
               <div className={`ml-[30px] ${FunctionBUTTON}`}>학년 무관</div>
             ) : (
-              getValues("years").map((year) => (
-                <div className={`ml-[30px] ${FunctionBUTTON}`}>{year}</div>
+              getValues("years").map((year: string, index: number) => (
+                <div key={index} className={`ml-[30px] ${FunctionBUTTON}`}>
+                  {year}
+                </div>
               ))
             )}
           </div>
@@ -834,6 +912,7 @@ function PostModifyForm() {
                     <div className="flex ">
                       <div className="flex"></div>
                       <button
+                        type="button"
                         onClick={() => {
                           setGradeToggle(false);
                           setValue("years", ["상관없음" as never]);
@@ -849,6 +928,7 @@ function PostModifyForm() {
                       {/* <p className="mx-[10px]">학년 선택하기</p> */}
                       {!gradeToggle && (
                         <button
+                          type="button"
                           className={`border-2 ${
                             gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
                           } px-[15px] py-[5px] rounded-lg ml-[10px]`}
@@ -867,6 +947,7 @@ function PostModifyForm() {
                         <>
                           {Grades.map((grade, index) => (
                             <button
+                              type="button"
                               value={grade}
                               key={index}
                               className={`ml-[10px] px-[15px] py-[5px] rounded-lg ${
@@ -909,6 +990,7 @@ function PostModifyForm() {
                         onKeyUp={textareaResize}
                         className="notes w-full px-[10px]"
                         placeholder="지원자 자격에 대해 자유롭게 작성해주세요."
+                        {...register("qualifications")}
                       />
                     </div>
                   </div>
@@ -927,6 +1009,7 @@ function PostModifyForm() {
                   }`}
                 >
                   <button
+                    type="button"
                     onClick={() => {
                       setMajorToggle(false);
                       setValue("years", ["상관없음" as never]);
@@ -941,6 +1024,7 @@ function PostModifyForm() {
 
                   {!majorToggle && (
                     <button
+                      type="button"
                       className={`border-2 ${UnSelectedBUTTON}  w-[120px] px-[15px] py-[5px] rounded-lg ml-[10px]`}
                       onClick={() => {
                         // if(majorToggle) setValue("departments" , ["상관없음"] as any);
@@ -967,6 +1051,7 @@ function PostModifyForm() {
                               className="flex items-center px-[20px] py-[10px]"
                             >
                               <button
+                                type="button"
                                 key={index}
                                 onClick={(e) => {
                                   setVisible((prev) => [
@@ -993,6 +1078,7 @@ function PostModifyForm() {
                                   >
                                     {/* check point */}
                                     <button
+                                      type="button"
                                       className={`${DetailUnSelectedBUTTON}`}
                                       onClick={(e) => {
                                         const gV = getValues("departments");
@@ -1033,11 +1119,12 @@ function PostModifyForm() {
               <div className="w-[45%]">
                 <div>
                   <span className="flex items-center text-[20px] mb-[10px]">
-                    학년{" "}
+                    인원{" "}
                   </span>
                 </div>
                 <div className="flex">
                   <button
+                    type="button"
                     className={`${
                       getValues("positionToggle")
                         ? UnSelectedBUTTON
@@ -1048,6 +1135,7 @@ function PostModifyForm() {
                     상관 없음
                   </button>
                   <button
+                    type="button"
                     className={` ml-[10px] ${
                       !getValues("positionToggle")
                         ? UnSelectedBUTTON
@@ -1068,7 +1156,7 @@ function PostModifyForm() {
               </div>
               <div className="w-[45%] ">
                 <p className="">활동 기간</p>
-                <select className="mt-[20px]">
+                <select {...register("durations")} className="mt-[20px]">
                   {durations.map((duration, index) => (
                     <option key={index}>{duration}</option>
                   ))}
@@ -1125,7 +1213,7 @@ function PostModifyForm() {
                   </span>
                 ))
               )}
-              {getValues("keywords").map((keyword, index) => (
+              {getValues("keywords").map((keyword: string, index: number) => (
                 <span
                   key={index}
                   className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
@@ -1152,6 +1240,7 @@ function PostModifyForm() {
                 placeholder="엔터키로 키워드를 등록하세요"
                 onKeyPress={async (e) => {
                   if (e.key === "Enter") {
+                    e.preventDefault();
                     await setValue("keywords", [
                       ...getValues("keywords"),
                       getValues("keyword") as never,
@@ -1284,6 +1373,7 @@ function PostModifyForm() {
                 <div className="relative mt-[30px] mr-[30px]">
                   <img className="w-[400px]" src={imageUrl} key={index} />
                   <button
+                    type="button"
                     className="absolute right-0 top-0"
                     onClick={() => {
                       setImageURLList((prev) => [
@@ -1319,7 +1409,10 @@ function PostModifyForm() {
           </div>
         )}
         <div className="flex justify-center mt-[50px]">
-          <button className="text-white bg-blue-500  text-[18px] px-[20px] py-[8px] rounded-lg">
+          <button
+            type="submit"
+            className="text-white bg-blue-500  text-[18px] px-[20px] py-[8px] rounded-lg"
+          >
             {" "}
             모집글 등록하기
           </button>

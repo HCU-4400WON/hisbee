@@ -99,9 +99,10 @@ function PostAddForm2() {
       keywords: [],
       firstKeyword: "",
       secondKeyword: "",
-      qualification: "",
+      qualifications: "",
       positionToggle: false,
       total: "",
+
       // first: [],
       // second: [],
 
@@ -132,7 +133,7 @@ function PostAddForm2() {
     keywords?: string[];
     firstKeyword?: string;
     secondKeyword?: string;
-    qualification?: string;
+    qualifications?: string;
     positionToggle?: boolean;
     total?: string;
   }
@@ -249,23 +250,32 @@ function PostAddForm2() {
           ? converter("year", new Date())
           : data?.recruitStart,
       recruitEnd: data?.recruitEnd !== "" ? data?.recruitEnd : null,
+
       // projectStart: data?.projectStart !== "" ? data?.projectStart : null,
       projectStart: "2023-04-11", // optional로 바뀌어야 함
       // durations: data?.durations?.length !== 0 ? data?.durations : [],
+      // durations: data?.durations,
+      durations: [],
+
       // targetCount: data?.positionToggle ? null : data?.targetCount,
       targetCount: "10명",
       // positions: newPosition,
       contact: "11",
-      durations: ["봄학기", "여름방학"],
+
       // contact: data?.contact !== "" ? data?.contact : null,
       contactDetails: data?.contactDetails !== "" ? data?.contactDetails : null,
-      content: data?.content !== "" ? data?.content : null,
+      content:
+        draftToHtml(convertToRaw(editorState.getCurrentContent())) ===
+        "<p></p>\n"
+          ? null
+          : draftToHtml(convertToRaw(editorState.getCurrentContent())),
       years: data?.years?.length !== 0 ? data?.years : null,
       departments: data?.departments?.length !== 0 ? data?.departments : null,
       keywords: [
         ...data?.postTypes,
         ...(data?.first as string[] | []),
         ...(data?.second as string[] | []),
+        ...(data?.keywords as string[] | []),
       ],
       posterPaths: imageURLList?.length !== 0 ? imageURLList : null,
     };
@@ -775,6 +785,7 @@ function PostAddForm2() {
                   type="text"
                   className="w-full border-b-2 h-[40px] ml-[20px] px-[10px]"
                   placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
+                  {...register("contact")}
                 />
               </span>
               <span className="flex mt-[10px] items-start w-[45%]">
@@ -785,6 +796,7 @@ function PostAddForm2() {
                   onKeyUp={textareaResize}
                   className="notes px-[10px] vertical-center w-full ml-[20px] "
                   placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
+                  {...register("contactDetails")}
                 />
               </span>
               {/* </div> */}
@@ -950,6 +962,7 @@ function PostAddForm2() {
                         onKeyUp={textareaResize}
                         className="notes w-full px-[10px]"
                         placeholder="지원자 자격에 대해 자유롭게 작성해주세요."
+                        {...register("qualifications")}
                       />
                     </div>
                   </div>
@@ -1078,7 +1091,7 @@ function PostAddForm2() {
               <div className="w-[45%]">
                 <div>
                   <span className="flex items-center text-[20px] mb-[10px]">
-                    학년{" "}
+                    인원{" "}
                   </span>
                 </div>
                 <div className="flex">
@@ -1115,7 +1128,7 @@ function PostAddForm2() {
               </div>
               <div className="w-[45%] ">
                 <p className="">활동 기간</p>
-                <select className="mt-[20px]">
+                <select {...register("durations")} className="mt-[20px]">
                   {durations.map((duration, index) => (
                     <option key={index}>{duration}</option>
                   ))}

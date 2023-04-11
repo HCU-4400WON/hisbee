@@ -738,8 +738,10 @@ function Post() {
                 (posts as IPosts).posts.map((post, index) => (
                   <Card key={index} post={post} refetch={refetch} index={index}  />
                 ))} */}
-              {posts?.posts?.map((post: IReadOnePost) => (
-                <Thumbnail {...post} />
+              {posts?.posts?.map((post: IReadOnePost, index: number) => (
+                <Link key={index} to={`/post2/${post?.id}`}>
+                  <Thumbnail {...post} />
+                </Link>
               ))}
             </PostGrid>
 

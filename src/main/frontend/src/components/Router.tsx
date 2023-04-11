@@ -16,6 +16,7 @@ import BlankPage from "Routes/BlankPage/BlankPage";
 import PrivateRoute from "./PrivateRoute";
 import PostAddForm2 from "Routes/PostAddForm/PostAddForm2";
 import Detail2 from "Routes/Detail/Detail2";
+import PostModifyForm from "Routes/PostModifyForm/PostModifyForm";
 
 function Router() {
   return (
@@ -67,6 +68,7 @@ function Router() {
 
         <Route path="add2" element={<PostAddForm2 />}></Route>
         <Route path="post2/:id" element={<Detail2 />}></Route>
+        <Route path="modify/:id" element={<PostModifyForm />}></Route>
 
         <Route path="*" element={<Main />}></Route>
 
