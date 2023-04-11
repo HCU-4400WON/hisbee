@@ -6,6 +6,7 @@ import {
   deleteLikePost,
   departments,
   IReadAllPosts,
+  IReadOnePost,
   loginCheckApi,
   posts,
   readPosts,
@@ -737,8 +738,8 @@ function Post() {
                 (posts as IPosts).posts.map((post, index) => (
                   <Card key={index} post={post} refetch={refetch} index={index}  />
                 ))} */}
-              {PostExamples.선택안됨?.map((postExample) => (
-                <Thumbnail {...postExample} />
+              {posts?.posts?.map((post: IReadOnePost) => (
+                <Thumbnail {...post} />
               ))}
             </PostGrid>
 

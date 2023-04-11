@@ -748,7 +748,7 @@ export const readPosts = async (
       paramSearch = `&search=${search}`;
     }
     if (keywords && keywords.length !== 0) {
-      paramKeywords = keywords.join(",");
+      paramKeywords = "&keywords=" + keywords.join(",");
       console.log(paramKeywords);
     }
 
@@ -1033,8 +1033,8 @@ export interface IReadAllPosts {
 export interface ICreatePost {
   title: string;
   summary?: string;
-  // tags?: ITags;
-  tags?: string[];
+  tags?: ITags;
+  // tags?: string[];
   postTypes: string[];
   recruitStart: string;
   recruitEnd?: string;

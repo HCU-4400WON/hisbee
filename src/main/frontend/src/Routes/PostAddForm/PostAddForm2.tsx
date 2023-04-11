@@ -239,11 +239,15 @@ function PostAddForm2() {
     const newPost = {
       title: data.title,
       summary: data?.summary !== "" ? data?.summary : null,
-
-      tags:
-        // data?.first ,
-        // data?.second,
-        ["dd", "dd"],
+      tags: {
+        // first: "d",
+        // second: "d",
+        // ["d", "d"],
+        first: data?.first?.length === 0 ? [] : data?.first,
+        second: data?.second?.length === 0 ? [] : data?.second,
+      },
+      // tags: ["콘디,콘디2전공가능", "재학생"],
+      // tags: ["d", "d"],
       postTypes: data?.postTypes,
       recruitStart:
         data?.recruitStart === ""
@@ -274,7 +278,10 @@ function PostAddForm2() {
       title: "시각디자인 학회 도트 리쿠르팅",
       summary:
         "도트는 그래픽, 편집, 타이포 등 다양한 분야의 디자인을 실험적으로 연구하는 학회입니다.",
-      tags: ["콘디,콘디2전공가능", "재학생"],
+      tags: {
+        first: ["콘디,콘디2전공가능"],
+        second: ["재학생"],
+      },
       postTypes: ["학회", "학술모임"],
       recruitStart: "2023-04-02",
       recruitEnd: "2023-04-16",
@@ -282,16 +289,15 @@ function PostAddForm2() {
       durations: ["봄학기", "여름방학"],
       targetCount: "전체00명",
       contact: "ccdot@gmail.com",
-      contactDetails: null,
-      // contactDetails: "포트폴리오 제출 필수",
-      // content: "시각디자인 학회 도트에서 신입 학회원을 모집합니다! ...",
-      // years: ["1학년", "2학년"],
+      contactDetails: "포트폴리오 제출 필수",
+      content: "시각디자인 학회 도트에서 신입 학회원을 모집합니다! ...",
+      years: ["1학년", "2학년"],
       departments: ["콘텐츠디자인융합학부"],
       keywords: ["포트폴리오필수", "2학기필수"],
-      posterPaths: ["https://firebasestorage.googleapis.com/v0/b/..."],
+      posterPaths: ["https://firebasestorage.googleapis.com/v0/b/…"],
     };
     console.log(nPost);
-    createPostMutate(newPost as any);
+    createPostMutate(nPost as any);
   };
 
   const Grades = [

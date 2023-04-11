@@ -1,23 +1,34 @@
+import { IReadOnePost } from "api";
 import {
   convertDateToString,
   IPostExample,
 } from "Routes/PostAddForm/PostExamples";
 
+// function Thumbnail({
+//   postStart,
+//   postEnd,
+//   title,
+//   subTitle,
+//   categories,
+//   keywordsFirstLine,
+//   keywordsSecondLine,
+//   Likes,
+// }: IPostExample) {
 function Thumbnail({
-  postStart,
-  postEnd,
+  recruitStart,
+  recruitEnd,
   title,
-  subTitle,
-  categories,
-  keywordsFirstLine,
-  keywordsSecondLine,
-  Likes,
-}: IPostExample) {
-  // function Thumbnail({postStart , postEnd , title, summary , postType , {first}: tag , {second} : tag , nlike , closed , hasLiked} : IReadOnePost){
+  summary,
+  postTypes,
+  tags: { first, second },
+  nlike,
+  closed,
+  hasLiked,
+}: IReadOnePost) {
   // closed일 때는 모집마감 처리를 해주기 흐리게
   // hasLiked 일 때는 하트가 빨갛게 되어있도록
 
-  const dDay = convertDateToString(postStart, postEnd);
+  const dDay = convertDateToString(recruitStart, recruitEnd);
 
   // const duration = "D-12";
   // const title = "iF공모전 참여할 콘디생 모집";
@@ -34,7 +45,7 @@ function Thumbnail({
           <p>{dDay}</p>
         </span>
         <span className="flex items-center ">
-          <p className="mr-[10px]">{Likes}</p>
+          <p className="mr-[10px]">{nlike}</p>
           <i className="fa-regular fa-heart text-[18px] text-gray-400"></i>
         </span>
       </div>
@@ -43,22 +54,22 @@ function Thumbnail({
         <p className="my-[10px] text-[18px]">{title}</p>
       </span>
       <span>
-        <p className="text-[14px]">{subTitle}</p>
+        <p className="text-[14px]">{summary}</p>
       </span>
 
       <div className="flex mt-[25px]">
-        {categories.map((category, index) => (
+        {postTypes.map((postType: string, index: number) => (
           <span
             key={index}
             className="px-[10px] py-[1px] bg-blue-100 mr-[10px] rounded-full text-[15px]"
           >
-            {category}
+            {postType}
           </span>
         ))}
       </div>
 
       <div className="flex mt-[10px] w-full">
-        {keywordsFirstLine.map((keyword, index) => (
+        {first?.map((keyword: string, index: number) => (
           <span
             key={index}
             className="px-[10px] py-[1px] bg-blue-200 mr-[10px] rounded-full text-[15px]"
@@ -68,7 +79,7 @@ function Thumbnail({
         ))}
       </div>
       <div className="flex mt-[10px]">
-        {keywordsSecondLine.map((keyword, index) => (
+        {second?.map((keyword: string, index: number) => (
           <span
             key={index}
             className="px-[10px] py-[1px] bg-blue-200 mr-[10px] rounded-full text-[15px]"
