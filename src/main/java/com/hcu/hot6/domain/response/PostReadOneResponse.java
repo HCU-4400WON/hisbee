@@ -1,10 +1,8 @@
 package com.hcu.hot6.domain.response;
 
-import com.hcu.hot6.domain.Position;
 import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.Poster;
 import com.hcu.hot6.domain.Thumbnail;
-import com.hcu.hot6.domain.request.PositionForm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -34,7 +32,7 @@ public class PostReadOneResponse {
     private String content;
     private String contact;
     private String contactDetails;
-    private List<PositionForm> positions;
+    private String targetCount;
     private List<String> years;
     private List<String> departments;
     private List<String> keywords;
@@ -70,9 +68,7 @@ public class PostReadOneResponse {
         this.years = toArray(post.getTargetYears(), ",");
         this.departments = toArray(post.getTargetDepartment(), ",");
         this.keywords = toArray(post.getKeywords(), ",");
-        this.positions = post.getPositions().stream()
-                .map(Position::toResponse)
-                .toList();
+        this.targetCount = post.getTargetCount();
         this.posterPaths = post.getPosters().stream()
                 .map(Poster::getPostURL)
                 .toList();
