@@ -4,7 +4,6 @@ import com.hcu.hot6.domain.Thumbnail;
 import com.hcu.hot6.domain.request.TagForm;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.logging.log4j.util.Strings;
 
 import java.util.Date;
 import java.util.List;
@@ -31,9 +30,8 @@ public class PostThumbnailResponse {
         this.title = thumbnail.getTitle();
         this.summary = thumbnail.getSummary();
         this.postTypes = toArray(thumbnail.getPost().getPostTypes(), ",");
-        this.tags = (Strings.isEmpty(thumbnail.getTags())) ?
-                new TagForm() :
-                new TagForm(toArray(thumbnail.getTags(), ";"));
+        this.tags = new TagForm(toArray(thumbnail.getTags(), ";"));
+
         this.views = thumbnail.getPost().getViews();
         this.createdDate = toDate(thumbnail.getPost().getCreatedDate());
         this.recruitStart = toDate(thumbnail.getRecruitStart());

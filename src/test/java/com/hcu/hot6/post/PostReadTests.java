@@ -3,7 +3,6 @@ package com.hcu.hot6.post;
 import com.hcu.hot6.domain.Duration;
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.request.MemberRequest;
-import com.hcu.hot6.domain.request.PositionForm;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.TagForm;
 import com.hcu.hot6.repository.MemberRepository;
@@ -62,14 +61,8 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .projectStart(new Date())
                 .durations(List.of(Duration.SPRING, Duration.SUMMER))
-                .positions(List.of(
-                        PositionForm.builder()
-                                .name("전체")
-                                .count(5)
-                                .build())
-                )
+                .targetCount("00명")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
                 .build();
@@ -92,14 +85,8 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .projectStart(new Date())
                 .durations(List.of(Duration.SPRING, Duration.SUMMER))
-                .positions(List.of(
-                        PositionForm.builder()
-                                .name("전체")
-                                .count(5)
-                                .build())
-                )
+                .targetCount("00명")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
                 .build();
@@ -112,5 +99,103 @@ public class PostReadTests {
         // then
         assertThat(Utils.toString(tags.getFirst(), ",")).isEqualTo("두번째줄_태그");
         assertThat(Utils.toString(tags.getSecond(), ",")).isEqualTo("마지막_태그");
+    }
+
+    @Test
+    public void 썸네일_태그_첫줄은_입력_두번째줄_없는경우() throws Exception {
+        // given
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .tags(new TagForm(List.of("첫줄,태그", "?")))
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .targetCount("00명")
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .build();
+
+        // when
+        var post = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
+        TagForm tags = res.getTags();
+
+        // then
+        assertThat(Utils.toString(tags.getFirst(), ",")).isEqualTo("첫줄,태그");
+        assertThat(Utils.toString(tags.getSecond(), ",")).isEqualTo("");
+    }
+
+    @Test
+    public void 썸네일_태그_첫줄은_없고_두번째줄_있는경우() throws Exception {
+        // given
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .tags(new TagForm(List.of("?", "두번째줄,태그")))
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .targetCount("00명")
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .build();
+
+        // when
+        var post = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
+        TagForm tags = res.getTags();
+
+        // then
+        assertThat(Utils.toString(tags.getFirst(), ",")).isEqualTo("");
+        assertThat(Utils.toString(tags.getSecond(), ",")).isEqualTo("두번째줄,태그");
+    }
+
+    @Test
+    public void 썸네일_태그_모두_없는경우() throws Exception {
+        // given
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .build();
+
+        // when
+        var post = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
+        TagForm tags = res.getTags();
+
+        // then
+        assertThat(Utils.toString(tags.getFirst(), ",")).isEqualTo("");
+        assertThat(Utils.toString(tags.getSecond(), ",")).isEqualTo("");
+    }
+
+    @Test
+    public void 모집인원_기본값은_00명() throws Exception {
+        // given
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .build();
+
+        // when
+        var post = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
+
+        // then
+        assertThat(res.getTargetCount()).isEqualTo("00명");
     }
 }
