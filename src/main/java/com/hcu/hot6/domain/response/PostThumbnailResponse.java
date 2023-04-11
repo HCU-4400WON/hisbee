@@ -1,7 +1,10 @@
 package com.hcu.hot6.domain.response;
 
 import com.hcu.hot6.domain.Thumbnail;
+import com.hcu.hot6.domain.request.TagForm;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 
 import java.util.Date;
 import java.util.List;
@@ -10,6 +13,7 @@ import static com.hcu.hot6.util.Utils.toArray;
 import static com.hcu.hot6.util.Utils.toDate;
 
 @Getter
+@NoArgsConstructor
 public class PostThumbnailResponse {
     private Long id;
     private String title;
@@ -17,17 +21,19 @@ public class PostThumbnailResponse {
     private Date recruitStart;
     private Date recruitEnd;
     private List<String> postTypes;
-    private List<String> tags;
+    private TagForm tags;
     private Long views;
     private boolean hasLiked;
     private Date createdDate;
 
-    public PostThumbnailResponse(final Thumbnail thumbnail, String email) {
+    public PostThumbnailResponse(Thumbnail thumbnail, String email) {
         this.id = thumbnail.getPost().getId();
         this.title = thumbnail.getTitle();
         this.summary = thumbnail.getSummary();
         this.postTypes = toArray(thumbnail.getPost().getPostTypes(), ",");
-        this.tags = toArray(thumbnail.getTags(), ";");
+        this.tags = (Strings.isEmpty(thumbnail.getTags())) ?
+                new TagForm() :
+                new TagForm(toArray(thumbnail.getTags(), ";"));
         this.views = thumbnail.getPost().getViews();
         this.createdDate = toDate(thumbnail.getPost().getCreatedDate());
         this.recruitStart = toDate(thumbnail.getRecruitStart());

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Getter
@@ -43,7 +44,7 @@ public class Thumbnail {
     public Thumbnail(PostCreationRequest request) {
         this.title = request.getTitle();
         this.summary = request.getSummary();
-        this.tags = Utils.toString(request.getTags(), ";");
+        this.tags = (Objects.isNull(request.getTags())) ? "" : request.getTags().combine();
         this.recruitStart = Utils.toLocalDateTime(request.getRecruitStart());
         this.recruitEnd = Utils.toLocalDateTime(request.getRecruitEnd());
         this.projectStart = Utils.toLocalDateTime(request.getProjectStart());
