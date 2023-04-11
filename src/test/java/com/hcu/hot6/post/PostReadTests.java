@@ -3,7 +3,6 @@ package com.hcu.hot6.post;
 import com.hcu.hot6.domain.Duration;
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.request.MemberRequest;
-import com.hcu.hot6.domain.request.PositionForm;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.TagForm;
 import com.hcu.hot6.repository.MemberRepository;
@@ -64,12 +63,7 @@ public class PostReadTests {
                 .recruitEnd(new Date())
                 .projectStart(new Date())
                 .durations(List.of(Duration.SPRING, Duration.SUMMER))
-                .positions(List.of(
-                        PositionForm.builder()
-                                .name("전체")
-                                .count(5)
-                                .build())
-                )
+                .targetCount("00명")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
                 .build();
@@ -94,12 +88,7 @@ public class PostReadTests {
                 .recruitEnd(new Date())
                 .projectStart(new Date())
                 .durations(List.of(Duration.SPRING, Duration.SUMMER))
-                .positions(List.of(
-                        PositionForm.builder()
-                                .name("전체")
-                                .count(5)
-                                .build())
-                )
+                .targetCount("00명")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
                 .build();
