@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Getter
@@ -27,7 +26,6 @@ public class Thumbnail {
     private String summary;
     private LocalDateTime recruitStart;     // 미래인 경우 썸네일에 "모집 예정" , 아닌 경우 "D-00" 표시
     private LocalDateTime recruitEnd;
-    private LocalDateTime projectStart;
     private String durations;       // 다중선택 가능 - 구분 "," 콤마
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "thumbnail")
@@ -42,12 +40,14 @@ public class Thumbnail {
     }
 
     public Thumbnail(PostCreationRequest request) {
+        // required
         this.title = request.getTitle();
+        this.tags = request.getTags().combine();
+
+        // optional
         this.summary = request.getSummary();
-        this.tags = (Objects.isNull(request.getTags())) ? "" : request.getTags().combine();
         this.recruitStart = Utils.toLocalDateTime(request.getRecruitStart());
         this.recruitEnd = Utils.toLocalDateTime(request.getRecruitEnd());
-        this.projectStart = Utils.toLocalDateTime(request.getProjectStart());
         this.durations = arrayToString(request.getDurations());
     }
 
