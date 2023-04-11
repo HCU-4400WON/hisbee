@@ -2,7 +2,6 @@ package com.hcu.hot6.repository;
 
 import com.hcu.hot6.domain.Department;
 import com.hcu.hot6.domain.Member;
-import com.hcu.hot6.domain.Position;
 import com.hcu.hot6.domain.filter.PoolSearchFilter;
 import com.hcu.hot6.domain.request.MemberRequest;
 import jakarta.persistence.EntityManager;

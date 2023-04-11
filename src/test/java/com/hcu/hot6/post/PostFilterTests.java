@@ -5,7 +5,6 @@ import com.hcu.hot6.domain.Duration;
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.MemberRequest;
-import com.hcu.hot6.domain.request.PositionForm;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.TagForm;
 import com.hcu.hot6.repository.MemberRepository;
@@ -90,12 +89,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .projectStart(new Date())
                 .durations(List.of(Duration.SPRING, Duration.SUMMER))
-                .positions(List.of(
-                        PositionForm.builder()
-                                .name("전체")
-                                .count(5)
-                                .build())
-                )
+                .targetCount("전체 00명")
                 .contact("example@test.com")
                 .build();
 
@@ -125,12 +119,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .projectStart(new Date())
                 .durations(List.of(Duration.SPRING, Duration.SUMMER))
-                .positions(List.of(
-                        PositionForm.builder()
-                                .name("전체")
-                                .count(5)
-                                .build())
-                )
+                .targetCount("전체00명")
                 .contact("example@test.com")
                 .build();
 
@@ -159,12 +148,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .projectStart(new Date())
                 .durations(List.of(Duration.SPRING, Duration.SUMMER))
-                .positions(List.of(
-                        PositionForm.builder()
-                                .name("전체")
-                                .count(5)
-                                .build())
-                )
+                .targetCount("전체00명")
                 .contact("example@test.com")
                 .build();
 
@@ -177,12 +161,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .projectStart(new Date())
                 .durations(List.of(Duration.SPRING, Duration.SUMMER))
-                .positions(List.of(
-                        PositionForm.builder()
-                                .name("전체")
-                                .count(5)
-                                .build())
-                )
+                .targetCount("전체00명")
                 .contact("example@test.com")
                 .build();
 
@@ -211,12 +190,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .projectStart(new Date())
                 .durations(List.of(Duration.SPRING, Duration.SUMMER))
-                .positions(List.of(
-                        PositionForm.builder()
-                                .name("전체")
-                                .count(5)
-                                .build())
-                )
+                .targetCount("전체00명")
                 .contact("example@test.com")
                 .build();
         final var request2 = PostCreationRequest.builder()
@@ -228,12 +202,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .projectStart(new Date())
                 .durations(List.of(Duration.SPRING, Duration.SUMMER))
-                .positions(List.of(
-                        PositionForm.builder()
-                                .name("전체")
-                                .count(5)
-                                .build())
-                )
+                .targetCount("전체00명")
                 .contact("example@test.com")
                 .build();
 
@@ -265,12 +234,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .projectStart(new Date())
                 .durations(List.of(Duration.SPRING, Duration.SUMMER))
-                .positions(List.of(
-                        PositionForm.builder()
-                                .name("전체")
-                                .count(5)
-                                .build())
-                )
+                .targetCount("전체00명")
                 .contact("example@test.com")
                 .build();
         final var request2 = PostCreationRequest.builder()
@@ -281,12 +245,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .projectStart(new Date())
                 .durations(List.of(Duration.SPRING, Duration.SUMMER))
-                .positions(List.of(
-                        PositionForm.builder()
-                                .name("전체")
-                                .count(5)
-                                .build())
-                )
+                .targetCount("전체00명")
                 .keywords(List.of("온유", "축복"))
                 .contact("example@test.com")
                 .build();

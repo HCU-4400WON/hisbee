@@ -42,8 +42,7 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private List<Likes> likes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
-    private List<Position> positions = new ArrayList<>();
+    private String targetCount;
 
     @OneToMany(mappedBy = "post")
     private List<Poster> posters = new ArrayList<>();
@@ -74,6 +73,7 @@ public class Post {
         this.qualifications = request.getQualifications();
         this.targetYears = Utils.toString(request.getYears(), ",");
         this.targetDepartment = Utils.toString(request.getDepartments(), ",");
+        this.targetCount = request.getTargetCount();
         this.views = 0L;
         this.isAutoClose = false;
         registerAuthor(author);
