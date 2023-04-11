@@ -15,7 +15,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 @Getter
@@ -36,6 +35,7 @@ public class Post {
     // 필수 아닌 필드
     private String content;
     private String contactDetails;
+    private String qualifications;
     private String targetYears;         // 다중선택 가능. "," 콤마로 구분
     private String targetDepartment;    // 다중선택 가능. "," 콤마로 구분
 
@@ -62,15 +62,15 @@ public class Post {
     private LocalDateTime lastModifiedDate;
 
     public Post(PostCreationRequest request, Member author) {
+        // required
         this.postTypes = Utils.toString(request.getPostTypes(), ",");
-        this.content = request.getContent();
         this.contact = request.getContact();
-        this.keywords = String.join(
-                ",",
-                Optional.ofNullable(request.getKeywords())
-                        .orElse(List.of())
-        );
+
+        // optional
+        this.content = request.getContent();
+        this.keywords = Utils.toString(request.getKeywords(), ",");
         this.contactDetails = request.getContactDetails();
+        this.qualifications = request.getQualifications();
         this.targetYears = Utils.toString(request.getYears(), ",");
         this.targetDepartment = Utils.toString(request.getDepartments(), ",");
         this.targetCount = request.getTargetCount();

@@ -3,8 +3,11 @@ package com.hcu.hot6.domain.response;
 import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.Poster;
 import com.hcu.hot6.domain.Thumbnail;
+import com.hcu.hot6.domain.request.TagForm;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 
 import java.util.Date;
 import java.util.List;
@@ -25,14 +28,16 @@ public class PostReadOneResponse {
     private Date projectStart;
     private List<String> durations;
     private List<String> postTypes;
-    private List<String> tags;
+    private TagForm tags;
 
     // Post
     private String author;
     private String content;
     private String contact;
     private String contactDetails;
+    private String qualifications;
     private String targetCount;
+  
     private List<String> years;
     private List<String> departments;
     private List<String> keywords;
@@ -56,7 +61,9 @@ public class PostReadOneResponse {
         this.recruitEnd = toDate(thumbnail.getRecruitEnd());
         this.projectStart = toDate(thumbnail.getProjectStart());
         this.durations = toArray(thumbnail.getDurations(), ",");
-        this.tags = toArray(thumbnail.getTags(), ";"); // 프론트에서 각 라인별로 ,로 구분 후 나타내기
+        this.tags = (Strings.isEmpty(thumbnail.getTags())) ?
+                new TagForm() :
+                new TagForm(toArray(thumbnail.getTags(), ";"));
         this.isClosed = thumbnail.isClosed();
         this.isArchived = thumbnail.isArchived();
 
@@ -65,6 +72,7 @@ public class PostReadOneResponse {
         this.contact = post.getContact();
         this.content = post.getContent();
         this.contactDetails = post.getContactDetails();
+        this.qualifications = post.getQualifications();
         this.years = toArray(post.getTargetYears(), ",");
         this.departments = toArray(post.getTargetDepartment(), ",");
         this.keywords = toArray(post.getKeywords(), ",");
