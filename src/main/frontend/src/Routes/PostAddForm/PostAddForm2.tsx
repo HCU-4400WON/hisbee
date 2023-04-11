@@ -2,7 +2,7 @@ import tw from "tailwind-styled-components";
 import { async } from "@firebase/util";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import "./textarea.css";
 import { Editor } from "react-draft-wysiwyg";
@@ -27,7 +27,11 @@ import {
   IPostExample,
   PostExamples,
 } from "./PostExamples";
-import { departments, ICreatePost } from "api";
+import { createPost, departments, ICreatePost } from "api";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosError, AxiosResponse } from "axios";
+import { useSetRecoilState } from "recoil";
+import { isLoginModalState, isLoginState } from "components/atom";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -160,6 +164,34 @@ function PostAddForm2() {
 
   // const postTypesWatch = watch("postTypes");
   // https://dotorimook.github.io/post/2020-10-05-rhf-watch-vs-getvalues/
+  const setIsLogin = useSetRecoilState(isLoginState);
+  const setIsLoginModal = useSetRecoilState(isLoginModalState);
+
+  const navigate = useNavigate();
+
+  const { mutate: createPostMutate, isLoading: createPostLoading } =
+    useMutation(
+      ["createPostMutate" as string],
+
+      (newPost: ICreatePost) => createPost(newPost),
+
+      {
+        onSuccess: (data) => {
+          console.log("모집글이 생성되었습니다.", data);
+        },
+        onError: (error) => {
+          if (
+            ((error as AxiosError).response as AxiosResponse).status === 401
+          ) {
+            alert("로그인이 필요합니다.");
+            setIsLoginModal(true);
+            setIsLogin(false);
+            if (localStorage.getItem("key")) localStorage.removeItem("key");
+            navigate("/");
+          }
+        },
+      }
+    );
 
   const onSubmit = (data: ISubmitDate) => {
     console.log(getValues("years"));
@@ -233,6 +265,7 @@ function PostAddForm2() {
     };
 
     console.log(newPost);
+    createPostMutate(newPost as ICreatePost);
   };
 
   const Grades = [

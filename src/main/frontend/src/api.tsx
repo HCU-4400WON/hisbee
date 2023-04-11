@@ -1034,9 +1034,9 @@ export interface ICreatePost {
   summary?: string;
   tags?: ITags;
   postTypes: string[];
-  recruitStart: Date;
-  recruitEnd?: Date;
-  projectStart?: Date;
+  recruitStart: string;
+  recruitEnd?: string;
+  projectStart?: string;
   targetCount?: string; // positions : 없을 경우 "전체", 인원 : ~ 로 넣어서 요청해주기
   contact: string;
 
