@@ -17,23 +17,22 @@ public class PostCreationRequest {
     @NotNull
     private String title;
     private String summary;
-    private List<String> tags;
+    private TagForm tags;
 
     // Metadata
     @NotNull
     private List<String> postTypes;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull
     private Date recruitStart;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date recruitEnd;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull
     private Date projectStart;
 
-    @NotNull
     private List<Duration> durations;
 
     @NotNull
@@ -45,6 +44,7 @@ public class PostCreationRequest {
     // Optional fields
     private String contactDetails;
     private String content;
+    private String qualifications;
     private List<String> years;
     private List<String> departments;
     private List<String> keywords;
