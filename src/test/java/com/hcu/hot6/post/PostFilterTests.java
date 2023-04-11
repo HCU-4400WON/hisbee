@@ -7,6 +7,7 @@ import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.request.PositionForm;
 import com.hcu.hot6.domain.request.PostCreationRequest;
+import com.hcu.hot6.domain.request.TagForm;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.service.PostService;
 import jakarta.annotation.PostConstruct;
@@ -83,7 +84,7 @@ public class PostFilterTests {
         final var request = PostCreationRequest.builder()
                 .title("모집글 제목")
                 .summary("한 줄 소개")
-                .tags(List.of("두번째줄_태그", "마지막_태그"))
+                .tags(new TagForm(List.of("두번째줄_태그", "마지막_태그")))
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
@@ -118,7 +119,7 @@ public class PostFilterTests {
         final var request = PostCreationRequest.builder()
                 .title("모집글 제목")
                 .summary("한 줄 소개")
-                .tags(List.of("두번째줄_태그;마지막_태그"))
+                .tags(new TagForm(List.of("두번째줄_태그", "마지막_태그")))
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
@@ -152,7 +153,7 @@ public class PostFilterTests {
         final var request = PostCreationRequest.builder()
                 .title("모집글 제목")
                 .summary("한 줄 소개")
-                .tags(List.of("소망", "축복"))
+                .tags(new TagForm(List.of("소망", "축복")))
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
@@ -170,7 +171,7 @@ public class PostFilterTests {
         final var request2 = PostCreationRequest.builder()
                 .title("모집글 제목")
                 .summary("한 줄 소개")
-                .tags(List.of("온유", "축복"))
+                .tags(new TagForm(List.of("온유", "축복")))
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
@@ -204,7 +205,7 @@ public class PostFilterTests {
         final var request = PostCreationRequest.builder()
                 .title("모집글 제목")
                 .summary("한 줄 소개")
-                .tags(List.of("소망", "축복"))
+                .tags(new TagForm(List.of("소망", "축복")))
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
@@ -221,7 +222,7 @@ public class PostFilterTests {
         final var request2 = PostCreationRequest.builder()
                 .title("모집글 제목")
                 .summary("한 줄 소개")
-                .tags(List.of("온유", "축복"))
+                .tags(new TagForm(List.of("온유", "축복")))
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
@@ -248,7 +249,8 @@ public class PostFilterTests {
 
         // then
         assertThat(response.getTotal()).isEqualTo(1L);
-        assertThat(response.getPosts().get(0).getTags()).isEqualTo("온유;축복");
+        assertThat(response.getPosts().get(0).getTags().getFirst()).isEqualTo(List.of("온유"));
+        assertThat(response.getPosts().get(0).getTags().getSecond()).isEqualTo(List.of("축복"));
     }
 
     @Test
@@ -257,7 +259,7 @@ public class PostFilterTests {
         final var request = PostCreationRequest.builder()
                 .title("모집글 제목")
                 .summary("한 줄 소개")
-                .tags(List.of("소망", "축복"))
+                .tags(new TagForm(List.of("소망", "축복")))
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
