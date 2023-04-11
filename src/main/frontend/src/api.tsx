@@ -1021,6 +1021,7 @@ export interface IReadOnePost {
   archived: boolean;
   createdDate: Date;
   lastModifiedDate: Date;
+  qualifications: string;
   // 지원 자격
 }
 
@@ -1041,7 +1042,7 @@ export interface ICreatePost {
   projectStart?: string;
   targetCount?: string; // positions : 없을 경우 "전체", 인원 : ~ 로 넣어서 요청해주기
   contact: string;
-
+  qualifications?: string;
   // Optional
   durations?: string[];
   contactDetails?: string;

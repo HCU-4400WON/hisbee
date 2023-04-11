@@ -35,6 +35,7 @@ import {
   PostDetailExample,
   PostExamples,
 } from "Routes/PostAddForm/PostExamples";
+import { DragControls } from "framer-motion";
 
 const Container = tw.div`
 md:w-[1470px] 
@@ -602,7 +603,7 @@ function Detail2() {
         <LoadingAnimation />
       ) : (
         <>
-          {isPostDeleteModal && <PostDeleteModal postId={dataExample?.id} />}
+          {isPostDeleteModal && <PostDeleteModal postId={data?.id} />}
           <Container>
             <GoBackSpan>
               <GoBackButton onClick={() => navigate(-1)}>
@@ -612,34 +613,34 @@ function Detail2() {
 
             <Form onSubmit={handleSubmit(onValid as any)}>
               <FormHeader>
-                <FormTitle>{dataExample?.title}</FormTitle>
+                <FormTitle>{data?.title}</FormTitle>
                 {/* )} */}
               </FormHeader>
 
               <FormAuthorNButtonRow>
                 <FormAuthorSpan className="flex justify-between w-full">
                   <WriterSpan>
-                    <WriteInfo>{dataExample?.summary}</WriteInfo>
+                    <WriteInfo>{data?.summary}</WriteInfo>
                   </WriterSpan>
 
                   <WriterSpan>
                     <WriteInfo className="">
                       <span className="mx-[10px] text-gray-600">
-                        {dataExample?.author}
+                        {data?.author}
                       </span>
                     </WriteInfo>
                     <WriteInfo className="">
                       <span className="ml-[10px]">
-                        {datetimeToString(dataExample?.createdDate)}
+                        {datetimeToString(data?.createdDate as Date)}
                       </span>
                     </WriteInfo>
                     <WriteInfo className="">
                       <i className="fa-regular fa-eye mr-[5px]"></i>
-                      {dataExample?.views}
+                      {data?.views}
                     </WriteInfo>
                     <WriteInfo className="">
                       <i className="fa-regular fa-heart mr-[5px]"></i>
-                      {dataExample?.nBookmark}
+                      {data?.nlike}
                     </WriteInfo>
                   </WriterSpan>
                 </FormAuthorSpan>
@@ -651,14 +652,14 @@ function Detail2() {
                   <GridItem>
                     <ItemTitle>모집 기간</ItemTitle>
                     <ItemText>
-                      <>{datetimeToString(dataExample?.recruitStart as Date)}</>
+                      <>{datetimeToString(data?.recruitStart as Date)}</>
                     </ItemText>
                     <ItemText className="mx-[10px]">~</ItemText>
                     <ItemText>
                       <ItemText className="text-blue-500">
                         {/* 수정과 벨리데이션 */}
 
-                        {datetimeToString(dataExample?.recruitStart as Date)}
+                        {datetimeToString(data?.recruitEnd as Date)}
 
                         {/* )} */}
                       </ItemText>
@@ -668,33 +669,25 @@ function Detail2() {
                     <ItemTitle>학년</ItemTitle>
 
                     <ItemText className="text-blue-500">
-                      {dataExample?.years.length === 0
+                      {data?.years.length === 0
                         ? "학년 무관"
-                        : dataExample?.years.map((year) => year + " ")}
+                        : data?.years.map((year) => year + " ")}
                     </ItemText>
                   </GridItem>
                   <GridItem>
                     <ItemTitle>모집 인원</ItemTitle>
-                    {dataExample?.positions.length === 1 &&
-                    dataExample?.positions[0].name === "전체" ? (
-                      <ItemText>
-                        {dataExample?.positions[0].count + "명"}
-                      </ItemText>
+                    {data?.targetCount ? (
+                      <ItemText>{data?.targetCount}</ItemText>
                     ) : (
-                      dataExample?.positions.map((position, index) => (
-                        <ItemText key={index}>
-                          {position.name} : {position.count}{" "}
-                          {index !== dataExample?.positions.length - 1 && " / "}
-                        </ItemText>
-                      ))
+                      <ItemText>인원 제한 없음</ItemText>
                     )}
                   </GridItem>
                   <GridItem>
                     <ItemTitle>전공</ItemTitle>
                     <ItemText className="text-blue-500">
-                      {dataExample?.departments.length === 0
+                      {data?.departments.length === 0
                         ? "전공 무관"
-                        : dataExample?.departments.map(
+                        : data?.departments.map(
                             (department) => department + " "
                           )}
                     </ItemText>
@@ -705,7 +698,7 @@ function Detail2() {
                       href="http://google.com"
                       className="md:w-full w-[200px] text-[13px] md:text-[17px] font-bold underline"
                     >
-                      {dataExample?.contact}
+                      {data?.contact}
                     </a>
                   </GridItem>
                   <GridItem>
@@ -716,20 +709,20 @@ function Detail2() {
                   <GridItem>
                     <ItemTitle>신청 안내</ItemTitle>
                     <ItemText className="pr-[40px]">
-                      {dataExample?.contactDetails}
+                      {data?.contactDetails}
                     </ItemText>
                   </GridItem>
                   <GridItem>
                     <ItemTitle>지원 자격</ItemTitle>
 
-                    <ItemText>새내기라면 누구든지 환영~ (하드코딩)</ItemText>
+                    <ItemText>{data?.qualifications}</ItemText>
                   </GridItem>
                 </Grid>
               </div>
               {/* 키워드들 */}
 
               <div className="mt-[30px] mb-[60px] px-[50px]">
-                {dataExample?.postTypes.map((postType, index) => (
+                {data?.postTypes.map((postType, index) => (
                   <button
                     key={index}
                     className="bg-blue-200 py-[5px] px-[15px] rounded-lg mx-[5px]"
@@ -737,9 +730,9 @@ function Detail2() {
                     {postType}
                   </button>
                 ))}
-                {dataExample?.keywords.map(
+                {data?.keywords.map(
                   (keyword: string, index: number) =>
-                    dataExample?.postTypes.indexOf(keyword) === -1 && (
+                    data?.postTypes.indexOf(keyword) === -1 && (
                       <button
                         className="bg-blue-100 py-[5px] px-[15px] rounded-lg mx-[5px] mb-[10px]"
                         key={index}
@@ -749,9 +742,18 @@ function Detail2() {
                     )
                 )}
               </div>
-              <div className="px-[50px] text-[20px]">
-                {dataExample?.content}
+              <div className="px-[50px] text-[20px]">{data?.content}</div>
+              <div className="flex">
+                {data?.posterPaths?.map((posterPath: string, index: number) => (
+                  <img
+                    className="w-[400px] h-[400px]"
+                    key={index}
+                    src={posterPath}
+                    alt="poster"
+                  />
+                ))}
               </div>
+              {data?.posterPaths[0]}
             </Form>
 
             <div className="min-w-[40px] md:min-w-[100px] "></div>

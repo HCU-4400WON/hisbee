@@ -240,14 +240,9 @@ function PostAddForm2() {
       title: data.title,
       summary: data?.summary !== "" ? data?.summary : null,
       tags: {
-        // first: "d",
-        // second: "d",
-        // ["d", "d"],
         first: data?.first?.length === 0 ? [] : data?.first,
         second: data?.second?.length === 0 ? [] : data?.second,
       },
-      // tags: ["콘디,콘디2전공가능", "재학생"],
-      // tags: ["d", "d"],
       postTypes: data?.postTypes,
       recruitStart:
         data?.recruitStart === ""
@@ -267,7 +262,11 @@ function PostAddForm2() {
       content: data?.content !== "" ? data?.content : null,
       years: data?.years?.length !== 0 ? data?.years : null,
       departments: data?.departments?.length !== 0 ? data?.departments : null,
-      keywords: data?.keywords?.length !== 0 ? data?.keywords : null,
+      keywords: [
+        ...data?.postTypes,
+        ...(data?.first as string[] | []),
+        ...(data?.second as string[] | []),
+      ],
       posterPaths: imageURLList?.length !== 0 ? imageURLList : null,
     };
 
@@ -297,7 +296,7 @@ function PostAddForm2() {
       posterPaths: ["https://firebasestorage.googleapis.com/v0/b/…"],
     };
     console.log(nPost);
-    createPostMutate(nPost as any);
+    createPostMutate(newPost as any);
   };
 
   const Grades = [

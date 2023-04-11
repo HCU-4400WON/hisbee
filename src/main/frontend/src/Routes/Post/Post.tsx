@@ -117,34 +117,34 @@ const FormCancelIcon = tw.i`
 fa-solid fa-xmark text-[15px] text-black ml-[5px] mt-[1px]
 `;
 
-export interface IPost {
-  id: number;
-  writer: string;
-  title: string;
-  content: string;
-  contact: string;
-  postStart: Date;
-  postEnd: Date;
-  projectStart: Date;
-  duration: string[];
-  keywords: string[];
-  nliked: number;
-  total: number;
-  curr: number;
-  views: number;
-  createdDate: Date;
-  lastModifiedDate: Date;
-  varified?: boolean;
-  hasLiked?: boolean;
+// export interface IPost {
+//   id: number;
+//   writer: string;
+//   title: string;
+//   content: string;
+//   contact: string;
+//   postStart: Date;
+//   postEnd: Date;
+//   projectStart: Date;
+//   duration: string[];
+//   keywords: string[];
+//   nliked: number;
+//   total: number;
+//   curr: number;
+//   views: number;
+//   createdDate: Date;
+//   lastModifiedDate: Date;
+//   varified?: boolean;
+//   hasLiked?: boolean;
 
-  // period: number;
-  // total: number;
-  // category: string;
-}
-export interface IPosts {
-  total: number;
-  posts: IPost[];
-}
+//   // period: number;
+//   // total: number;
+//   // category: string;
+// }
+// export interface IPosts {
+//   total: number;
+//   posts: IPost[];
+// }
 
 function Post() {
   const location = useLocation();
