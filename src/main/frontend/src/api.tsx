@@ -705,20 +705,22 @@ export const readPosts = async (
   search: string | null,
   order: string | null,
   type: string | null,
-  position: string | null,
-  pay: string | null,
-  limit: string | null
+  limit: string | null,
+  keywords: string[] | null
+  // position: string | null,
+  // pay: string | null,
 ) => {
   try {
     const TOKEN = localStorage.getItem("key");
 
     let paramPage = "";
-    let paramSearch = "";
     let paramOrder = "";
     let paramType = "";
-    let paramPosition = "";
-    let paramPay = "";
     let paramLimit = "";
+    let paramKeywords = "";
+    let paramSearch = "";
+    // let paramPosition = "";
+    // let paramPay = "";
 
     if (page) {
       paramPage = `&page=${page}`;
@@ -732,19 +734,29 @@ export const readPosts = async (
     if (type) {
       paramType = `&type=${type}`;
     }
-    if (position) {
-      paramPosition = `&position=${position}`;
-    }
-    if (pay) {
-      if (pay === "yes") paramPay = `&pay=yes`;
-      else if (pay === "no") paramPay = `&pay=no`;
-    }
+    // if (position) {
+    //   paramPosition = `&position=${position}`;
+    // }
+    // if (pay) {
+    //   if (pay === "yes") paramPay = `&pay=yes`;
+    //   else if (pay === "no") paramPay = `&pay=no`;
+    // }
     if (limit) {
       paramLimit = `&limit=${limit}`;
     }
+    if (search) {
+      paramSearch = `&search=${search}`;
+    }
+    if (keywords && keywords.length !== 0) {
+      paramKeywords = "&keywords=" + keywords.join(",");
+      console.log(paramKeywords);
+    }
 
     const response = await axios.get(
-      `http://localhost:8080/posts?${paramPage}${paramSearch}${paramOrder}${paramType}${paramPosition}${paramPay}${paramLimit}`,
+      // `http://localhost:8080/posts?${paramPage}${paramSearch}${paramOrder}${paramType}${paramPosition}${paramPay}${paramLimit}`,
+
+      `http://localhost:8080/posts?${paramPage}${paramOrder}${paramType}${paramLimit}${paramKeywords}`,
+      // `http://localhost:8080/posts?${paramPage}${paramSearch}${paramOrder}${paramType}${paramLimit}${paramKeywords}`,
       {
         headers: { Authorization: `Bearer ${TOKEN}` },
         withCredentials: true,
@@ -773,8 +785,6 @@ export const readOnePost = async (id: number) => {
     console.error(error);
   }
 };
-
-
 
 export const createMentoring = async (data: IMentoring) => {
   const TOKEN = localStorage.getItem("key");
@@ -819,7 +829,30 @@ export const deletePost = (id: number) => {
   }
 };
 
-export const updatePost = (id: number, data: any) => {
+export interface IUpdatePost {
+  title?: string;
+  summary?: string;
+  tags?: ITags;
+  postTypes?: string[];
+  recruitStart?: string;
+  recruitEnd?: string;
+  // projectStart?: string;
+  targetCount?: string; // positions : 없을 경우 "전체", 인원 : ~ 로 넣어서 요청해주기
+  contact?: string;
+  qualifications?: string;
+  // Optional
+  durations?: string[];
+  contactDetails?: string;
+  content?: string; // 텍스트 에디터 변환 코드가 들어갈 예정
+  years?: string[];
+  departments?: string[];
+  keywords?: string[];
+  posterPaths?: string[];
+  isClosed?: boolean;
+  isArchived?: boolean;
+}
+
+export const updatePost = (id: number, data: IUpdatePost) => {
   try {
     console.log("DD", data);
     const TOKEN = localStorage.getItem("key");
@@ -831,6 +864,7 @@ export const updatePost = (id: number, data: any) => {
     return response;
   } catch (error) {
     console.error(error);
+    console.log("error!!");
   }
 };
 
@@ -970,81 +1004,80 @@ export const loginCheckApi = () => {
   return response;
 };
 
-
-
-
-
 ///////////////////////////////////////////////
 // version 2 api
 
-export interface IPosition{
-  name : string,
-  count : number,
+export interface IPosition {
+  name: string;
+  count: number;
 }
 
-export interface ITags{
-  firstLine : string,
-  secondLine : string,
+export interface ITags {
+  first: string[];
+  second: string[];
 }
 
 export interface IReadOnePost {
   id: number;
   title: string;
-  summary : string;
-  recruitStart : Date;
-  recruitEnd : Date;
-  projectStart : Date;
-  durations : string[];
-  postTypes : string[];
-  tags : ITags;
-  author : string;
+  summary: string;
+  recruitStart: Date;
+  recruitEnd: Date;
+  projectStart: Date;
+  durations: string[];
+  postTypes: string[];
+  tags: ITags;
+  author: string;
   content: string;
   contact: string;
   contactDetails: string;
-  positions: IPosition[];
-  years : string[];
+  // positions: IPosition[];
+  targetCount: string;
+  years: string[];
   departments: string[];
   keywords: string[];
-  posterPaths : string[];
-  nBookmark : number;
-  views : number;
-  hasLiked : boolean;
-  verified : boolean;
-  isClosed: boolean;
-  isArchived : boolean;
-  createdDate : Date;
-  lastModifiedDate : Date;
+  posterPaths: string[];
+  nlike: number;
+  views: number;
+  hasLiked: boolean;
+  verified: boolean;
+  closed: boolean;
+  archived: boolean;
+  createdDate: Date;
+  lastModifiedDate: Date;
+  qualifications: string;
   // 지원 자격
 }
 
 export interface IReadAllPosts {
   total: number;
-  relatedKeywords: string[],
+  relatedKeywords: string[];
   posts: IReadOnePost[];
 }
 
 export interface ICreatePost {
-  "title": string;
-	"summary"?: string;
-	"tags": ITags;
-	"postTypes": string[];
-	"recruitStart"?: Date;
-	"recruitEnd"?: Date;
-	"projectStart"?: Date; 
-	"positions": IPosition[]; // positions : 없을 경우 "전체", 인원 : ~ 로 넣어서 요청해주기
-	"contact": string;
-	
+  title: string;
+  summary?: string;
+  tags?: ITags;
+  // tags?: string[];
+  postTypes: string[];
+  recruitStart: string;
+  recruitEnd?: string;
+  projectStart?: string;
+  targetCount?: string; // positions : 없을 경우 "전체", 인원 : ~ 로 넣어서 요청해주기
+  contact: string;
+  qualifications?: string;
   // Optional
-  "durations"?: string[];
-	"contactDetails"?: string;
-	"content"?: string; // 텍스트 에디터 변환 코드가 들어갈 예정
-	"years"?: string[];
-	"departments"?: string[];
-	"keywords" ?: string[];
-	"posterPaths" ?: string[];
+  durations?: string[];
+  contactDetails?: string;
+  content?: string; // 텍스트 에디터 변환 코드가 들어갈 예정
+  years?: string[];
+  departments?: string[];
+  keywords?: string[];
+  posterPaths?: string[];
 }
 
-export const createPost = async (data : ICreatePost) => {
+export const createPost = async (data: ICreatePost) => {
   const TOKEN = localStorage.getItem("key");
   const response = axios.post("http://localhost:8080/posts", data, {
     headers: { Authorization: `Bearer ${TOKEN}` },

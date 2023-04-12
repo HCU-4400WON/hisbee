@@ -10,6 +10,8 @@ import {
   deleteLikePost,
   IPost,
   IPosts,
+  IReadAllPosts,
+  IReadOnePost,
   loginCheckApi,
   readPosts,
 } from "api";
@@ -38,7 +40,7 @@ min-w-[480px]
 mb-[440px] 
 w-screen
 
-`
+`;
 
 const titles = [
   "🔥 요즘 핫한 모집글",
@@ -71,7 +73,7 @@ const TitleSpan = tw.span`
 flex 
 jusify-between 
 min-w-[260px]
-`
+`;
 
 const Title = tw.p`
 text-xl
@@ -81,7 +83,7 @@ font-unique
 const PostContainer = tw.div`
 relative 
 mx-4
-`
+`;
 
 const PostGrid = tw(motion.div)`
 absolute
@@ -139,7 +141,7 @@ const PostCategoryLabel = tw.label`
 
 `;
 
-const HeartSpan = tw.span``
+const HeartSpan = tw.span``;
 
 const HeartIcon = tw(motion.i)`
 `;
@@ -363,29 +365,33 @@ function Main() {
     data: postslikes,
     isLoading: isLikesLoading,
     refetch: likesRefetch,
-  } = useQuery<IPosts>(["PostsMainFiltered", ["likes", LIMIT]], () =>
-    readPosts(null, null, ORDER[0], null, null, null, LIMIT + "")
+  } = useQuery<IReadAllPosts>(["PostsMainFiltered", ["likes", LIMIT]], () =>
+    // readPosts(null, null, ORDER[0], null, null, null, LIMIT + "")
+    readPosts(null, null, ORDER[0], null, LIMIT + "", null)
   );
   const {
     data: postsrecent,
     isLoading: isRecentLoading,
     refetch: recentRefetch,
-  } = useQuery<IPosts>(["PostsMainFiltered", ["recent", LIMIT]], () =>
-    readPosts(null, null, ORDER[1], null, null, null, LIMIT + "")
+  } = useQuery<IReadAllPosts>(["PostsMainFiltered", ["recent", LIMIT]], () =>
+    // readPosts(null, null, ORDER[1], null, null, null, LIMIT + "")
+    readPosts(null, null, ORDER[1], null, LIMIT + "", null)
   );
   const {
     data: postsmember,
     isLoading: isMemberLoading,
     refetch: memberRefetch,
-  } = useQuery<IPosts>(["PostsMainFiltered", ["member", LIMIT]], () =>
-    readPosts(null, null, ORDER[2], null, null, null, LIMIT + "")
+  } = useQuery<IReadAllPosts>(["PostsMainFiltered", ["member", LIMIT]], () =>
+    // readPosts(null, null, ORDER[2], null, null, null, LIMIT + "")
+    readPosts(null, null, ORDER[2], null, LIMIT + "", null)
   );
   const {
     data: postsend,
     isLoading: isEndLoading,
     refetch: endRefetch,
-  } = useQuery<IPosts>(["PostsMainFiltered", ["end", LIMIT]], () =>
-    readPosts(null, null, ORDER[3], null, null, null, LIMIT + "")
+  } = useQuery<IReadAllPosts>(["PostsMainFiltered", ["end", LIMIT]], () =>
+    // readPosts(null, null, ORDER[3], null, null, null, LIMIT + "")
+    readPosts(null, null, ORDER[3], null, LIMIT + "", null)
   );
 
   const { mutate: likeAddMutate, isLoading: isLikeAddLoading } = useMutation(
@@ -461,44 +467,40 @@ function Main() {
   }, []);
 
   type IdtypeToStyle = {
-    [P: string] : {
-      color: string,
-      bdColor : string,
-      text: string,
-    },
+    [P: string]: {
+      color: string;
+      bdColor: string;
+      text: string;
+    };
     M: {
-      color: string,
-      bdColor : string,
-      text: string,
-    },
-    S : {
-      
-        color: string,
-        bdColor : string,
-        text: string,
-      
-    }
-  }
+      color: string;
+      bdColor: string;
+      text: string;
+    };
+    S: {
+      color: string;
+      bdColor: string;
+      text: string;
+    };
+  };
 
-  const dtypeToStyle : IdtypeToStyle = {
+  const dtypeToStyle: IdtypeToStyle = {
     P: {
-      color: 'text-purple-400',
-      bdColor: 'bg-[#e0c3f8]',
-      text: '프로젝트',
+      color: "text-purple-400",
+      bdColor: "bg-[#e0c3f8]",
+      text: "프로젝트",
     },
     M: {
-      color:"text-blue-400",
-      bdColor:'bg-[#bdc9f2]',
-      text:'멘토링'
+      color: "text-blue-400",
+      bdColor: "bg-[#bdc9f2]",
+      text: "멘토링",
     },
     S: {
-      color:"text-gray-400",
-      bdColor:'bg-[#c7c7c7]',
-      text:'스터디'
-
-    }
-  }
-
+      color: "text-gray-400",
+      bdColor: "bg-[#c7c7c7]",
+      text: "스터디",
+    },
+  };
 
   return (
     <>
@@ -517,12 +519,15 @@ function Main() {
           <Banner src="/img/mainBannerReal.png"></Banner>
 
           {[postslikes, postsrecent, postsmember, postsend]?.map(
-            (posts?: IPosts, idx?: any) => (
+            (posts?: IReadAllPosts, idx?: any) => (
               <PostCategory className="mb-[350px]">
                 <TitleRow>
                   <TitleSpan>
-                  <Title>{titles[idx]}</Title>
-                  <Title className="ml-[30px]"> { `( ${indexs[idx] + 1} /  ${(12/OFFSET)} )`  }  </Title>
+                    <Title>{titles[idx]}</Title>
+                    <Title className="ml-[30px]">
+                      {" "}
+                      {`( ${indexs[idx] + 1} /  ${12 / OFFSET} )`}{" "}
+                    </Title>
                   </TitleSpan>
                   <svg
                     onClick={() => increaseIndex(idx)}
@@ -540,24 +545,21 @@ function Main() {
                       initial={false}
                       onExitComplete={() => setLeaving(false)}
                     >
-                      <PostGrid key={indexs[idx]} >
-
+                      <PostGrid key={indexs[idx]}>
                         {posts?.posts
                           ?.slice(
                             indexs[idx] * OFFSET,
                             indexs[idx] * OFFSET + OFFSET
                           )
-                          .map((post: IPost) => (
-                            
+                          .map((post: IReadOnePost) => (
                             <PostItem
                               custom={{ windowSize, leaving }}
                               variants={postsVariants}
                               initial="hidden"
                               animate="showing"
                               exit="exit"
-                              whileHover="hover" 
+                              whileHover="hover"
                               key={post?.id}
-                             
                             >
                               <PostContentFirstRow
                                 className={`${
@@ -565,8 +567,8 @@ function Main() {
                                   //   ? "bg-[#e0c3f8]"
                                   //   : post?.dtype === "S"
                                   //   ? "bg-[#c7c7c7]"
-                                  //   : "bg-[#bdc9f2]"
-                                  dtypeToStyle[post?.dtype].bdColor
+                                  "bg-[#bdc9f2]"
+                                  // dtypeToStyle[post?.dtype].bdColor
                                 }`}
                               >
                                 <PostCategorySpan>
@@ -579,8 +581,8 @@ function Main() {
                                     //     : "text-blue-400"
                                     // } `}
                                     className={`${
-                                      
-                                      dtypeToStyle[post?.dtype].color
+                                      // dtypeToStyle[post?.dtype].color
+                                      "text-blue-400"
                                     }`}
                                   >
                                     {/* {post?.dtype === "P"
@@ -588,10 +590,11 @@ function Main() {
                                       : post?.dtype === "S"
                                       ? "스터디"
                                       : "멘토링"} */}
-                                      {dtypeToStyle[post?.dtype].text}
+                                    {/* {dtypeToStyle[post?.dtype].text} */}
+                                    {post?.postTypes}
                                   </PostCategoryLabel>
                                 </PostCategorySpan>
-                                <HeartSpan >
+                                <HeartSpan>
                                   <HeartIcon
                                     whileHover={{ scale: [1, 1.3, 1, 1.3, 1] }}
                                     whileTap={{ y: [0, -30, 0] }}
@@ -609,10 +612,8 @@ function Main() {
                                   >
                                     {/* {post.likenum} */}
                                   </HeartIcon>
-                                  &nbsp; {post?.nliked}
+                                  &nbsp; {post?.nlike}
                                 </HeartSpan>
-
-                            
                               </PostContentFirstRow>
 
                               <Link to={`/post/${post.id}`}>
@@ -626,53 +627,53 @@ function Main() {
 
                                   {/* ThirdRow */}
                                   <PostDate>
-                                    {(new Date(post?.projectEnd).getTime() -
-                                      new Date(post?.projectStart).getTime()) /
+                                    {(new Date(post?.recruitEnd).getTime() -
+                                      new Date(post?.recruitStart).getTime()) /
                                       (1000 * 24 * 60 * 60) >=
                                     365 ? (
                                       <PostDatePlan>
                                         {Math.floor(
                                           (new Date(
-                                            post?.projectEnd
+                                            post?.recruitEnd
                                           ).getTime() -
                                             new Date(
-                                              post?.projectStart
+                                              post?.recruitStart
                                             ).getTime()) /
                                             (1000 * 24 * 60 * 60 * 365)
                                         )}
                                         {""}년 플랜
                                       </PostDatePlan>
-                                    ) : (new Date(post?.projectEnd).getTime() -
+                                    ) : (new Date(post?.recruitEnd).getTime() -
                                         new Date(
-                                          post?.projectStart
+                                          post?.recruitStart
                                         ).getTime()) /
                                         (1000 * 24 * 60 * 60) >=
                                       30 ? (
                                       <PostDatePlan>
                                         {Math.floor(
                                           (new Date(
-                                            post?.projectEnd
+                                            post?.recruitEnd
                                           ).getTime() -
                                             new Date(
-                                              post?.projectStart
+                                              post?.recruitStart
                                             ).getTime()) /
                                             (1000 * 24 * 60 * 60 * 30)
                                         )}
                                         {""}달 플랜
                                       </PostDatePlan>
-                                    ) : (new Date(post?.projectEnd).getTime() -
+                                    ) : (new Date(post?.recruitEnd).getTime() -
                                         new Date(
-                                          post?.projectStart
+                                          post?.recruitStart
                                         ).getTime()) /
                                         (1000 * 24 * 60 * 60) >=
                                       7 ? (
                                       <PostDatePlan>
                                         {Math.floor(
                                           (new Date(
-                                            post?.projectEnd
+                                            post?.recruitEnd
                                           ).getTime() -
                                             new Date(
-                                              post?.projectStart
+                                              post?.recruitStart
                                             ).getTime()) /
                                             (1000 * 24 * 60 * 60 * 7)
                                         )}
@@ -682,10 +683,10 @@ function Main() {
                                       <PostDatePlan>
                                         {Math.floor(
                                           (new Date(
-                                            post?.projectEnd
+                                            post?.recruitEnd
                                           ).getTime() -
                                             new Date(
-                                              post?.projectStart
+                                              post?.recruitStart
                                             ).getTime()) /
                                             (1000 * 24 * 60 * 60)
                                         )}
@@ -695,15 +696,15 @@ function Main() {
                                     <p className="mx-[7px] pb-0.5">|</p>
                                     <PostDateStart>
                                       {" "}
-                                      {new Date(post?.projectStart).getMonth()}
+                                      {new Date(post?.recruitStart).getMonth()}
                                       월{" "}
-                                      {new Date(post?.projectStart).getDate()}일
+                                      {new Date(post?.recruitStart).getDate()}일
                                       시작
                                     </PostDateStart>
                                   </PostDate>
 
                                   {/* lastRow */}
-                                  <PostPerson>
+                                  {/* <PostPerson>
                                     <PostPersonTotal>
                                       {post?.dtype === "P"
                                         ? post?.maxDesigner +
@@ -754,7 +755,7 @@ function Main() {
                                         )}
                                       </>
                                     )}
-                                  </PostPerson>
+                                  </PostPerson> */}
                                 </PostMainPart>
                               </Link>
                             </PostItem>

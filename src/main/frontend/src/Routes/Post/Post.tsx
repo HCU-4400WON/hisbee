@@ -5,6 +5,8 @@ import {
   createMentoring,
   deleteLikePost,
   departments,
+  IReadAllPosts,
+  IReadOnePost,
   loginCheckApi,
   posts,
   readPosts,
@@ -115,34 +117,34 @@ const FormCancelIcon = tw.i`
 fa-solid fa-xmark text-[15px] text-black ml-[5px] mt-[1px]
 `;
 
-export interface IPost {
-  id: number;
-  writer: string;
-  title: string;
-  content: string;
-  contact: string;
-  postStart: Date;
-  postEnd: Date;
-  projectStart: Date;
-  duration: string[];
-  keywords: string[];
-  nliked: number;
-  total: number;
-  curr: number;
-  views: number;
-  createdDate: Date;
-  lastModifiedDate: Date;
-  varified?: boolean;
-  hasLiked?: boolean;
+// export interface IPost {
+//   id: number;
+//   writer: string;
+//   title: string;
+//   content: string;
+//   contact: string;
+//   postStart: Date;
+//   postEnd: Date;
+//   projectStart: Date;
+//   duration: string[];
+//   keywords: string[];
+//   nliked: number;
+//   total: number;
+//   curr: number;
+//   views: number;
+//   createdDate: Date;
+//   lastModifiedDate: Date;
+//   varified?: boolean;
+//   hasLiked?: boolean;
 
-  // period: number;
-  // total: number;
-  // category: string;
-}
-export interface IPosts {
-  total: number;
-  posts: IPost[];
-}
+//   // period: number;
+//   // total: number;
+//   // category: string;
+// }
+// export interface IPosts {
+//   total: number;
+//   posts: IPost[];
+// }
 
 function Post() {
   const location = useLocation();
@@ -177,6 +179,19 @@ function Post() {
   //     }
   //   }
   // };
+
+  const [selectedMajor, setSelectedMajor] = useState<string | "">("");
+  const [selectedGrade, setSelectedGrade] = useState<string | "">("");
+  const [selectedCategory, setSelectedCategory] = useState<string | "">("전체"); // about category
+  const [keywordInput, setKeywordInput] = useState<string | "">("");
+  const [keywords, setKeywords] = useState<string[] | []>([
+    "프로젝트",
+    "스터디",
+    "멘토링",
+    "밥고",
+    "팀 프로젝트",
+  ]);
+  const [selectedKeywords, setSelectedKeywords] = useState<string[] | []>([]);
 
   useEffect(() => {
     console.log(filterCategory, filterPosition, filterPay);
@@ -243,26 +258,35 @@ function Post() {
     // refetch();
   }, [search, order, filterCategory, filterPosition, filterPay]);
 
+  const [LIMIT, useLIMIT] = useState<number>(12);
   // [사이에 필터링을 추가하기]
   const {
     data: posts,
     isLoading,
     refetch,
-  } = useQuery<IPosts>(
+  } = useQuery<IReadAllPosts>(
     [
-      "PostsPostFiltered",
+      "FilteredPosts",
 
-      [nowPage, search, order, filterCategory, filterPosition, filterPay],
+      [nowPage, search, order, selectedCategory, LIMIT + "", selectedKeywords],
     ],
     () =>
       readPosts(
+        // page:
         nowPage + "",
+        // search:
         search,
+        // order:
         order,
-        filterCategory === "" ? null : filterCategory,
-        filterPosition === "" ? null : filterPosition,
-        filterPay === "" ? null : filterPay,
-        null
+        // type:
+        selectedCategory === "전체" ? null : selectedCategory,
+        // limit:
+        LIMIT + "",
+        // keywords:
+        selectedKeywords
+        // filterPosition === "" ? null : filterPosition,
+        // filterPay === "" ? null : filterPay,
+        // null
       ),
     {
       onSuccess: (posts) => {
@@ -325,19 +349,6 @@ function Post() {
   useEffect(() => {
     loginCheckMutate();
   }, []);
-
-  const [selectedMajor, setSelectedMajor] = useState<string | "">("");
-  const [selectedGrade, setSelectedGrade] = useState<string | "">("");
-  const [selectedCategory, setSelectedCategory] = useState<string | "">("전체"); // about category
-  const [keywordInput, setKeywordInput] = useState<string | "">("");
-  const [keywords, setKeywords] = useState<string[] | []>([
-    "프로젝트",
-    "스터디",
-    "멘토링",
-    "밥고",
-    "팀 프로젝트",
-  ]);
-  const [selectedKeywords, setSelectedKeywords] = useState<string[] | []>([]);
 
   const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
     const selectedId = event.currentTarget.id;
@@ -478,7 +489,7 @@ function Post() {
                 </div>
               </div>
               <div className="flex h-[60px] justify-between px-[50px] ">
-                <div className="flex  items-center">
+                <div className="flex items-center">
                   {/* <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] border-2 border-black">
                     {Majors.map((major, index) => (
                       <option key={index}>
@@ -727,8 +738,10 @@ function Post() {
                 (posts as IPosts).posts.map((post, index) => (
                   <Card key={index} post={post} refetch={refetch} index={index}  />
                 ))} */}
-              {PostExamples.선택안됨?.map((postExample) => (
-                <Thumbnail {...postExample} />
+              {posts?.posts?.map((post: IReadOnePost, index: number) => (
+                <Link key={index} to={`/post2/${post?.id}`}>
+                  <Thumbnail {...post} />
+                </Link>
               ))}
             </PostGrid>
 

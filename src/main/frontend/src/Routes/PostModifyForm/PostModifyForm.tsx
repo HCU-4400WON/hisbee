@@ -2,12 +2,12 @@ import tw from "tailwind-styled-components";
 import { async } from "@firebase/util";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import "./textarea.css";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { EditorState, convertToRaw } from "draft-js";
+import { EditorState, convertToRaw, ContentState } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import styled from "styled-components";
 
@@ -27,11 +27,19 @@ import {
   IPostExample,
   PostExamples,
 } from "./PostExamples";
-import { createPost, departments, ICreatePost } from "api";
+import {
+  createPost,
+  departments,
+  ICreatePost,
+  IReadOnePost,
+  IUpdatePost,
+  updatePost,
+} from "api";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
 import { useSetRecoilState } from "recoil";
 import { isLoginModalState, isLoginState } from "components/atom";
+import htmlToDraft from "html-to-draftjs";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -63,7 +71,9 @@ const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8
 const MajorUnSelectedBUTTON = `${MainBLUE} px-[15px] py-[8px] rounded-lg`;
 const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg`;
 
-function PostAddForm2() {
+function PostModifyForm() {
+  const { state } = useLocation();
+
   const {
     register,
     watch,
@@ -75,31 +85,31 @@ function PostAddForm2() {
   } = useForm({
     mode: "onSubmit",
     defaultValues: {
-      title: "",
-      summary: "",
-      first: [],
-      second: [],
-      postTypes: [],
-
-      recruitStart: converter("year", new Date()), // string
-      recruitEnd: converter("year", new Date()), // string
+      title: state?.title ? state?.title : "",
+      summary: state?.summary ? state?.title : "",
+      first: state?.tags?.first,
+      second: state?.tags?.second,
+      postTypes: state?.postTypes,
+      recruitStart: converter("dateTime", state?.recruitStart), // string
+      recruitEnd: converter("dateTime", new Date()), // string
       projectStart: "",
-      durations: [],
-
+      durations: state?.durations,
       // positions: [],
       // positionName: "",
       // positionCount: "",
-      contact: "",
-      targetCount: "",
-      contactDetails: "",
-      content: "",
-      years: [],
-      departments: [],
+      contact: state?.contact,
+      targetCount: state?.targetCount,
+      contactDetails: state?.contactDetails,
+      //   content: state?.content,
+      // content 부분 변환
+      //
+      years: state?.years,
+      departments: state?.departments,
       keyword: "",
-      keywords: [],
+      keywords: state?.keywords,
       firstKeyword: "",
       secondKeyword: "",
-      qualifications: "",
+      qualifications: state?.qualifications,
       positionToggle: false,
       total: "",
 
@@ -170,21 +180,20 @@ function PostAddForm2() {
 
   const navigate = useNavigate();
 
-  const { mutate: createPostMutate, isLoading: createPostLoading } =
+  const { mutate: updatePostMutate, isLoading: updatePostLoading } =
     useMutation(
-      ["createPostMutate" as string],
-
-      (newPost: ICreatePost) => createPost(newPost),
+      ["updatePostMutate" as string],
+      ((id: number, newPost: IUpdatePost) => updatePost(id, newPost)) as any,
 
       {
         onSuccess: (data) => {
-          console.log("모집글이 생성되었습니다.", data);
+          console.log("모집글이 수정되었습니다.", data);
         },
         onError: (error) => {
           if (
             ((error as AxiosError).response as AxiosResponse).status === 401
           ) {
-            // alert("로그인이 필요합니다.");
+            alert("로그인이 필요합니다.");
             // setIsLoginModal(true);
             // setIsLogin(false);
             // if (localStorage.getItem("key")) localStorage.removeItem("key");
@@ -238,7 +247,7 @@ function PostAddForm2() {
     // }
 
     const newPost = {
-      title: data.title,
+      title: data?.title,
       summary: data?.summary !== "" ? data?.summary : null,
       tags: {
         first: data?.first?.length === 0 ? [] : data?.first,
@@ -255,7 +264,7 @@ function PostAddForm2() {
       projectStart: "2023-04-11", // optional로 바뀌어야 함
       // durations: data?.durations?.length !== 0 ? data?.durations : [],
       // durations: data?.durations,
-      durations: [],
+      durations: ["봄학기", "여름학기"],
 
       // targetCount: data?.positionToggle ? null : data?.targetCount,
       targetCount: "10명",
@@ -284,29 +293,13 @@ function PostAddForm2() {
     // createPostMutate(newPost as any);
 
     const nPost = {
-      title: "시각디자인 학회 도트 리쿠르팅",
-      summary:
-        "도트는 그래픽, 편집, 타이포 등 다양한 분야의 디자인을 실험적으로 연구하는 학회입니다.",
-      tags: {
-        first: ["콘디,콘디2전공가능"],
-        second: ["재학생"],
-      },
-      postTypes: ["학회", "학술모임"],
-      recruitStart: "2023-04-02",
-      recruitEnd: "2023-04-16",
-      projectStart: "2023-05-01",
-      durations: ["봄학기", "여름방학"],
-      targetCount: "전체00명",
-      contact: "ccdot@gmail.com",
-      contactDetails: "포트폴리오 제출 필수",
-      content: "시각디자인 학회 도트에서 신입 학회원을 모집합니다! ...",
-      years: ["1학년", "2학년"],
-      departments: ["콘텐츠디자인융합학부"],
-      keywords: ["포트폴리오필수", "2학기필수"],
-      posterPaths: ["https://firebasestorage.googleapis.com/v0/b/…"],
+      title: "시각디자인 학회 도트 리쿠르팅 (수정)",
+      years: ["2학년", "4학년"],
+      keywords: ["포트폴리오필수", "4학기필수"],
     };
-    console.log(nPost);
-    createPostMutate(newPost as any);
+    console.log(nPost, state?.id);
+    updatePost(state?.id, newPost as any);
+    // updatePost(state?.id, nPost);
   };
 
   const Grades = [
@@ -351,17 +344,39 @@ function PostAddForm2() {
 
   // useState로 상태관리하기 초기값은 EditorState.createEmpty()
   // EditorState의 비어있는 ContentState 기본 구성으로 새 개체를 반환 => 이렇게 안하면 상태 값을 나중에 변경할 수 없음.
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [editorState, setEditorState] = useState(() => {
+    if (!state.content) return EditorState.createEmpty();
+    const contentDraft = htmlToDraft(state?.content);
+    const { contentBlocks, entityMap } = contentDraft;
+    const contentState = ContentState.createFromBlockArray(
+      contentBlocks,
+      entityMap
+    );
+    return EditorState.createWithContent(contentState);
+  });
 
   const onEditorStateChange = (editorState: any) => {
     // editorState에 값 설정
     setEditorState(editorState);
   };
 
+  //   const contentDraft = htmlToDraft(state?.content);
+  //     const { contentBlocks, entityMap } = contentDraft;
+  //         const contentState = ContentState.createFromBlockArray(
+  //           contentBlocks,
+  //           entityMap
+  //         );
+  //         const editorState = EditorState.createWithContent(contentState);
+
+  //     setEditorState(editorState);
+  // setEditorString(state.content);
+
   // content : draftToHtml(convertToRaw(editorState.getCurrentContent();
 
   const [imageURL, setImageURL] = useState<string>("");
-  const [imageURLList, setImageURLList] = useState<string[] | []>([]);
+  const [imageURLList, setImageURLList] = useState<string[] | []>(
+    state?.posterPaths
+  );
   const inputRef = useRef<HTMLInputElement | null>(null);
   const onUploadImageButtonClick = useCallback(() => {
     if (!inputRef.current) {
@@ -538,9 +553,9 @@ function PostAddForm2() {
                   {postExampleToggle &&
                     (
                       PostExamples[
-                        getValues("postTypes").length === 0
+                        getValues("postTypes")?.length === 0
                           ? "선택안됨"
-                          : getValues("postTypes")[0]
+                          : (getValues("postTypes") as never)[0]
                       ] as IPostExample[]
                     )?.map((postExample: IPostExample, index: number) => (
                       <Thumbnail {...postExample} key={index} />
@@ -822,17 +837,21 @@ function PostAddForm2() {
             {getValues("departments").length === 0 ? (
               <div className={`ml-[30px] ${FunctionBUTTON}`}>전공 무관</div>
             ) : (
-              getValues("departments").map((department) => (
-                <div className={`ml-[30px] ${FunctionBUTTON}`}>
-                  {department}
-                </div>
-              ))
+              getValues("departments").map(
+                (department: string, index: number) => (
+                  <div key={index} className={`ml-[30px] ${FunctionBUTTON}`}>
+                    {department}
+                  </div>
+                )
+              )
             )}
             {getValues("years").length === 0 ? (
               <div className={`ml-[30px] ${FunctionBUTTON}`}>학년 무관</div>
             ) : (
-              getValues("years").map((year) => (
-                <div className={`ml-[30px] ${FunctionBUTTON}`}>{year}</div>
+              getValues("years").map((year: string, index: number) => (
+                <div key={index} className={`ml-[30px] ${FunctionBUTTON}`}>
+                  {year}
+                </div>
               ))
             )}
           </div>
@@ -1185,7 +1204,7 @@ function PostAddForm2() {
                   </span>
                 ))
               )}
-              {getValues("keywords").map((keyword, index) => (
+              {getValues("keywords").map((keyword: string, index: number) => (
                 <span
                   key={index}
                   className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
@@ -1394,4 +1413,4 @@ function PostAddForm2() {
   );
 }
 
-export default PostAddForm2;
+export default PostModifyForm;
