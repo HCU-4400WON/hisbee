@@ -829,7 +829,30 @@ export const deletePost = (id: number) => {
   }
 };
 
-export const updatePost = (id: number, data: any) => {
+export interface IUpdatePost {
+  title?: string;
+  summary?: string;
+  tags?: ITags;
+  postTypes?: string[];
+  recruitStart?: string;
+  recruitEnd?: string;
+  // projectStart?: string;
+  targetCount?: string; // positions : 없을 경우 "전체", 인원 : ~ 로 넣어서 요청해주기
+  contact?: string;
+  qualifications?: string;
+  // Optional
+  durations?: string[];
+  contactDetails?: string;
+  content?: string; // 텍스트 에디터 변환 코드가 들어갈 예정
+  years?: string[];
+  departments?: string[];
+  keywords?: string[];
+  posterPaths?: string[];
+  isClosed?: boolean;
+  isArchived?: boolean;
+}
+
+export const updatePost = (id: number, data: IUpdatePost) => {
   try {
     console.log("DD", data);
     const TOKEN = localStorage.getItem("key");

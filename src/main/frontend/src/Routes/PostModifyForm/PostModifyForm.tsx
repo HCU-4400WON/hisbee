@@ -27,7 +27,14 @@ import {
   IPostExample,
   PostExamples,
 } from "./PostExamples";
-import { createPost, departments, ICreatePost, IReadOnePost } from "api";
+import {
+  createPost,
+  departments,
+  ICreatePost,
+  IReadOnePost,
+  IUpdatePost,
+  updatePost,
+} from "api";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
 import { useSetRecoilState } from "recoil";
@@ -173,15 +180,14 @@ function PostModifyForm() {
 
   const navigate = useNavigate();
 
-  const { mutate: createPostMutate, isLoading: createPostLoading } =
+  const { mutate: updatePostMutate, isLoading: updatePostLoading } =
     useMutation(
-      ["createPostMutate" as string],
-
-      (newPost: ICreatePost) => createPost(newPost),
+      ["updatePostMutate" as string],
+      ((id: number, newPost: IUpdatePost) => updatePost(id, newPost)) as any,
 
       {
         onSuccess: (data) => {
-          console.log("모집글이 생성되었습니다.", data);
+          console.log("모집글이 수정되었습니다.", data);
         },
         onError: (error) => {
           if (
@@ -241,7 +247,7 @@ function PostModifyForm() {
     // }
 
     const newPost = {
-      title: data.title,
+      title: data?.title,
       summary: data?.summary !== "" ? data?.summary : null,
       tags: {
         first: data?.first?.length === 0 ? [] : data?.first,
@@ -258,7 +264,7 @@ function PostModifyForm() {
       projectStart: "2023-04-11", // optional로 바뀌어야 함
       // durations: data?.durations?.length !== 0 ? data?.durations : [],
       // durations: data?.durations,
-      durations: [],
+      durations: "11",
 
       // targetCount: data?.positionToggle ? null : data?.targetCount,
       targetCount: "10명",
@@ -309,7 +315,7 @@ function PostModifyForm() {
       posterPaths: ["https://firebasestorage.googleapis.com/v0/b/…"],
     };
     console.log(nPost);
-    createPostMutate(newPost as any);
+    updatePostMutate(state?.id, newPost as any);
   };
 
   const Grades = [
@@ -355,6 +361,7 @@ function PostModifyForm() {
   // useState로 상태관리하기 초기값은 EditorState.createEmpty()
   // EditorState의 비어있는 ContentState 기본 구성으로 새 개체를 반환 => 이렇게 안하면 상태 값을 나중에 변경할 수 없음.
   const [editorState, setEditorState] = useState(() => {
+    if (!state.content) return EditorState.createEmpty();
     const contentDraft = htmlToDraft(state?.content);
     const { contentBlocks, entityMap } = contentDraft;
     const contentState = ContentState.createFromBlockArray(

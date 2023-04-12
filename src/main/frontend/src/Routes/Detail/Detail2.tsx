@@ -610,14 +610,21 @@ function Detail2() {
                 <GoBackIcon></GoBackIcon>
               </GoBackButton>
             </GoBackSpan>
-            <Link to={`/modify/${id}`} state={data}>
-              <button>수정</button>
-            </Link>
+
             <Form onSubmit={handleSubmit(onValid as any)}>
               <FormHeader>
                 <FormTitle>{data?.title}</FormTitle>
                 {/* )} */}
               </FormHeader>
+              <div className="flex justify-end">
+                <button>마감</button>
+                <Link to={`/modify/${id}`} state={data as IReadOnePost}>
+                  <button>수정</button>
+                </Link>
+                <FormDeleteButton id="delete" onClick={onBtnClick}>
+                  <FormDeleteIcon />
+                </FormDeleteButton>
+              </div>
 
               <FormAuthorNButtonRow>
                 <FormAuthorSpan className="flex justify-between w-full">
