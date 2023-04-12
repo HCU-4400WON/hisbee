@@ -76,7 +76,8 @@ public class PostUpdateTests {
 
         // when
         var post = postService.createPost(req, TEST_EMAIL);
-        var res = postService.updatePost(post.getId(), upReq, TEST_EMAIL);
+        postService.updatePost(post.getId(), upReq, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
 
         // then
         assertThat(res.getTitle()).isEqualTo("수정된 모집글 제목");
@@ -84,6 +85,6 @@ public class PostUpdateTests {
         assertThat(res.getTags().getSecond()).isEqualTo(List.of());
         assertThat(res.getPostTypes()).isEqualTo(List.of("학회", "스터디"));
         assertThat(res.getSummary()).isEqualTo("한 줄 소개");
-        assertThat(res.getDuration()).isEqualTo(Duration.TBD.toKor());
+        assertThat(res.getDuration()).isEqualTo(Duration.TBD);
     }
 }
