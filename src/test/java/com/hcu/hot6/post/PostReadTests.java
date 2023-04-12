@@ -61,7 +61,7 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.SPRING)
                 .targetCount("00명")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
@@ -85,7 +85,7 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.SPRING)
                 .targetCount("00명")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
@@ -111,7 +111,7 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.SPRING)
                 .targetCount("00명")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
@@ -137,7 +137,7 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.SPRING)
                 .targetCount("00명")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
@@ -162,7 +162,7 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.SPRING)
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
                 .build();
@@ -186,7 +186,7 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.SPRING)
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
                 .build();
@@ -197,5 +197,48 @@ public class PostReadTests {
 
         // then
         assertThat(res.getTargetCount()).isEqualTo("00명");
+    }
+
+    @Test
+    public void 모집글_프로젝트_기간_기본값_확인() throws Exception {
+        // given
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .build();
+
+        // when
+        var post = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
+
+        // then
+        assertThat(res.getDuration()).isEqualTo(Duration.TBD);
+    }
+
+    @Test
+    public void 모집글_프로젝트_기간은_단일선택이다() throws Exception {
+        // given
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .duration(Duration.FALL)
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .build();
+
+        // when
+        var post = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
+
+        // then
+        assertThat(res.getDuration()).isEqualTo(Duration.FALL);
     }
 }

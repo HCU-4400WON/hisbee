@@ -8,6 +8,7 @@ import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.domain.response.PostFilterResponse;
+import com.hcu.hot6.domain.response.PostModifiedResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.repository.PostRepository;
@@ -55,13 +56,13 @@ public class PostService {
     }
 
     @Transactional
-    public PostReadOneResponse updatePost(Long postId,
+    public PostModifiedResponse updatePost(Long postId,
                                           PostUpdateRequest request,
                                           String email) {
         Post post = postRepository.findOne(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not found."));
         post.update(request);
-        return post.toResponse(email);
+        return new PostModifiedResponse(post.getId(), post.getLastModifiedDate());
     }
 
     public PostFilterResponse readFilteredPost(PostSearchFilter filter, String email) {
@@ -79,7 +80,11 @@ public class PostService {
         var pagination = new Pagination(filter.getPage(), postRepository.count(filter));
         var postResponseList = postRepository.findAll(filter, pagination.getOffset())
                 .stream()
-                .map(post -> post.getThumbnail().toResponse(email))
+                .map(post -> {
+                    if(!post.getThumbnail().isArchived())
+                        return post.getThumbnail().toResponse(email);
+                    else return null;
+                })
                 .toList();
 
         return new PostFilterResponse(
