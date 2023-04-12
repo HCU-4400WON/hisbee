@@ -264,7 +264,8 @@ function PostModifyForm() {
       projectStart: "2023-04-11", // optional로 바뀌어야 함
       // durations: data?.durations?.length !== 0 ? data?.durations : [],
       // durations: data?.durations,
-      durations: ["봄학기", "여름학기"],
+      //   durations: ["봄학기", "여름학기"],
+      // durations:
 
       // targetCount: data?.positionToggle ? null : data?.targetCount,
       targetCount: "10명",
