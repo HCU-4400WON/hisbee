@@ -7,6 +7,8 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class LikesRepository {
@@ -22,8 +24,8 @@ public class LikesRepository {
         return like.getId();
     }
 
-    public Likes findOne(Post post, Member member){
-        return (Likes) em.createQuery("SELECT l FROM Likes l WHERE l.member.id = member.id AND l.post.id = post.id")
+    public List<Likes> findOne(Post post, Member member){
+        return em.createQuery("SELECT l FROM Likes l WHERE l.member.id = member.id AND l.post.id = post.id")
                 .getResultList();
     }
 
