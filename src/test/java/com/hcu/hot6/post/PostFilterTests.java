@@ -87,7 +87,7 @@ public class PostFilterTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.FALL)
                 .targetCount("전체 00명")
                 .contact("example@test.com")
                 .build();
@@ -116,7 +116,7 @@ public class PostFilterTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.FALL)
                 .targetCount("전체00명")
                 .contact("example@test.com")
                 .build();
@@ -144,7 +144,7 @@ public class PostFilterTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.FALL)
                 .targetCount("전체00명")
                 .contact("example@test.com")
                 .build();
@@ -156,7 +156,7 @@ public class PostFilterTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.FALL)
                 .targetCount("전체00명")
                 .contact("example@test.com")
                 .build();
@@ -184,7 +184,7 @@ public class PostFilterTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.FALL)
                 .targetCount("전체00명")
                 .contact("example@test.com")
                 .build();
@@ -195,7 +195,7 @@ public class PostFilterTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.FALL)
                 .targetCount("전체00명")
                 .contact("example@test.com")
                 .build();
@@ -226,7 +226,7 @@ public class PostFilterTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.FALL)
                 .targetCount("전체00명")
                 .contact("example@test.com")
                 .build();
@@ -236,7 +236,7 @@ public class PostFilterTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.FALL)
                 .targetCount("전체00명")
                 .keywords(List.of("온유", "축복"))
                 .contact("example@test.com")

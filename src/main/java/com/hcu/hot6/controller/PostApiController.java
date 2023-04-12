@@ -6,6 +6,7 @@ import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.domain.response.PostFilterResponse;
+import com.hcu.hot6.domain.response.PostModifiedResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
 import com.hcu.hot6.service.KeywordService;
 import com.hcu.hot6.service.PostService;
@@ -62,7 +63,7 @@ public class PostApiController {
      * 모집글 정보 수정(update) : 단순 수정 + 모집 현황 수정
      */
     @PutMapping("/posts/{postId}")
-    public ResponseEntity<PostReadOneResponse> updatePost(
+    public ResponseEntity<PostModifiedResponse> updatePost(
             @PathVariable Long postId,
             @RequestBody PostUpdateRequest request,
             @AuthenticationPrincipal OAuth2User user) {

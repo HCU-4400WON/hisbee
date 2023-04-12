@@ -9,10 +9,11 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum Duration {
     TBD("미정"),
-    SHORT("1개월 이하"),
     SPRING("봄학기"), FALL("가을학기"),
     SUMMER("여름방학"), WINTER("겨울방학"),
-    LONG("1년 이상");
+    ONE("1학기"), TWO("2학기"),
+    THREE("3학기"), FOUR("4학기"),
+    LONG("1년");
 
     private final String kor;
 
@@ -25,7 +26,7 @@ public enum Duration {
     }
 
     @JsonValue
-    public String getKor() {
+    public String toKor() {
         return kor;
     }
 }

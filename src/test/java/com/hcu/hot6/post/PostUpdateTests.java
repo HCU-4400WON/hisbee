@@ -61,7 +61,7 @@ public class PostUpdateTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .durations(List.of(Duration.SPRING, Duration.SUMMER))
+                .duration(Duration.FALL)
                 .targetCount("00명")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
@@ -71,11 +71,13 @@ public class PostUpdateTests {
                 .title("수정된 모집글 제목")
                 .tags(new TagForm(List.of("첫줄,태그", "?")))
                 .postTypes(List.of("학회", "스터디"))
+                .duration(Duration.TBD)
                 .build();
 
         // when
         var post = postService.createPost(req, TEST_EMAIL);
-        var res = postService.updatePost(post.getId(), upReq, TEST_EMAIL);
+        postService.updatePost(post.getId(), upReq, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
 
         // then
         assertThat(res.getTitle()).isEqualTo("수정된 모집글 제목");
@@ -83,5 +85,6 @@ public class PostUpdateTests {
         assertThat(res.getTags().getSecond()).isEqualTo(List.of());
         assertThat(res.getPostTypes()).isEqualTo(List.of("학회", "스터디"));
         assertThat(res.getSummary()).isEqualTo("한 줄 소개");
+        assertThat(res.getDuration()).isEqualTo(Duration.TBD);
     }
 }

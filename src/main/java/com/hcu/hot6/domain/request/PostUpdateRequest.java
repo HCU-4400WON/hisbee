@@ -32,7 +32,7 @@ public class PostUpdateRequest {
     private List<String> departments;
     private String qualifications;
     private String targetCount;
-    private List<Duration> durations;
+    private Duration duration;
 
     // #3
     private List<String> keywords;
