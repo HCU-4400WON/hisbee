@@ -39,6 +39,8 @@ public class Post {
     private String targetDepartment;    // 다중선택 가능. "," 콤마로 구분
     private String targetCount;
     private String keywords;
+
+    @Column(length = 4095)
     private String content;
     private Long views;
     private boolean isAutoClose;
