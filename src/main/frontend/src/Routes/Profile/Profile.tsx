@@ -38,7 +38,7 @@ import Card from "Routes/Profile/Card";
 
 const Container = tw.div`
 flex
-`
+`;
 
 const Main = tw.div`
 px-[50px] 
@@ -47,7 +47,7 @@ min-w-[530px]
 lg:w-5/6 border-t-2 
 border-b-2 
 border-gray-200 
-`
+`;
 
 const Sidebar = tw.div`
 hidden
@@ -144,7 +144,6 @@ mt-[0px]
 mb-[80px]
 
 `;
-
 
 const ValidationVariant = {
   hidden: {
@@ -251,7 +250,6 @@ function Profile() {
     }
   };
 
-
   const { register, handleSubmit, formState, setValue, getValues } = useForm();
 
   const [Links, setLinks] = useState<string[]>([]);
@@ -323,19 +321,20 @@ function Profile() {
     const {
       currentTarget: { id },
     } = event;
-    const scrollToTarget = (target : string) => window.scrollTo(
-      (document.querySelector(target) as HTMLElement).offsetLeft,
-      (document.querySelector(target) as HTMLElement).offsetTop
-    );
+    const scrollToTarget = (target: string) =>
+      window.scrollTo(
+        (document.querySelector(target) as HTMLElement).offsetLeft,
+        (document.querySelector(target) as HTMLElement).offsetTop
+      );
 
     if (id === "1") {
-      scrollToTarget("#profileInfo")
+      scrollToTarget("#profileInfo");
     } else if (id === "2") {
-      scrollToTarget("#myPost")
+      scrollToTarget("#myPost");
     } else if (id === "3") {
-      scrollToTarget("#zzim")
+      scrollToTarget("#zzim");
     } else if (id === "4") {
-      scrollToTarget("#delete")
+      scrollToTarget("#delete");
     }
   };
 
@@ -388,7 +387,6 @@ function Profile() {
           ).style.backgroundColor = "white";
           (document.querySelector("#basicImage") as HTMLElement).style.color =
             "black";
-          
         });
       }
     );
@@ -403,7 +401,7 @@ function Profile() {
   };
   return (
     <>
-      {onSuccessLoading || getUserLoading  ? (
+      {onSuccessLoading || getUserLoading ? (
         <LoadingAnimation />
       ) : (
         <>
@@ -498,8 +496,6 @@ function Profile() {
                     </div>
                   ) : (
                     <div className="flex items-center justify-center w-[150px] mt-[10px]">
-                      
-
                       <span className=" text-[17px] font-semibold text-gray-500 bg-white px-[20px]">
                         <i className="fa-solid fa-user mr-[10px] text-gray-600"></i>
                         {data?.nickname}
@@ -659,7 +655,6 @@ function Profile() {
                         )}
                       </div>
                     )}
-
                   </ProfileInfoRow>
 
                   <ProfileInfoRow className=" items-start mb-0 mt-[8px]">
@@ -777,12 +772,10 @@ function Profile() {
               </span>
 
               <PostGrid id="myPost">
-              <AnimatePresence>
-                {(data?.posts as IPost[]).map((post, index) => (
-                
-      <Card post={post} refetch={refetch} key={index} />
-      
-                ))}
+                <AnimatePresence>
+                  {(data?.posts as IPost[]).map((post, index) => (
+                    <Card post={post} refetch={refetch} key={index} />
+                  ))}
                 </AnimatePresence>
               </PostGrid>
 
@@ -792,17 +785,19 @@ function Profile() {
               </span>
 
               <PostGrid id="zzim">
-              <AnimatePresence>
+                <AnimatePresence>
                   {data?.likes?.map((post, index) => (
-                      <Card post={post} refetch={refetch}  variants={PostItemVariant}
-                                      initial="initial"
-                                      animate="showing"
-                                      exit="hidden"
-                                      key={index}
-                                      />
-  
+                    <Card
+                      post={post}
+                      refetch={refetch}
+                      variants={PostItemVariant}
+                      initial="initial"
+                      animate="showing"
+                      exit="hidden"
+                      key={index}
+                    />
                   ))}
-                  </AnimatePresence>
+                </AnimatePresence>
               </PostGrid>
 
               {!location.state && (

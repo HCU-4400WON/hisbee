@@ -841,7 +841,7 @@ export interface IUpdatePost {
   contact?: string;
   qualifications?: string;
   // Optional
-  durations?: string[];
+  duration?: string;
   contactDetails?: string;
   content?: string; // 텍스트 에디터 변환 코드가 들어갈 예정
   years?: string[];
@@ -1023,8 +1023,8 @@ export interface IReadOnePost {
   summary: string;
   recruitStart: Date;
   recruitEnd: Date;
-  projectStart: Date;
-  durations: string[];
+  // projectStart: Date;
+  duration: string;
   postTypes: string[];
   tags: ITags;
   author: string;
@@ -1063,12 +1063,12 @@ export interface ICreatePost {
   postTypes: string[];
   recruitStart: string;
   recruitEnd?: string;
-  projectStart?: string;
+  // projectStart?: string;
   targetCount?: string; // positions : 없을 경우 "전체", 인원 : ~ 로 넣어서 요청해주기
   contact: string;
   qualifications?: string;
   // Optional
-  durations?: string[];
+  duration?: string;
   contactDetails?: string;
   content?: string; // 텍스트 에디터 변환 코드가 들어갈 예정
   years?: string[];

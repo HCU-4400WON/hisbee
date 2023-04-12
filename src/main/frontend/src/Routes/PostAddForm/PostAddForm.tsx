@@ -477,31 +477,28 @@ function PostAddForm() {
   };
 
   interface Iconverter {
-    [study : string] : string,
-    mentoring : string,
-    project : string,
+    [study: string]: string;
+    mentoring: string;
+    project: string;
 
-    planner : string,
-    designer : string,
-    developer : string,
-    mentor : string,
-    mentee : string,
+    planner: string;
+    designer: string;
+    developer: string;
+    mentor: string;
+    mentee: string;
   }
 
-  const converter : Iconverter = {
-    study : "스터디",
-    mentoring : "멘토링",
-    project : "프로젝트",
+  const converter: Iconverter = {
+    study: "스터디",
+    mentoring: "멘토링",
+    project: "프로젝트",
 
-    planner : "기획자",
-    designer : "디자이너",
-    developer : "개발자",
-    mentor : "멘토",
-    mentee : "멘티",
-  }
-
-
-
+    planner: "기획자",
+    designer: "디자이너",
+    developer: "개발자",
+    mentor: "멘토",
+    mentee: "멘티",
+  };
 
   return (
     <>
@@ -511,331 +508,371 @@ function PostAddForm() {
       mentoringMutateLoading ? (
         <LoadingAnimation />
       ) : (
-
         <>
-{/* Preview */}
+          {/* Preview */}
 
-        <div className="w-full h-[600px] flex items-center justify-between px-[100px]">
-          <div className="w-[400px] h-[400px] bg-[#eeeeee] p-[30px]">
-            <div className="mb-[70px]">
-              <span className="flex items-center justify-between mb-[20px]">
-            <input className="w-[70px] p-[5px] rounded-full " placeholder="일정 입력"/>
-            <i className="fa-regular fa-heart text-[23px] text-gray-400"></i>
-            </span>
-            <input className="w-[340px] text-[20px] p-[5px] mb-[10px]" type="text" placeholder="모집글 제목을 입력하세요" />
-            <input className="w-[340px] text-[15px] px-[5px] p-[2px] mb-[10px]" type="text" placeholder="모집글 제목을 입력하세요" />
-
-            </div>
-            <div className=" mb-[10px]">
-              <input type="text" className="px-[5px] w-[100px]" placeholder="키워드 입력"/>
-            </div>
-            <div className=" mb-[10px]">
-              <input type="text" className="px-[5px] w-[100px]" placeholder="키워드 입력"/>
-            </div>
-            <div className=" mb-[10px]">
-              <input type="text" className="px-[5px] w-[100px]" placeholder="키워드 입력"/>
-            </div>
-            
-            
-          </div>
-
-
-
-        <div className="w-[400px] h-[400px] border">
-          
-        </div>
-
-        <div className="w-[400px] h-[400px] border">
-
-        </div>
-        </div>
-
-
-
-
-        <form
-          onSubmit={handleSubmit(onValid as any)}
-          className="md:text-[16px] text-[13px] md:w-[1470px] md:px-[100px] px-[30px] py-[50px] pb-[100px] relative"
-        >
-          <Link to="/post">
-            <div className="absolute md:top-[62px] md:left-[40px] top-[25px] left-[30px]">
-              <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
-            </div>
-          </Link>
-          <div className="flex justify-between items-center">
-            <p className="w-full md:text-[30px] text-[20px] font-unique">모집글 작성하기</p>
-            <div className="flex h-[40px] items-end">
-              {[ "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)" ,"radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)" , "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)"].map((color,index) => (
-                <div key={index}
-                className="w-[15px] h-[15px]"
-                style={{
-                  backgroundImage: color,
-                }}
-              />
-              ))}
-            </div>
-          </div>
-          <FieldContainer>
-            <FieldRow>
-              <FieldBox>
-                <StyledFieldTitle>모집유형</StyledFieldTitle>
-                <StyledUl>
-                  {["study" , "mentoring" , "project"].map((category , index) => (
-                    <Styledli key={index}>
-                    <StyledInput
-                      id={category}
-                      type="radio"
-                      {...register("category", {
-                        required: "필수 항목",
-                      })}
-                      value={category}
-                      onClick={onClick}
-                    />
-                    <StyledInputName htmlFor={category}>{converter[category]}</StyledInputName>
-                  </Styledli>
-
-                  ))}
-                  <Validation message={formState.errors.category?.message} />
-                 
-                </StyledUl>
-              </FieldBox>
-
-              <FieldBox>
-                <StyledFieldTitle>모집인원</StyledFieldTitle>
-                <StyledUl>
-                  {cat === "project" ? (
-                    <>
-                    {["planner" , "designer" , "developer"].map((position , index) => (
-                      <Styledli key={index}>
-                      <label htmlFor={position}>{converter[position]}</label>
-                      <StyledInputNumber
-                        {...register(position as any, {
-                          required: "필수 사항 입니다.",
-                        })}
-                        min="0"
-                        id={position}
-                        type="number"
-                      />
-                    </Styledli>
-                    ))}
-                     
-                      <Validation message={formState.errors.planner?.message} />
-                    </>
-                  ) : cat === "mentoring" ? (
-                    <>
-                    {["mentor" , "mentee"].map((position , index) => (
-                      <Styledli key={index}>
-                      <label htmlFor={position}>{converter[position]}</label>
-                      <StyledInputNumber
-                        {...register(position as any, {
-                          required: "필수 사항 입니다.",
-                        })}
-                        min="0"
-                        id={position}
-                        type="number"
-                      />
-                    </Styledli>
-                    ))}
-                      <Validation message={formState.errors.mentor?.message} />
-                    </>
-                  ) : cat === "study" ? (
-                    <>
-                      <Styledli>
-                        <label htmlFor="member">스터디원</label>
-                        <StyledInputNumber
-                          {...register("member")}
-                          min="0"
-                          id="member"
-                          type="number"
-                        />
-                      </Styledli>
-
-                      <Validation message={formState.errors.member?.message} />
-                    </>
-                  ) : null}
-                </StyledUl>
-              </FieldBox>
-            </FieldRow>
-
-            <FieldRow className=" relative my-[30px]">
-              <FieldBox>
-                <StyledFieldTitle htmlFor="projectStart">
-                  프로젝트 기간
-                </StyledFieldTitle>
-
-                <input
-                  id="projectStart"
-                  {...register("projectStart", {
-                    required: "필수 항목",
-                  })}
-                  type="date"
-                  className=" px-[10px]"
-                />
-                <StyledSpan>~</StyledSpan>
-                <input
-                  {...register("projectEnd", {
-                    required: "필수 항목",
-                  })}
-                  type="date"
-                  className=" px-[10px]"
-                />
-               
-                <Validation message={(formState.errors.projectStart?.message as string) || (formState.errors.projectEnd?.message as string)} />
-              </FieldBox>
-              <FieldBox>
-                <StyledFieldTitle htmlFor="postEnd">모집 기간</StyledFieldTitle>
-
-                <span className=" font-medium pr-[10px]">
-                  {formState.defaultValues?.postStart}
+          <div className="w-full h-[600px] flex items-center justify-between px-[100px]">
+            <div className="w-[400px] h-[400px] bg-[#eeeeee] p-[30px]">
+              <div className="mb-[70px]">
+                <span className="flex items-center justify-between mb-[20px]">
+                  <input
+                    className="w-[70px] p-[5px] rounded-full "
+                    placeholder="일정 입력"
+                  />
+                  <i className="fa-regular fa-heart text-[23px] text-gray-400"></i>
                 </span>
-                <StyledSpan>~</StyledSpan>
                 <input
-                  className="w-[150px]  px-[10px]"
-                  {...register("postEnd", {
-                    required: "필수 항목",
-                  })}
-                  type="date"
-                />
-                <Validation message={formState.errors.postEnd?.message} />
-
-              </FieldBox>
-            </FieldRow>
-
-            <FieldRow>
-              <FieldBox>
-                <StyledFieldTitle htmlFor="contact">연락 수단</StyledFieldTitle>
-                <input
-                  className="border-b-2 border-black py-[5px] px-[10px] w-[270px] focus:outline-0"
-                  id="contact"
+                  className="w-[340px] text-[20px] p-[5px] mb-[10px]"
                   type="text"
-                  {...register("contact", {
-                    required: "필수 항목",
-                  })}
-                  placeholder="ex) 전화 번호 , 이메일 , 카톡 아이디 등"
-                  maxLength={30}
+                  placeholder="모집글 제목을 입력하세요"
                 />
+                <input
+                  className="w-[340px] text-[15px] px-[5px] p-[2px] mb-[10px]"
+                  type="text"
+                  placeholder="모집글 제목을 입력하세요"
+                />
+              </div>
+              <div className=" mb-[10px]">
+                <input
+                  type="text"
+                  className="px-[5px] w-[100px]"
+                  placeholder="키워드 입력"
+                />
+              </div>
+              <div className=" mb-[10px]">
+                <input
+                  type="text"
+                  className="px-[5px] w-[100px]"
+                  placeholder="키워드 입력"
+                />
+              </div>
+              <div className=" mb-[10px]">
+                <input
+                  type="text"
+                  className="px-[5px] w-[100px]"
+                  placeholder="키워드 입력"
+                />
+              </div>
+            </div>
 
-               
-                <Validation message={formState.errors.contact?.message} />
-              </FieldBox>
+            <div className="w-[400px] h-[400px] border"></div>
 
-              {cat === "" || cat === "study" ? null : (
+            <div className="w-[400px] h-[400px] border"></div>
+          </div>
+
+          <form
+            onSubmit={handleSubmit(onValid as any)}
+            className="md:text-[16px] text-[13px] md:w-[1470px] md:px-[100px] px-[30px] py-[50px] pb-[100px] relative"
+          >
+            <Link to="/post">
+              <div className="absolute md:top-[62px] md:left-[40px] top-[25px] left-[30px]">
+                <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
+              </div>
+            </Link>
+            <div className="flex justify-between items-center">
+              <p className="w-full md:text-[30px] text-[20px] font-unique">
+                모집글 작성하기
+              </p>
+              <div className="flex h-[40px] items-end">
+                {[
+                  "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)",
+                  "radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)",
+                  "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)",
+                ].map((color, index) => (
+                  <div
+                    key={index}
+                    className="w-[15px] h-[15px]"
+                    style={{
+                      backgroundImage: color,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+            <FieldContainer>
+              <FieldRow>
                 <FieldBox>
-                  <StyledFieldTitle>보수 유무</StyledFieldTitle>
-
+                  <StyledFieldTitle>모집유형</StyledFieldTitle>
                   <StyledUl>
-                    <Styledli>
-                      <StyledInput
-                        id="yes"
-                        {...register("pay", {
-                          required: "필수 항목",
-                        })}
-                        type="radio"
-                        value="yes"
-                      />
-                      <StyledInputName htmlFor="yes">Yes</StyledInputName>
-                    </Styledli>
-                    <Styledli>
-                      <StyledInput
-                        id="no"
-                        {...register("pay", {
-                          required: "필수 항목",
-                        })}
-                        type="radio"
-                        value="no"
-                      />
-                      <StyledInputName htmlFor="no">No</StyledInputName>
-                    </Styledli>
+                    {["study", "mentoring", "project"].map(
+                      (category, index) => (
+                        <Styledli key={index}>
+                          <StyledInput
+                            id={category}
+                            type="radio"
+                            {...register("category", {
+                              required: "필수 항목",
+                            })}
+                            value={category}
+                            onClick={onClick}
+                          />
+                          <StyledInputName htmlFor={category}>
+                            {converter[category]}
+                          </StyledInputName>
+                        </Styledli>
+                      )
+                    )}
+                    <Validation message={formState.errors.category?.message} />
                   </StyledUl>
-
-                  <Validation message={formState.errors.pay?.message} />
                 </FieldBox>
-              )}
-            </FieldRow>
-          </FieldContainer>
 
-          <div className="flex mb-[40px] relative">
-            <label
-              htmlFor="title"
-              className="md:w-[130px] w-[80px] text-[15px] md:text-[20px] my-auto font-main"
-            >
-              제목
-            </label>
-            <input
-              {...register("title", {
-                minLength: {
-                  value: 3,
-                  message: "제목이 너무 짧습니다.",
-                },
-                maxLength: {
-                  value: 30,
-                  message: "제목이 너무 깁니다.",
-                },
-              })}
-              id="title"
-              type="text"
-              className="w-full bg-[#eeeeee] h-[40px] px-[10px] "
-              placeholder="3~30글자 제한 (짧은 제목 권장)"
-              maxLength={30}
-            />
-           
-            <Validation message={formState.errors.title?.message} />
-          </div>
+                <FieldBox>
+                  <StyledFieldTitle>모집인원</StyledFieldTitle>
+                  <StyledUl>
+                    {cat === "project" ? (
+                      <>
+                        {["planner", "designer", "developer"].map(
+                          (position, index) => (
+                            <Styledli key={index}>
+                              <label htmlFor={position}>
+                                {converter[position]}
+                              </label>
+                              <StyledInputNumber
+                                {...register(position as any, {
+                                  required: "필수 사항 입니다.",
+                                })}
+                                min="0"
+                                id={position}
+                                type="number"
+                              />
+                            </Styledli>
+                          )
+                        )}
 
-          <div className="flex relative">
-            <label
-              htmlFor="content"
-              className="md:w-[130px] text-[15px] md:text-[20px] w-[80px] font-main"
-            >
-              내용
-            </label>
-            
-            <MyBlock className="w-full">
-              <Editor
-                // 에디터와 툴바 모두에 적용되는 클래스
-                wrapperClassName="wrapper-class"
-                // 에디터 주변에 적용된 클래스
-                editorClassName="editor"
-                // 툴바 주위에 적용된 클래스
-                toolbarClassName="toolbar-class"
-                // 툴바 설정
-                toolbar={{
-                  // inDropdown: 해당 항목과 관련된 항목을 드롭다운으로 나타낼것인지
-                  list: { inDropdown: true },
-                  textAlign: { inDropdown: true },
-                  link: { inDropdown: true },
-                  history: { inDropdown: false },
-                  image: {
-                    uploadCallback: onImageChange,
-                    previewImage: true,
-                    alt: { present: true, mandatory: false },
-                    inputAccept:
-                      "image/gif,image/jpeg,image/jpg,image/png,image/svg",
+                        <Validation
+                          message={formState.errors.planner?.message}
+                        />
+                      </>
+                    ) : cat === "mentoring" ? (
+                      <>
+                        {["mentor", "mentee"].map((position, index) => (
+                          <Styledli key={index}>
+                            <label htmlFor={position}>
+                              {converter[position]}
+                            </label>
+                            <StyledInputNumber
+                              {...register(position as any, {
+                                required: "필수 사항 입니다.",
+                              })}
+                              min="0"
+                              id={position}
+                              type="number"
+                            />
+                          </Styledli>
+                        ))}
+                        <Validation
+                          message={formState.errors.mentor?.message}
+                        />
+                      </>
+                    ) : cat === "study" ? (
+                      <>
+                        <Styledli>
+                          <label htmlFor="member">스터디원</label>
+                          <StyledInputNumber
+                            {...register("member")}
+                            min="0"
+                            id="member"
+                            type="number"
+                          />
+                        </Styledli>
+
+                        <Validation
+                          message={formState.errors.member?.message}
+                        />
+                      </>
+                    ) : null}
+                  </StyledUl>
+                </FieldBox>
+              </FieldRow>
+
+              <FieldRow className=" relative my-[30px]">
+                <FieldBox>
+                  <StyledFieldTitle htmlFor="projectStart">
+                    프로젝트 기간
+                  </StyledFieldTitle>
+
+                  <input
+                    id="projectStart"
+                    {...register("projectStart", {
+                      required: "필수 항목",
+                    })}
+                    type="date"
+                    className=" px-[10px]"
+                  />
+                  <StyledSpan>~</StyledSpan>
+                  <input
+                    {...register("projectEnd", {
+                      required: "필수 항목",
+                    })}
+                    type="date"
+                    className=" px-[10px]"
+                  />
+
+                  <Validation
+                    message={
+                      (formState.errors.projectStart?.message as string) ||
+                      (formState.errors.projectEnd?.message as string)
+                    }
+                  />
+                </FieldBox>
+                <FieldBox>
+                  <StyledFieldTitle htmlFor="postEnd">
+                    모집 기간
+                  </StyledFieldTitle>
+
+                  <span className=" font-medium pr-[10px]">
+                    {formState.defaultValues?.postStart}
+                  </span>
+                  <StyledSpan>~</StyledSpan>
+                  <input
+                    className="w-[150px]  px-[10px]"
+                    {...register("postEnd", {
+                      required: "필수 항목",
+                    })}
+                    type="date"
+                  />
+                  <Validation message={formState.errors.postEnd?.message} />
+                </FieldBox>
+              </FieldRow>
+
+              <FieldRow>
+                <FieldBox>
+                  <StyledFieldTitle htmlFor="contact">
+                    연락 수단
+                  </StyledFieldTitle>
+                  <input
+                    className="border-b-2 border-black py-[5px] px-[10px] w-[270px] focus:outline-0"
+                    id="contact"
+                    type="text"
+                    {...register("contact", {
+                      required: "필수 항목",
+                    })}
+                    placeholder="ex) 전화 번호 , 이메일 , 카톡 아이디 등"
+                    maxLength={30}
+                  />
+
+                  <Validation message={formState.errors.contact?.message} />
+                </FieldBox>
+
+                {cat === "" || cat === "study" ? null : (
+                  <FieldBox>
+                    <StyledFieldTitle>보수 유무</StyledFieldTitle>
+
+                    <StyledUl>
+                      <Styledli>
+                        <StyledInput
+                          id="yes"
+                          {...register("pay", {
+                            required: "필수 항목",
+                          })}
+                          type="radio"
+                          value="yes"
+                        />
+                        <StyledInputName htmlFor="yes">Yes</StyledInputName>
+                      </Styledli>
+                      <Styledli>
+                        <StyledInput
+                          id="no"
+                          {...register("pay", {
+                            required: "필수 항목",
+                          })}
+                          type="radio"
+                          value="no"
+                        />
+                        <StyledInputName htmlFor="no">No</StyledInputName>
+                      </Styledli>
+                    </StyledUl>
+
+                    <Validation message={formState.errors.pay?.message} />
+                  </FieldBox>
+                )}
+              </FieldRow>
+            </FieldContainer>
+
+            <div className="flex mb-[40px] relative">
+              <label
+                htmlFor="title"
+                className="md:w-[130px] w-[80px] text-[15px] md:text-[20px] my-auto font-main"
+              >
+                제목
+              </label>
+              <input
+                {...register("title", {
+                  minLength: {
+                    value: 3,
+                    message: "제목이 너무 짧습니다.",
                   },
-                }}
-                placeholder="내용을 작성해주세요."
-                // 한국어 설정
-                localization={{
-                  locale: "ko",
-                }}
-                // 초기값 설정
-                editorState={editorState}
-                // 에디터의 값이 변경될 때마다 onEditorStateChange 호출
-                onEditorStateChange={onEditorStateChange}
+                  maxLength: {
+                    value: 30,
+                    message: "제목이 너무 깁니다.",
+                  },
+                })}
+                id="title"
+                type="text"
+                className="w-full bg-[#eeeeee] h-[40px] px-[10px] "
+                placeholder="3~30글자 제한 (짧은 제목 권장)"
+                maxLength={30}
               />
-            </MyBlock>
 
-            <Validation message={formState.errors.content?.message} className="absolute text-xs my-auto mx-5 bottom-[-20px] left-[100px]" />
-          </div>
+              <Validation message={formState.errors.title?.message} />
+            </div>
 
-          <input
-            type="submit"
-            className="my-[40px] bg-[#eeeeee] w-[120px] h-[30px] text-[16px] font-semibold float-right"
-            value="올리기"
-          />
-        </form>
+            <div className="flex relative">
+              <label
+                htmlFor="content"
+                className="md:w-[130px] text-[15px] md:text-[20px] w-[80px] font-main"
+              >
+                내용
+              </label>
+
+              <MyBlock className="w-full">
+                <Editor
+                  // 에디터와 툴바 모두에 적용되는 클래스
+                  wrapperClassName="wrapper-class"
+                  // 에디터 주변에 적용된 클래스
+                  editorClassName="editor"
+                  // 툴바 주위에 적용된 클래스
+                  toolbarClassName="toolbar-class"
+                  // 툴바 설정
+                  toolbar={{
+                    // inDropdown: 해당 항목과 관련된 항목을 드롭다운으로 나타낼것인지
+                    list: { inDropdown: true },
+                    textAlign: { inDropdown: true },
+                    link: { inDropdown: true },
+                    history: { inDropdown: false },
+                    image: {
+                      uploadCallback: onImageChange,
+                      previewImage: true,
+                      alt: { present: true, mandatory: false },
+                      inputAccept:
+                        "image/gif,image/jpeg,image/jpg,image/png,image/svg",
+                    },
+                  }}
+                  placeholder="내용을 작성해주세요."
+                  // 한국어 설정
+                  localization={{
+                    locale: "ko",
+                  }}
+                  // 초기값 설정
+                  editorState={editorState}
+                  // 에디터의 값이 변경될 때마다 onEditorStateChange 호출
+                  onEditorStateChange={onEditorStateChange}
+                />
+              </MyBlock>
+
+              <Validation
+                message={formState.errors.content?.message}
+                className="absolute text-xs my-auto mx-5 bottom-[-20px] left-[100px]"
+              />
+            </div>
+
+            <input
+              type="submit"
+              className="my-[40px] bg-[#eeeeee] w-[120px] h-[30px] text-[16px] font-semibold float-right"
+              value="올리기"
+            />
+          </form>
         </>
-        
       )}
     </>
   );
