@@ -44,6 +44,6 @@ public class PostUpdateRequest {
     private List<String> posterPaths;
 
     //
-    private boolean isClosed;
-    private boolean isArchived;
+    private Boolean isClosed;
+    private Boolean isArchived;
 }

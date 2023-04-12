@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.hcu.hot6.util.Utils.nonNullOrElse;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,22 +29,25 @@ public class Post {
     @Column(name = "post_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Member author;
-    private String postTypes;   // keyword. "," 콤마로 구분
+    private String postTypes;
     private String contact;
 
     // 필수 아닌 필드
-    private String content;
     private String contactDetails;
     private String qualifications;
     private String targetYears;         // 다중선택 가능. "," 콤마로 구분
     private String targetDepartment;    // 다중선택 가능. "," 콤마로 구분
+    private String targetCount;
+    private String keywords;
+    private String content;
+    private Long views;
+    private boolean isAutoClose;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member author;
 
     @OneToMany(mappedBy = "post")
     private List<Likes> likes = new ArrayList<>();
-
-    private String targetCount;
 
     @OneToMany(mappedBy = "post")
     private List<Poster> posters = new ArrayList<>();
@@ -50,10 +55,6 @@ public class Post {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "thumbnail_id")
     private Thumbnail thumbnail;
-
-    private String keywords;            // 추가 설명 키워드. "," 콤마로 구분
-    private Long views;                 // 조회수
-    private boolean isAutoClose;
 
     @CreatedDate
     private LocalDateTime createdDate;
@@ -100,9 +101,26 @@ public class Post {
         return null;
     }
 
-    public void update(PostUpdateRequest request) {
-        this.content = request.getContent();
-        this.contact = request.getContact();
+    public void update(PostUpdateRequest req) {
+        this.postTypes = (req.getPostTypes() != null)
+                ? Utils.toString(req.getPostTypes(), ",")
+                : postTypes;
+        this.contact = nonNullOrElse(req.getContact(), contact);
+        this.contactDetails = nonNullOrElse(req.getContactDetails(), contactDetails);
+        this.qualifications = nonNullOrElse(req.getQualifications(), qualifications);
+        this.targetYears = (req.getYears() != null)
+                ? Utils.toString(req.getYears(), ",")
+                : targetYears;
+        this.targetDepartment = (req.getDepartments() != null)
+                ? Utils.toString(req.getDepartments(), ",")
+                : targetDepartment;
+        this.targetCount = nonNullOrElse(req.getTargetCount(), targetCount);
+        this.keywords = (req.getKeywords() != null)
+                ? Utils.toString(req.getKeywords(), ",")
+                : keywords;
+        this.content = nonNullOrElse(req.getContent(), content);
+
+        thumbnail.update(req);
     }
 
     public PostReadOneResponse toResponse(String email) {

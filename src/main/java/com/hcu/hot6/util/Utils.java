@@ -37,4 +37,8 @@ public class Utils {
     public static String nonEmptyOrElse(String s, String or) {
         return (s.isEmpty()) ? or : s;
     }
+
+    public static <T> T nonNullOrElse(T obj, T defaultObj) {
+        return (obj != null) ? obj : defaultObj;
+    }
 }

@@ -1,6 +1,7 @@
 package com.hcu.hot6.domain;
 
 import com.hcu.hot6.domain.request.PostCreationRequest;
+import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostThumbnailResponse;
 import com.hcu.hot6.util.Utils;
 import jakarta.persistence.*;
@@ -11,6 +12,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static com.hcu.hot6.util.Utils.nonNullOrElse;
 
 @Getter
 @Entity
@@ -52,6 +55,8 @@ public class Thumbnail {
     }
 
     private String arrayToString(List<Duration> durations) {
+        if (durations == null) return null;
+
         List<String> list = durations.stream()
                 .map(Enum::name)
                 .toList();
@@ -65,5 +70,16 @@ public class Thumbnail {
 
     public PostThumbnailResponse toResponse(String email) {
         return new PostThumbnailResponse(this, email);
+    }
+
+    public void update(PostUpdateRequest req) {
+        this.title = nonNullOrElse(req.getTitle(), title);
+        this.tags = (req.getTags() != null) ? req.getTags().combine() : tags;
+        this.summary = nonNullOrElse(req.getSummary(), summary);
+        this.recruitStart = nonNullOrElse(Utils.toLocalDateTime(req.getRecruitStart()), recruitStart);
+        this.recruitEnd = nonNullOrElse(Utils.toLocalDateTime(req.getRecruitEnd()), recruitEnd);
+        this.durations = nonNullOrElse(arrayToString(req.getDurations()), durations);
+        this.isClosed = nonNullOrElse(req.getIsClosed(), isClosed);
+        this.isArchived = nonNullOrElse(req.getIsArchived(), isArchived);
     }
 }
