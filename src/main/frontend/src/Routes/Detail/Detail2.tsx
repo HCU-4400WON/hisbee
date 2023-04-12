@@ -533,8 +533,7 @@ function Detail2() {
   const onImageChange = async (file: any) => {
     console.log(file);
     let newImage: any;
-    // file.preventDefault();
-    // const file = e;
+
     if (!file) return null;
 
     const storageRef = ref(storage, `files/${file.name}`);
@@ -631,35 +630,7 @@ function Detail2() {
                 <button
                   onClick={() => {
                     const newClosedPost: IUpdatePost = {
-                      title: data?.title,
-                      summary: data?.summary,
-                      tags: data?.tags,
-                      postTypes: data?.postTypes,
-                      recruitStart:
-                        data?.recruitStart &&
-                        converter("year", data?.recruitStart),
-                      recruitEnd:
-                        data?.recruitEnd && converter("year", data?.recruitEnd),
-
-                      // projectStart: data?.projectStart !== "" ? data?.projectStart : null,
-                      // projectStart: "2023-04-11", // optional로 바뀌어야 함
-                      // durations: data?.durations?.length !== 0 ? data?.durations : [],
-                      durations: data?.durations,
-                      // durations: "11",
-
-                      // targetCount: data?.positionToggle ? null : data?.targetCount,
-                      targetCount: data?.targetCount,
-                      // positions: newPosition,
-                      contact: data?.contact,
-
-                      // contact: data?.contact !== "" ? data?.contact : null,
-                      contactDetails: data?.contactDetails,
-                      content: data?.content,
-
-                      years: data?.years,
-                      departments: data?.departments,
-                      keywords: data?.keywords,
-                      posterPaths: data?.posterPaths,
+                      isClosed: true,
                     };
                     updatePost(Number(id), newClosedPost);
                   }}
