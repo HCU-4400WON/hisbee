@@ -8,45 +8,57 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Builder
 public class PostCreationRequest {
 
-    // Thumbnail
+    // #1
     @NotNull
     private String title;
+
     private String summary;
+
+    @NotNull
     private TagForm tags;
 
-    // Metadata
     @NotNull
-    private List<String> postTypes;
-
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull
     private Date recruitStart;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date recruitEnd;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date projectStart;
-
-    private List<Duration> durations;
-
     @NotNull
-    private String targetCount;
+    private List<String> postTypes;
 
     @NotNull
     private String contact;
 
-    // Optional fields
     private String contactDetails;
-    private String content;
-    private String qualifications;
+
+    // #2
     private List<String> years;
     private List<String> departments;
+    private String qualifications;
+    private String targetCount;
+    private List<Duration> durations;
+
+    // #3
     private List<String> keywords;
+
+    // #4
+    private String content;
+
+    // #5
     private List<String> posterPaths;
+
+    public TagForm getTags() {
+        return Objects.requireNonNullElse(this.tags, new TagForm());
+    }
+
+    public String getTargetCount() {
+        return Objects.requireNonNullElse(this.targetCount, "00명");
+    }
 }

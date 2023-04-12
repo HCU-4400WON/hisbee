@@ -1,6 +1,7 @@
 package com.hcu.hot6.domain;
 
 import com.hcu.hot6.domain.request.PostCreationRequest;
+import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostThumbnailResponse;
 import com.hcu.hot6.util.Utils;
 import jakarta.persistence.*;
@@ -10,8 +11,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+
+import static com.hcu.hot6.util.Utils.nonNullOrElse;
 
 @Getter
 @Entity
@@ -27,7 +29,6 @@ public class Thumbnail {
     private String summary;
     private LocalDateTime recruitStart;     // 미래인 경우 썸네일에 "모집 예정" , 아닌 경우 "D-00" 표시
     private LocalDateTime recruitEnd;
-    private LocalDateTime projectStart;
     private String durations;       // 다중선택 가능 - 구분 "," 콤마
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "thumbnail")
@@ -42,16 +43,20 @@ public class Thumbnail {
     }
 
     public Thumbnail(PostCreationRequest request) {
+        // required
         this.title = request.getTitle();
+        this.tags = request.getTags().combine();
+
+        // optional
         this.summary = request.getSummary();
-        this.tags = (Objects.isNull(request.getTags())) ? "" : request.getTags().combine();
         this.recruitStart = Utils.toLocalDateTime(request.getRecruitStart());
         this.recruitEnd = Utils.toLocalDateTime(request.getRecruitEnd());
-        this.projectStart = Utils.toLocalDateTime(request.getProjectStart());
         this.durations = arrayToString(request.getDurations());
     }
 
     private String arrayToString(List<Duration> durations) {
+        if (durations == null) return null;
+
         List<String> list = durations.stream()
                 .map(Enum::name)
                 .toList();
@@ -65,5 +70,16 @@ public class Thumbnail {
 
     public PostThumbnailResponse toResponse(String email) {
         return new PostThumbnailResponse(this, email);
+    }
+
+    public void update(PostUpdateRequest req) {
+        this.title = nonNullOrElse(req.getTitle(), title);
+        this.tags = (req.getTags() != null) ? req.getTags().combine() : tags;
+        this.summary = nonNullOrElse(req.getSummary(), summary);
+        this.recruitStart = nonNullOrElse(Utils.toLocalDateTime(req.getRecruitStart()), recruitStart);
+        this.recruitEnd = nonNullOrElse(Utils.toLocalDateTime(req.getRecruitEnd()), recruitEnd);
+        this.durations = nonNullOrElse(arrayToString(req.getDurations()), durations);
+        this.isClosed = nonNullOrElse(req.getIsClosed(), isClosed);
+        this.isArchived = nonNullOrElse(req.getIsArchived(), isArchived);
     }
 }

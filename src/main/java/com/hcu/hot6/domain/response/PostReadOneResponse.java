@@ -25,7 +25,6 @@ public class PostReadOneResponse {
     private String summary;
     private Date recruitStart;
     private Date recruitEnd;
-    private Date projectStart;
     private List<String> durations;
     private List<String> postTypes;
     private TagForm tags;
@@ -59,7 +58,6 @@ public class PostReadOneResponse {
         this.summary = thumbnail.getSummary();
         this.recruitStart = toDate(thumbnail.getRecruitStart());
         this.recruitEnd = toDate(thumbnail.getRecruitEnd());
-        this.projectStart = toDate(thumbnail.getProjectStart());
         this.durations = toArray(thumbnail.getDurations(), ",");
         this.tags = (Strings.isEmpty(thumbnail.getTags())) ?
                 new TagForm() :

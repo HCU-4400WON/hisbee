@@ -116,7 +116,6 @@ public class PostControllerTest {
                 .content("content")
                 .contact("contact")
                 .recruitEnd(new Date())
-                .projectStart(new Date())
                 .build();
 
         MvcResult result = mockMvc
@@ -157,7 +156,6 @@ public class PostControllerTest {
                 .content("content")
                 .contact("contact")
                 .recruitEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
-                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build();
 
         mockMvc
@@ -186,7 +184,6 @@ public class PostControllerTest {
                 .content("content")
                 .contact("contact")
                 .recruitEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
-                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build();
 
         mockMvc
@@ -211,7 +208,6 @@ public class PostControllerTest {
                 .content("content")
                 .contact("contact")
                 .recruitEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
-                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -237,7 +233,6 @@ public class PostControllerTest {
                 .content("content")
                 .contact("contact")
                 .recruitEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
-                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -265,7 +260,6 @@ public class PostControllerTest {
                 .content("content")
                 .contact("contact")
                 .recruitEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
-                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -298,7 +292,6 @@ public class PostControllerTest {
                 .content("content")
                 .contact("contact")
                 .recruitEnd(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
-                .projectStart(java.sql.Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -327,7 +320,6 @@ public class PostControllerTest {
                 .content("content")
                 .contact("contact")
                 .recruitEnd(Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
-                .projectStart(Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build(), TEST_EMAIL);
 
         // when
@@ -354,7 +346,6 @@ public class PostControllerTest {
                 .content("content")
                 .contact("contact")
                 .recruitEnd(Timestamp.valueOf(LocalDateTime.of(2023, 3, 2, 0, 0, 0)))
-                .projectStart(Timestamp.valueOf(LocalDateTime.of(2023, 3, 10, 0, 0, 0)))
                 .build(), TEST_EMAIL);
 
         postService.addBookmark(post.getId(), "lifeIsGood@test.com");
@@ -383,7 +374,6 @@ public class PostControllerTest {
                 .content("content")
                 .contact("contact")
                 .recruitEnd(new Date())
-                .projectStart(new Date())
                 .build(), "lifeIsGood@test.com");
 
         // when

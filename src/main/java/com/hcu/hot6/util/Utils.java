@@ -8,15 +8,19 @@ import java.util.Optional;
 
 public class Utils {
     public static LocalDateTime toLocalDateTime(Date e) {
+        if (e == null) return null;
+
         return LocalDateTime.ofInstant(e.toInstant(), ZoneId.systemDefault());
     }
 
     public static Date toDate(LocalDateTime e) {
+        if (e == null) return null;
+
         return java.sql.Timestamp.valueOf(e);
     }
 
     public static List<String> toArray(String s, String delim) {
-        if (s == null) {
+        if (s == null || s.equals("?")) {
             return List.of();
         }
         return List.of(s.split(delim));
@@ -28,5 +32,13 @@ public class Utils {
                 Optional.ofNullable(list)
                         .orElse(List.of())
         );
+    }
+
+    public static String nonEmptyOrElse(String s, String or) {
+        return (s.isEmpty()) ? or : s;
+    }
+
+    public static <T> T nonNullOrElse(T obj, T defaultObj) {
+        return (obj != null) ? obj : defaultObj;
     }
 }
