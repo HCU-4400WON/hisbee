@@ -80,7 +80,11 @@ public class PostService {
         var pagination = new Pagination(filter.getPage(), postRepository.count(filter));
         var postResponseList = postRepository.findAll(filter, pagination.getOffset())
                 .stream()
-                .map(post -> post.getThumbnail().toResponse(email))
+                .map(post -> {
+                    if(!post.getThumbnail().isArchived())
+                        return post.getThumbnail().toResponse(email);
+                    else return null;
+                })
                 .toList();
 
         return new PostFilterResponse(
