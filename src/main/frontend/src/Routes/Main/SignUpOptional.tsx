@@ -347,7 +347,9 @@ function SignUpOptional() {
           >
             <Title>Sign Up</Title>
 
-            <SubTitle className="mt-[80px] mb-[20px] font-unique">선택사항</SubTitle>
+            <SubTitle className="mt-[80px] mb-[20px] font-unique">
+              선택사항
+            </SubTitle>
             <Info className="mt-[0px]">
               * 선택 사항을 기입하시면 인재풀 페이지를 열람 하실 수 있습니다.
               {/* <Link to="/"> */}
@@ -471,7 +473,6 @@ function SignUpOptional() {
                 </InfoBox>
               </div>
               <div className="flex flex-col items-center justify-evenly mt-[15px]">
-              
                 <img
                   id="uploadImage"
                   className="my-[10px] w-[200px] h-[200px] md:w-[300px] md:h-[300px] md:my-[0px]"
@@ -483,7 +484,7 @@ function SignUpOptional() {
                     console.log(e);
                   }}
                 ></img>
-                
+
                 <input
                   className="hidden"
                   type="file"
@@ -492,7 +493,7 @@ function SignUpOptional() {
                   // onChange={onUploadImage}
                   onChange={onImageChange}
                 />
-                
+
                 <div className="flex items-center justify-between w-[170px] md:mb-[10px] mb-[10px]">
                   <i
                     onClick={onUploadImageButtonClick}

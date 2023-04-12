@@ -83,8 +83,8 @@ function PostAddForm2() {
 
       recruitStart: converter("year", new Date()), // string
       recruitEnd: converter("year", new Date()), // string
-      projectStart: "",
-      durations: [],
+      // projectStart: "",
+      duration: "",
 
       // positions: [],
       // positionName: "",
@@ -118,8 +118,8 @@ function PostAddForm2() {
     postTypes: string[];
     recruitStart: string; // string
     recruitEnd?: string; // string
-    projectStart?: string;
-    durations?: string[];
+    // projectStart?: string;
+    duration?: string;
     targetCount?: string;
     // positions?: IPositionList[];
     // positionName?: string;
@@ -238,7 +238,7 @@ function PostAddForm2() {
     // }
 
     const newPost = {
-      title: data.title,
+      title: data?.title,
       summary: data?.summary !== "" ? data?.summary : null,
       tags: {
         first: data?.first?.length === 0 ? [] : data?.first,
@@ -250,19 +250,9 @@ function PostAddForm2() {
           ? converter("year", new Date())
           : data?.recruitStart,
       recruitEnd: data?.recruitEnd !== "" ? data?.recruitEnd : null,
-
-      // projectStart: data?.projectStart !== "" ? data?.projectStart : null,
-      projectStart: "2023-04-11", // optional로 바뀌어야 함
-      // durations: data?.durations?.length !== 0 ? data?.durations : [],
-      // durations: data?.durations,
-      durations: [],
-
-      // targetCount: data?.positionToggle ? null : data?.targetCount,
-      targetCount: "10명",
-      // positions: newPosition,
-      contact: "11",
-
-      // contact: data?.contact !== "" ? data?.contact : null,
+      duration: data.duration === "" ? null : data?.duration,
+      targetCount: data?.targetCount,
+      contact: data?.contact,
       contactDetails: data?.contactDetails !== "" ? data?.contactDetails : null,
       content:
         draftToHtml(convertToRaw(editorState.getCurrentContent())) ===
@@ -295,7 +285,7 @@ function PostAddForm2() {
       recruitStart: "2023-04-02",
       recruitEnd: "2023-04-16",
       projectStart: "2023-05-01",
-      durations: ["봄학기", "여름방학"],
+      duration: "d",
       targetCount: "전체00명",
       contact: "ccdot@gmail.com",
       contactDetails: "포트폴리오 제출 필수",
@@ -468,7 +458,7 @@ function PostAddForm2() {
     /* 활동 기간 */
   }
 
-  const durations = [
+  const duration = [
     "봄학기",
     "가을학기",
     "여름방학",
@@ -1128,8 +1118,8 @@ function PostAddForm2() {
               </div>
               <div className="w-[45%] ">
                 <p className="">활동 기간</p>
-                <select {...register("durations")} className="mt-[20px]">
-                  {durations.map((duration, index) => (
+                <select {...register("duration")} className="mt-[20px]">
+                  {duration.map((duration, index) => (
                     <option key={index}>{duration}</option>
                   ))}
                 </select>

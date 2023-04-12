@@ -37,13 +37,28 @@ function Thumbnail({
   // const keywordsFirstLine = ["UX" , "제품 디자인"];
   // const keywordsSecondLine = ["5학기 이상"];
   // const Likes = 15;
+  const dateDiff =
+    (new Date(recruitEnd).getTime() - new Date(recruitStart).getTime()) /
+    (1000 * 60 * 60 * 24);
+  const soon = dateDiff <= 4 && closed === false;
 
   return (
-    <div className="min-w-[310px] h-[260px] mb-[50px] p-[15px] bg-white rounded-xl border mx-[20px]">
+    <div
+      className={`min-w-[310px] h-[260px] mb-[50px] p-[15px]  rounded-xl border mx-[20px] bg-white ${
+        closed && "opacity-40 bg-gray-200"
+      }`}
+    >
       <div className="flex justify-between">
-        <span className="px-[10px] py-[1px] rounded-full bg-gray-200 text-[13px]">
-          <p>{dDay}</p>
-        </span>
+        <div className="flex items-center">
+          <span className="px-[10px] py-[1px] rounded-full bg-gray-200 text-[14px]">
+            <p>{closed ? "모집마감" : dDay}</p>
+          </span>
+          {soon && (
+            <span className="px-[10px] py-[1px] rounded-full bg-gray-200 text-[14px] ml-[10px]">
+              마감 임박🔥
+            </span>
+          )}
+        </div>
         <span className="flex items-center ">
           <p className="mr-[10px]">{nlike}</p>
           <i className="fa-regular fa-heart text-[18px] text-gray-400"></i>

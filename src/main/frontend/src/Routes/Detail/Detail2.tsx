@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   IPost,
   IReadOnePost,
+  IUpdatePost,
   loginCheckApi,
   readOnePost,
   updatePost,
@@ -32,6 +33,7 @@ import styled from "styled-components";
 import Validation from "./Validation";
 import MyEditor from "./MyEditor";
 import {
+  converter,
   PostDetailExample,
   PostExamples,
 } from "Routes/PostAddForm/PostExamples";
@@ -342,6 +344,15 @@ function Detail2() {
     {
       onSuccess: (data) => {
         console.log("모집글 하나 읽어오기 성공 : ", data);
+
+        // if (!data?.content) data.content= EditorState.createEmpty();
+        // const contentDraft = htmlToDraft(data?.content);
+        // const { contentBlocks, entityMap } = contentDraft;
+        // const contentState = ContentState.createFromBlockArray(
+        //   contentBlocks,
+        //   entityMap
+        // );
+        // data.content = EditorState.createWithContent(contentState);
       },
       onError: () => {
         console.log("존재하지 않는 게시물입니다.");
@@ -522,8 +533,7 @@ function Detail2() {
   const onImageChange = async (file: any) => {
     console.log(file);
     let newImage: any;
-    // file.preventDefault();
-    // const file = e;
+
     if (!file) return null;
 
     const storageRef = ref(storage, `files/${file.name}`);
@@ -565,25 +575,25 @@ function Detail2() {
     );
   };
 
-  interface Iconverter {
-    [maxDeveloper: string]: string;
-    maxPlanner: string;
-    maxDesigner: string;
-    maxMentor: string;
-    maxMentee: string;
-  }
-  const converter: Iconverter = {
-    maxDeveloper: "개발자",
-    maxPlanner: "기획자",
-    maxDesigner: "디자이너",
-    maxMentor: "멘토",
-    maxMentee: "멘티",
-    currDeveloper: "개발자",
-    currPlanner: "기획자",
-    currDesigner: "디자이너",
-    currMentor: "멘토",
-    currMentee: "멘티",
-  };
+  // interface Iconverter {
+  //   [maxDeveloper: string]: string;
+  //   maxPlanner: string;
+  //   maxDesigner: string;
+  //   maxMentor: string;
+  //   maxMentee: string;
+  // }
+  // const converter: Iconverter = {
+  //   maxDeveloper: "개발자",
+  //   maxPlanner: "기획자",
+  //   maxDesigner: "디자이너",
+  //   maxMentor: "멘토",
+  //   maxMentee: "멘티",
+  //   currDeveloper: "개발자",
+  //   currPlanner: "기획자",
+  //   currDesigner: "디자이너",
+  //   currMentor: "멘토",
+  //   currMentee: "멘티",
+  // };
   const dateConverter = (date: Date) => {
     const str = "";
     return str.concat(
@@ -617,7 +627,16 @@ function Detail2() {
                 {/* )} */}
               </FormHeader>
               <div className="flex justify-end">
-                <button>마감</button>
+                <button
+                  onClick={() => {
+                    const newClosedPost: IUpdatePost = {
+                      isClosed: true,
+                    };
+                    updatePost(Number(id), newClosedPost);
+                  }}
+                >
+                  마감
+                </button>
                 <Link to={`/modify/${id}`} state={data as IReadOnePost}>
                   <button>수정</button>
                 </Link>
@@ -751,7 +770,11 @@ function Detail2() {
                     )
                 )}
               </div>
-              <div className="px-[50px] text-[20px]">{data?.content}</div>
+              <div
+                dangerouslySetInnerHTML={{ __html: data?.content as string }}
+                className="px-[50px] text-[20px]"
+              ></div>
+              {/* <div dangerouslySetInnerHTML={{ __html: editorString }}></div> */}
               <div className="flex">
                 {data?.posterPaths?.map((posterPath: string, index: number) => (
                   <img
