@@ -10,8 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 import static com.hcu.hot6.util.Utils.nonNullOrElse;
 
@@ -29,7 +27,9 @@ public class Thumbnail {
     private String summary;
     private LocalDateTime recruitStart;     // 미래인 경우 썸네일에 "모집 예정" , 아닌 경우 "D-00" 표시
     private LocalDateTime recruitEnd;
-    private String durations;       // 다중선택 가능 - 구분 "," 콤마
+
+    @Enumerated(value = EnumType.STRING)
+    private Duration duration;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "thumbnail")
     private Post post;
@@ -51,21 +51,7 @@ public class Thumbnail {
         this.summary = request.getSummary();
         this.recruitStart = Utils.toLocalDateTime(request.getRecruitStart());
         this.recruitEnd = Utils.toLocalDateTime(request.getRecruitEnd());
-        this.durations = arrayToString(request.getDurations());
-    }
-
-    private String arrayToString(List<Duration> durations) {
-        if (durations == null) return null;
-
-        List<String> list = durations.stream()
-                .map(Enum::name)
-                .toList();
-
-        return String.join(
-                ",",
-                Optional.of(list)
-                        .orElse(List.of())
-        );
+        this.duration = request.getDuration();
     }
 
     public PostThumbnailResponse toResponse(String email) {
@@ -78,7 +64,7 @@ public class Thumbnail {
         this.summary = nonNullOrElse(req.getSummary(), summary);
         this.recruitStart = nonNullOrElse(Utils.toLocalDateTime(req.getRecruitStart()), recruitStart);
         this.recruitEnd = nonNullOrElse(Utils.toLocalDateTime(req.getRecruitEnd()), recruitEnd);
-        this.durations = nonNullOrElse(arrayToString(req.getDurations()), durations);
+        this.duration = nonNullOrElse(req.getDuration(), duration);
         this.isClosed = nonNullOrElse(req.getIsClosed(), isClosed);
         this.isArchived = nonNullOrElse(req.getIsArchived(), isArchived);
     }

@@ -1,10 +1,10 @@
 package com.hcu.hot6.domain.response;
 
+import com.hcu.hot6.domain.Duration;
 import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.Poster;
 import com.hcu.hot6.domain.Thumbnail;
 import com.hcu.hot6.domain.request.TagForm;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
@@ -25,7 +25,7 @@ public class PostReadOneResponse {
     private String summary;
     private Date recruitStart;
     private Date recruitEnd;
-    private List<String> durations;
+    private Duration duration;
     private List<String> postTypes;
     private TagForm tags;
 
@@ -36,7 +36,7 @@ public class PostReadOneResponse {
     private String contactDetails;
     private String qualifications;
     private String targetCount;
-  
+
     private List<String> years;
     private List<String> departments;
     private List<String> keywords;
@@ -58,7 +58,7 @@ public class PostReadOneResponse {
         this.summary = thumbnail.getSummary();
         this.recruitStart = toDate(thumbnail.getRecruitStart());
         this.recruitEnd = toDate(thumbnail.getRecruitEnd());
-        this.durations = toArray(thumbnail.getDurations(), ",");
+        this.duration = thumbnail.getDuration();
         this.tags = (Strings.isEmpty(thumbnail.getTags())) ?
                 new TagForm() :
                 new TagForm(toArray(thumbnail.getTags(), ";"));

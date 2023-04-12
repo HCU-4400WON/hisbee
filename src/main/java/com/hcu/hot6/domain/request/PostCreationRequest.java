@@ -43,7 +43,7 @@ public class PostCreationRequest {
     private List<String> departments;
     private String qualifications;
     private String targetCount;
-    private List<Duration> durations;
+    private Duration duration;
 
     // #3
     private List<String> keywords;
@@ -60,5 +60,9 @@ public class PostCreationRequest {
 
     public String getTargetCount() {
         return Objects.requireNonNullElse(this.targetCount, "00명");
+    }
+
+    public Duration getDuration() {
+        return Objects.requireNonNullElse(this.duration, Duration.TBD);
     }
 }
