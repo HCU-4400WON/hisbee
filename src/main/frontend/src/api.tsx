@@ -864,6 +864,7 @@ export const updatePost = (id: number, data: IUpdatePost) => {
     return response;
   } catch (error) {
     console.error(error);
+    console.log("error!!");
   }
 };
 

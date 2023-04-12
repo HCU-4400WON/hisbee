@@ -193,7 +193,7 @@ function PostModifyForm() {
           if (
             ((error as AxiosError).response as AxiosResponse).status === 401
           ) {
-            // alert("로그인이 필요합니다.");
+            alert("로그인이 필요합니다.");
             // setIsLoginModal(true);
             // setIsLogin(false);
             // if (localStorage.getItem("key")) localStorage.removeItem("key");
@@ -264,7 +264,7 @@ function PostModifyForm() {
       projectStart: "2023-04-11", // optional로 바뀌어야 함
       // durations: data?.durations?.length !== 0 ? data?.durations : [],
       // durations: data?.durations,
-      durations: "11",
+      durations: ["봄학기", "여름학기"],
 
       // targetCount: data?.positionToggle ? null : data?.targetCount,
       targetCount: "10명",
@@ -293,29 +293,13 @@ function PostModifyForm() {
     // createPostMutate(newPost as any);
 
     const nPost = {
-      title: "시각디자인 학회 도트 리쿠르팅",
-      summary:
-        "도트는 그래픽, 편집, 타이포 등 다양한 분야의 디자인을 실험적으로 연구하는 학회입니다.",
-      tags: {
-        first: ["콘디,콘디2전공가능"],
-        second: ["재학생"],
-      },
-      postTypes: ["학회", "학술모임"],
-      recruitStart: "2023-04-02",
-      recruitEnd: "2023-04-16",
-      projectStart: "2023-05-01",
-      durations: ["봄학기", "여름방학"],
-      targetCount: "전체00명",
-      contact: "ccdot@gmail.com",
-      contactDetails: "포트폴리오 제출 필수",
-      content: "시각디자인 학회 도트에서 신입 학회원을 모집합니다! ...",
-      years: ["1학년", "2학년"],
-      departments: ["콘텐츠디자인융합학부"],
-      keywords: ["포트폴리오필수", "2학기필수"],
-      posterPaths: ["https://firebasestorage.googleapis.com/v0/b/…"],
+      title: "시각디자인 학회 도트 리쿠르팅 (수정)",
+      years: ["2학년", "4학년"],
+      keywords: ["포트폴리오필수", "4학기필수"],
     };
-    console.log(nPost);
-    updatePostMutate(state?.id, newPost as any);
+    console.log(nPost, state?.id);
+    updatePost(state?.id, newPost as any);
+    // updatePost(state?.id, nPost);
   };
 
   const Grades = [
