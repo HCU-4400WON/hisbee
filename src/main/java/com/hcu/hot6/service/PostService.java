@@ -110,9 +110,9 @@ public class PostService {
         Member member = memberRepository.findByEmail(email).orElseThrow();
         Post post = postRepository.findOne(postId).orElseThrow();
 
-        Likes like = likesRepository.findOne(post, member);
-        likesRepository.delete(like);
+        List<Likes> like = likesRepository.findOne(post, member);
+        likesRepository.delete(like.get(0));
 
-        return new LikesResponse(like);
+        return new LikesResponse(like.get(0));
     }
 }
