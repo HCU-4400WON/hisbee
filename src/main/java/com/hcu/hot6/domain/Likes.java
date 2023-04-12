@@ -28,4 +28,14 @@ public class Likes {
 
     @CreatedDate
     private LocalDateTime createdDate;
+
+    public Likes(Post post, Member member){
+        this.post = post;
+        this.member = member;
+        this.createdDate = LocalDateTime.now();
+        post.getLikes().add(this);
+        member.getLikes().add(this);
+    }
+
+
 }
