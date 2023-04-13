@@ -1,6 +1,5 @@
 package com.hcu.hot6.domain;
 
-import com.hcu.hot6.domain.request.PostCreationRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,12 +14,14 @@ public class Poster {
     @Column(name = "poster_id")
     private Long id;
 
-    private String postURL;
+    private String path;
+
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
     private Post post;
 
-    public Poster(String postURL, Post post) {
-        this.postURL = postURL;
+    public Poster(String path, Post post) {
+        this.path = path;
         this.post = post;
     }
 }

@@ -53,11 +53,12 @@ public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Poster> posters = new ArrayList<>();
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "thumbnail_id")
     private Thumbnail thumbnail;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Archive archive;
 
     @CreatedDate
@@ -82,8 +83,8 @@ public class Post {
         this.views = 0L;
         this.isAutoClose = false;
         registerAuthor(author);
-        createPoster(request);
         createThumbnail(new Thumbnail(request));
+        savePosters(request.getPosterPaths());
     }
 
     //=== 연관관계 메서드 ===//
@@ -93,12 +94,14 @@ public class Post {
         thumbnail.setPost(this);
     }
 
-    private void createPoster(PostCreationRequest request){
-        if (request.getPosterPaths() != null) {
-            request.getPosterPaths().stream().forEach((p) -> {
-                this.getPosters().add(new Poster(p, this));
-            });
-        }
+    private void savePosters(List<String> paths) {
+        if (paths == null) return;
+        if (!posters.isEmpty()) posters.clear();
+
+        List<Poster> posters = paths.stream()
+                .map(path -> new Poster(path, this))
+                .toList();
+        this.posters.addAll(posters);
     }
 
     private void registerAuthor(Member author) {
@@ -146,27 +149,12 @@ public class Post {
                 ? Utils.toString(req.getKeywords(), ",")
                 : keywords;
         this.content = nonNullOrElse(req.getContent(), content);
-        updatePoster(req);
+
         thumbnail.update(req);
+        savePosters(req.getPosterPaths());
     }
 
     public PostReadOneResponse toResponse(String email) {
         return new PostReadOneResponse(this, email);
-    }
-
-    private void updatePoster(PostUpdateRequest req){
-        List<Poster> temp = this.posters;
-
-        this.posters.clear();
-
-        req.getPosterPaths().stream().forEach((p) -> {
-            Poster poster = new Poster(p, this);
-            int flag = 0;
-            for(int i=0; i<temp.size(); i++)
-            {
-                if(p.compareTo(temp.get(i).getPostURL()) == 0) flag = 1;
-            }
-            if(flag == 0) this.posters.add(poster);
-        });
     }
 }

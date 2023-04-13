@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -76,12 +75,9 @@ public class PostReadOneResponse {
         this.departments = (post.getTargetDepartment() != null) ? toArray(post.getTargetDepartment(), ",") : null;
         this.keywords = (post.getKeywords() != null) ? toArray(post.getKeywords(), ",") : null;
         this.targetCount = post.getTargetCount();
-        this.posterPaths = (post.getPosters() != null)
-                ? post.getPosters().stream()
-                .map(Poster::getPostURL)
-                .toList()
-                : null;
-
+        this.posterPaths = post.getPosters().stream()
+                .map(Poster::getPath)
+                .toList();
         this.nLike = post.getLikes().size();
         this.views = post.getViews();
         this.createdDate = toDate(post.getCreatedDate());

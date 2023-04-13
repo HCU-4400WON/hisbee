@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 public class Utils {
     public static LocalDateTime toLocalDateTime(Date e) {
@@ -27,15 +26,7 @@ public class Utils {
     }
 
     public static String toString(List<String> list, String delim) {
-        return String.join(
-                delim,
-                Optional.ofNullable(list)
-                        .orElse(List.of())
-        );
-    }
-
-    public static String nonEmptyOrElse(String s, String or) {
-        return (s.isEmpty()) ? or : s;
+        return (list == null || list.isEmpty()) ? null : String.join(delim, list);
     }
 
     public static <T> T nonNullOrElse(T obj, T defaultObj) {

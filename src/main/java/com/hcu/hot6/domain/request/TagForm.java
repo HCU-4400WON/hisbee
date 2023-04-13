@@ -4,9 +4,10 @@ import com.hcu.hot6.util.Utils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import static com.hcu.hot6.util.Utils.nonEmptyOrElse;
 import static com.hcu.hot6.util.Utils.toArray;
 
 @Getter
@@ -18,14 +19,14 @@ public class TagForm {
         this.second = toArray(tags.get(1), ",");
     }
 
-    private List<String> first;
-    private List<String> second;
+    private List<String> first = new ArrayList<>();
+    private List<String> second = new ArrayList<>();
 
     public String combine() {
-        String first = nonEmptyOrElse(
+        String first = Objects.requireNonNullElse(
                 Utils.toString(this.first, ","),
                 "?");
-        String second = nonEmptyOrElse(
+        String second = Objects.requireNonNullElse(
                 Utils.toString(this.second, ","),
                 "?");
 
