@@ -43,7 +43,7 @@ public class PostService {
     }
 
     @Transactional
-    public Long deletePost(Long postId) {
+    public Long deletePost(Long postId, String email) {
         Post post = postRepository.findOne(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not found."));
         return postRepository.delete(post);

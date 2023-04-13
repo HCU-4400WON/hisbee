@@ -43,8 +43,9 @@ public class PostApiController {
      * 모집글 삭제(DELETE) -> 권한 설정 미완
      */
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<Long> deletePost(@PathVariable Long postId) {
-        return ResponseEntity.ok(postService.deletePost(postId));
+    public ResponseEntity<Long> deletePost(@PathVariable Long postId, @AuthenticationPrincipal OAuth2User user) {
+        String email = user.getName();
+        return ResponseEntity.ok(postService.deletePost(postId, email));
     }
 
     /**
