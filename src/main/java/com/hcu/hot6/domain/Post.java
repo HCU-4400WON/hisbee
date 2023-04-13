@@ -51,14 +51,14 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private List<Likes> likes = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Poster> posters = new ArrayList<>();
-    private String posters;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Poster> posters = new ArrayList<>();
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "thumbnail_id")
     private Thumbnail thumbnail;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Archive archive;
 
     @CreatedDate
@@ -82,10 +82,9 @@ public class Post {
         this.targetCount = request.getTargetCount();
         this.views = 0L;
         this.isAutoClose = false;
-        this.posters = Utils.toString(request.getPosterPaths(), ",");
         registerAuthor(author);
-        //createPoster(request);
         createThumbnail(new Thumbnail(request));
+        savePosters(request.getPosterPaths());
     }
 
     //=== 연관관계 메서드 ===//
@@ -95,11 +94,15 @@ public class Post {
         thumbnail.setPost(this);
     }
 
-//    private void createPoster(PostCreationRequest request){
-//        request.getPosterPaths().stream().forEach((p) -> {
-//            this.getPosters().add(new Poster(p, this));
-//        });
-//    }
+    private void savePosters(List<String> paths) {
+        if (paths == null) return;
+        if (!posters.isEmpty()) posters.clear();
+
+        List<Poster> posters = paths.stream()
+                .map(path -> new Poster(path, this))
+                .toList();
+        this.posters.addAll(posters);
+    }
 
     private void registerAuthor(Member author) {
         this.author = author;
@@ -146,19 +149,12 @@ public class Post {
                 ? Utils.toString(req.getKeywords(), ",")
                 : keywords;
         this.content = nonNullOrElse(req.getContent(), content);
-        this.posters = Utils.toString(req.getPosterPaths(), ",");
-//        updatePoster(req);
+
         thumbnail.update(req);
+        savePosters(req.getPosterPaths());
     }
 
     public PostReadOneResponse toResponse(String email) {
         return new PostReadOneResponse(this, email);
     }
-
-//    private void updatePoster(PostUpdateRequest req){
-//        req.getDelPosterPaths().stream().forEach((p) -> this.posters.stream().forEach((originP) -> {
-//            if(p.compareTo(originP.getPostURL()) == 0) this.posters.remove(originP);
-//        }));
-//        req.getAddPosterPaths().stream().forEach((p) -> this.posters.add(new Poster(p, this)));
-//    }
 }

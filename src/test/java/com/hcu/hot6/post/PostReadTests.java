@@ -123,8 +123,8 @@ public class PostReadTests {
         TagForm tags = res.getTags();
 
         // then
-        assertThat(Utils.toString(tags.getFirst(), ",")).isEqualTo("첫줄,태그");
-        assertThat(Utils.toString(tags.getSecond(), ",")).isEqualTo("");
+        assertThat(tags.getSecond()).isEmpty();
+        assertThat(tags.getFirst()).isEqualTo(List.of("첫줄", "태그"));
     }
 
     @Test
@@ -149,8 +149,8 @@ public class PostReadTests {
         TagForm tags = res.getTags();
 
         // then
-        assertThat(Utils.toString(tags.getFirst(), ",")).isEqualTo("");
-        assertThat(Utils.toString(tags.getSecond(), ",")).isEqualTo("두번째줄,태그");
+        assertThat(tags.getFirst()).isEmpty();
+        assertThat(tags.getSecond()).isEqualTo(List.of("두번째줄", "태그"));
     }
 
     @Test
@@ -173,8 +173,8 @@ public class PostReadTests {
         TagForm tags = res.getTags();
 
         // then
-        assertThat(Utils.toString(tags.getFirst(), ",")).isEqualTo("");
-        assertThat(Utils.toString(tags.getSecond(), ",")).isEqualTo("");
+        assertThat(tags.getFirst()).isEmpty();
+        assertThat(tags.getSecond()).isEmpty();
     }
 
     @Test
