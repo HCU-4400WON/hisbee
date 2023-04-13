@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -75,9 +76,10 @@ public class PostReadOneResponse {
         this.departments = toArray(post.getTargetDepartment(), ",");
         this.keywords = toArray(post.getKeywords(), ",");
         this.targetCount = post.getTargetCount();
-        this.posterPaths = post.getPosters().stream()
-                .map(Poster::getPostURL)
-                .toList();
+//        this.posterPaths = post.getPosters().stream()
+//                .map(Poster::getPostURL)
+//                .toList();
+        this.posterPaths = Arrays.stream(post.getPosters().split(",")).toList();
 
         this.nLike = post.getLikes().size();
         this.views = post.getViews();
