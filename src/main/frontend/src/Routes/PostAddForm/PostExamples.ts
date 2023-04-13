@@ -28,7 +28,7 @@ export const convertDateToString = (postStart: any, postEnd: any) => {
   } else if (postEnd === "") {
     return "상시 모집";
   } else if (dateDifference(postEnd!) === 0) {
-    return "오늘 마감";
+    return "D-Day";
   } else {
     return "D-" + dateDifference(postEnd!);
   }
@@ -156,7 +156,7 @@ export const PostDetailExample = {
   recruitStart: new Date("2023-04-03"),
   recruitEnd: new Date("2023-04-13"),
   projectStart: new Date("2023-05-13"),
-  durations: ["봄학기", "가을학기"],
+  duration: ["봄학기", "가을학기"],
   postTypes: ["학회", "학술모임"],
   tags: ["1,2", "3,4"],
   author: "아프지마 도트 잠보",

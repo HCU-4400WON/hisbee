@@ -51,9 +51,9 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private List<Likes> likes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
-    private List<Poster> posters = new ArrayList<>();
-
+//    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Poster> posters = new ArrayList<>();
+    private String posters;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "thumbnail_id")
     private Thumbnail thumbnail;
@@ -82,7 +82,9 @@ public class Post {
         this.targetCount = request.getTargetCount();
         this.views = 0L;
         this.isAutoClose = false;
+        this.posters = Utils.toString(request.getPosterPaths(), ",");
         registerAuthor(author);
+        //createPoster(request);
         createThumbnail(new Thumbnail(request));
     }
 
@@ -92,6 +94,12 @@ public class Post {
         this.thumbnail = thumbnail;
         thumbnail.setPost(this);
     }
+
+//    private void createPoster(PostCreationRequest request){
+//        request.getPosterPaths().stream().forEach((p) -> {
+//            this.getPosters().add(new Poster(p, this));
+//        });
+//    }
 
     private void registerAuthor(Member author) {
         this.author = author;
@@ -138,11 +146,19 @@ public class Post {
                 ? Utils.toString(req.getKeywords(), ",")
                 : keywords;
         this.content = nonNullOrElse(req.getContent(), content);
-
+        this.posters = Utils.toString(req.getPosterPaths(), ",");
+//        updatePoster(req);
         thumbnail.update(req);
     }
 
     public PostReadOneResponse toResponse(String email) {
         return new PostReadOneResponse(this, email);
     }
+
+//    private void updatePoster(PostUpdateRequest req){
+//        req.getDelPosterPaths().stream().forEach((p) -> this.posters.stream().forEach((originP) -> {
+//            if(p.compareTo(originP.getPostURL()) == 0) this.posters.remove(originP);
+//        }));
+//        req.getAddPosterPaths().stream().forEach((p) -> this.posters.add(new Poster(p, this)));
+//    }
 }

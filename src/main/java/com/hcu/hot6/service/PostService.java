@@ -1,5 +1,6 @@
 package com.hcu.hot6.service;
 
+import com.hcu.hot6.domain.Likes;
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.Pagination;
 import com.hcu.hot6.domain.Post;
@@ -9,6 +10,7 @@ import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.*;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.repository.PostRepository;
+import com.hcu.hot6.repository.LikesRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final LikesRepository likesRepository;
 
     @Transactional
     public PostCreationResponse createPost(PostCreationRequest request, String email) {
@@ -88,23 +91,25 @@ public class PostService {
     }
 
     @Transactional
-    public PostReadOneResponse addBookmark(Long postId, String name) {
+    public LikesResponse addBookmark(Long postId, String name) {
         Member member = memberRepository.findByEmail(name).orElseThrow();
-        Post post = postRepository.findOne(postId)
-                .orElseThrow()
-                .addBookmark(member);
+        Post post = postRepository.findOne(postId).orElseThrow();
 
-        return post.toResponse(name);
+        Likes like = new Likes(post, member);
+        likesRepository.save(like);
+
+        return new LikesResponse(like);
     }
 
     @Transactional
-    public PostReadOneResponse delBookmark(Long postId, String email) {
+    public LikesResponse delBookmark(Long postId, String email) {
         Member member = memberRepository.findByEmail(email).orElseThrow();
-        Post post = postRepository.findOne(postId)
-                .orElseThrow()
-                .delBookmark(member);
+        Post post = postRepository.findOne(postId).orElseThrow();
 
-        return post.toResponse(email);
+        List<Likes> like = likesRepository.findOne(post, member);
+        likesRepository.delete(like.get(0));
+
+        return new LikesResponse(like.get(0));
     }
 
     @Transactional

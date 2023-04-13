@@ -41,6 +41,8 @@ public class PostUpdateRequest {
     private String content;
 
     // #5
+//    private List<String> addPosterPaths;
+//    private List<String> delPosterPaths;
     private List<String> posterPaths;
 
     //

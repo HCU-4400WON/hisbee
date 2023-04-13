@@ -19,38 +19,33 @@ import { ContentState, convertToRaw, EditorState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-import {
-  ref,
-  getDownloadURL,
-  uploadBytesResumable,
-} from "firebase/storage";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { useRef } from "react";
 import { storage } from "../../firebase";
 import styled from "styled-components";
 import Validation from "./Validation";
 import MyEditor from "./MyEditor";
 
-
 const Container = tw.div`
 md:w-[1470px] 
 flex w-full
-`
+`;
 const GoBackSpan = tw.span`
 md:min-w-[100px] min-w-[40px] py-[62px] border-gray-300  flex justify-end
-`
+`;
 
 const GoBackButton = tw.button`
-md:mr-[40px] mr-[10px] h-[30px]`
+md:mr-[40px] mr-[10px] h-[30px]`;
 
 const GoBackIcon = tw.i`
 fa-solid fa-arrow-left text-[18px] md:text-[23px]
-`
+`;
 
 const Form = tw.form`
 w-full
-`
+`;
 const FormHeader = tw.header`
-pt-[62px] md:pt-[55px] text-[20px] md:text-[25px] font-semibold flex`
+pt-[62px] md:pt-[55px] text-[20px] md:text-[25px] font-semibold flex`;
 
 const FormTitleInput = tw.input`
 w-[400px] 
@@ -58,15 +53,15 @@ md:h-[40px]
 h-[35px] 
 px-[15px] 
 bg-[#eeeeee]
-`
+`;
 
 const FormTitle = tw.div`
 font-main
-`
+`;
 
 const FormAuthorNButtonRow = tw.div`
 flex justify-between
-`
+`;
 
 const StyledUl = tw.ul`
 flex
@@ -91,7 +86,7 @@ const StyledInputNumber = tw.input`
 const StyledInputLabel = tw.label`
 text-[13px]
 md:text-[18px]
-`
+`;
 
 const Grid = tw.div`
 grid 
@@ -141,9 +136,9 @@ py-[20px]
 
 const WriterSpan = tw.span`
 flex w-[200px] md:w-[auto]
-`
+`;
 const WriteDateSpan = tw.span`
-`
+`;
 const WriteInfo = tw.span`
 text-[13px]
 md:text-[17px]
@@ -157,31 +152,31 @@ md:h-auto
 
 const FormButtonDiv = tw.div`
 flex items-center w-[70px] md:w-[100px] justify-between
-`
+`;
 
 const FormModifyOKButton = tw.button`
 w-[70px] text-gray-500 rounded-full
-`
+`;
 
 const FormModifyOKIcon = tw.i`
 fa-solid fa-check text-[30px] text-green-600
-`
+`;
 
 const FormModifyButton = tw.button`
 w-[70px] text-gray-500 rounded-full
-`
+`;
 const FormModifyIcon = tw.i`
 fa-regular fa-pen-to-square text-[25px] md:text-[30px]
 
-`
+`;
 
 const FormDeleteButton = tw.button`
 w-[70px]  text-red-400  rounded-full
-`
+`;
 
 const FormDeleteIcon = tw.i`
 fa-regular fa-trash-can text-[25px] md:text-[30px]
-`
+`;
 
 const ValidationVariant = {
   hidden: {
@@ -306,13 +301,7 @@ function Detail() {
       },
     }
   );
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState,
-    setValue,
-  } = useForm({
+  const { register, handleSubmit, setError, formState, setValue } = useForm({
     mode: "onSubmit",
   });
 
@@ -341,7 +330,6 @@ function Detail() {
     content: string;
   }
 
-
   const [isPostDeleteModal, setIsPostDeleteModal] = useRecoilState(
     isPostDeleteModalState
   );
@@ -362,7 +350,6 @@ function Detail() {
 
   const [isModifying, setIsModifying] = useState(false);
 
-
   const navigate = useNavigate();
   const onValid = async (data: IData) => {
     if (data.projectStart >= data.projectEnd) {
@@ -379,7 +366,6 @@ function Detail() {
         setError("maxMember", { message: "0보다 커야 합니다." });
         return;
       } else if (data.maxMember < data.currMember) {
-       
         data.maxMember = data.currMember;
       }
     } else if (data.dtype === "M") {
@@ -387,10 +373,8 @@ function Detail() {
         setError("maxMentor", { message: "0보다 커야 합니다." });
         return;
       } else if (data.maxMentor < data.currMentor) {
-        
         data.maxMentor = data.currMentor;
       } else if (data.maxMentee < data.currMentee) {
-        
         data.maxMentee = data.currMentee;
       }
     } else if (data.dtype === "P") {
@@ -403,18 +387,14 @@ function Detail() {
         setError("maxPlanner", { message: "0보다 커야 합니다." });
         return;
       } else if (data.maxPlanner < data.currPlanner) {
-        
         data.maxPlanner = data.currPlanner;
       } else if (data.maxDesigner < data.currDesigner) {
-        
         data.maxDesigner = data.currDesigner;
       } else if (data.maxDeveloper < data.currDeveloper) {
-       
         data.maxDeveloper = data.currDeveloper;
-        
       }
 
-      console.log("제출되었습니다.")
+      console.log("제출되었습니다.");
     }
 
     const newData = {
@@ -539,37 +519,34 @@ function Detail() {
   };
 
   interface Iconverter {
-    [maxDeveloper:string] : string,
-    maxPlanner: string,
-    maxDesigner: string,
-    maxMentor: string,
-    maxMentee: string,
+    [maxDeveloper: string]: string;
+    maxPlanner: string;
+    maxDesigner: string;
+    maxMentor: string;
+    maxMentee: string;
   }
-  const converter : Iconverter = {
+  const converter: Iconverter = {
     maxDeveloper: "개발자",
-    maxPlanner:"기획자",
+    maxPlanner: "기획자",
     maxDesigner: "디자이너",
     maxMentor: "멘토",
     maxMentee: "멘티",
     currDeveloper: "개발자",
-    currPlanner:"기획자",
+    currPlanner: "기획자",
     currDesigner: "디자이너",
     currMentor: "멘토",
     currMentee: "멘티",
-    
-  } 
-  const dateConverter = (date : Date) => {
+  };
+  const dateConverter = (date: Date) => {
     const str = "";
-    return str.concat(new Date(date).getFullYear() + "", " / ",
-    (
-      new Date(date).getMonth() +
-      1 +
-      ""
-    ).padStart(2, "0"), " / ",
-    (
-      new Date(date).getDate() + ""
-    ).padStart(2, "0"))
-  }
+    return str.concat(
+      new Date(date).getFullYear() + "",
+      " / ",
+      (new Date(date).getMonth() + 1 + "").padStart(2, "0"),
+      " / ",
+      (new Date(date).getDate() + "").padStart(2, "0")
+    );
+  };
 
   return (
     <>
@@ -580,9 +557,7 @@ function Detail() {
           {isPostDeleteModal && <PostDeleteModal postId={data?.id} />}
           <Container>
             <GoBackSpan>
-              <GoBackButton
-                onClick={() => navigate(-1)}
-              >
+              <GoBackButton onClick={() => navigate(-1)}>
                 <GoBackIcon></GoBackIcon>
               </GoBackButton>
             </GoBackSpan>
@@ -609,53 +584,41 @@ function Detail() {
                     <Validation message={formState.errors.title?.message} />
                   </>
                 ) : (
-                  <FormTitle >{data?.title}</FormTitle>
+                  <FormTitle>{data?.title}</FormTitle>
                 )}
               </FormHeader>
 
               <FormAuthorNButtonRow>
-                <FormAuthorSpan >
+                <FormAuthorSpan>
                   <WriterSpan>
                     <WriteInfo className="">작성자</WriteInfo>
                     <WriteInfo className="mr-[40px] text-gray-500">
                       {data?.writer}
                     </WriteInfo>
                   </WriterSpan>
-                  
+
                   <WriteDateSpan className="flex w-[200px] md:w-[auto]">
-                  <WriteInfo className="">작성일</WriteInfo>
-                  <WriteInfo className="text-gray-500">
-                    
-                    {dateConverter(data?.postStart as Date)}
-                    
-                  </WriteInfo>
+                    <WriteInfo className="">작성일</WriteInfo>
+                    <WriteInfo className="text-gray-500">
+                      {dateConverter(data?.postStart as Date)}
+                    </WriteInfo>
                   </WriteDateSpan>
-                  
                 </FormAuthorSpan>
 
                 <FormButtonDiv>
                   {register("varified") && (
                     <>
                       {isModifying ? (
-                        <FormModifyOKButton
-                          id="modify"
-                        >
+                        <FormModifyOKButton id="modify">
                           <FormModifyOKIcon />
                         </FormModifyOKButton>
                       ) : (
-                        <FormModifyButton
-                          id="modify"
-                          onClick={onBtnClick}
-                        >
+                        <FormModifyButton id="modify" onClick={onBtnClick}>
                           <FormModifyIcon />
                         </FormModifyButton>
                       )}
 
-                      <FormDeleteButton
-                        id="delete"
-                        onClick={onBtnClick}
-                        
-                      >
+                      <FormDeleteButton id="delete" onClick={onBtnClick}>
                         <FormDeleteIcon />
                       </FormDeleteButton>
                     </>
@@ -666,9 +629,7 @@ function Detail() {
                 <GridItem>
                   <ItemTitle>모집 기간</ItemTitle>
                   <ItemText>
-                    <>
-                      {dateConverter(data?.postStart as Date)}
-                    </>
+                    <>{dateConverter(data?.postStart as Date)}</>
                   </ItemText>
                   <ItemText className="mx-[10px] ml-[20px]">~</ItemText>
                   <ItemText>
@@ -681,15 +642,13 @@ function Detail() {
                             {...register("postEnd", {
                               required: "필수 항목",
                             })}
-                           
                           ></input>
-                          <Validation message={formState.errors.postEnd?.message} />
-                        
+                          <Validation
+                            message={formState.errors.postEnd?.message}
+                          />
                         </div>
                       ) : (
-                        <>
-                          {dateConverter(data?.postEnd as Date)}
-                        </>
+                        <>{dateConverter(data?.postEnd as Date)}</>
                       )}
                     </ItemText>
                   </ItemText>
@@ -713,41 +672,56 @@ function Detail() {
                       <StyledUl>
                         {data?.dtype === "P" ? (
                           <>
-                          {["currDeveloper", "currPlanner" ,"currDesigner"].map((element,index)=> (
-                            <Styledli key={index}>
-                            <StyledInputLabel htmlFor={element}>{converter[element]}</StyledInputLabel>
-                            <StyledInputNumber
-                              {...register(element)}
-                              min="0"
-                              id={element}
-                              type="number"
+                            {[
+                              "currDeveloper",
+                              "currPlanner",
+                              "currDesigner",
+                            ].map((element, index) => (
+                              <Styledli key={index}>
+                                <StyledInputLabel htmlFor={element}>
+                                  {converter[element]}
+                                </StyledInputLabel>
+                                <StyledInputNumber
+                                  {...register(element)}
+                                  min="0"
+                                  id={element}
+                                  type="number"
+                                />
+                              </Styledli>
+                            ))}
+
+                            <Validation
+                              message={formState.errors.currPlanner?.message}
                             />
-                          </Styledli>
-                          ))}
-                            
-                          
-                            <Validation message={formState.errors.currPlanner?.message} />
                           </>
                         ) : data?.dtype === "M" ? (
                           <>
-                          {["currMentor", "currMentee"].map((element,index)=> (
-                            <Styledli key={index}>
-                            <StyledInputLabel htmlFor={element}>{converter[element]}</StyledInputLabel>
-                            <StyledInputNumber
-                              {...register(element)}
-                              min="0"
-                              id={element}
-                              type="number"
-                            />
-                          </Styledli>
-                          ))}
+                            {["currMentor", "currMentee"].map(
+                              (element, index) => (
+                                <Styledli key={index}>
+                                  <StyledInputLabel htmlFor={element}>
+                                    {converter[element]}
+                                  </StyledInputLabel>
+                                  <StyledInputNumber
+                                    {...register(element)}
+                                    min="0"
+                                    id={element}
+                                    type="number"
+                                  />
+                                </Styledli>
+                              )
+                            )}
 
-                            <Validation message={formState.errors.currMentor?.message} />
+                            <Validation
+                              message={formState.errors.currMentor?.message}
+                            />
                           </>
                         ) : data?.dtype === "S" ? (
                           <>
                             <Styledli>
-                              <StyledInputLabel htmlFor="currMember">스터디원</StyledInputLabel>
+                              <StyledInputLabel htmlFor="currMember">
+                                스터디원
+                              </StyledInputLabel>
                               <StyledInputNumber
                                 {...register("currMember", {
                                   required: "필수 사항입니다.",
@@ -758,9 +732,9 @@ function Detail() {
                               />
                             </Styledli>
 
-                           
-                            <Validation message={formState.errors.currMember?.message} />
-                            
+                            <Validation
+                              message={formState.errors.currMember?.message}
+                            />
                           </>
                         ) : null}
                       </StyledUl>
@@ -818,13 +792,9 @@ function Detail() {
                         {...register("projectStart", {
                           required: "필수 항목입니다.",
                         })}
-                      
                       ></input>
                     ) : (
-                      <>
-                       
-                         {dateConverter(data?.projectStart as Date)}
-                      </>
+                      <>{dateConverter(data?.projectStart as Date)}</>
                     )}
                   </ItemText>
                   <ItemText className=" mx-[10px]">~</ItemText>
@@ -837,16 +807,17 @@ function Detail() {
                           {...register("projectEnd", {
                             required: "필수 항목 입니다",
                           })}
-                        
                         ></input>
 
-                      
-                        <Validation message={formState.errors.projectStart?.message || formState.errors.projectEnd?.message} />
+                        <Validation
+                          message={
+                            formState.errors.projectStart?.message ||
+                            formState.errors.projectEnd?.message
+                          }
+                        />
                       </div>
                     ) : (
-                      <>
-                        {dateConverter(data?.projectEnd as Date)}
-                      </>
+                      <>{dateConverter(data?.projectEnd as Date)}</>
                     )}
                   </ItemText>
                 </GridItem>
@@ -858,44 +829,63 @@ function Detail() {
                       <StyledUl>
                         {data?.dtype === "P" ? (
                           <>
-                          {["maxDeveloper","maxPlanner","maxDesigner"].map((element,index)=> ( 
-                          <Styledli key={index}>
-                              <StyledInputLabel htmlFor={element}>{converter[element]}</StyledInputLabel>
-                              <StyledInputNumber
-                                {...register(element)}
-                                min="0"
-                                id={element}
-                                type="number"
-                              />
-                            </Styledli>
-                            ))}
-                            
+                            {["maxDeveloper", "maxPlanner", "maxDesigner"].map(
+                              (element, index) => (
+                                <Styledli key={index}>
+                                  <StyledInputLabel htmlFor={element}>
+                                    {converter[element]}
+                                  </StyledInputLabel>
+                                  <StyledInputNumber
+                                    {...register(element)}
+                                    min="0"
+                                    id={element}
+                                    type="number"
+                                  />
+                                </Styledli>
+                              )
+                            )}
 
-                           
-                            <Validation message={formState.errors.maxPlanner?.message || formState.errors.maxDeveloper?.message || formState.errors.maxDesigner?.message} />
+                            <Validation
+                              message={
+                                formState.errors.maxPlanner?.message ||
+                                formState.errors.maxDeveloper?.message ||
+                                formState.errors.maxDesigner?.message
+                              }
+                            />
                           </>
                         ) : data?.dtype === "M" ? (
                           <>
-                          {["maxMentor" , "maxMentee"].map((element,index) => (
-                            <Styledli key={index}>
-                            <StyledInputLabel htmlFor={element}>{converter[element]}</StyledInputLabel>
-                            <StyledInputNumber
-                              {...register(element, {
-                                required: "필수 사항 입니다.",
-                              })}
-                              min="0"
-                              id={element}
-                              type="number"
-                            />
-                          </Styledli>
-                          ))}
+                            {["maxMentor", "maxMentee"].map(
+                              (element, index) => (
+                                <Styledli key={index}>
+                                  <StyledInputLabel htmlFor={element}>
+                                    {converter[element]}
+                                  </StyledInputLabel>
+                                  <StyledInputNumber
+                                    {...register(element, {
+                                      required: "필수 사항 입니다.",
+                                    })}
+                                    min="0"
+                                    id={element}
+                                    type="number"
+                                  />
+                                </Styledli>
+                              )
+                            )}
 
-                            <Validation message={formState.errors.maxMentor?.message || formState.errors.maxMentee?.message} />
+                            <Validation
+                              message={
+                                formState.errors.maxMentor?.message ||
+                                formState.errors.maxMentee?.message
+                              }
+                            />
                           </>
                         ) : data?.dtype === "S" ? (
                           <>
                             <Styledli>
-                              <StyledInputLabel htmlFor="maxMember">스터디원</StyledInputLabel>
+                              <StyledInputLabel htmlFor="maxMember">
+                                스터디원
+                              </StyledInputLabel>
                               <StyledInputNumber
                                 {...register("maxMember", {
                                   required: "필수 사항입니다.",
@@ -906,8 +896,9 @@ function Detail() {
                               />
                             </Styledli>
 
-                            
-                            <Validation message={formState.errors.maxMember?.message} />
+                            <Validation
+                              message={formState.errors.maxMember?.message}
+                            />
                           </>
                         ) : null}
                       </StyledUl>
@@ -916,7 +907,6 @@ function Detail() {
                     <>
                       {data?.dtype === "P" ? (
                         <>
-                        
                           {data?.maxDeveloper !== 0 && (
                             <ItemText>
                               개발자 {data?.maxDeveloper}명 &nbsp;
@@ -967,8 +957,10 @@ function Detail() {
                           className=" w-[350px] h-[30px] bg-[#eeeeee] px-[15px] md:text-[17px] text-[15px]"
                           maxLength={30}
                         ></input>
-                        
-                        <Validation message={formState.errors.contact?.message} />
+
+                        <Validation
+                          message={formState.errors.contact?.message}
+                        />
                       </div>
                     ) : (
                       <>{data?.contact}</>
@@ -1053,7 +1045,6 @@ function Detail() {
                       // 에디터의 값이 변경될 때마다 onEditorStateChange 호출
                       onEditorStateChange={onEditorStateChange}
                     />
-                    
                   </MyBlock>
                 ) : (
                   <div dangerouslySetInnerHTML={{ __html: editorString }}></div>

@@ -93,7 +93,7 @@ function PostModifyForm() {
       recruitStart: converter("dateTime", state?.recruitStart), // string
       recruitEnd: converter("dateTime", new Date()), // string
       projectStart: "",
-      durations: state?.durations,
+      duration: state?.duration,
       // positions: [],
       // positionName: "",
       // positionCount: "",
@@ -129,7 +129,7 @@ function PostModifyForm() {
     recruitStart: string; // string
     recruitEnd?: string; // string
     projectStart?: string;
-    durations?: string[];
+    duration?: string[];
     targetCount?: string;
     // positions?: IPositionList[];
     // positionName?: string;
@@ -210,41 +210,6 @@ function PostModifyForm() {
     console.log(imageURL);
 
     console.log("데이터");
-    {
-      /* positionToggle - T , Total = 0 이면 안보냄 */
-    }
-    {
-      /* positionToggle - T , Total != 0 이면 total을 보냄  */
-    }
-    {
-      /* positionToggle - F , position 부분 비어있으면 total 보냄 */
-    }
-    {
-      /* posoitionToggle - F , position 부분 있으면 position:인원 보냄 */
-    }
-    // let newPosition;
-    // if (data.positionToggle) {
-    //   if (data.total === "" || data.total === "0") {
-    //     newPosition = {
-    //       name: "",
-    //       count: 0,
-    //     };
-    //   } else {
-    //     newPosition = {
-    //       name: "",
-    //       count: data.total,
-    //     };
-    //   }
-    // } else {
-    //   if (data.positions?.length === 0) {
-    //     newPosition = {
-    //       name: "",
-    //       count: 0,
-    //     };
-    //   } else {
-    //     newPosition = data.positions;
-    //   }
-    // }
 
     const newPost = {
       title: data?.title,
@@ -261,16 +226,16 @@ function PostModifyForm() {
       recruitEnd: data?.recruitEnd !== "" ? data?.recruitEnd : null,
 
       // projectStart: data?.projectStart !== "" ? data?.projectStart : null,
-      projectStart: "2023-04-11", // optional로 바뀌어야 함
-      // durations: data?.durations?.length !== 0 ? data?.durations : [],
-      // durations: data?.durations,
-      durations: ["봄학기", "여름학기"],
+      //   projectStart: "2023-04-11", // optional로 바뀌어야 함
+      // duration: data?.duration?.length !== 0 ? data?.duration : [],
+      duration: data?.duration,
+      //   duration: ["봄학기", "여름학기"],
+      //   duration
 
       // targetCount: data?.positionToggle ? null : data?.targetCount,
-      targetCount: "10명",
+      targetCount: data?.targetCount,
       // positions: newPosition,
-      contact: "11",
-
+      contact: data?.contact,
       // contact: data?.contact !== "" ? data?.contact : null,
       contactDetails: data?.contactDetails !== "" ? data?.contactDetails : null,
       content:
@@ -483,7 +448,7 @@ function PostModifyForm() {
     /* 활동 기간 */
   }
 
-  const durations = [
+  const duration = [
     "봄학기",
     "가을학기",
     "여름방학",
@@ -1147,8 +1112,8 @@ function PostModifyForm() {
               </div>
               <div className="w-[45%] ">
                 <p className="">활동 기간</p>
-                <select {...register("durations")} className="mt-[20px]">
-                  {durations.map((duration, index) => (
+                <select {...register("duration")} className="mt-[20px]">
+                  {duration.map((duration, index) => (
                     <option key={index}>{duration}</option>
                   ))}
                 </select>

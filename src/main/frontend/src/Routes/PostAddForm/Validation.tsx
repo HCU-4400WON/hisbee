@@ -1,5 +1,4 @@
-import { AnimatePresence , motion } from "framer-motion";
-
+import { AnimatePresence, motion } from "framer-motion";
 
 const ValidationVariant = {
   hidden: {
@@ -19,21 +18,20 @@ const ValidationVariant = {
   },
 };
 
-
-export default function Validation({message} : any ){
-    return(
-        <AnimatePresence>
-        {(message) && (
-          <motion.div
-            variants={ValidationVariant}
-            className="text-xs my-auto ml-[3px]"
-            initial="hidden"
-            animate="showing"
-            exit="exit"
-          >
-            * {message}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    )
+export default function Validation({ message }: any) {
+  return (
+    <AnimatePresence>
+      {message && (
+        <motion.div
+          variants={ValidationVariant}
+          className="text-xs my-auto ml-[3px]"
+          initial="hidden"
+          animate="showing"
+          exit="exit"
+        >
+          * {message}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 }
