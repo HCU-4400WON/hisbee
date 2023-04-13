@@ -4,10 +4,7 @@ import com.hcu.hot6.domain.enums.OrderBy;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
-import com.hcu.hot6.domain.response.PostCreationResponse;
-import com.hcu.hot6.domain.response.PostFilterResponse;
-import com.hcu.hot6.domain.response.PostModifiedResponse;
-import com.hcu.hot6.domain.response.PostReadOneResponse;
+import com.hcu.hot6.domain.response.*;
 import com.hcu.hot6.service.KeywordService;
 import com.hcu.hot6.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -65,9 +62,8 @@ public class PostApiController {
     @PutMapping("/posts/{postId}")
     public ResponseEntity<PostModifiedResponse> updatePost(
             @PathVariable Long postId,
-            @RequestBody PostUpdateRequest request,
-            @AuthenticationPrincipal OAuth2User user) {
-        return ResponseEntity.ok(postService.updatePost(postId, request, user.getName()));
+            @RequestBody PostUpdateRequest request) {
+        return ResponseEntity.ok(postService.updatePost(postId, request));
     }
 
     /**
@@ -92,9 +88,6 @@ public class PostApiController {
         return ResponseEntity.ok(postService.readFilteredPost(filter, email));
     }
 
-    /**
-     * 키워드 겁색
-     */
     @PostMapping("/posts/{postId}/likes")
     public ResponseEntity<PostReadOneResponse> doBookmark(@PathVariable Long postId,
                                                           @AuthenticationPrincipal OAuth2User user) {
@@ -105,5 +98,17 @@ public class PostApiController {
     public ResponseEntity<PostReadOneResponse> undoBookmark(@PathVariable Long postId,
                                                             @AuthenticationPrincipal OAuth2User user) {
         return ResponseEntity.ok(postService.delBookmark(postId, user.getName()));
+    }
+
+    @PostMapping("/posts/{postId}/archive")
+    public ResponseEntity<ArchiveResponse> doArchive(@PathVariable Long postId,
+                                                     @AuthenticationPrincipal OAuth2User user) {
+        return ResponseEntity.ok(postService.addArchive(postId, user.getName()));
+    }
+
+    @DeleteMapping("/posts/{postId}/archive")
+    public ResponseEntity<ArchiveResponse> undoArchive(@PathVariable Long postId,
+                                                            @AuthenticationPrincipal OAuth2User user) {
+        return ResponseEntity.ok(postService.delArchive(postId, user.getName()));
     }
 }

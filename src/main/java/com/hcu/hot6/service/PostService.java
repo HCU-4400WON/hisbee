@@ -6,10 +6,7 @@ import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
-import com.hcu.hot6.domain.response.PostCreationResponse;
-import com.hcu.hot6.domain.response.PostFilterResponse;
-import com.hcu.hot6.domain.response.PostModifiedResponse;
-import com.hcu.hot6.domain.response.PostReadOneResponse;
+import com.hcu.hot6.domain.response.*;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -57,11 +54,11 @@ public class PostService {
 
     @Transactional
     public PostModifiedResponse updatePost(Long postId,
-                                          PostUpdateRequest request,
-                                          String email) {
+                                           PostUpdateRequest request) {
         Post post = postRepository.findOne(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not found."));
         post.update(request);
+
         return new PostModifiedResponse(post.getId(), post.getLastModifiedDate());
     }
 
@@ -80,11 +77,7 @@ public class PostService {
         var pagination = new Pagination(filter.getPage(), postRepository.count(filter));
         var postResponseList = postRepository.findAll(filter, pagination.getOffset())
                 .stream()
-                .map(post -> {
-                    if(!post.getThumbnail().isArchived())
-                        return post.getThumbnail().toResponse(email);
-                    else return null;
-                })
+                .map(post -> post.getThumbnail().toResponse(email))
                 .toList();
 
         return new PostFilterResponse(
@@ -112,5 +105,25 @@ public class PostService {
                 .delBookmark(member);
 
         return post.toResponse(email);
+    }
+
+    @Transactional
+    public ArchiveResponse addArchive(Long postId, String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow();
+        Post post = postRepository.findOne(postId)
+                .orElseThrow()
+                .archivedBy(member);
+
+        return new ArchiveResponse(post.getId(), post.getArchive().getCreatedDate());
+    }
+
+    @Transactional
+    public ArchiveResponse delArchive(Long postId, String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow();
+        Post post = postRepository.findOne(postId)
+                .orElseThrow()
+                .unarchivedBy(member);
+
+        return new ArchiveResponse(post.getId());
     }
 }
