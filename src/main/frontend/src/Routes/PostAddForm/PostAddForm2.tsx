@@ -32,6 +32,7 @@ import { useMutation } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
 import { useSetRecoilState } from "recoil";
 import { isLoginModalState, isLoginState } from "components/atom";
+import Soon from "components/Soon";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -554,7 +555,7 @@ function PostAddForm2() {
                   <span className="flex items-center">
                     {/* <input className="w-[70px] px-[10px] rounded-full mr-[20px]" placeholder="일정 입력"/> */}
                     {/* <input className="w-[70px] px-[5px] rounded-full " placeholder="모집유형1"/> */}
-                    <span className="px-[10px] rounded-full mr-[20px] bg-gray-200 font-light">
+                    <span className="px-[10px] rounded-full bg-gray-200 font-light">
                       {/* {getValues("durationIndex") === "0" ? 
                                         "상시 모집"
                                  : new Date(getValues("recruitStart")!) > new Date() ?
@@ -571,6 +572,12 @@ function PostAddForm2() {
                         getValues("recruitEnd")
                       )}
                     </span>
+                    <Soon
+                      bgColor="bg-gray-200"
+                      recruitStart={getValues("recruitStart")}
+                      recruitEnd={getValues("recruitEnd")}
+                      closed={false}
+                    />
                   </span>
                   <i className="fa-regular fa-heart text-[23px] text-gray-400"></i>
                 </span>
