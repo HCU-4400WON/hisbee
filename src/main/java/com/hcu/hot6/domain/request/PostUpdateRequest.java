@@ -45,5 +45,4 @@ public class PostUpdateRequest {
 
     //
     private Boolean isClosed;
-    private Boolean isArchived;
 }

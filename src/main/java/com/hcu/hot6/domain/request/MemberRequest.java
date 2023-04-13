@@ -19,7 +19,6 @@ public class MemberRequest {
 
     private String bio;
     private Department department;
-    //private Position position;
     private String grade;
     private String contact;
     private List<String> club;
