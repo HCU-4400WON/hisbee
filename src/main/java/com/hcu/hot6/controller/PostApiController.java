@@ -63,9 +63,8 @@ public class PostApiController {
     @PutMapping("/posts/{postId}")
     public ResponseEntity<PostModifiedResponse> updatePost(
             @PathVariable Long postId,
-            @RequestBody PostUpdateRequest request,
-            @AuthenticationPrincipal OAuth2User user) {
-        return ResponseEntity.ok(postService.updatePost(postId, request, user.getName()));
+            @RequestBody PostUpdateRequest request) {
+        return ResponseEntity.ok(postService.updatePost(postId, request));
     }
 
     /**
@@ -90,9 +89,6 @@ public class PostApiController {
         return ResponseEntity.ok(postService.readFilteredPost(filter, email));
     }
 
-    /**
-     * 북마크
-     */
     @PostMapping("/posts/{postId}/likes")
     public ResponseEntity<LikesResponse> doBookmark(@PathVariable Long postId,
                                                     @AuthenticationPrincipal OAuth2User user) {
@@ -103,5 +99,17 @@ public class PostApiController {
     public ResponseEntity<LikesResponse> undoBookmark(@PathVariable Long postId,
                                                             @AuthenticationPrincipal OAuth2User user) {
         return ResponseEntity.ok(postService.delBookmark(postId, user.getName()));
+    }
+
+    @PostMapping("/posts/{postId}/archive")
+    public ResponseEntity<ArchiveResponse> doArchive(@PathVariable Long postId,
+                                                     @AuthenticationPrincipal OAuth2User user) {
+        return ResponseEntity.ok(postService.addArchive(postId, user.getName()));
+    }
+
+    @DeleteMapping("/posts/{postId}/archive")
+    public ResponseEntity<ArchiveResponse> undoArchive(@PathVariable Long postId,
+                                                            @AuthenticationPrincipal OAuth2User user) {
+        return ResponseEntity.ok(postService.delArchive(postId, user.getName()));
     }
 }

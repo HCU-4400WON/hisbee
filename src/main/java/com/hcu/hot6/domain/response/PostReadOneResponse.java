@@ -64,7 +64,7 @@ public class PostReadOneResponse {
                 new TagForm() :
                 new TagForm(toArray(thumbnail.getTags(), ";"));
         this.isClosed = thumbnail.isClosed();
-        this.isArchived = thumbnail.isArchived();
+        this.isArchived = post.getArchive() != null;
 
         this.author = post.getAuthor().getNickname();
         this.postTypes = toArray(post.getPostTypes(), ",");

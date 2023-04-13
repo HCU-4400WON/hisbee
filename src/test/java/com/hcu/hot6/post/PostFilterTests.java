@@ -7,6 +7,7 @@ import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.TagForm;
+import com.hcu.hot6.domain.response.PostFilterResponse;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.service.PostService;
 import jakarta.annotation.PostConstruct;
@@ -253,5 +254,46 @@ public class PostFilterTests {
 
         // then
         assertThat(response.getTotal()).isEqualTo(2L);
+    }
+
+    @Test
+    public void 아카이브된_모집글은_보이지_않아야한다() throws Exception {
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .duration(Duration.FALL)
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .build();
+        final var request2 = PostCreationRequest.builder()
+                .title("보관될 모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .duration(Duration.FALL)
+                .targetCount("전체00명")
+                .keywords(List.of("온유", "축복"))
+                .contact("example@test.com")
+                .build();
+
+        postService.createPost(request, TEST_EMAIL);
+
+        var target = postService.createPost(request2, TEST_EMAIL);
+        var filter = PostSearchFilter.builder().build();
+
+        // when
+        postService.addArchive(target.getId(), TEST_EMAIL);
+        PostFilterResponse res = postService.readFilteredPost(filter, TEST_EMAIL);
+
+        // then
+        assertThat(res.getTotal()).isEqualTo(1L);
+        assertThat(res.getPosts().size()).isEqualTo(1);
+        assertThat(res.getPosts().get(0).getTitle()).isEqualTo("모집글 제목");
     }
 }

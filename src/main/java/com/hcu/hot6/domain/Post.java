@@ -58,6 +58,9 @@ public class Post {
     @JoinColumn(name = "thumbnail_id")
     private Thumbnail thumbnail;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Archive archive;
+
     @CreatedDate
     private LocalDateTime createdDate;
 
@@ -109,6 +112,20 @@ public class Post {
 
     public Post delBookmark(Member member) {
         return null;
+    }
+
+    public Post archivedBy(Member member) {
+        this.archive = new Archive(this, member);
+        member.getArchives().add(archive);
+
+        return this;
+    }
+
+    public Post unarchivedBy(Member member) {
+        member.getArchives().remove(archive);
+        this.archive = null;
+
+        return this;
     }
 
     public void update(PostUpdateRequest req) {
