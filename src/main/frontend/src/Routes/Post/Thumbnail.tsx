@@ -1,9 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
-import { addLikePost, deleteLikePost, IReadOnePost } from "api";
-import { AxiosError, AxiosResponse } from "axios";
-import { isLoginModalState, isLoginState } from "components/atom";
+import Heart from "components/Heart";
+import Soon from "components/Soon";
 import { motion } from "framer-motion";
-import { useSetRecoilState } from "recoil";
 import {
   convertDateToString,
   IPostExample,
@@ -35,51 +32,6 @@ function Thumbnail({
   // closed일 때는 모집마감 처리를 해주기 흐리게
   // hasLiked 일 때는 하트가 빨갛게 되어있도록
 
-  const setIsLogin = useSetRecoilState(isLoginState);
-  const setIsLoginModal = useSetRecoilState(isLoginModalState);
-
-  const { mutate: likeAddMutate, isLoading: isLikeAddLoading } = useMutation(
-    ["likeAddMutatePostPage" as string],
-    (postId: number) => addLikePost(postId) as any,
-    {
-      onSuccess: () => {
-        refetch();
-      },
-      onError: (error) => {
-        if (((error as AxiosError).response as AxiosResponse).status === 401) {
-          alert("로그인이 필요합니다.");
-          if (localStorage.getItem("key")) localStorage.removeItem("key");
-          setIsLoginModal(true);
-        }
-      },
-    }
-  );
-  const { mutate: likeDeleteMutate, isLoading: isLikeDeleteLoading } =
-    useMutation(
-      ["likeDeleteMutatePostPage" as string],
-      (postId: number) => deleteLikePost(postId) as any,
-      {
-        onSuccess: () => {
-          refetch();
-        },
-        onError: (error) => {
-          if (
-            ((error as AxiosError).response as AxiosResponse).status === 401
-          ) {
-            alert("로그인이 필요합니다.");
-            if (localStorage.getItem("key")) localStorage.removeItem("key");
-            setIsLoginModal(true);
-            setIsLogin(false);
-          }
-        },
-      }
-    );
-
-  const onHeartClick = () => {
-    if (!hasLiked) likeAddMutate(id);
-    else likeDeleteMutate(id);
-  };
-
   const dDay = convertDateToString(recruitStart, recruitEnd);
 
   // const duration = "D-12";
@@ -90,13 +42,14 @@ function Thumbnail({
   // const keywordsSecondLine = ["5학기 이상"];
   // const Likes = 15;
 
-  const dateDiff =
-    (new Date(recruitEnd).getTime() - new Date(recruitStart).getTime()) /
-    (1000 * 60 * 60 * 24);
-  const soon = dateDiff <= 4 && closed === false;
+  // const dateDiff =
+  //   (new Date(recruitEnd).getTime() - new Date(recruitStart).getTime()) /
+  //   (1000 * 60 * 60 * 24);
+  // const soon = dateDiff <= 4 && closed === false;
 
   return (
-    <div
+    <motion.div
+      whileHover={{ scale: 1.1 }}
       className={`w-[310px] min-h-[270px] mb-[50px]  rounded-xl border mx-[20px] bg-white ${
         closed && "opacity-40 bg-gray-200"
       }`}
@@ -109,24 +62,22 @@ function Thumbnail({
           <span className="px-[10px] py-[1px] rounded-full bg-gray-200 text-[14px]">
             <p>{closed ? "모집마감" : dDay}</p>
           </span>
-          {soon && (
+          {/* {soon && (
             <span className="px-[10px] py-[1px] rounded-full bg-gray-200 text-[14px] ml-[10px]">
               마감 임박🔥
             </span>
-          )}
+          )} */}
+          <Soon
+            fontSize="15"
+            bgColor="bg-gray-200"
+            closed={closed}
+            recruitStart={recruitStart}
+            recruitEnd={recruitEnd}
+          />
         </div>
         <span className="flex items-center ">
           <p className="mr-[10px]">{nlike}</p>
-          <motion.i
-            whileHover={{ scale: [1, 1.3, 1, 1.3, 1] }}
-            whileTap={{ y: [0, -30, 0] }}
-            onClick={onHeartClick}
-            className={`${
-              hasLiked
-                ? "fa-solid fa-heart text-blue-300 stroke-black shadow-stone-400"
-                : "fa-regular fa-heart"
-            } text-[18px] text-gray-400 `}
-          ></motion.i>
+          <Heart id={id} hasLiked={hasLiked} refetch={refetch} />
         </span>
       </div>
       <div className="px-[15px] pb-[15px]">
@@ -169,7 +120,7 @@ function Thumbnail({
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
