@@ -72,14 +72,13 @@ public class PostReadOneResponse {
         this.content = post.getContent();
         this.contactDetails = post.getContactDetails();
         this.qualifications = post.getQualifications();
-        this.years = toArray(post.getTargetYears(), ",");
+        this.years = (post.getTargetYears() != null) ? toArray(post.getTargetYears(), ",") : null;
         this.departments = toArray(post.getTargetDepartment(), ",");
         this.keywords = toArray(post.getKeywords(), ",");
         this.targetCount = post.getTargetCount();
-//        this.posterPaths = post.getPosters().stream()
-//                .map(Poster::getPostURL)
-//                .toList();
-        this.posterPaths = Arrays.stream(post.getPosters().split(",")).toList();
+        this.posterPaths = post.getPosters().stream()
+                .map(Poster::getPostURL)
+                .toList();
 
         this.nLike = post.getLikes().size();
         this.views = post.getViews();
