@@ -51,9 +51,8 @@ public class Post {
     @OneToMany(mappedBy = "post")
     private List<Likes> likes = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Poster> posters = new ArrayList<>();
-    private String posters;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Poster> posters = new ArrayList<>();
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "thumbnail_id")
     private Thumbnail thumbnail;
@@ -74,14 +73,13 @@ public class Post {
         this.keywords = Utils.toString(request.getKeywords(), ",");
         this.contactDetails = request.getContactDetails();
         this.qualifications = request.getQualifications();
-        this.targetYears = Utils.toString(request.getYears(), ",");
+        this.targetYears = (request.getYears() != null) ? Utils.toString(request.getYears(), ",") : null;
         this.targetDepartment = Utils.toString(request.getDepartments(), ",");
         this.targetCount = request.getTargetCount();
         this.views = 0L;
         this.isAutoClose = false;
-        this.posters = Utils.toString(request.getPosterPaths(), ",");
         registerAuthor(author);
-        //createPoster(request);
+        createPoster(request);
         createThumbnail(new Thumbnail(request));
     }
 
@@ -92,11 +90,11 @@ public class Post {
         thumbnail.setPost(this);
     }
 
-//    private void createPoster(PostCreationRequest request){
-//        request.getPosterPaths().stream().forEach((p) -> {
-//            this.getPosters().add(new Poster(p, this));
-//        });
-//    }
+    private void createPoster(PostCreationRequest request){
+        request.getPosterPaths().stream().forEach((p) -> {
+            this.getPosters().add(new Poster(p, this));
+        });
+    }
 
     private void registerAuthor(Member author) {
         this.author = author;
@@ -129,8 +127,7 @@ public class Post {
                 ? Utils.toString(req.getKeywords(), ",")
                 : keywords;
         this.content = nonNullOrElse(req.getContent(), content);
-        this.posters = Utils.toString(req.getPosterPaths(), ",");
-//        updatePoster(req);
+        updatePoster(req);
         thumbnail.update(req);
     }
 
@@ -138,10 +135,19 @@ public class Post {
         return new PostReadOneResponse(this, email);
     }
 
-//    private void updatePoster(PostUpdateRequest req){
-//        req.getDelPosterPaths().stream().forEach((p) -> this.posters.stream().forEach((originP) -> {
-//            if(p.compareTo(originP.getPostURL()) == 0) this.posters.remove(originP);
-//        }));
-//        req.getAddPosterPaths().stream().forEach((p) -> this.posters.add(new Poster(p, this)));
-//    }
+    private void updatePoster(PostUpdateRequest req){
+        List<Poster> temp = this.posters;
+
+        this.posters.clear();
+
+        req.getPosterPaths().stream().forEach((p) -> {
+            Poster poster = new Poster(p, this);
+            int flag = 0;
+            for(int i=0; i<temp.size(); i++)
+            {
+                if(p.compareTo(temp.get(i).getPostURL()) == 0) flag = 1;
+            }
+            if(flag == 0) this.posters.add(poster);
+        });
+    }
 }
