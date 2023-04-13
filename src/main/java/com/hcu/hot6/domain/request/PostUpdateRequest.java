@@ -41,7 +41,8 @@ public class PostUpdateRequest {
     private String content;
 
     // #5
-    private List<String> posterPaths;
+    private List<String> addPosterPaths;
+    private List<String> delPosterPaths;
 
     //
     private Boolean isClosed;
