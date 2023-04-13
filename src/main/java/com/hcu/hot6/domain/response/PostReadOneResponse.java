@@ -14,6 +14,7 @@ import java.util.List;
 
 import static com.hcu.hot6.util.Utils.toArray;
 import static com.hcu.hot6.util.Utils.toDate;
+import static java.util.Objects.requireNonNullElse;
 
 @Getter
 @NoArgsConstructor
@@ -55,7 +56,7 @@ public class PostReadOneResponse {
 
         this.id = post.getId();
         this.title = thumbnail.getTitle();
-        this.summary = thumbnail.getSummary();
+        this.summary = requireNonNullElse(thumbnail.getSummary(), "");
         this.recruitStart = toDate(thumbnail.getRecruitStart());
         this.recruitEnd = toDate(thumbnail.getRecruitEnd());
         this.duration = thumbnail.getDuration();
@@ -68,12 +69,12 @@ public class PostReadOneResponse {
         this.author = post.getAuthor().getNickname();
         this.postTypes = toArray(post.getPostTypes(), ",");
         this.contact = post.getContact();
-        this.content = post.getContent();
-        this.contactDetails = post.getContactDetails();
-        this.qualifications = post.getQualifications();
-        this.years = (post.getTargetYears() != null) ? toArray(post.getTargetYears(), ",") : null;
-        this.departments = (post.getTargetDepartment() != null) ? toArray(post.getTargetDepartment(), ",") : null;
-        this.keywords = (post.getKeywords() != null) ? toArray(post.getKeywords(), ",") : null;
+        this.content = requireNonNullElse(post.getContent(), "");
+        this.contactDetails = requireNonNullElse(post.getContactDetails(), "");
+        this.qualifications = requireNonNullElse(post.getQualifications(), "");
+        this.years = toArray(post.getTargetYears(), ",");
+        this.departments = toArray(post.getTargetDepartment(), ",");
+        this.keywords = toArray(post.getKeywords(), ",");
         this.targetCount = post.getTargetCount();
         this.posterPaths = post.getPosters().stream()
                 .map(Poster::getPath)
