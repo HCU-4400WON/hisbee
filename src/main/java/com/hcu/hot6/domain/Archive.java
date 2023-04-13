@@ -14,11 +14,17 @@ public class Archive {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "archive")
     private Post post;
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
     @CreatedDate
     private LocalDateTime createdDate;
+
+    public Archive(Post post, Member member) {
+        this.post = post;
+        this.member = member;
+        member.getArchives().add(this);
+    }
 }
