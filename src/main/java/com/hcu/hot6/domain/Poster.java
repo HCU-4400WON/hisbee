@@ -1,10 +1,13 @@
 package com.hcu.hot6.domain;
 
+import com.hcu.hot6.domain.request.PostCreationRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Poster {
 
     @Id
@@ -15,4 +18,9 @@ public class Poster {
     private String postURL;
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
+
+    public Poster(String postURL, Post post) {
+        this.postURL = postURL;
+        this.post = post;
+    }
 }

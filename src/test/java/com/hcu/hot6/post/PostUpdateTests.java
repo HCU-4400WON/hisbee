@@ -76,7 +76,7 @@ public class PostUpdateTests {
 
         // when
         var post = postService.createPost(req, TEST_EMAIL);
-        postService.updatePost(post.getId(), upReq, TEST_EMAIL);
+        postService.updatePost(post.getId(), upReq);
         var res = postService.readOnePost(post.getId(), TEST_EMAIL);
 
         // then
