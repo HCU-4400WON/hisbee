@@ -43,7 +43,8 @@ public class PostRepository {
         return query.selectFrom(post)
                 .where(
                         eqType(filter.getType()),
-                        eqKeywords(filter.getKeywords())
+                        eqKeywords(filter.getKeywords()),
+                        post.archive.isNull()
                 )
                 .offset(offset)
                 .limit(Pagination.LIMIT)
@@ -55,7 +56,8 @@ public class PostRepository {
         return query.selectFrom(post)
                 .where(
                         eqType(filter.getType()),
-                        eqKeywords(filter.getKeywords())
+                        eqKeywords(filter.getKeywords()),
+                        post.archive.isNull()
                 )
                 .orderBy(orderCond(filter.getOrderBy()))
                 .fetch();
@@ -66,7 +68,8 @@ public class PostRepository {
                 .from(post)
                 .where(
                         eqType(filter.getType()),
-                        eqKeywords(filter.getKeywords())
+                        eqKeywords(filter.getKeywords()),
+                        post.archive.isNull()
                 )
                 .fetchOne();
     }
