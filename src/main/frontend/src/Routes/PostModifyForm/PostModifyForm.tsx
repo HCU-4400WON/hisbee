@@ -40,6 +40,7 @@ import { AxiosError, AxiosResponse } from "axios";
 import { useSetRecoilState } from "recoil";
 import { isLoginModalState, isLoginState } from "components/atom";
 import htmlToDraft from "html-to-draftjs";
+import Soon from "components/Soon";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -224,10 +225,6 @@ function PostModifyForm() {
           ? converter("year", new Date())
           : data?.recruitStart,
       recruitEnd: data?.recruitEnd !== "" ? data?.recruitEnd : null,
-
-      // projectStart: data?.projectStart !== "" ? data?.projectStart : null,
-      //   projectStart: "2023-04-11", // optional로 바뀌어야 함
-      // duration: data?.duration?.length !== 0 ? data?.duration : [],
       duration: data?.duration,
       //   duration: ["봄학기", "여름학기"],
       //   duration
@@ -470,7 +467,7 @@ function PostModifyForm() {
             </div>
           </Link>
           <p className="md:text-[25px] text-[20px] font-unique">
-            모집글 작성하기
+            모집글 수정하기
           </p>
         </span>
         {/* <div className="flex justify-between items-center">
@@ -544,7 +541,7 @@ function PostModifyForm() {
                   <span className="flex items-center">
                     {/* <input className="w-[70px] px-[10px] rounded-full mr-[20px]" placeholder="일정 입력"/> */}
                     {/* <input className="w-[70px] px-[5px] rounded-full " placeholder="모집유형1"/> */}
-                    <span className="px-[10px] rounded-full mr-[20px] bg-gray-200 font-light">
+                    <span className="px-[10px] rounded-full mr-[0px] bg-gray-200 font-light">
                       {/* {getValues("durationIndex") === "0" ? 
                                         "상시 모집"
                                  : new Date(getValues("recruitStart")!) > new Date() ?
@@ -561,6 +558,12 @@ function PostModifyForm() {
                         getValues("recruitEnd")
                       )}
                     </span>
+                    <Soon
+                      bgColor="bg-gray-200"
+                      recruitStart={getValues("recruitStart")}
+                      recruitEnd={getValues("recruitEnd")}
+                      closed={false}
+                    />
                   </span>
                   <i className="fa-regular fa-heart text-[23px] text-gray-400"></i>
                 </span>
@@ -1370,7 +1373,7 @@ function PostModifyForm() {
             className="text-white bg-blue-500  text-[18px] px-[20px] py-[8px] rounded-lg"
           >
             {" "}
-            모집글 등록하기
+            모집글 수정하기
           </button>
         </div>
       </form>

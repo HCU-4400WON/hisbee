@@ -45,12 +45,12 @@ public class Thumbnail {
         // required
         this.title = request.getTitle();
         this.tags = request.getTags().combine();
+        this.recruitStart = Utils.toLocalDateTime(request.getRecruitStart());
 
         // optional
-        this.summary = request.getSummary();
-        this.recruitStart = Utils.toLocalDateTime(request.getRecruitStart());
-        this.recruitEnd = Utils.toLocalDateTime(request.getRecruitEnd());
-        this.duration = request.getDuration();
+        this.summary = (request.getSummary() != null) ? request.getSummary() : null;
+        this.recruitEnd = (request.getRecruitEnd() != null) ? Utils.toLocalDateTime(request.getRecruitEnd()) : null;
+        this.duration = (request.getDuration() != null) ? request.getDuration() : null;
     }
 
     public PostThumbnailResponse toResponse(String email) {

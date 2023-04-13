@@ -298,23 +298,6 @@ function Post() {
   const setIsLogin = useSetRecoilState(isLoginState);
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
-  const { mutate: likeAddMutate, isLoading: isLikeAddLoading } = useMutation(
-    ["likeAddMutatePostPage" as string],
-    (postId: number) => addLikePost(postId) as any,
-    {
-      onSuccess: () => {
-        refetch();
-      },
-      onError: (error) => {
-        if (((error as AxiosError).response as AxiosResponse).status === 401) {
-          alert("로그인이 필요합니다.");
-          if (localStorage.getItem("key")) localStorage.removeItem("key");
-          setIsLoginModal(true);
-        }
-      },
-    }
-  );
-
   const { mutate: loginCheckMutate, isLoading: isLoginCheckLoading } =
     useMutation(["loginCheckApiPost" as string], loginCheckApi, {
       onError: (error) => {
@@ -324,27 +307,6 @@ function Post() {
         }
       },
     });
-
-  const { mutate: likeDeleteMutate, isLoading: isLikeDeleteLoading } =
-    useMutation(
-      ["likeDeleteMutatePostPage" as string],
-      (postId: number) => deleteLikePost(postId) as any,
-      {
-        onSuccess: () => {
-          refetch();
-        },
-        onError: (error) => {
-          if (
-            ((error as AxiosError).response as AxiosResponse).status === 401
-          ) {
-            alert("로그인이 필요합니다.");
-            if (localStorage.getItem("key")) localStorage.removeItem("key");
-            setIsLoginModal(true);
-            setIsLogin(false);
-          }
-        },
-      }
-    );
 
   useEffect(() => {
     loginCheckMutate();
@@ -740,7 +702,7 @@ function Post() {
                 ))} */}
               {posts?.posts?.map((post: IReadOnePost, index: number) => (
                 <Link key={index} to={`/post2/${post?.id}`}>
-                  <Thumbnail {...post} />
+                  <Thumbnail {...post} refetch={refetch} />
                 </Link>
               ))}
             </PostGrid>

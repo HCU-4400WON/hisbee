@@ -39,6 +39,8 @@ import {
 } from "Routes/PostAddForm/PostExamples";
 import { DragControls } from "framer-motion";
 import { Link } from "react-router-dom";
+import Heart from "components/Heart";
+import Soon from "components/Soon";
 
 const Container = tw.div`
 md:w-[1470px] 
@@ -55,11 +57,11 @@ const GoBackIcon = tw.i`
 fa-solid fa-arrow-left text-[18px] md:text-[23px]
 `;
 
-const Form = tw.form`
+const Form = tw.div`
 w-full
 `;
 const FormHeader = tw.header`
-pt-[62px] md:pt-[55px] text-[20px] md:text-[25px] font-semibold flex`;
+pt-[62px] md:pt-[55px] flex items-center justify-between `;
 
 const FormTitleInput = tw.input`
 w-[400px] 
@@ -70,6 +72,7 @@ bg-[#eeeeee]
 `;
 
 const FormTitle = tw.div`
+text-[20px] md:text-[25px] font-semibold 
 font-main
 `;
 
@@ -621,29 +624,57 @@ function Detail2() {
               </GoBackButton>
             </GoBackSpan>
 
-            <Form onSubmit={handleSubmit(onValid as any)}>
+            <Form>
               <FormHeader>
-                <FormTitle>{data?.title}</FormTitle>
+                <div className="flex items-center">
+                  <div>
+                    {data?.closed && (
+                      <div className="px-[20px] py-[4px] rounded-lg text-[18px] mr-[10px] bg-gray-200 ">
+                        ✂️ 마감 된 글
+                      </div>
+                    )}
+                  </div>
+                  <FormTitle className="mr-[10px]">{data?.title}</FormTitle>
+                  <Heart
+                    id={data?.id}
+                    hasLiked={data?.hasLiked}
+                    refetch={refetch}
+                  />
+                </div>
                 {/* )} */}
-              </FormHeader>
-              <div className="flex justify-end">
-                <button
-                  onClick={() => {
-                    const newClosedPost: IUpdatePost = {
-                      isClosed: true,
-                    };
-                    updatePost(Number(id), newClosedPost);
-                  }}
-                >
-                  마감
-                </button>
-                <Link to={`/modify/${id}`} state={data as IReadOnePost}>
-                  <button>수정</button>
-                </Link>
-                <FormDeleteButton id="delete" onClick={onBtnClick}>
+                <div>
+                  <button
+                    className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-gray-200 "
+                    onClick={() => {
+                      const newClosedPost: IUpdatePost = {
+                        isClosed: true,
+                      };
+                      if (window.confirm("마감하시겠습니까?")) {
+                        console.log("!!");
+                        updatePost(Number(id), newClosedPost);
+                      }
+                    }}
+                  >
+                    {data?.closed ? "연장" : "마감"}
+                  </button>
+
+                  <Link to={`/modify/${id}`} state={data as IReadOnePost}>
+                    <button className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-blue-100 text-blue-500">
+                      수정
+                    </button>
+                  </Link>
+                  <button
+                    id="delete"
+                    onClick={onBtnClick}
+                    className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-red-100 text-red-500"
+                  >
+                    삭제
+                  </button>
+                  {/* <FormDeleteButton  >
                   <FormDeleteIcon />
-                </FormDeleteButton>
-              </div>
+                </FormDeleteButton> */}
+                </div>
+              </FormHeader>
 
               <FormAuthorNButtonRow>
                 <FormAuthorSpan className="flex justify-between w-full">
@@ -675,7 +706,7 @@ function Detail2() {
               </FormAuthorNButtonRow>
 
               {/* 요약정보 */}
-              <div className="bg-gray-100 rounded-3xl">
+              <div className="bg-slate-100 rounded-3xl">
                 <Grid>
                   <GridItem>
                     <ItemTitle>모집 기간</ItemTitle>
@@ -690,6 +721,11 @@ function Detail2() {
                         {datetimeToString(data?.recruitEnd as Date)}
 
                         {/* )} */}
+                        <Soon
+                          recruitStart={data?.recruitStart}
+                          recruitEnd={data?.recruitEnd}
+                          closed={data?.closed}
+                        />
                       </ItemText>
                     </ItemText>
                   </GridItem>
@@ -697,7 +733,7 @@ function Detail2() {
                     <ItemTitle>학년</ItemTitle>
 
                     <ItemText className="text-blue-500">
-                      {data?.years.length === 0
+                      {data?.years.length === 1 && data?.years[0] === ""
                         ? "학년 무관"
                         : data?.years.map((year) => year + " ")}
                     </ItemText>
@@ -713,43 +749,56 @@ function Detail2() {
                   <GridItem>
                     <ItemTitle>전공</ItemTitle>
                     <ItemText className="text-blue-500">
-                      {data?.departments.length === 0
+                      {data?.departments.length === 1 &&
+                      data?.departments[0] === ""
                         ? "전공 무관"
                         : data?.departments.map(
                             (department) => department + " "
                           )}
                     </ItemText>
                   </GridItem>
-                  <GridItem>
-                    <ItemTitle>신청 방법</ItemTitle>
-                    <a
-                      href="http://google.com"
-                      className="md:w-full w-[200px] text-[13px] md:text-[17px] font-bold underline"
-                    >
-                      {data?.contact}
-                    </a>
-                  </GridItem>
-                  <GridItem>
-                    <ItemTitle>활동 기간</ItemTitle>
 
-                    <ItemText>4학기 이상</ItemText>
-                  </GridItem>
-                  <GridItem>
-                    <ItemTitle>신청 안내</ItemTitle>
-                    <ItemText className="pr-[40px]">
-                      {data?.contactDetails}
-                    </ItemText>
-                  </GridItem>
-                  <GridItem>
-                    <ItemTitle>지원 자격</ItemTitle>
+                  {data?.contact && (
+                    <GridItem>
+                      <ItemTitle>신청 방법</ItemTitle>
+                      <a
+                        href="http://google.com"
+                        className="md:w-full w-[200px] text-[13px] md:text-[17px] font-bold underline"
+                      >
+                        {data?.contact}
+                      </a>
+                    </GridItem>
+                  )}
 
-                    <ItemText>{data?.qualifications}</ItemText>
-                  </GridItem>
+                  {data?.duration && (
+                    <GridItem>
+                      <ItemTitle>활동 기간</ItemTitle>
+
+                      <ItemText>{data?.duration}</ItemText>
+                    </GridItem>
+                  )}
+
+                  {data?.contactDetails && (
+                    <GridItem>
+                      <ItemTitle>신청 안내</ItemTitle>
+                      <ItemText className="pr-[40px]">
+                        {data?.contactDetails}
+                      </ItemText>
+                    </GridItem>
+                  )}
+
+                  {data?.qualifications && (
+                    <GridItem>
+                      <ItemTitle>지원 자격</ItemTitle>
+
+                      <ItemText>{data?.qualifications}</ItemText>
+                    </GridItem>
+                  )}
                 </Grid>
               </div>
               {/* 키워드들 */}
 
-              <div className="mt-[30px] mb-[60px] px-[50px]">
+              <div className="m-[30px] mb-[60px] px-[50px]">
                 {data?.postTypes.map((postType, index) => (
                   <button
                     key={index}
@@ -772,7 +821,7 @@ function Detail2() {
               </div>
               <div
                 dangerouslySetInnerHTML={{ __html: data?.content as string }}
-                className="px-[50px] text-[20px]"
+                className="p-[50px] text-[20px] bg-gray-100 rounded-3xl"
               ></div>
               {/* <div dangerouslySetInnerHTML={{ __html: editorString }}></div> */}
               <div className="flex">

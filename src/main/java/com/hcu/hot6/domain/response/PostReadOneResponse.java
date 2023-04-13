@@ -71,9 +71,9 @@ public class PostReadOneResponse {
         this.content = post.getContent();
         this.contactDetails = post.getContactDetails();
         this.qualifications = post.getQualifications();
-        this.years = toArray(post.getTargetYears(), ",");
-        this.departments = toArray(post.getTargetDepartment(), ",");
-        this.keywords = toArray(post.getKeywords(), ",");
+        this.years = (post.getTargetYears() != null) ? toArray(post.getTargetYears(), ",") : null;
+        this.departments = (post.getTargetDepartment() != null) ? toArray(post.getTargetDepartment(), ",") : null;
+        this.keywords = (post.getKeywords() != null) ? toArray(post.getKeywords(), ",") : null;
         this.targetCount = post.getTargetCount();
         this.posterPaths = post.getPosters().stream()
                 .map(Poster::getPath)

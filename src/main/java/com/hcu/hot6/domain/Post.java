@@ -73,13 +73,13 @@ public class Post {
         this.contact = request.getContact();
 
         // optional
-        this.content = request.getContent();
-        this.keywords = Utils.toString(request.getKeywords(), ",");
-        this.contactDetails = request.getContactDetails();
-        this.qualifications = request.getQualifications();
-        this.targetYears = Utils.toString(request.getYears(), ",");
-        this.targetDepartment = Utils.toString(request.getDepartments(), ",");
-        this.targetCount = request.getTargetCount();
+        this.content = (request.getContent() != null) ? request.getContent() : null;
+        this.keywords = (request.getKeywords() != null) ?Utils.toString(request.getKeywords(), ",") : null;
+        this.contactDetails = (request.getContactDetails() != null) ? request.getContactDetails() : null;
+        this.qualifications = (request.getQualifications() != null) ? request.getQualifications() : null;
+        this.targetYears = (request.getYears() != null) ? Utils.toString(request.getYears(), ",") : null;
+        this.targetDepartment = (request.getDepartments() != null) ? Utils.toString(request.getDepartments(), ",") : null;
+        this.targetCount = (request.getTargetCount() != null) ? request.getTargetCount() : null;
         this.views = 0L;
         this.isAutoClose = false;
         registerAuthor(author);
