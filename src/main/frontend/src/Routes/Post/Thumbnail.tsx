@@ -50,7 +50,7 @@ function Thumbnail({
   return (
     <motion.div
       whileHover={{ scale: 1.1 }}
-      className={`w-[310px] min-h-[270px] mb-[50px]  rounded-xl border mx-[20px] bg-white ${
+      className={`min-w-[310px] min-h-[280px] mb-[50px] rounded-xl border mx-[20px] bg-white ${
         closed && "opacity-40 bg-gray-200"
       }`}
     >
@@ -58,7 +58,7 @@ function Thumbnail({
         className="pt-[15px] px-[15px] flex justify-between"
         onClick={(e) => e.preventDefault()}
       >
-        <div className="flex items-center">
+        <div className="flex items-center ">
           <span className="px-[10px] py-[1px] rounded-full bg-gray-200 text-[14px]">
             <p>{closed ? "모집마감" : dDay}</p>
           </span>
@@ -80,7 +80,7 @@ function Thumbnail({
           <Heart id={id} hasLiked={hasLiked} refetch={refetch} />
         </span>
       </div>
-      <div className="px-[15px] pb-[15px]">
+      <div className="px-[15px] pb-[15px] border">
         <span className="">
           <p className="my-[10px] text-[18px]">{title}</p>
         </span>

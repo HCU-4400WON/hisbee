@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 
 import "./textarea.css";
+import "./date.css";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertToRaw } from "draft-js";
@@ -63,6 +64,17 @@ const DetailUnSelectedBUTTON = `${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
 const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8px] rounded-lg`;
 const MajorUnSelectedBUTTON = `${MainBLUE} px-[15px] py-[8px] rounded-lg`;
 const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg`;
+
+const ThumbnailKeywordsButton = tw.div`
+  text-[15px] px-[15px] py-[2px] rounded-full mr-[10px] bg-blue-100
+  
+`;
+//LightMainBlue
+const ThumbnailCategoryButton = tw.div`
+  py-[2px] mb-[10px] px-[15px] rounded-full mr-[10px] bg-blue-200
+`;
+
+//MainBlue
 
 function PostAddForm2() {
   const {
@@ -313,7 +325,7 @@ function PostAddForm2() {
     { 경영경제학부: ["경영학", "경제학", "GM"] },
     { 상당심리사회복지학부: ["상담심리학", "사회복지학"] },
     { 생명과학부: ["생명과학부"] },
-    { 전산전자공학부: ["AI 컴퓨터공학심화", "컴퓨터공학", "전자공학심화"] },
+    { 전산전자공학부: ["AI", "컴퓨터공학", "전자공학"] },
     { ICT창업학부: ["GE", "ICT융합", "ACE"] },
     { 커뮤니케이션학부: ["언론정보학", "공연영상학"] },
     { 기계제어공학부: ["기계공학", "전자제어공학"] },
@@ -549,8 +561,8 @@ function PostAddForm2() {
           </p> */}
 
           <div className="w-full h-[400px] flex items-center justify-between my-[20px] ">
-            <div className="w-[400px] bg-white p-[30px]">
-              <div className="mb-[30px]">
+            <div className="w-[400px] h-[350px] bg-white p-[30px] rounded-2xl">
+              <div className="mb-[10px]">
                 <span className="flex items-center justify-between mb-[20px]">
                   <span className="flex items-center">
                     {/* <input className="w-[70px] px-[10px] rounded-full mr-[20px]" placeholder="일정 입력"/> */}
@@ -583,53 +595,67 @@ function PostAddForm2() {
                 </span>
 
                 <input
-                  className="w-[340px] text-[20px] py-[5px] px-[15px] mb-[10px] border-b-2"
+                  className="w-[340px] text-[19px] py-[5px] px-[15px] mb-[10px] border-b-2"
                   {...register("title")}
                   type="text"
                   placeholder="제목을 입력해주세요"
                 />
-                <textarea
-                  id="summary"
-                  onKeyPress={textareaResize}
-                  onKeyUp={textareaResize}
-                  className="notes w-[340px] text-[15px] px-[15px] pt-[5px]"
-                  {...register("summary")}
-                  placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요"
-                />
+                <div className=" h-[70px]">
+                  <textarea
+                    id="summary"
+                    onKeyPress={textareaResize}
+                    onKeyUp={textareaResize}
+                    className="notes w-[340px] text-[15px] px-[15px] pt-[5px]"
+                    {...register("summary")}
+                    placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요"
+                  />
+                </div>
               </div>
               <div className="flex items-center">
                 {getValues("postTypes").length !== 0 &&
                   getValues("postTypes").map(
                     (category: string, index: number) => (
-                      <div
-                        className={` py-[1px] mb-[20px] px-[15px] rounded-full mr-[10px] ${LightMainBLUE}`}
-                        key={index}
-                      >
+                      <ThumbnailCategoryButton key={index}>
                         {category}
-                      </div>
+                      </ThumbnailCategoryButton>
                     )
                   )}
               </div>
               {[
                 { array: "first", str: "firstKeyword" },
                 { array: "second", str: "secondKeyword" },
-              ].map((lineObj, index) => (
-                <div key={index} className="flex mb-[10px] items-center">
+              ].map((lineObj, LineIndex) => (
+                <div key={LineIndex} className="flex mb-[10px] items-center">
                   {/* firstLine Keyword */}
 
                   {getValues(lineObj.array as any)?.map(
-                    (keyword: string, index: number) => (
-                      <div
-                        key={index}
-                        className={`text-[15px] px-[15px] py-[1px] rounded-full mr-[10px] ${LightMainBLUE}`}
-                      >
+                    (keyword: string, keywordIndex: number) => (
+                      <ThumbnailKeywordsButton key={keywordIndex}>
                         {keyword}
-                      </div>
+                        <i
+                          className="fa-solid fa-xmark ml-[5px]"
+                          onClick={(e) => {
+                            // first , second keywords 구분하여 삭제
+                            console.log(LineIndex);
+
+                            let v: any;
+                            if (LineIndex === 0) v = "first";
+                            else v = "second";
+
+                            const gv = getValues(v) as any;
+
+                            setValue(v, [
+                              ...gv.slice(0, keywordIndex),
+                              ...gv.slice(keywordIndex + 1),
+                            ]);
+                          }}
+                        ></i>
+                      </ThumbnailKeywordsButton>
                     )
                   )}
                   <input
                     type="text"
-                    className={`py-[2px] px-[15px] w-[110px] rounded-full ${MainBLUE}`}
+                    className={`py-[2px] px-[15px] w-[110px] rounded-full ${LightMainBLUE}`}
                     {...register(lineObj.str as any)}
                     onKeyPress={async (
                       e: React.KeyboardEvent<HTMLInputElement>
@@ -685,17 +711,17 @@ function PostAddForm2() {
                 <span className="flex items-center mb-[10px]">
                   <p className="mx-[15px]">시작</p>
                   <input
-                    className="w-[140px]"
+                    className={`w-[140px] bg-slate-100 text-blue-500`}
                     type="date"
                     {...register("recruitStart")}
                   />
                 </span>
 
                 <span className="flex items-center">
-                  <p className="mx-[15px]">마감</p>
+                  <p className="mx-[15px] ">마감</p>
                   <input
                     type="date"
-                    className="w-[140px]"
+                    className="w-[140px] bg-slate-100 text-blue-500"
                     {...register("recruitEnd")}
                   />
                 </span>
@@ -716,7 +742,7 @@ function PostAddForm2() {
               </span>
 
               <div className="flex">
-                <div className="grid grid-cols-2 w-[300px]">
+                <div className="grid grid-cols-2 w-[330px]">
                   {Categories.map((category, index) => (
                     <span key={index} className="flex items-center mt-[20px]">
                       {/* <input {...register("postTypes")} value={category} type="checkBox" className="mx-[10px]" /> */}
@@ -727,7 +753,7 @@ function PostAddForm2() {
                           getValues("postTypes")?.includes(category as never)
                             ? MajorSeletedBUTTON
                             : UnSelectedBUTTON
-                        } px-[15px] py-[8px] rounded-lg`}
+                        } px-[15px] py-[8px] rounded-lg w-[130px]`}
                         onClick={async () => {
                           const gv = getValues("postTypes");
                           const gvIdx = gv.indexOf(category as never);
@@ -780,7 +806,7 @@ function PostAddForm2() {
                 <p className="w-[130px] mt-[8px]">신청 방법</p>
                 <input
                   type="text"
-                  className="w-full border-b-2 h-[40px] ml-[20px] px-[10px]"
+                  className="w-full border-b-2 border-gray-400 h-[40px] ml-[20px] px-[10px] bg-slate-100"
                   placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
                   {...register("contact")}
                 />
@@ -791,7 +817,7 @@ function PostAddForm2() {
                   id="registerMethod"
                   onKeyPress={textareaResize}
                   onKeyUp={textareaResize}
-                  className="notes px-[10px] vertical-center w-full ml-[20px] "
+                  className="notes px-[10px] vertical-center w-full ml-[20px]"
                   placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
                   {...register("contactDetails")}
                 />
@@ -870,7 +896,7 @@ function PostAddForm2() {
 
                 {/* 학년 중복선택  */}
                 <div className="py-[20px] flex w-full justify-between items-center ">
-                  <div className="w-[45%]">
+                  <div className="w-[55%]">
                     <span className="flex items-center text-[20px] mb-[10px]">
                       학년{" "}
                       <p className="ml-[10px] text-[15px] text-gray-400">
@@ -878,7 +904,7 @@ function PostAddForm2() {
                       </p>
                     </span>
 
-                    <div className="flex ">
+                    <div className="flex">
                       <div className="flex"></div>
                       <button
                         type="button"
@@ -887,7 +913,7 @@ function PostAddForm2() {
                           setValue("years", ["상관없음" as never]);
                         }}
                         value="상관없음"
-                        className={`border-2 px-[15px] py-[5px] rounded-lg ${
+                        className={`border-2 px-[10px] py-[5px] rounded-lg ${
                           !gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
                         }`}
                       >
@@ -900,7 +926,7 @@ function PostAddForm2() {
                           type="button"
                           className={`border-2 ${
                             gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
-                          } px-[15px] py-[5px] rounded-lg ml-[10px]`}
+                          } px-[10px] py-[5px] rounded-lg ml-[10px] `}
                           onClick={() => {
                             // if(gradeToggle) setValue("years" , ["상관없음"] as any);
                             setValue("years", []);
@@ -950,7 +976,7 @@ function PostAddForm2() {
 
                   {/* 지원 자격 */}
 
-                  <div className="mt-[20px] w-[45%]">
+                  <div className="mt-[20px] w-[40%]">
                     <p className="mb-[10px] text-[18px] ">지원 자격</p>
                     <div className="flex">
                       <textarea
@@ -1085,13 +1111,13 @@ function PostAddForm2() {
             </div>
 
             <div className="my-[20px] flex w-[full] items-center justify-between mt-[40px]">
-              <div className="w-[45%]">
+              <div className="w-[55%]">
                 <div>
                   <span className="flex items-center text-[20px] mb-[10px]">
                     인원{" "}
                   </span>
                 </div>
-                <div className="flex">
+                <div className="flex items-center">
                   <button
                     type="button"
                     className={`${
@@ -1116,20 +1142,27 @@ function PostAddForm2() {
                   </button>
                   {getValues("positionToggle") && (
                     <input
-                      className="ml-[10px]"
+                      className="ml-[20px] px-[10px] h-[40px] w-[300px] border-b-2 border-gray-400 bg-gray-100"
                       type="text"
+                      placeholder="ex) 1학년 9명 , 콘디생 3학년 이상 5명"
                       {...register("targetCount")}
                     ></input>
                   )}
                 </div>
               </div>
-              <div className="w-[45%] ">
-                <p className="">활동 기간</p>
-                <select {...register("duration")} className="mt-[20px]">
-                  {duration.map((duration, index) => (
-                    <option key={index}>{duration}</option>
-                  ))}
-                </select>
+              <div className="w-[40%] ">
+                <p className="text-[18px]">활동 기간</p>
+                <span className="text-[17px]">
+                  <select
+                    {...register("duration")}
+                    className="mt-[20px] mr-[20px] pr-[10px] pl-[10px] py-[5px] bg-gray-200 rounded-lg"
+                  >
+                    {duration.map((duration, index) => (
+                      <option key={index}>{duration}</option>
+                    ))}
+                  </select>
+                  동안
+                </span>
               </div>
             </div>
           </div>
@@ -1156,7 +1189,7 @@ function PostAddForm2() {
         )}
 
         {optionalFoldToggle[1] && (
-          <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
+          <div className="relative bg-gray-100 rounded-3xl p-[30px] mb-[30px]">
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
               onClick={() =>
@@ -1168,9 +1201,11 @@ function PostAddForm2() {
               }
             ></i>
 
-            <p className="text-[20px] font-main">검색 키워드 입력</p>
-            <p className="mt-[10px]">모집글과 관련된 키워드를 입력해주세요</p>
-            <p className="my-[10px]">키워드</p>
+            <p className=" text-[20px]">
+              모임과 관련된 키워드를 입력하여 검색 결과에 노출될 수 있게
+              해보세요!
+            </p>
+            <p className="mt-[30px] mb-[15px] text-[17px]">키워드</p>
             <div className="flex items-center">
               {["postTypes", "first", "second"].map((elem) =>
                 getValues(elem as any)?.map((v: string, index: number) => (
@@ -1202,10 +1237,12 @@ function PostAddForm2() {
             </div>
 
             <div className="">
-              <p className="mr-[20px] my-[10px]">키워드 입력</p>
+              <p className="mr-[20px] mt-[30px] mb-[15px] text-[17px]">
+                키워드 입력
+              </p>
               <input
                 type="text"
-                className="w-[300px] border-b-2 h-[40px] px-[10px]"
+                className="w-[300px] border-b-2 h-[40px] px-[10px] bg-gray-100 border-gray-400"
                 placeholder="엔터키로 키워드를 등록하세요"
                 onKeyPress={async (e) => {
                   if (e.key === "Enter") {
