@@ -115,7 +115,7 @@ function PostAddForm2() {
       qualifications: "",
       positionToggle: false,
       total: "",
-
+      durationText: "",
       // first: [],
       // second: [],
 
@@ -133,6 +133,7 @@ function PostAddForm2() {
     recruitEnd?: string; // string
     // projectStart?: string;
     duration?: string;
+    durationText?: string;
     targetCount?: string;
     // positions?: IPositionList[];
     // positionName?: string;
@@ -152,7 +153,9 @@ function PostAddForm2() {
   }
 
   watch([
+    "departments",
     "postTypes",
+    "duration",
     // "durationIndex",
     "targetCount",
     "firstKeyword",
@@ -250,6 +253,21 @@ function PostAddForm2() {
     //   }
     // }
 
+    // 키워드 중복 없앰
+    let newKeywords: string[] = [];
+    const unionKeywords = [
+      ...data?.postTypes,
+      ...(data?.first as string[] | []),
+      ...(data?.second as string[] | []),
+      ...(data?.keywords as string[] | []),
+    ];
+
+    unionKeywords.forEach((element) => {
+      if (!newKeywords.includes(element)) {
+        newKeywords.push(element);
+      }
+    });
+
     const newPost = {
       title: data?.title,
       summary: data?.summary !== "" ? data?.summary : null,
@@ -263,7 +281,12 @@ function PostAddForm2() {
           ? converter("year", new Date())
           : data?.recruitStart,
       recruitEnd: data?.recruitEnd !== "" ? data?.recruitEnd : null,
-      duration: data.duration === "" ? null : data?.duration,
+      duration:
+        data.duration === ""
+          ? null
+          : data?.duration === "직접 입력"
+          ? data?.durationText
+          : data?.duration,
       targetCount: data?.targetCount,
       contact: data?.contact,
       contactDetails: data?.contactDetails !== "" ? data?.contactDetails : null,
@@ -274,12 +297,7 @@ function PostAddForm2() {
           : draftToHtml(convertToRaw(editorState.getCurrentContent())),
       years: data?.years?.length !== 0 ? data?.years : null,
       departments: data?.departments?.length !== 0 ? data?.departments : null,
-      keywords: [
-        ...data?.postTypes,
-        ...(data?.first as string[] | []),
-        ...(data?.second as string[] | []),
-        ...(data?.keywords as string[] | []),
-      ],
+      keywords: newKeywords,
       posterPaths: imageURLList?.length !== 0 ? imageURLList : null,
     };
 
@@ -370,6 +388,7 @@ function PostAddForm2() {
     if (!inputRef.current) {
       return;
     }
+
     inputRef.current.click();
   }, []);
 
@@ -481,6 +500,7 @@ function PostAddForm2() {
     "2학기",
     "3학기",
     "4학기",
+    "직접 입력",
   ];
 
   return (
@@ -910,7 +930,7 @@ function PostAddForm2() {
                         type="button"
                         onClick={() => {
                           setGradeToggle(false);
-                          setValue("years", ["상관없음" as never]);
+                          setValue("years", []);
                         }}
                         value="상관없음"
                         className={`border-2 px-[10px] py-[5px] rounded-lg ${
@@ -929,7 +949,7 @@ function PostAddForm2() {
                           } px-[10px] py-[5px] rounded-lg ml-[10px] `}
                           onClick={() => {
                             // if(gradeToggle) setValue("years" , ["상관없음"] as any);
-                            setValue("years", []);
+                            // setValue("years", []);
                             setGradeToggle(true);
                             console.log(getValues("years"));
                           }}
@@ -946,23 +966,20 @@ function PostAddForm2() {
                               value={grade}
                               key={index}
                               className={`ml-[10px] px-[15px] py-[5px] rounded-lg ${
-                                !gradeToggle
+                                getValues("years").includes(grade as never)
                                   ? MajorSeletedBUTTON
                                   : MajorUnSelectedBUTTON
                               }`}
                               onClick={(e: any) => {
                                 const gV = getValues("years");
                                 const gvIdx = gV.indexOf(grade as never);
-                                const btn = e.currentTarget;
                                 if (gvIdx === -1) {
                                   setValue("years", [...gV, grade as never]);
-                                  btn.className = ` px-[15px] py-[5px] rounded-lg ml-[10px] ${MajorSeletedBUTTON}`;
                                 } else {
                                   setValue("years", [
                                     ...gV.slice(0, gvIdx),
                                     ...gV.slice(gvIdx + 1),
                                   ]);
-                                  btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${MajorUnSelectedBUTTON}`;
                                 }
                               }}
                             >
@@ -1007,7 +1024,7 @@ function PostAddForm2() {
                     type="button"
                     onClick={() => {
                       setMajorToggle(false);
-                      setValue("years", ["상관없음" as never]);
+                      setValue("departments", []);
                     }}
                     value="상관없음"
                     className={`border-2 px-[15px] min-w-[120px] py-[5px] rounded-lg ${
@@ -1023,7 +1040,7 @@ function PostAddForm2() {
                       className={`border-2 ${UnSelectedBUTTON}  w-[120px] px-[15px] py-[5px] rounded-lg ml-[10px]`}
                       onClick={() => {
                         // if(majorToggle) setValue("departments" , ["상관없음"] as any);
-                        setValue("departments", []);
+                        // setValue("departments", []);
                         setMajorToggle(true);
                       }}
                     >
@@ -1074,7 +1091,13 @@ function PostAddForm2() {
                                     {/* check point */}
                                     <button
                                       type="button"
-                                      className={`${DetailUnSelectedBUTTON}`}
+                                      className={`${
+                                        getValues("departments").includes(
+                                          value as never
+                                        )
+                                          ? DetailSelectedBUTTON
+                                          : DetailUnSelectedBUTTON
+                                      }`}
                                       onClick={(e) => {
                                         const gV = getValues("departments");
                                         const gvIdx = gV.indexOf(
@@ -1086,13 +1109,13 @@ function PostAddForm2() {
                                             ...gV,
                                             value as never,
                                           ]);
-                                          btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailSelectedBUTTON}`;
+                                          // btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailSelectedBUTTON}`;
                                         } else {
                                           setValue("departments", [
                                             ...gV.slice(0, gvIdx),
                                             ...gV.slice(gvIdx + 1),
                                           ]);
-                                          btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailUnSelectedBUTTON}`;
+                                          // btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailUnSelectedBUTTON}`;
                                         }
                                       }}
                                     >
@@ -1152,17 +1175,26 @@ function PostAddForm2() {
               </div>
               <div className="w-[40%] ">
                 <p className="text-[18px]">활동 기간</p>
-                <span className="text-[17px]">
+                <div className=" mt-[20px] text-[17px] flex items-center">
                   <select
                     {...register("duration")}
-                    className="mt-[20px] mr-[20px] pr-[10px] pl-[10px] py-[5px] bg-gray-200 rounded-lg"
+                    className=" mr-[20px] pr-[10px] pl-[10px] py-[5px] bg-gray-200 rounded-lg"
                   >
                     {duration.map((duration, index) => (
                       <option key={index}>{duration}</option>
                     ))}
                   </select>
-                  동안
-                </span>
+                  {getValues("duration") === "직접 입력" && (
+                    <input
+                      {...register("durationText")}
+                      type="text"
+                      className="mr-[20px] h-[30px] bg-gray-100 border-b-2 border-gray-400 px-[10px]"
+                      placeholder="ex) 가을학기 ~ 겨울방학"
+                    />
+                  )}
+
+                  <p>동안</p>
+                </div>
               </div>
             </div>
           </div>
