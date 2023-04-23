@@ -967,8 +967,8 @@ function PostAddForm2() {
                               key={index}
                               className={`ml-[10px] px-[15px] py-[5px] rounded-lg ${
                                 getValues("years").includes(grade as never)
-                                  ? MajorSeletedBUTTON
-                                  : MajorUnSelectedBUTTON
+                                  ? DetailSelectedBUTTON
+                                  : DetailUnSelectedBUTTON
                               }`}
                               onClick={(e: any) => {
                                 const gV = getValues("years");
