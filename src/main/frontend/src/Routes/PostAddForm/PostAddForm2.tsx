@@ -97,7 +97,7 @@ function PostAddForm2() {
       recruitStart: converter("year", new Date()), // string
       recruitEnd: converter("year", new Date()), // string
       // projectStart: "",
-      duration: "",
+      duration: "미설정",
 
       // positions: [],
       // positionName: "",
@@ -268,6 +268,16 @@ function PostAddForm2() {
       }
     });
 
+    //duration
+    const newDuration =
+      data.duration === ""
+        ? null
+        : data?.duration === "직접 입력"
+        ? data?.durationText
+        : data?.duration === "미설정"
+        ? ""
+        : data?.duration;
+
     const newPost = {
       title: data?.title,
       summary: data?.summary !== "" ? data?.summary : null,
@@ -281,12 +291,7 @@ function PostAddForm2() {
           ? converter("year", new Date())
           : data?.recruitStart,
       recruitEnd: data?.recruitEnd !== "" ? data?.recruitEnd : null,
-      duration:
-        data.duration === ""
-          ? null
-          : data?.duration === "직접 입력"
-          ? data?.durationText
-          : data?.duration,
+      duration: newDuration,
       targetCount: data?.targetCount,
       contact: data?.contact,
       contactDetails: data?.contactDetails !== "" ? data?.contactDetails : null,
@@ -486,11 +491,8 @@ function PostAddForm2() {
 
   const [posterUploadList, setPosterUploadList] = useState<number[]>([0, 1, 2]);
 
-  {
-    /* 활동 기간 */
-  }
-
   const duration = [
+    "미설정",
     "봄학기",
     "가을학기",
     "여름방학",
@@ -826,7 +828,7 @@ function PostAddForm2() {
                 <p className="w-[130px] mt-[8px]">신청 방법</p>
                 <input
                   type="text"
-                  className="w-full border-b-2 border-gray-400 h-[40px] ml-[20px] px-[10px] bg-slate-100"
+                  className="w-full border-b border-gray-300 h-[40px] ml-[20px] px-[10px] bg-slate-100"
                   placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
                   {...register("contact")}
                 />
@@ -837,7 +839,7 @@ function PostAddForm2() {
                   id="registerMethod"
                   onKeyPress={textareaResize}
                   onKeyUp={textareaResize}
-                  className="notes px-[10px] vertical-center w-full ml-[20px]"
+                  className="notes_slate px-[10px] vertical-center w-full ml-[20px]"
                   placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
                   {...register("contactDetails")}
                 />
@@ -850,7 +852,12 @@ function PostAddForm2() {
         {/* 선택 옵션 접었을 때 */}
 
         {!optionalFoldToggle[0] && (
-          <div className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]">
+          <div
+            onClick={() =>
+              setOptionalFoldToggle((prev) => [true, ...prev.slice(1)])
+            }
+            className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]"
+          >
             {optionalFoldText[0].first} &nbsp;{" "}
             <span className={`text-blue-500`}>
               {optionalFoldText[0].accent}
@@ -858,9 +865,9 @@ function PostAddForm2() {
             &nbsp;{optionalFoldText[0].last}
             <i
               className="fa-solid fa-caret-down ml-[10px] text-[25px]"
-              onClick={() =>
-                setOptionalFoldToggle((prev) => [true, ...prev.slice(1)])
-              }
+              // onClick={() =>
+              //   setOptionalFoldToggle((prev) => [true, ...prev.slice(1)])
+              // }
             ></i>
             {getValues("departments").length === 0 ? (
               <div className={`ml-[30px] ${FunctionBUTTON}`}>전공 무관</div>
@@ -882,12 +889,17 @@ function PostAddForm2() {
         )}
 
         {optionalFoldToggle[0] && (
-          <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
+          <div
+            onClick={() =>
+              setOptionalFoldToggle((prev) => [false, ...prev.slice(1)])
+            }
+            className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]"
+          >
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
-              onClick={() =>
-                setOptionalFoldToggle((prev) => [false, ...prev.slice(1)])
-              }
+              // onClick={() =>
+              //   setOptionalFoldToggle((prev) => [false, ...prev.slice(1)])
+              // }
             ></i>
             <p className="text-[20px] font-main">모집 대상 조건 설정하기</p>
             <p className="mt-[10px]">
@@ -1000,7 +1012,7 @@ function PostAddForm2() {
                         id="registerMethod"
                         onKeyPress={textareaResize}
                         onKeyUp={textareaResize}
-                        className="notes w-full px-[10px]"
+                        className="notes_gray w-full px-[10px]"
                         placeholder="지원자 자격에 대해 자유롭게 작성해주세요."
                         {...register("qualifications")}
                       />
@@ -1165,7 +1177,7 @@ function PostAddForm2() {
                   </button>
                   {getValues("positionToggle") && (
                     <input
-                      className="ml-[20px] px-[10px] h-[40px] w-[300px] border-b-2 border-gray-400 bg-gray-100"
+                      className="ml-[20px] px-[10px] h-[40px] w-[300px] border-b border-gray-300 bg-gray-100"
                       type="text"
                       placeholder="ex) 1학년 9명 , 콘디생 3학년 이상 5명"
                       {...register("targetCount")}
@@ -1201,7 +1213,12 @@ function PostAddForm2() {
         )}
 
         {!optionalFoldToggle[1] && (
-          <div className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]">
+          <div
+            onClick={() =>
+              setOptionalFoldToggle((prev) => [prev[0], true, ...prev.slice(2)])
+            }
+            className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]"
+          >
             {optionalFoldText[1].first} &nbsp;{" "}
             <span className={`text-blue-500`}>
               {optionalFoldText[1].accent}
@@ -1209,28 +1226,37 @@ function PostAddForm2() {
             &nbsp;{optionalFoldText[1].last}
             <i
               className="fa-solid fa-caret-down ml-[10px] text-[25px]"
-              onClick={() =>
-                setOptionalFoldToggle((prev) => [
-                  prev[0],
-                  true,
-                  ...prev.slice(2),
-                ])
-              }
+              // onClick={() =>
+              //   setOptionalFoldToggle((prev) => [
+              //     prev[0],
+              //     true,
+              //     ...prev.slice(2),
+              //   ])
+              // }
             ></i>
           </div>
         )}
 
         {optionalFoldToggle[1] && (
-          <div className="relative bg-gray-100 rounded-3xl p-[30px] mb-[30px]">
+          <div
+            onClick={() =>
+              setOptionalFoldToggle((prev) => [
+                prev[0],
+                false,
+                ...prev.slice(2),
+              ])
+            }
+            className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]"
+          >
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
-              onClick={() =>
-                setOptionalFoldToggle((prev) => [
-                  prev[0],
-                  false,
-                  ...prev.slice(2),
-                ])
-              }
+              // onClick={() =>
+              //   setOptionalFoldToggle((prev) => [
+              //     prev[0],
+              //     false,
+              //     ...prev.slice(2),
+              //   ])
+              // }
             ></i>
 
             <p className=" text-[20px]">
@@ -1294,7 +1320,16 @@ function PostAddForm2() {
         )}
 
         {!optionalFoldToggle[2] && (
-          <div className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]">
+          <div
+            onClick={() =>
+              setOptionalFoldToggle((prev) => [
+                ...prev.slice(0, 2),
+                true,
+                prev[3],
+              ])
+            }
+            className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]"
+          >
             {optionalFoldText[2].first} &nbsp;{" "}
             <span className={`text-blue-500`}>
               {optionalFoldText[2].accent}
@@ -1302,28 +1337,37 @@ function PostAddForm2() {
             &nbsp;{optionalFoldText[2].last}
             <i
               className="fa-solid fa-caret-down ml-[10px] text-[25px]"
-              onClick={() =>
-                setOptionalFoldToggle((prev) => [
-                  ...prev.slice(0, 2),
-                  true,
-                  prev[3],
-                ])
-              }
+              // onClick={() =>
+              //   setOptionalFoldToggle((prev) => [
+              //     ...prev.slice(0, 2),
+              //     true,
+              //     prev[3],
+              //   ])
+              // }
             ></i>
           </div>
         )}
 
         {optionalFoldToggle[2] && (
-          <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
+          <div
+            onClick={() =>
+              setOptionalFoldToggle((prev) => [
+                ...prev.slice(0, 2),
+                false,
+                prev[3],
+              ])
+            }
+            className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]"
+          >
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
-              onClick={() =>
-                setOptionalFoldToggle((prev) => [
-                  ...prev.slice(0, 2),
-                  false,
-                  prev[3],
-                ])
-              }
+              // onClick={() =>
+              //   setOptionalFoldToggle((prev) => [
+              //     ...prev.slice(0, 2),
+              //     false,
+              //     prev[3],
+              //   ])
+              // }
             ></i>
             <p className="text-[20px] font-main">자유 내용 입력</p>
             <p className="mt-[10px] mb-[20px]">
@@ -1361,7 +1405,12 @@ function PostAddForm2() {
         )}
 
         {!optionalFoldToggle[3] && (
-          <div className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]">
+          <div
+            onClick={() =>
+              setOptionalFoldToggle((prev) => [...prev.slice(0, 3), true])
+            }
+            className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]"
+          >
             {optionalFoldText[3].first} &nbsp;{" "}
             <span className={`text-blue-500`}>
               {optionalFoldText[3].accent}
@@ -1369,21 +1418,26 @@ function PostAddForm2() {
             &nbsp;{optionalFoldText[3].last}
             <i
               className="fa-solid fa-caret-down ml-[10px] text-[25px]"
-              onClick={() =>
-                setOptionalFoldToggle((prev) => [...prev.slice(0, 3), true])
-              }
+              // onClick={() =>
+              //   setOptionalFoldToggle((prev) => [...prev.slice(0, 3), true])
+              // }
             ></i>
           </div>
         )}
 
         {/* 포스터 등록 */}
         {optionalFoldToggle[3] && (
-          <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
+          <div
+            onClick={() =>
+              setOptionalFoldToggle((prev) => [...prev.slice(0, 3), false])
+            }
+            className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]"
+          >
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
-              onClick={() =>
-                setOptionalFoldToggle((prev) => [...prev.slice(0, 3), false])
-              }
+              // onClick={() =>
+              //   setOptionalFoldToggle((prev) => [...prev.slice(0, 3), false])
+              // }
             ></i>
             {/* <div> */}
             <p className="text-[20px] font-main">포스터 등록</p>

@@ -11,7 +11,34 @@
     );
   line-height: 30px;
   height: 50px;
-  /* padding: 8px 10px; */
+}
 
-  /* padding-bottom: 100px; */
+.notes_slate {
+  background-attachment: local;
+  background-image: linear-gradient(to right, #f1f5f9 10px, transparent 10px),
+    linear-gradient(to left, #f1f5f9 10px, transparent 10px),
+    repeating-linear-gradient(
+      #f1f5f9,
+      #f1f5f9 30px,
+      #ccc 30px,
+      #ccc 31px,
+      #f1f5f9 31px
+    );
+  line-height: 30px;
+  height: 50px;
+}
+
+.notes_gray {
+  background-attachment: local;
+  background-image: linear-gradient(to right, #f3f4f6 10px, transparent 10px),
+    linear-gradient(to left, #f3f4f6 10px, transparent 10px),
+    repeating-linear-gradient(
+      #f3f4f6,
+      #f3f4f6 30px,
+      #ccc 30px,
+      #ccc 31px,
+      #f3f4f6 31px
+    );
+  line-height: 30px;
+  height: 50px;
 }
