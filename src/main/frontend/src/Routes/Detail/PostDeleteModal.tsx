@@ -27,7 +27,7 @@ function PostDeleteModal({ postId }: any) {
   const onClick = (event: any) => {
     if (event.currentTarget.id === "yes") {
       deletePost(postId);
-      window.location.replace("/post");
+      // window.location.replace("/post");
     } else if (event.currentTarget.id === "no") {
       setIsPostDeleteModal(false);
     }

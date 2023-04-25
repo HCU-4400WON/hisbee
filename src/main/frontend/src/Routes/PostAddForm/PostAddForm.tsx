@@ -30,7 +30,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { storage } from "../../firebase";
-import Validation from "./Validation";
+import Validation from "./components/Validation";
 
 const StyledUl = tw.ul`
 flex

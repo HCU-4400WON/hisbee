@@ -36,7 +36,7 @@ import {
   converter,
   PostDetailExample,
   PostExamples,
-} from "Routes/PostAddForm/PostExamples";
+} from "Routes/PostAddForm/components/PostExamples";
 import { DragControls } from "framer-motion";
 import { Link } from "react-router-dom";
 import Heart from "components/Heart";
@@ -733,7 +733,7 @@ function Detail2() {
                     <ItemTitle>학년</ItemTitle>
 
                     <ItemText className="text-blue-500">
-                      {data?.years.length === 1 && data?.years[0] === ""
+                      {data?.years.length === 0
                         ? "학년 무관"
                         : data?.years.map((year) => year + " ")}
                     </ItemText>
@@ -749,8 +749,7 @@ function Detail2() {
                   <GridItem>
                     <ItemTitle>전공</ItemTitle>
                     <ItemText className="text-blue-500">
-                      {data?.departments.length === 1 &&
-                      data?.departments[0] === ""
+                      {data?.departments.length === 0
                         ? "전공 무관"
                         : data?.departments.map(
                             (department) => department + " "
