@@ -14,6 +14,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Map;
+
 @Controller
 @RequiredArgsConstructor
 public class MemberController {
@@ -46,5 +49,13 @@ public class MemberController {
     @DeleteMapping("/users/me")
     public ResponseEntity<String> deleteAccount(@AuthenticationPrincipal OAuth2User user) {
         return ResponseEntity.ok(memberService.deleteMember(user.getName()));
+    }
+
+    @GetMapping("/users/validation")
+    public ResponseEntity<Map<String, Boolean>> checkNickname(@RequestParam String nickname) {
+        boolean isPresent = memberService.isPresent(nickname);
+        Map<String, Boolean> result = Collections.singletonMap("isPresent", isPresent);
+
+        return ResponseEntity.ok(result);
     }
 }
