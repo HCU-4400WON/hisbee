@@ -356,7 +356,6 @@ function PostAddForm2() {
     setEditorState(editorState);
   };
 
-  const [ETCToggle, setETCToggle] = useState<boolean>(false);
   // const [gradeToggle, setGradeToggle] = useState<boolean>(false);
   // const [majorToggle, setMajorToggle] = useState<boolean>(false);
   const [postExampleToggle, setPostExampleToggle] = useState<boolean>(false);
@@ -550,7 +549,7 @@ function PostAddForm2() {
                     </span>
                     <Soon
                       bgColor="bg-gray-200"
-                      recruitStart={getValues("recruitStart")}
+                      recruitStart={new Date()}
                       recruitEnd={getValues("recruitEnd")}
                       closed={false}
                     />
@@ -566,6 +565,7 @@ function PostAddForm2() {
                 />
                 <div className="h-[70px]">
                   <textarea
+                    wrap="off"
                     id="summary"
                     onKeyPress={textareaResize}
                     onKeyUp={textareaResize}
@@ -748,7 +748,6 @@ function PostAddForm2() {
                             ]);
                             if (category === "기타 모임") {
                               document.getElementById("categoryETC")?.focus();
-                              setETCToggle(true);
                             }
                           } else if (
                             gv.includes(category as never) &&
@@ -759,7 +758,6 @@ function PostAddForm2() {
                               ...gv.slice(gvIdx + 1),
                             ]);
                             // 기타모임 포함 x
-                            if (category === "기타 모임") setETCToggle(false);
                           }
                         }}
                       >
@@ -806,6 +804,7 @@ function PostAddForm2() {
                 <p className="w-[130px] mt-[8px]">신청 안내</p>
                 <div className="w-full">
                   <textarea
+                    wrap="off"
                     id="registerMethod"
                     onKeyPress={textareaResize}
                     onKeyUp={textareaResize}
@@ -894,6 +893,7 @@ function PostAddForm2() {
                     <p className="mb-[10px] text-[18px] ">지원 자격</p>
                     <div className="flex">
                       <textarea
+                        wrap="off"
                         id="registerMethod"
                         onKeyPress={textareaResize}
                         onKeyUp={textareaResize}
@@ -970,8 +970,6 @@ function PostAddForm2() {
             ></i>
 
             <Keywords
-              ETCToggle={ETCToggle}
-              setETCToggle={setETCToggle}
               getValues={getValues}
               setValue={setValue}
               register={register}
