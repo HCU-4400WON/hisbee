@@ -74,7 +74,7 @@ public class Post {
 
         // optional
         this.content = (request.getContent() != null) ? request.getContent() : null;
-        this.keywords = (request.getKeywords() != null) ?Utils.toString(request.getKeywords(), ",") : null;
+        this.keywords = (request.getKeywords() != null) ? Utils.toString(request.getKeywords(), ",") : null;
         this.contactDetails = (request.getContactDetails() != null) ? request.getContactDetails() : null;
         this.qualifications = (request.getQualifications() != null) ? request.getQualifications() : null;
         this.targetYears = (request.getYears() != null) ? Utils.toString(request.getYears(), ",") : null;
@@ -107,14 +107,6 @@ public class Post {
     private void registerAuthor(Member author) {
         this.author = author;
         author.getPosts().add(this);
-    }
-
-    public Post addBookmark(Member member) {
-        return null;
-    }
-
-    public Post delBookmark(Member member) {
-        return null;
     }
 
     public Post archivedBy(Member member) {
@@ -156,5 +148,9 @@ public class Post {
 
     public PostReadOneResponse toResponse(String email) {
         return new PostReadOneResponse(this, email);
+    }
+
+    public void countUp() {
+        views++;
     }
 }
