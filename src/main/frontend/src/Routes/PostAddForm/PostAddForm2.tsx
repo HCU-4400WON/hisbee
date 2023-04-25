@@ -3,22 +3,22 @@ import React, { useState } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 
-import "./textarea.css";
-import "./date.css";
+import "./css/textarea.css";
+import "./css/date.css";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import styled from "styled-components";
 
-import Thumbnail from "./Thumbnail";
+import Thumbnail from "./components/Thumbnail";
 
 import {
   convertDateToString,
   converter,
   IPostExample,
   PostExamples,
-} from "./PostExamples";
+} from "./components/PostExamples";
 import { createPost, ICreatePost } from "api";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
@@ -26,12 +26,12 @@ import { useSetRecoilState } from "recoil";
 import { isLoginModalState, isLoginState } from "components/atom";
 import Soon from "components/Soon";
 import { AnimatePresence, motion } from "framer-motion";
-import { ImageUpload } from "./ImageUpload";
-import { Grade } from "./Grade";
-import { Department } from "./Department";
-import { People } from "./People";
-import { Duration } from "./Duration";
-import { Keywords } from "./Keywords";
+import { ImageUpload } from "./components/ImageUpload";
+import { Grade } from "./components/Grade";
+import { Department } from "./components/Department";
+import { People } from "./components/People";
+import { Duration } from "./components/Duration";
+import { Keywords } from "./components/Keywords";
 
 const MyBlock = styled.div`
   background-color: white;

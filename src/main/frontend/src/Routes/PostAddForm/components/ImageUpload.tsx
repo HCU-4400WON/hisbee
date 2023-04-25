@@ -5,7 +5,7 @@ import {
   uploadBytes,
   uploadBytesResumable,
 } from "firebase/storage";
-import { storage } from "../../firebase";
+import { storage } from "../../../firebase";
 
 interface IProps {
   imageURLList: string[] | [];

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import {
   convertDateToString,
   IPostExample,
-} from "Routes/PostAddForm/PostExamples";
+} from "Routes/PostAddForm/components/PostExamples";
 
 // function Thumbnail({
 //   postStart,

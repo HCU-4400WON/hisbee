@@ -36,7 +36,7 @@ import {
   converter,
   PostDetailExample,
   PostExamples,
-} from "Routes/PostAddForm/PostExamples";
+} from "Routes/PostAddForm/components/PostExamples";
 import { DragControls } from "framer-motion";
 import { Link } from "react-router-dom";
 import Heart from "components/Heart";
