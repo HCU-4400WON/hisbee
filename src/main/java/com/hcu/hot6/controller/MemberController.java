@@ -1,10 +1,7 @@
 package com.hcu.hot6.controller;
 
-import com.hcu.hot6.domain.Department;
 import com.hcu.hot6.domain.Member;
-import com.hcu.hot6.domain.filter.PoolSearchFilter;
 import com.hcu.hot6.domain.request.MemberRequest;
-import com.hcu.hot6.domain.response.MemberPoolResponse;
 import com.hcu.hot6.domain.response.MemberProfileResponse;
 import com.hcu.hot6.domain.response.MemberResponse;
 import com.hcu.hot6.repository.MemberRepository;
@@ -50,25 +47,4 @@ public class MemberController {
     public ResponseEntity<String> deleteAccount(@AuthenticationPrincipal OAuth2User user) {
         return ResponseEntity.ok(memberService.deleteMember(user.getName()));
     }
-
-//    @GetMapping("/pool")
-//    public ResponseEntity<MemberPoolResponse> getProfiles(@AuthenticationPrincipal OAuth2User user,
-//                                                          @RequestParam int page,
-//                                                          @RequestParam(required = false) Department department,
-//                                                          @RequestParam(required = false) Position position,
-//                                                          @RequestParam(required = false) String grade) {
-//
-//        memberRepository.findByEmail(user.getName())
-//                .filter(Member::isPublic)
-//                .orElseThrow(IllegalArgumentException::new);
-//
-//        PoolSearchFilter filter = PoolSearchFilter.builder()
-//                .page(page)
-//                .department(department)
-//                .position(position)
-//                .grade(grade)
-//                .build();
-//
-//        return ResponseEntity.ok(memberService.getMatchedProfilesWith(filter));
-//    }
 }
