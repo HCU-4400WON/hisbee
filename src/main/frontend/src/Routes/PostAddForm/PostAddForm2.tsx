@@ -1,7 +1,6 @@
 import tw from "tailwind-styled-components";
-import { async } from "@firebase/util";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useState } from "react";
+import { useForm, UseFormReturn } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 
 import "./textarea.css";
@@ -12,14 +11,6 @@ import { EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import styled from "styled-components";
 
-import {
-  ref,
-  getDownloadURL,
-  uploadBytes,
-  uploadBytesResumable,
-} from "firebase/storage";
-import { storage } from "../../firebase";
-import { get } from "http";
 import Thumbnail from "./Thumbnail";
 
 import {
@@ -28,13 +19,19 @@ import {
   IPostExample,
   PostExamples,
 } from "./PostExamples";
-import { createPost, departments, ICreatePost } from "api";
+import { createPost, ICreatePost } from "api";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
 import { useSetRecoilState } from "recoil";
 import { isLoginModalState, isLoginState } from "components/atom";
 import Soon from "components/Soon";
-import { animate, AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { ImageUpload } from "./ImageUpload";
+import { Grade } from "./Grade";
+import { Department } from "./Department";
+import { People } from "./People";
+import { Duration } from "./Duration";
+import { Keywords } from "./Keywords";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -86,7 +83,7 @@ function PostAddForm2() {
     getValues,
     setValue,
     trigger,
-  } = useForm({
+  } = useForm<UseFormReturn>({
     mode: "onSubmit",
     defaultValues: {
       title: "",
@@ -179,13 +176,6 @@ function PostAddForm2() {
     "years",
   ]);
 
-  // interface IPositionList {
-  //   positionName: string;
-  //   positionCount: number;
-  // }
-
-  // const postTypesWatch = watch("postTypes");
-  // https://dotorimook.github.io/post/2020-10-05-rhf-watch-vs-getvalues/
   const setIsLogin = useSetRecoilState(isLoginState);
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
@@ -215,63 +205,19 @@ function PostAddForm2() {
       }
     );
 
+  const [imageURLList, setImageURLList] = useState<string[] | []>([]);
+
   const onSubmit = (data: ISubmitDate, e: any) => {
     console.log(getValues("years"));
     console.log(getValues("departments"));
     console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
-    console.log(imageURL);
+    // console.log(imageURL);
 
     console.log("데이터");
-    {
-      /* positionToggle - T , Total = 0 이면 안보냄 */
-    }
-    {
-      /* positionToggle - T , Total != 0 이면 total을 보냄  */
-    }
-    {
-      /* positionToggle - F , position 부분 비어있으면 total 보냄 */
-    }
-    {
-      /* posoitionToggle - F , position 부분 있으면 position:인원 보냄 */
-    }
-    // let newPosition;
-    // if (data.positionToggle) {
-    //   if (data.total === "" || data.total === "0") {
-    //     newPosition = {
-    //       name: "",
-    //       count: 0,
-    //     };
-    //   } else {
-    //     newPosition = {
-    //       name: "",
-    //       count: data.total,
-    //     };
-    //   }
-    // } else {
-    //   if (data.positions?.length === 0) {
-    //     newPosition = {
-    //       name: "",
-    //       count: 0,
-    //     };
-    //   } else {
-    //     newPosition = data.positions;
-    //   }
-    // }
-
-    // 기타모임 이 들어있을 때
-    // 1) 기타 모임이 타입에 들어 있긴 해야함
-    // 2) 기타 모임이 들어 있으면 만들기 전에 대체 해야함.
-    // 3) 기타 모임이 들어 있으면 keywords 만들 때 기타 모임 대신 입력한 것 넣어야 함.
-
-    // 다른 것 : 펴져있을 때는 아무거나 눌러도 접히면 안됨
 
     const categoryETCIdx = data?.postTypes.findIndex(
       (elem) => elem === "기타 모임"
     );
-    // const newPostTypes =
-    //   categoryETCIdx === -1
-    //     ? data?.postTypes
-    //     : data?.postTypes.splice(categoryETCIdx,1);
     let newKeywords: string[] = [];
 
     if (categoryETCIdx !== -1 && data?.categoryETC !== "") {
@@ -288,28 +234,6 @@ function PostAddForm2() {
       ...(data?.second as string[] | []),
       ...(data?.keywords as string[] | []),
     ];
-
-    // [
-    //     ...data?.postTypes.map((elem, index) => {
-    //       if (index === categoryETCIdx) return data?.categoryETC;
-    //       return elem;
-    //     }),
-    //   ];
-    // 키워드 중복 없앰
-
-    // if (categoryETCIdx === -1) {
-    //   data?.postTypes.forEach((element) => {
-    //     if (!newKeywords.includes(element)) {
-    //       newKeywords.push(element);
-    //     }
-    //   });
-    // } else {
-    //   newPostTypes.forEach((element) => {
-    //     if (!newKeywords.includes(element as any)) {
-    //       newKeywords.push(element as any);
-    //     }
-    //   });
-    // }
 
     unionKeywords.forEach((element) => {
       if (!newKeywords.includes(element)) {
@@ -384,14 +308,14 @@ function PostAddForm2() {
     createPostMutate(newPost as any);
   };
 
-  const Grades = [
-    "23학번 새내기",
-    "1학년",
-    "2학년",
-    "3학년",
-    "4학년",
-    "9학기 이상",
-  ];
+  // const Grades = [
+  //   "23학번 새내기",
+  //   "1학년",
+  //   "2학년",
+  //   "3학년",
+  //   "4학년",
+  //   "9학기 이상",
+  // ];
   const Majors = [
     // {"상관없음":[]},
     { 경영경제학부: ["경영학", "경제학", "GM"] },
@@ -418,14 +342,13 @@ function PostAddForm2() {
     "기타 모임",
   ];
 
-  const [visible, setVisible] = useState<Boolean[]>(
-    Array.from({ length: Majors.length }, () => false)
-  );
-
-  const [firstKeywords, setFirstKeywords] = useState<string[]>();
+  // const [visible, setVisible] = useState<Boolean[]>(
+  //   Array.from({ length: Majors.length }, () => false)
+  // );
 
   // useState로 상태관리하기 초기값은 EditorState.createEmpty()
   // EditorState의 비어있는 ContentState 기본 구성으로 새 개체를 반환 => 이렇게 안하면 상태 값을 나중에 변경할 수 없음.
+
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   const onEditorStateChange = (editorState: any) => {
@@ -433,67 +356,9 @@ function PostAddForm2() {
     setEditorState(editorState);
   };
 
-  // content : draftToHtml(convertToRaw(editorState.getCurrentContent();
-
-  const [imageURL, setImageURL] = useState<string>("");
-  const [imageURLList, setImageURLList] = useState<string[] | []>([]);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const onUploadImageButtonClick = useCallback(() => {
-    if (!inputRef.current) {
-      return;
-    }
-
-    inputRef.current.click();
-  }, []);
-
-  const onImageChange = (
-    e: React.ChangeEvent<EventTarget & HTMLInputElement>
-  ) => {
-    e.preventDefault();
-    const file = e.target.files;
-    if (!file) return null;
-
-    const storageRef = ref(storage, `files/${file[0].name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file[0]);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        // setProgressPercent(progress);
-      },
-      (error) => {
-        switch (error.code) {
-          case "storage/canceld":
-            alert("Upload has been canceled");
-            break;
-        }
-      },
-      () => {
-        e.target.value = "";
-        getDownloadURL(storageRef).then((downloadURL) => {
-          console.log("File available at", downloadURL);
-          setImageURL(downloadURL);
-          setImageURLList((prev) => [...prev, downloadURL]);
-          setPosterUploadList((prev) => [...prev.slice(0, prev.length - 1)]);
-
-          //   setValue("poster", downloadURL);
-
-          //   (
-          //     document.querySelector("#basicImage") as HTMLElement
-          //   ).style.backgroundColor = "white";
-          //   (document.querySelector("#basicImage") as HTMLElement).style.color =
-          //     "black";
-        });
-      }
-    );
-  };
-
   const [ETCToggle, setETCToggle] = useState<boolean>(false);
-  const [gradeToggle, setGradeToggle] = useState<boolean>(false);
-  const [majorToggle, setMajorToggle] = useState<boolean>(false);
+  // const [gradeToggle, setGradeToggle] = useState<boolean>(false);
+  // const [majorToggle, setMajorToggle] = useState<boolean>(false);
   const [postExampleToggle, setPostExampleToggle] = useState<boolean>(false);
   const [registerToggle, setRegisterToggle] = useState<boolean>(false);
 
@@ -538,8 +403,6 @@ function PostAddForm2() {
     },
     { first: "", accent: "포스터", last: "가 있다면 업로드 해주세요!" },
   ];
-
-  const [posterUploadList, setPosterUploadList] = useState<number[]>([0, 1, 2]);
 
   const duration = [
     "미설정",
@@ -980,12 +843,7 @@ function PostAddForm2() {
               {optionalFoldText[0].accent}
             </span>
             &nbsp;{optionalFoldText[0].last}
-            <i
-              className="fa-solid fa-caret-down ml-[10px] text-[25px]"
-              // onClick={() =>
-              //   setOptionalFoldToggle((prev) => [true, ...prev.slice(1)])
-              // }
-            ></i>
+            <i className="fa-solid fa-caret-down ml-[10px] text-[25px]"></i>
             {getValues("departments").length === 0 ? (
               <div className={`ml-[30px] ${FunctionBUTTON}`}>전공 무관</div>
             ) : (
@@ -1026,100 +884,9 @@ function PostAddForm2() {
 
             <div className="w-full">
               <div className="flex">
-                {/* {Grades.map((grade,index) => (
-                                <span key={index} className="flex items-center mt-[10px]">
-                                    <input type="checkBox" {...register("years")} value={grade} className="mx-[10px]" onClick = {
-                                        (e : any) => {
-                                            if(index === 0 && e.target.checked){
-                                                setValue("years", [grade as never]);
-                                            }
-                                            else if( index!== 0 && getValues("years").includes("상관없음" as never)){
-                                                // e.preventDefault();
-                                                setValue("years", [grade as never]);
-                                                return;
-                                            }
-                                        }
-                                    } />
-                                    <p>{grade}</p>
-                                </span>
-                            ))} */}
-
                 {/* 학년 중복선택  */}
                 <div className="py-[20px] flex w-full justify-between items-center ">
-                  <div className="w-[55%]">
-                    <span className="flex items-center text-[20px] mb-[10px]">
-                      학년{" "}
-                      <p className="ml-[10px] text-[15px] text-gray-400">
-                        중복 선택 가능
-                      </p>
-                    </span>
-
-                    <div className="flex">
-                      <div className="flex"></div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setGradeToggle(false);
-                          setValue("years", []);
-                        }}
-                        value="상관없음"
-                        className={`border-2 px-[10px] py-[5px] rounded-lg ${
-                          !gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
-                        }`}
-                      >
-                        상관 없음
-                      </button>
-
-                      {/* <p className="mx-[10px]">학년 선택하기</p> */}
-                      {!gradeToggle && (
-                        <button
-                          type="button"
-                          className={`border-2 ${
-                            gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
-                          } px-[10px] py-[5px] rounded-lg ml-[10px] `}
-                          onClick={() => {
-                            // if(gradeToggle) setValue("years" , ["상관없음"] as any);
-                            // setValue("years", []);
-                            setGradeToggle(true);
-                            console.log(getValues("years"));
-                          }}
-                        >
-                          학년 설정
-                        </button>
-                      )}
-
-                      {gradeToggle && (
-                        <>
-                          {Grades.map((grade, index) => (
-                            <button
-                              type="button"
-                              value={grade}
-                              key={index}
-                              className={`ml-[10px] px-[15px] py-[5px] rounded-lg ${
-                                getValues("years").includes(grade as never)
-                                  ? DetailSelectedBUTTON
-                                  : DetailUnSelectedBUTTON
-                              }`}
-                              onClick={(e: any) => {
-                                const gV = getValues("years");
-                                const gvIdx = gV.indexOf(grade as never);
-                                if (gvIdx === -1) {
-                                  setValue("years", [...gV, grade as never]);
-                                } else {
-                                  setValue("years", [
-                                    ...gV.slice(0, gvIdx),
-                                    ...gV.slice(gvIdx + 1),
-                                  ]);
-                                }
-                              }}
-                            >
-                              {grade}
-                            </button>
-                          ))}
-                        </>
-                      )}
-                    </div>
-                  </div>
+                  <Grade getValues={getValues} setValue={setValue} />
 
                   {/* 지원 자격 */}
 
@@ -1138,194 +905,21 @@ function PostAddForm2() {
                   </div>
                 </div>
               </div>
-              <span className="flex items-center text-[20px] my-[10px]">
-                전공{" "}
-                <p className="ml-[10px] text-[15px] text-gray-400">
-                  중복 선택 가능
-                </p>
-              </span>
-              <div className="flex">
-                <span
-                  className={`flex items-start mt-[10px] ${
-                    majorToggle && "text-gray-400"
-                  }`}
-                >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMajorToggle(false);
-                      setValue("departments", []);
-                    }}
-                    value="상관없음"
-                    className={`border-2 px-[15px] min-w-[120px] py-[5px] rounded-lg ${
-                      !majorToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
-                    }`}
-                  >
-                    상관 없음
-                  </button>
 
-                  {!majorToggle && (
-                    <button
-                      type="button"
-                      className={`border-2 ${UnSelectedBUTTON}  w-[120px] px-[15px] py-[5px] rounded-lg ml-[10px]`}
-                      onClick={() => {
-                        // if(majorToggle) setValue("departments" , ["상관없음"] as any);
-                        // setValue("departments", []);
-                        setMajorToggle(true);
-                      }}
-                    >
-                      전공 선택
-                    </button>
-                  )}
-                </span>
-
-                <div className="w-full grid grid-cols-2">
-                  {majorToggle && (
-                    <>
-                      {Majors?.map((major, index) => {
-                        const key = Object.keys(major)[0];
-                        const values = Object.values(major)[0];
-                        let clicked = false;
-                        return (
-                          <div className="flex flex-col">
-                            <span
-                              key={index}
-                              className="flex items-center px-[20px] py-[10px]"
-                            >
-                              <button
-                                type="button"
-                                key={index}
-                                onClick={(e) => {
-                                  setVisible((prev) => [
-                                    ...prev.slice(0, index),
-                                    !prev[index],
-                                    ...prev.slice(index + 1),
-                                  ]);
-                                }}
-                                className={`${
-                                  visible[index]
-                                    ? MajorSeletedBUTTON
-                                    : MajorUnSelectedBUTTON
-                                } flex items-center px-[15px] py-[5px] rounded-lg ml-[10px]`}
-                              >
-                                <p>{Object.keys(major)}</p>
-                                <i className="fa-solid fa-chevron-right ml-[10px]"></i>
-                              </button>
-
-                              {visible[index] &&
-                                values.map((value: string, idx: number) => (
-                                  <span
-                                    key={idx}
-                                    className="pl-[20px] flex items-center"
-                                  >
-                                    {/* check point */}
-                                    <button
-                                      type="button"
-                                      className={`${
-                                        getValues("departments").includes(
-                                          value as never
-                                        )
-                                          ? DetailSelectedBUTTON
-                                          : DetailUnSelectedBUTTON
-                                      }`}
-                                      onClick={(e) => {
-                                        const gV = getValues("departments");
-                                        const gvIdx = gV.indexOf(
-                                          value as never
-                                        );
-                                        const btn = e.currentTarget;
-                                        if (gvIdx === -1) {
-                                          setValue("departments", [
-                                            ...gV,
-                                            value as never,
-                                          ]);
-                                          // btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailSelectedBUTTON}`;
-                                        } else {
-                                          setValue("departments", [
-                                            ...gV.slice(0, gvIdx),
-                                            ...gV.slice(gvIdx + 1),
-                                          ]);
-                                          // btn.className = `px-[15px] py-[5px] rounded-lg ml-[10px] ${DetailUnSelectedBUTTON}`;
-                                        }
-                                      }}
-                                    >
-                                      {value}
-                                    </button>
-                                  </span>
-                                ))}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </>
-                  )}
-                </div>
-              </div>
+              <Department getValues={getValues} setValue={setValue} />
             </div>
 
             <div className="my-[20px] flex w-[full] items-center justify-between mt-[40px]">
-              <div className="w-[55%]">
-                <div>
-                  <span className="flex items-center text-[20px] mb-[10px]">
-                    인원{" "}
-                  </span>
-                </div>
-                <div className="flex items-center">
-                  <button
-                    type="button"
-                    className={`${
-                      getValues("positionToggle")
-                        ? UnSelectedBUTTON
-                        : MajorSeletedBUTTON
-                    }`}
-                    onClick={() => setValue("positionToggle", false)}
-                  >
-                    상관 없음
-                  </button>
-                  <button
-                    type="button"
-                    className={` ml-[10px] ${
-                      !getValues("positionToggle")
-                        ? UnSelectedBUTTON
-                        : MajorSeletedBUTTON
-                    }`}
-                    onClick={() => setValue("positionToggle", true)}
-                  >
-                    인원 설정
-                  </button>
-                  {getValues("positionToggle") && (
-                    <input
-                      className="ml-[20px] px-[10px] h-[40px] w-[300px] border-b border-gray-300 bg-gray-100"
-                      type="text"
-                      placeholder="ex) 1학년 9명 , 콘디생 3학년 이상 5명"
-                      {...register("targetCount")}
-                    ></input>
-                  )}
-                </div>
-              </div>
-              <div className="w-[40%] ">
-                <p className="text-[18px]">활동 기간</p>
-                <div className=" mt-[20px] text-[17px] flex items-center">
-                  <select
-                    {...register("duration")}
-                    className=" mr-[20px] pr-[10px] pl-[10px] py-[5px] bg-gray-200 rounded-lg"
-                  >
-                    {duration.map((duration, index) => (
-                      <option key={index}>{duration}</option>
-                    ))}
-                  </select>
-                  {getValues("duration") === "직접 입력" && (
-                    <input
-                      {...register("durationText")}
-                      type="text"
-                      className="mr-[20px] h-[30px] bg-gray-100 border-b-2 border-gray-400 px-[10px]"
-                      placeholder="ex) 가을학기 ~ 겨울방학"
-                    />
-                  )}
-
-                  <p>동안</p>
-                </div>
-              </div>
+              <People
+                getValues={getValues}
+                setValue={setValue}
+                register={register}
+              />
+              <Duration
+                getValues={getValues}
+                setValue={setValue}
+                register={register}
+              />
             </div>
           </motion.div>
         )}
@@ -1351,16 +945,7 @@ function PostAddForm2() {
               {optionalFoldText[1].accent}
             </span>
             &nbsp;{optionalFoldText[1].last}
-            <i
-              className="fa-solid fa-caret-down ml-[10px] text-[25px]"
-              // onClick={() =>
-              //   setOptionalFoldToggle((prev) => [
-              //     prev[0],
-              //     true,
-              //     ...prev.slice(2),
-              //   ])
-              // }
-            ></i>
+            <i className="fa-solid fa-caret-down ml-[10px] text-[25px]"></i>
           </motion.div>
         )}
 
@@ -1384,82 +969,13 @@ function PostAddForm2() {
               }
             ></i>
 
-            <p className=" text-[20px]">
-              모임과 관련된 키워드를 입력하여 검색 결과에 노출될 수 있게
-              해보세요!
-            </p>
-            <p className="mt-[30px] mb-[15px] text-[17px]">키워드</p>
-            <div className="flex items-center">
-              {["postTypes", "first", "second"].map((elem) =>
-                getValues(elem as any)?.map(
-                  (v: string, index: number) =>
-                    v !== "기타 모임" && (
-                      <span
-                        key={index}
-                        className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
-                      >
-                        <p>{v}</p>
-                      </span>
-                    )
-                )
-              )}
-
-              {ETCToggle && getValues("categoryETC") !== "" && (
-                <span
-                  className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
-                >
-                  <p>{getValues("categoryETC")}</p>
-                </span>
-              )}
-              <AnimatePresence>
-                {getValues("keywords").map((keyword, index) => (
-                  <motion.span
-                    variants={presenseVariant}
-                    initial="initial"
-                    animate="showing"
-                    exit="exit"
-                    key={index}
-                    className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
-                  >
-                    <p className="mr-[10px]">{keyword}</p>
-                    <i
-                      className="fa-solid fa-xmark mt-[2px] text-gray-400"
-                      onClick={() =>
-                        setValue("keywords", [
-                          ...getValues("keywords").slice(0, index),
-                          ...getValues("keywords").slice(index + 1),
-                        ])
-                      }
-                    ></i>
-                  </motion.span>
-                ))}
-              </AnimatePresence>
-            </div>
-
-            <div className="">
-              <p className="mr-[20px] mt-[30px] mb-[15px] text-[17px]">
-                키워드 입력
-              </p>
-              <div className="w-[300px]">
-                <input
-                  type="text"
-                  className="w-[300px] border-b-2 h-[40px] px-[10px] bg-gray-100 border-gray-400"
-                  placeholder="엔터키로 키워드를 등록하세요"
-                  onKeyPress={async (e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      await setValue("keywords", [
-                        ...getValues("keywords"),
-                        getValues("keyword") as never,
-                      ]);
-
-                      setValue("keyword", "");
-                    }
-                  }}
-                  {...register("keyword")}
-                />
-              </div>
-            </div>
+            <Keywords
+              ETCToggle={ETCToggle}
+              setETCToggle={setETCToggle}
+              getValues={getValues}
+              setValue={setValue}
+              register={register}
+            />
           </motion.div>
         )}
 
@@ -1488,16 +1004,7 @@ function PostAddForm2() {
               {optionalFoldText[2].accent}
             </span>
             &nbsp;{optionalFoldText[2].last}
-            <i
-              className="fa-solid fa-caret-down ml-[10px] text-[25px]"
-              // onClick={() =>
-              //   setOptionalFoldToggle((prev) => [
-              //     ...prev.slice(0, 2),
-              //     true,
-              //     prev[3],
-              //   ])
-              // }
-            ></i>
+            <i className="fa-solid fa-caret-down ml-[10px] text-[25px]"></i>
           </motion.div>
         )}
 
@@ -1608,58 +1115,11 @@ function PostAddForm2() {
               페이지에서 보여집니다.
             </p>
 
-            <input
-              className="hidden"
-              type="file"
-              accept="image/*"
-              ref={inputRef}
-              onChange={onImageChange}
+            {/* 포스터 업로드 부분 */}
+            <ImageUpload
+              imageURLList={imageURLList}
+              setImageURLList={setImageURLList}
             />
-            {/* <div className=" items-center justify-between flex left-[30px] top-[20px] w-[90%] md:w-[190px]"> */}
-            {/* <i className="fa-solid fa-panorama w-[40px]"
-
-                      onClick={onUploadImageButtonClick}
-                    ></i> */}
-
-            {/* </div> */}
-            <div className="flex">
-              {imageURLList?.map((imageUrl: string, index: number) => (
-                <div className="relative mt-[30px] mr-[30px]">
-                  <img className="w-[400px]" src={imageUrl} key={index} />
-                  <button
-                    type="button"
-                    className="absolute right-0 top-0"
-                    onClick={() => {
-                      setImageURLList((prev) => [
-                        ...prev.slice(0, index),
-                        ...prev.slice(index + 1),
-                      ]);
-                      setPosterUploadList((prev) => [...prev, prev.length]);
-                    }}
-                  >
-                    <i className="fa-solid fa-square-xmark text-[30px] text-gray-700 opacity-50"></i>
-                  </button>
-                </div>
-              ))}
-
-              {posterUploadList.map((posterUploadBox, index) => (
-                <div
-                  key={index}
-                  onClick={onUploadImageButtonClick}
-                  className="mr-[30px] w-[100px] h-[100px] border border-black mt-[30px] flex justify-center items-center rounded-xl"
-                >
-                  <i className="fa-solid fa-plus text-black text-[30px] "></i>
-                </div>
-              ))}
-            </div>
-
-            {/* <div className="flex justify-center">
-                  {imageURLList.length !== 0 ? (<img className="w-[500px] border-2 mt-[30px]" src={imageURLList[0]}
-                    ></img>) : (<div onClick={onUploadImageButtonClick} className="w-[400px] h-[400px] border-2 border-gray-300 mt-[30px] flex justify-center items-center">
-                        <i className="fa-solid fa-plus text-gray-300 text-[40px]"></i>
-                    </div>)}
-
-                    </div> */}
           </motion.div>
         )}
         <div className="flex justify-center mt-[50px]">
