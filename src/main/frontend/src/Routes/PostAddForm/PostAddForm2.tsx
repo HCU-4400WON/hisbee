@@ -34,6 +34,7 @@ import { AxiosError, AxiosResponse } from "axios";
 import { useSetRecoilState } from "recoil";
 import { isLoginModalState, isLoginState } from "components/atom";
 import Soon from "components/Soon";
+import { motion } from "framer-motion";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -71,7 +72,7 @@ const ThumbnailKeywordsButton = tw.div`
 `;
 //LightMainBlue
 const ThumbnailCategoryButton = tw.div`
-  py-[2px] mb-[10px] px-[15px] rounded-full mr-[10px] bg-blue-200
+  min-h-[28px] py-[2px] mb-[10px] px-[15px] rounded-full mr-[10px] bg-blue-200
 `;
 
 //MainBlue
@@ -116,6 +117,7 @@ function PostAddForm2() {
       positionToggle: false,
       total: "",
       durationText: "",
+      categoryETC: "",
       // first: [],
       // second: [],
 
@@ -132,6 +134,7 @@ function PostAddForm2() {
     recruitStart: string; // string
     recruitEnd?: string; // string
     // projectStart?: string;
+
     duration?: string;
     durationText?: string;
     targetCount?: string;
@@ -150,9 +153,11 @@ function PostAddForm2() {
     qualifications?: string;
     positionToggle?: boolean;
     total?: string;
+    categoryETC?: string;
   }
 
   watch([
+    "categoryETC",
     "departments",
     "postTypes",
     "duration",
@@ -253,14 +258,58 @@ function PostAddForm2() {
     //   }
     // }
 
-    // 키워드 중복 없앰
+    // 기타모임 이 들어있을 때
+    // 1) 기타 모임이 타입에 들어 있긴 해야함
+    // 2) 기타 모임이 들어 있으면 만들기 전에 대체 해야함.
+    // 3) 기타 모임이 들어 있으면 keywords 만들 때 기타 모임 대신 입력한 것 넣어야 함.
+
+    // 다른 것 : 펴져있을 때는 아무거나 눌러도 접히면 안됨
+
+    const categoryETCIdx = data?.postTypes.findIndex(
+      (elem) => elem === "기타 모임"
+    );
+    // const newPostTypes =
+    //   categoryETCIdx === -1
+    //     ? data?.postTypes
+    //     : data?.postTypes.splice(categoryETCIdx,1);
     let newKeywords: string[] = [];
+
+    if (categoryETCIdx !== -1 && data?.categoryETC !== "") {
+      data?.postTypes.splice(categoryETCIdx, 1);
+      data?.postTypes.push(data?.categoryETC as string);
+    } else if (categoryETCIdx !== -1 && data?.categoryETC === "") {
+      //""를 빼줘야함 ..
+      data?.postTypes.splice(categoryETCIdx, 1);
+    }
+
     const unionKeywords = [
-      ...data?.postTypes,
+      ...(data?.postTypes as string[] | []),
       ...(data?.first as string[] | []),
       ...(data?.second as string[] | []),
       ...(data?.keywords as string[] | []),
     ];
+
+    // [
+    //     ...data?.postTypes.map((elem, index) => {
+    //       if (index === categoryETCIdx) return data?.categoryETC;
+    //       return elem;
+    //     }),
+    //   ];
+    // 키워드 중복 없앰
+
+    // if (categoryETCIdx === -1) {
+    //   data?.postTypes.forEach((element) => {
+    //     if (!newKeywords.includes(element)) {
+    //       newKeywords.push(element);
+    //     }
+    //   });
+    // } else {
+    //   newPostTypes.forEach((element) => {
+    //     if (!newKeywords.includes(element as any)) {
+    //       newKeywords.push(element as any);
+    //     }
+    //   });
+    // }
 
     unionKeywords.forEach((element) => {
       if (!newKeywords.includes(element)) {
@@ -442,6 +491,7 @@ function PostAddForm2() {
     );
   };
 
+  const [ETCToggle, setETCToggle] = useState<boolean>(false);
   const [gradeToggle, setGradeToggle] = useState<boolean>(false);
   const [majorToggle, setMajorToggle] = useState<boolean>(false);
   const [postExampleToggle, setPostExampleToggle] = useState<boolean>(false);
@@ -504,6 +554,13 @@ function PostAddForm2() {
     "4학기",
     "직접 입력",
   ];
+
+  const inputTextVariants = {
+    focused: {},
+    unfocused: {
+      borderBottom: "1px solid lightgray",
+    },
+  };
 
   return (
     <div className="p-[50px]">
@@ -622,12 +679,12 @@ function PostAddForm2() {
                   type="text"
                   placeholder="제목을 입력해주세요"
                 />
-                <div className=" h-[70px]">
+                <div className="h-[70px]">
                   <textarea
                     id="summary"
                     onKeyPress={textareaResize}
                     onKeyUp={textareaResize}
-                    className="notes w-[340px] text-[15px] px-[15px] pt-[5px]"
+                    className="notes w-[340px] text-[15px] px-[15px]"
                     {...register("summary")}
                     placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요"
                   />
@@ -638,7 +695,9 @@ function PostAddForm2() {
                   getValues("postTypes").map(
                     (category: string, index: number) => (
                       <ThumbnailCategoryButton key={index}>
-                        {category}
+                        {category === "기타 모임"
+                          ? getValues("categoryETC")
+                          : category}
                       </ThumbnailCategoryButton>
                     )
                   )}
@@ -677,7 +736,7 @@ function PostAddForm2() {
                   )}
                   <input
                     type="text"
-                    className={`py-[2px] px-[15px] w-[110px] rounded-full ${LightMainBLUE}`}
+                    className={`KeywordInput py-[2px] px-[15px] w-[110px] rounded-full ${LightMainBLUE}`}
                     {...register(lineObj.str as any)}
                     onKeyPress={async (
                       e: React.KeyboardEvent<HTMLInputElement>
@@ -787,8 +846,10 @@ function PostAddForm2() {
                               ...gv,
                               category as never,
                             ]);
-                            if (category === "기타 모임")
+                            if (category === "기타 모임") {
                               document.getElementById("categoryETC")?.focus();
+                              setETCToggle(true);
+                            }
                           } else if (
                             gv.includes(category as never) &&
                             gv.length <= 2
@@ -797,6 +858,8 @@ function PostAddForm2() {
                               ...gv.slice(0, gvIdx),
                               ...gv.slice(gvIdx + 1),
                             ]);
+                            // 기타모임 포함 x
+                            if (category === "기타 모임") setETCToggle(false);
                           }
                         }}
                       >
@@ -808,6 +871,7 @@ function PostAddForm2() {
                 <div className="flex flex-col justify-end">
                   {getValues("postTypes").includes("기타 모임" as never) && (
                     <input
+                      {...register("categoryETC")}
                       type="text"
                       id="categoryETC"
                       className="border-b-2 h-[35px] border-gray-400 w-full px-[10px] bg-slate-100"
@@ -824,25 +888,32 @@ function PostAddForm2() {
             <p className="mt-[10px]">지원에 필요한 정보를 채워주세요!</p>
             <div className="flex items-center w-full justify-between">
               {/* <div className="w-[600px] mt-[20px] mr-[100px]"> */}
-              <span className="flex items-start w-[45%]">
-                <p className="w-[130px] mt-[8px]">신청 방법</p>
-                <input
-                  type="text"
-                  className="w-full border-b border-gray-300 h-[40px] ml-[20px] px-[10px] bg-slate-100"
-                  placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
-                  {...register("contact")}
-                />
-              </span>
+              <div className="flex items-start w-[45%]">
+                <div className="w-[130px] mt-[8px]">신청 방법</div>
+                <div className="w-full">
+                  <input
+                    // onFocus={{
+
+                    // }}
+                    type="text"
+                    className="w-full border-b border-gray-300 h-[40px] px-[10px] bg-slate-100"
+                    placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
+                    {...register("contact")}
+                  />
+                </div>
+              </div>
               <span className="flex mt-[10px] items-start w-[45%]">
                 <p className="w-[130px] mt-[8px]">신청 안내</p>
-                <textarea
-                  id="registerMethod"
-                  onKeyPress={textareaResize}
-                  onKeyUp={textareaResize}
-                  className="notes_slate px-[10px] vertical-center w-full ml-[20px]"
-                  placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
-                  {...register("contactDetails")}
-                />
+                <div className="w-full">
+                  <textarea
+                    id="registerMethod"
+                    onKeyPress={textareaResize}
+                    onKeyUp={textareaResize}
+                    className="notes_slate px-[10px] vertical-center w-full "
+                    placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
+                    {...register("contactDetails")}
+                  />
+                </div>
               </span>
               {/* </div> */}
             </div>
@@ -889,17 +960,12 @@ function PostAddForm2() {
         )}
 
         {optionalFoldToggle[0] && (
-          <div
-            onClick={() =>
-              setOptionalFoldToggle((prev) => [false, ...prev.slice(1)])
-            }
-            className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]"
-          >
+          <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
-              // onClick={() =>
-              //   setOptionalFoldToggle((prev) => [false, ...prev.slice(1)])
-              // }
+              onClick={() =>
+                setOptionalFoldToggle((prev) => [false, ...prev.slice(1)])
+              }
             ></i>
             <p className="text-[20px] font-main">모집 대상 조건 설정하기</p>
             <p className="mt-[10px]">
@@ -1238,25 +1304,16 @@ function PostAddForm2() {
         )}
 
         {optionalFoldToggle[1] && (
-          <div
-            onClick={() =>
-              setOptionalFoldToggle((prev) => [
-                prev[0],
-                false,
-                ...prev.slice(2),
-              ])
-            }
-            className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]"
-          >
+          <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
-              // onClick={() =>
-              //   setOptionalFoldToggle((prev) => [
-              //     prev[0],
-              //     false,
-              //     ...prev.slice(2),
-              //   ])
-              // }
+              onClick={() =>
+                setOptionalFoldToggle((prev) => [
+                  prev[0],
+                  false,
+                  ...prev.slice(2),
+                ])
+              }
             ></i>
 
             <p className=" text-[20px]">
@@ -1266,15 +1323,27 @@ function PostAddForm2() {
             <p className="mt-[30px] mb-[15px] text-[17px]">키워드</p>
             <div className="flex items-center">
               {["postTypes", "first", "second"].map((elem) =>
-                getValues(elem as any)?.map((v: string, index: number) => (
-                  <span
-                    key={index}
-                    className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
-                  >
-                    <p>{v}</p>
-                  </span>
-                ))
+                getValues(elem as any)?.map(
+                  (v: string, index: number) =>
+                    v !== "기타 모임" && (
+                      <span
+                        key={index}
+                        className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
+                      >
+                        <p>{v}</p>
+                      </span>
+                    )
+                )
               )}
+
+              {ETCToggle && getValues("categoryETC") !== "" && (
+                <span
+                  className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
+                >
+                  <p>{getValues("categoryETC")}</p>
+                </span>
+              )}
+
               {getValues("keywords").map((keyword, index) => (
                 <span
                   key={index}
@@ -1298,23 +1367,25 @@ function PostAddForm2() {
               <p className="mr-[20px] mt-[30px] mb-[15px] text-[17px]">
                 키워드 입력
               </p>
-              <input
-                type="text"
-                className="w-[300px] border-b-2 h-[40px] px-[10px] bg-gray-100 border-gray-400"
-                placeholder="엔터키로 키워드를 등록하세요"
-                onKeyPress={async (e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    await setValue("keywords", [
-                      ...getValues("keywords"),
-                      getValues("keyword") as never,
-                    ]);
+              <div className="w-[300px]">
+                <input
+                  type="text"
+                  className="w-[300px] border-b-2 h-[40px] px-[10px] bg-gray-100 border-gray-400"
+                  placeholder="엔터키로 키워드를 등록하세요"
+                  onKeyPress={async (e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      await setValue("keywords", [
+                        ...getValues("keywords"),
+                        getValues("keyword") as never,
+                      ]);
 
-                    setValue("keyword", "");
-                  }
-                }}
-                {...register("keyword")}
-              />
+                      setValue("keyword", "");
+                    }
+                  }}
+                  {...register("keyword")}
+                />
+              </div>
             </div>
           </div>
         )}
@@ -1349,25 +1420,16 @@ function PostAddForm2() {
         )}
 
         {optionalFoldToggle[2] && (
-          <div
-            onClick={() =>
-              setOptionalFoldToggle((prev) => [
-                ...prev.slice(0, 2),
-                false,
-                prev[3],
-              ])
-            }
-            className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]"
-          >
+          <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
-              // onClick={() =>
-              //   setOptionalFoldToggle((prev) => [
-              //     ...prev.slice(0, 2),
-              //     false,
-              //     prev[3],
-              //   ])
-              // }
+              onClick={() =>
+                setOptionalFoldToggle((prev) => [
+                  ...prev.slice(0, 2),
+                  false,
+                  prev[3],
+                ])
+              }
             ></i>
             <p className="text-[20px] font-main">자유 내용 입력</p>
             <p className="mt-[10px] mb-[20px]">
@@ -1427,17 +1489,12 @@ function PostAddForm2() {
 
         {/* 포스터 등록 */}
         {optionalFoldToggle[3] && (
-          <div
-            onClick={() =>
-              setOptionalFoldToggle((prev) => [...prev.slice(0, 3), false])
-            }
-            className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]"
-          >
+          <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
-              // onClick={() =>
-              //   setOptionalFoldToggle((prev) => [...prev.slice(0, 3), false])
-              // }
+              onClick={() =>
+                setOptionalFoldToggle((prev) => [...prev.slice(0, 3), false])
+              }
             ></i>
             {/* <div> */}
             <p className="text-[20px] font-main">포스터 등록</p>

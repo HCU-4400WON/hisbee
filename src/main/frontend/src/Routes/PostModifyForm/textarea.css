@@ -4,10 +4,10 @@
     linear-gradient(to left, white 10px, transparent 10px),
     repeating-linear-gradient(
       white,
-      white 30px,
+      white 28px,
       #ccc 30px,
-      #ccc 31px,
-      white 31px
+      #ccc 30px,
+      white 30px
     );
   line-height: 30px;
   height: 50px;
@@ -19,10 +19,10 @@
     linear-gradient(to left, #f1f5f9 10px, transparent 10px),
     repeating-linear-gradient(
       #f1f5f9,
-      #f1f5f9 30px,
+      #f1f5f9 28px,
       #ccc 30px,
-      #ccc 31px,
-      #f1f5f9 31px
+      #ccc 30px,
+      #f1f5f9 30px
     );
   line-height: 30px;
   height: 50px;
@@ -34,10 +34,10 @@
     linear-gradient(to left, #f3f4f6 10px, transparent 10px),
     repeating-linear-gradient(
       #f3f4f6,
-      #f3f4f6 30px,
+      #f3f4f6 28px,
       #ccc 30px,
-      #ccc 31px,
-      #f3f4f6 31px
+      #ccc 30px,
+      #f3f4f6 30px
     );
   line-height: 30px;
   height: 50px;
