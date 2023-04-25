@@ -77,6 +77,7 @@ public class PostApiController {
                                                                @RequestParam(required = false) String keywords,
                                                                @RequestParam(required = false, value = "order") OrderBy orderBy,
                                                                @RequestParam(required = false) Integer limit,
+                                                               @RequestParam(required = false) String department,
                                                                @AuthenticationPrincipal OAuth2User user) {
         String email = (Objects.isNull(user)) ? "" : user.getName();
         PostSearchFilter filter = PostSearchFilter.builder()
@@ -85,6 +86,7 @@ public class PostApiController {
                 .keywords(keywords)
                 .orderBy(orderBy)
                 .limit(limit)
+                .department(department)
                 .build();
 
         return ResponseEntity.ok(postService.readFilteredPost(filter, email));

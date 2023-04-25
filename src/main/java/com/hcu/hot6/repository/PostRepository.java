@@ -44,6 +44,7 @@ public class PostRepository {
                 .where(
                         eqType(filter.getType()),
                         eqKeywords(filter.getKeywords()),
+                        eqDepartment(filter.getDepartment()),
                         post.archive.isNull()
                 )
                 .offset(offset)
@@ -57,6 +58,7 @@ public class PostRepository {
                 .where(
                         eqType(filter.getType()),
                         eqKeywords(filter.getKeywords()),
+                        eqDepartment(filter.getDepartment()),
                         post.archive.isNull()
                 )
                 .orderBy(orderCond(filter.getOrderBy()))
@@ -99,6 +101,12 @@ public class PostRepository {
                                 .reduce(BooleanExpression::or)
                                 .orElse(null)
                 );
+    }
+
+    private BooleanBuilder eqDepartment(String department) {
+        var builder = new BooleanBuilder();
+
+        return builder.or(post.targetDepartment.contains(department));
     }
 
     private OrderSpecifier<?> orderCond(OrderBy orderBy) {
