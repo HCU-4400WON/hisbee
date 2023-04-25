@@ -90,6 +90,15 @@ public class PostApiController {
         return ResponseEntity.ok(postService.readFilteredPost(filter, email));
     }
 
+    /**
+     * 아카이브된 모집글 조회
+     * */
+    @GetMapping("/posts/archived")
+    public ResponseEntity<PostFilterResponse> readAchivedPosts(@AuthenticationPrincipal OAuth2User user){
+        String email = (Objects.isNull(user)) ? "" : user.getName();
+        return ResponseEntity.ok(postService.readArchivedPost(email));
+    }
+
     @PostMapping("/posts/{postId}/likes")
     public ResponseEntity<LikesResponse> doBookmark(@PathVariable Long postId,
                                                     @AuthenticationPrincipal OAuth2User user) {

@@ -63,13 +63,19 @@ public class PostRepository {
                 .fetch();
     }
 
+    public List<Post> findAllArchived() {
+        return query.selectFrom(post)
+                .where(
+                        post.archive.isNotNull()
+                )
+                .fetch();
+    }
+
     public Long count(PostSearchFilter filter) {
         return query.select(post.count())
                 .from(post)
                 .where(
-                        eqType(filter.getType()),
-                        eqKeywords(filter.getKeywords()),
-                        post.archive.isNull()
+
                 )
                 .fetchOne();
     }

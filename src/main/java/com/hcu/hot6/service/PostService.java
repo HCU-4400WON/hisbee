@@ -131,4 +131,11 @@ public class PostService {
 
         return new ArchiveResponse(post.getId());
     }
+
+    public PostFilterResponse readArchivedPost(String email) {
+        List<PostThumbnailResponse> archivedPosts = postRepository.findAllArchived().stream()
+                .map(post -> (post.getArchive().getMember().getEmail().equals(email)) ? post.getThumbnail().toResponse(email) : null)
+                .toList();
+        return new PostFilterResponse(archivedPosts.size(), List.of(), archivedPosts);
+    }
 }
