@@ -100,14 +100,13 @@ textarea.center-origin {
     width: 100%;
   }
 }
-input[type="text"]:focus::-webkit-input-placeholder:not(.KeywordInput) {
-  /* placeholder 사라지는 keyframe 추가 */
+/* input[type="text"]:focus::-webkit-input-placeholder:not(.KeywordInput) {
   animation: expand 0.2s ease forwards;
-}
+} */
 
-textarea::placeholder {
+/* textarea::placeholder {
   color: blue;
-}
+} */
 
 input[type="text"]:focus:not(.KeywordInput) {
   border-bottom: solid 2px;

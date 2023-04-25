@@ -34,7 +34,7 @@ import { AxiosError, AxiosResponse } from "axios";
 import { useSetRecoilState } from "recoil";
 import { isLoginModalState, isLoginState } from "components/atom";
 import Soon from "components/Soon";
-import { motion } from "framer-motion";
+import { animate, AnimatePresence, motion } from "framer-motion";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -66,12 +66,12 @@ const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8
 const MajorUnSelectedBUTTON = `${MainBLUE} px-[15px] py-[8px] rounded-lg`;
 const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg`;
 
-const ThumbnailKeywordsButton = tw.div`
+const ThumbnailKeywordsButton = tw(motion.div)`
   text-[15px] px-[15px] py-[2px] rounded-full mr-[10px] bg-blue-100
   
 `;
 //LightMainBlue
-const ThumbnailCategoryButton = tw.div`
+const ThumbnailCategoryButton = tw(motion.div)`
   min-h-[28px] py-[2px] mb-[10px] px-[15px] rounded-full mr-[10px] bg-blue-200
 `;
 
@@ -562,6 +562,18 @@ function PostAddForm2() {
     },
   };
 
+  const presenseVariant = {
+    initial: {
+      scale: 0.5,
+    },
+    showing: {
+      scale: 1,
+    },
+    exit: {
+      scale: 0,
+    },
+  };
+
   return (
     <div className="p-[50px]">
       <div className="flex justify-between pb-[20px]">
@@ -596,6 +608,7 @@ function PostAddForm2() {
             <p className="text-[20px] font-main">
               썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
             </p>
+
             {!postExampleToggle && (
               <button
                 type="button"
@@ -605,31 +618,40 @@ function PostAddForm2() {
                 다른 모집글은 어떻게 작성되었는지 살펴보세요!
               </button>
             )}
-            {postExampleToggle && (
-              <div className="w-[600px] rounded-xl overflow-hidden absolute right-0">
-                <div className="w-[600px] h-[50px] flex px-[20px] justify-between items-center bg-white">
-                  <p>다른 모집글은 어떻게 작성되었는지 살펴보세요!</p>
-                  <button
-                    type="button"
-                    onClick={() => setPostExampleToggle(false)}
-                  >
-                    닫기
-                  </button>
-                </div>
-                <div className="w-600px h-[300px] bg-gray-200 flex items-center overflow-scroll">
-                  {postExampleToggle &&
-                    (
-                      PostExamples[
-                        getValues("postTypes").length === 0
-                          ? "선택안됨"
-                          : getValues("postTypes")[0]
-                      ] as IPostExample[]
-                    )?.map((postExample: IPostExample, index: number) => (
-                      <Thumbnail {...postExample} key={index} />
-                    ))}
-                </div>
-              </div>
-            )}
+
+            <AnimatePresence>
+              {postExampleToggle && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1.1 }}
+                  exit={{ scale: 0 }}
+                  transition={{ type: "linear" }}
+                  className="origin-top-right w-[600px] rounded-xl overflow-hidden absolute right-0"
+                >
+                  <div className="w-[600px] h-[50px] flex px-[20px] justify-between items-center bg-white">
+                    <p>다른 모집글은 어떻게 작성되었는지 살펴보세요!</p>
+                    <button
+                      type="button"
+                      onClick={() => setPostExampleToggle(false)}
+                    >
+                      닫기
+                    </button>
+                  </div>
+                  <motion.div className="w-600px h-[300px] bg-gray-200 flex items-center overflow-scroll">
+                    {postExampleToggle &&
+                      (
+                        PostExamples[
+                          getValues("postTypes").length === 0
+                            ? "선택안됨"
+                            : getValues("postTypes")[0]
+                        ] as IPostExample[]
+                      )?.map((postExample: IPostExample, index: number) => (
+                        <Thumbnail {...postExample} key={index} />
+                      ))}
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* <p className="flex justify-end text-[#0000ff] ">
                         필수 작성란입니다.
@@ -691,16 +713,24 @@ function PostAddForm2() {
                 </div>
               </div>
               <div className="flex items-center">
-                {getValues("postTypes").length !== 0 &&
-                  getValues("postTypes").map(
-                    (category: string, index: number) => (
-                      <ThumbnailCategoryButton key={index}>
-                        {category === "기타 모임"
-                          ? getValues("categoryETC")
-                          : category}
-                      </ThumbnailCategoryButton>
-                    )
-                  )}
+                <AnimatePresence>
+                  {getValues("postTypes").length !== 0 &&
+                    getValues("postTypes").map(
+                      (category: string, index: number) => (
+                        <ThumbnailCategoryButton
+                          key={index}
+                          variants={presenseVariant}
+                          initial="initial"
+                          animate="showing"
+                          exit="exit"
+                        >
+                          {category === "기타 모임"
+                            ? getValues("categoryETC")
+                            : category}
+                        </ThumbnailCategoryButton>
+                      )
+                    )}
+                </AnimatePresence>
               </div>
               {[
                 { array: "first", str: "firstKeyword" },
@@ -708,32 +738,39 @@ function PostAddForm2() {
               ].map((lineObj, LineIndex) => (
                 <div key={LineIndex} className="flex mb-[10px] items-center">
                   {/* firstLine Keyword */}
+                  <AnimatePresence>
+                    {getValues(lineObj.array as any)?.map(
+                      (keyword: string, keywordIndex: number) => (
+                        <ThumbnailKeywordsButton
+                          key={keywordIndex}
+                          variants={presenseVariant}
+                          initial="initial"
+                          animate="showing"
+                          exit="exit"
+                        >
+                          {keyword}
+                          <i
+                            className="fa-solid fa-xmark ml-[5px]"
+                            onClick={(e) => {
+                              // first , second keywords 구분하여 삭제
+                              console.log(LineIndex);
 
-                  {getValues(lineObj.array as any)?.map(
-                    (keyword: string, keywordIndex: number) => (
-                      <ThumbnailKeywordsButton key={keywordIndex}>
-                        {keyword}
-                        <i
-                          className="fa-solid fa-xmark ml-[5px]"
-                          onClick={(e) => {
-                            // first , second keywords 구분하여 삭제
-                            console.log(LineIndex);
+                              let v: any;
+                              if (LineIndex === 0) v = "first";
+                              else v = "second";
 
-                            let v: any;
-                            if (LineIndex === 0) v = "first";
-                            else v = "second";
+                              const gv = getValues(v) as any;
 
-                            const gv = getValues(v) as any;
-
-                            setValue(v, [
-                              ...gv.slice(0, keywordIndex),
-                              ...gv.slice(keywordIndex + 1),
-                            ]);
-                          }}
-                        ></i>
-                      </ThumbnailKeywordsButton>
-                    )
-                  )}
+                              setValue(v, [
+                                ...gv.slice(0, keywordIndex),
+                                ...gv.slice(keywordIndex + 1),
+                              ]);
+                            }}
+                          ></i>
+                        </ThumbnailKeywordsButton>
+                      )
+                    )}
+                  </AnimatePresence>
                   <input
                     type="text"
                     className={`KeywordInput py-[2px] px-[15px] w-[110px] rounded-full ${LightMainBLUE}`}
@@ -923,11 +960,20 @@ function PostAddForm2() {
         {/* 선택 옵션 접었을 때 */}
 
         {!optionalFoldToggle[0] && (
-          <div
+          <motion.div
+            initial={{
+              height: "300px",
+            }}
+            animate={{
+              height: "80px",
+            }}
+            transition={{
+              type: "linear",
+            }}
             onClick={() =>
               setOptionalFoldToggle((prev) => [true, ...prev.slice(1)])
             }
-            className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]"
+            className="flex  items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]"
           >
             {optionalFoldText[0].first} &nbsp;{" "}
             <span className={`text-blue-500`}>
@@ -956,11 +1002,17 @@ function PostAddForm2() {
                 <div className={`ml-[30px] ${FunctionBUTTON}`}>{year}</div>
               ))
             )}
-          </div>
+          </motion.div>
         )}
-
         {optionalFoldToggle[0] && (
-          <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
+          <motion.div
+            initial={{ y: 0, scaleY: 0.5 }}
+            animate={{ y: 0, scaleY: 1 }}
+            transition={{
+              type: "linear",
+            }}
+            className="origin-top relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]"
+          >
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
               onClick={() =>
@@ -1275,11 +1327,20 @@ function PostAddForm2() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {!optionalFoldToggle[1] && (
-          <div
+          <motion.div
+            initial={{
+              height: "300px",
+            }}
+            animate={{
+              height: "80px",
+            }}
+            transition={{
+              type: "linear",
+            }}
             onClick={() =>
               setOptionalFoldToggle((prev) => [prev[0], true, ...prev.slice(2)])
             }
@@ -1300,11 +1361,18 @@ function PostAddForm2() {
               //   ])
               // }
             ></i>
-          </div>
+          </motion.div>
         )}
 
         {optionalFoldToggle[1] && (
-          <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
+          <motion.div
+            initial={{ y: 0, scaleY: 0.5 }}
+            animate={{ y: 0, scaleY: 1 }}
+            transition={{
+              type: "linear",
+            }}
+            className="origin-top relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]"
+          >
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
               onClick={() =>
@@ -1343,24 +1411,29 @@ function PostAddForm2() {
                   <p>{getValues("categoryETC")}</p>
                 </span>
               )}
-
-              {getValues("keywords").map((keyword, index) => (
-                <span
-                  key={index}
-                  className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
-                >
-                  <p className="mr-[10px]">{keyword}</p>
-                  <i
-                    className="fa-solid fa-xmark mt-[2px] text-gray-400"
-                    onClick={() =>
-                      setValue("keywords", [
-                        ...getValues("keywords").slice(0, index),
-                        ...getValues("keywords").slice(index + 1),
-                      ])
-                    }
-                  ></i>
-                </span>
-              ))}
+              <AnimatePresence>
+                {getValues("keywords").map((keyword, index) => (
+                  <motion.span
+                    variants={presenseVariant}
+                    initial="initial"
+                    animate="showing"
+                    exit="exit"
+                    key={index}
+                    className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
+                  >
+                    <p className="mr-[10px]">{keyword}</p>
+                    <i
+                      className="fa-solid fa-xmark mt-[2px] text-gray-400"
+                      onClick={() =>
+                        setValue("keywords", [
+                          ...getValues("keywords").slice(0, index),
+                          ...getValues("keywords").slice(index + 1),
+                        ])
+                      }
+                    ></i>
+                  </motion.span>
+                ))}
+              </AnimatePresence>
             </div>
 
             <div className="">
@@ -1387,11 +1460,20 @@ function PostAddForm2() {
                 />
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {!optionalFoldToggle[2] && (
-          <div
+          <motion.div
+            initial={{
+              height: "300px",
+            }}
+            animate={{
+              height: "80px",
+            }}
+            transition={{
+              type: "linear",
+            }}
             onClick={() =>
               setOptionalFoldToggle((prev) => [
                 ...prev.slice(0, 2),
@@ -1416,11 +1498,18 @@ function PostAddForm2() {
               //   ])
               // }
             ></i>
-          </div>
+          </motion.div>
         )}
 
         {optionalFoldToggle[2] && (
-          <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
+          <motion.div
+            initial={{ y: 0, scaleY: 0.5 }}
+            animate={{ y: 0, scaleY: 1 }}
+            transition={{
+              type: "linear",
+            }}
+            className="relative origin-top bg-gray-100 rounded-3xl p-[50px] mb-[30px]"
+          >
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
               onClick={() =>
@@ -1463,11 +1552,20 @@ function PostAddForm2() {
                 onEditorStateChange={onEditorStateChange}
               />
             </MyBlock>
-          </div>
+          </motion.div>
         )}
 
         {!optionalFoldToggle[3] && (
-          <div
+          <motion.div
+            initial={{
+              height: "300px",
+            }}
+            animate={{
+              height: "80px",
+            }}
+            transition={{
+              type: "linear",
+            }}
             onClick={() =>
               setOptionalFoldToggle((prev) => [...prev.slice(0, 3), true])
             }
@@ -1484,12 +1582,19 @@ function PostAddForm2() {
               //   setOptionalFoldToggle((prev) => [...prev.slice(0, 3), true])
               // }
             ></i>
-          </div>
+          </motion.div>
         )}
 
         {/* 포스터 등록 */}
         {optionalFoldToggle[3] && (
-          <div className="relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]">
+          <motion.div
+            initial={{ y: 0, scaleY: 0.5 }}
+            animate={{ y: 0, scaleY: 1 }}
+            transition={{
+              type: "linear",
+            }}
+            className="origin-top relative bg-gray-100 rounded-3xl p-[50px] mb-[30px]"
+          >
             <i
               className="fa-solid fa-caret-up absolute right-[50px] ml-[10px] text-[25px]"
               onClick={() =>
@@ -1555,7 +1660,7 @@ function PostAddForm2() {
                     </div>)}
 
                     </div> */}
-          </div>
+          </motion.div>
         )}
         <div className="flex justify-center mt-[50px]">
           <button
