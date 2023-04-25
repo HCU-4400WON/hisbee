@@ -54,7 +54,7 @@ export function Keywords(
           </span>
         )}
         <AnimatePresence>
-          {getValues("keywords").map((keyword, index) => (
+          {getValues("keywords").map((keyword: string, index: number) => (
             <motion.span
               variants={presenseVariant}
               initial="initial"

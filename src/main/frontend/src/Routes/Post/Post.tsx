@@ -28,7 +28,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import Card from "Routes/Post/Card";
 import Thumbnail from "./Thumbnail";
-import { PostExamples } from "Routes/PostAddForm/PostExamples";
+import { PostExamples } from "Routes/PostAddForm/components/PostExamples";
 
 const Banner = tw.img`
 bg-gradient-to-r from-gray-300 to-gray-500
