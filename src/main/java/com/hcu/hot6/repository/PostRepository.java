@@ -1,5 +1,6 @@
 package com.hcu.hot6.repository;
 
+import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.Pagination;
 import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.QPost;
@@ -13,7 +14,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -25,6 +25,7 @@ public class PostRepository {
     private final EntityManager em;
     private final JPAQueryFactory query;
     private final QPost post = QPost.post;
+    private final MemberRepository memberRepository;
 
     public void save(Post post) {
         em.persist(post);
@@ -39,7 +40,23 @@ public class PostRepository {
         return Optional.ofNullable(em.find(Post.class, postId));
     }
 
-    public List<Post> findAll(PostSearchFilter filter, long offset) {
+    public List<Post> findAll(PostSearchFilter filter, long offset, String email) {
+        if(filter.getMyDeptOnly()){
+            Optional<Member> member = memberRepository.findByEmail(email);
+
+            return query.selectFrom(post)
+                    .where(
+                            eqType(filter.getType()),
+                            eqKeywords(filter.getKeywords()),
+                            eqDepartment(filter.getDepartment()),
+                            eqDepartment(member.get().getDepartment().getName()),
+                            post.archive.isNull()
+                    )
+                    .offset(offset)
+                    .limit(Pagination.LIMIT)
+                    .orderBy(orderCond(filter.getOrderBy()))
+                    .fetch();
+        }
         return query.selectFrom(post)
                 .where(
                         eqType(filter.getType()),
@@ -53,7 +70,21 @@ public class PostRepository {
                 .fetch();
     }
 
-    public List<Post> findAll(PostSearchFilter filter) {
+    public List<Post> findAll(PostSearchFilter filter, String email) {
+        if(filter.getMyDeptOnly()){
+            Optional<Member> member = memberRepository.findByEmail(email);
+
+            return query.selectFrom(post)
+                    .where(
+                            eqType(filter.getType()),
+                            eqKeywords(filter.getKeywords()),
+                            eqDepartment(filter.getDepartment()),
+                            eqDepartment(member.get().getDepartment().getName()),
+                            post.archive.isNull()
+                    )
+                    .orderBy(orderCond(filter.getOrderBy()))
+                    .fetch();
+        }
         return query.selectFrom(post)
                 .where(
                         eqType(filter.getType()),
@@ -88,7 +119,6 @@ public class PostRepository {
 
     private BooleanBuilder eqKeywords(List<String> keywords) {
         var builder = new BooleanBuilder();
-
         return builder
                 .or(
                         keywords.stream()
@@ -173,11 +203,15 @@ public class PostRepository {
                     .or(post.targetDepartment.contains(majors.get(3)))
                     .or(post.targetDepartment.contains(majors.get(4)));
         }
+        else if(department.compareTo("국제어문학부") == 0 || department.compareTo("법학부") == 0 || department.compareTo("상담심리사회복지학부") == 0 || department.compareTo("커뮤니케이션학부") == 0 || department.compareTo("공간환경시스템공학부") == 0 || department.compareTo("기계제어공학부") == 0 || department.compareTo("콘텐츠융합디자인학부") == 0){
+            return builder
+                    .or(post.targetDepartment.contains(department))
+                    .or(post.targetDepartment.contains(majors.get(0)))
+                    .or(post.targetDepartment.contains(majors.get(1)));
+        }
 
         return builder
-                .or(post.targetDepartment.contains(department))
-                .or(post.targetDepartment.contains(majors.get(0)))
-                .or(post.targetDepartment.contains(majors.get(1)));
+                .or(post.targetDepartment.contains(department));
     }
 
     private OrderSpecifier<?> orderCond(OrderBy orderBy) {

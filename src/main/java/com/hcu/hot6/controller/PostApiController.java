@@ -78,6 +78,7 @@ public class PostApiController {
                                                                @RequestParam(required = false, value = "order") OrderBy orderBy,
                                                                @RequestParam(required = false) Integer limit,
                                                                @RequestParam(required = false) String department,
+                                                               @RequestParam(required = false) Boolean myDeptOnly,
                                                                @AuthenticationPrincipal OAuth2User user) {
         String email = (Objects.isNull(user)) ? "" : user.getName();
         PostSearchFilter filter = PostSearchFilter.builder()
@@ -87,6 +88,7 @@ public class PostApiController {
                 .orderBy(orderBy)
                 .limit(limit)
                 .department(department)
+                .myDeptOnly(myDeptOnly)
                 .build();
 
         return ResponseEntity.ok(postService.readFilteredPost(filter, email));
