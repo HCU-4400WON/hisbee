@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Entity
 @Getter
@@ -35,13 +34,7 @@ public class Member {
     @Enumerated(value = EnumType.STRING)
     private Department department;
 
-    private boolean isPublic = false;
     private String nickname;
-    private String bio;
-    private String grade;
-    private String club;
-    private String contact;
-    private String externalLinks;
     private boolean isRegistered = true;
 
     @OneToMany(mappedBy = "member")
@@ -59,44 +52,35 @@ public class Member {
         this.email = email;
         this.pictureUrl = pictureUrl;
         this.department = department;
-        this.isPublic = isPublic;
         this.nickname = nickname;
-        this.bio = bio;
-        this.grade = grade;
-        this.club = club;
-        this.contact = contact;
-        this.externalLinks = externalLinks;
         this.posts = posts;
     }
 
     @Builder
-    public Member(String uid, String email, String pictureUrl, boolean isRegistered) {
+    public Member(String uid,
+                  String email,
+                  String pictureUrl,
+                  boolean isRegistered,
+                  String nickname,
+                  Department department) {
         this.uid = uid;
         this.email = email;
         this.pictureUrl = pictureUrl;
         this.isRegistered = isRegistered;
+
+        this.nickname = nickname;
+        this.department = department;
     }
 
     public void update(MemberRequest form) {
         // 기본 정보
         this.nickname = Objects.isNull(form.getNickname()) ? nickname : form.getNickname();
-        this.isPublic = Objects.isNull(form.getIsPublic()) ? isPublic : form.getIsPublic();
         this.pictureUrl = Objects.isNull(form.getPictureUrl()) ? pictureUrl : form.getPictureUrl();
 
         // 인재풀 등록시 필수 공개 정보
         this.department = Objects.isNull(form.getDepartment()) ? department : form.getDepartment();
-        this.grade = Objects.isNull(form.getGrade()) ? grade : form.getGrade();
-        this.contact = Objects.isNull(form.getContact()) ? contact : form.getContact();
 
         // 선택 정보
-        this.bio = Objects.isNull(form.getBio()) ? bio : form.getBio();
-        this.club = String.join(",", Optional.ofNullable(
-                form.getClub()
-        ).orElse(List.of()));
-        this.externalLinks = String.join(",", Optional.ofNullable(
-                form.getExternalLinks()
-        ).orElse(List.of()));
-
         if (!this.isRegistered) this.isRegistered = true;
     }
 }

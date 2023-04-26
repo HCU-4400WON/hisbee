@@ -6,3 +6,7 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 
   background-color: white;
 } */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  /* display: none; */
+  /* color: blue; */
+}

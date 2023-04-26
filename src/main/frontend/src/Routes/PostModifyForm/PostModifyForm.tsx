@@ -212,6 +212,20 @@ function PostModifyForm() {
 
     console.log("데이터");
 
+    let newKeywords: string[] = [];
+    const unionKeywords = [
+      ...data?.postTypes,
+      ...(data?.first as string[] | []),
+      ...(data?.second as string[] | []),
+      ...(data?.keywords as string[] | []),
+    ];
+
+    unionKeywords.forEach((element) => {
+      if (!newKeywords.includes(element)) {
+        newKeywords.push(element);
+      }
+    });
+
     const newPost = {
       title: data?.title,
       summary: data?.summary !== "" ? data?.summary : null,
@@ -242,12 +256,7 @@ function PostModifyForm() {
           : draftToHtml(convertToRaw(editorState.getCurrentContent())),
       years: data?.years?.length !== 0 ? data?.years : null,
       departments: data?.departments?.length !== 0 ? data?.departments : null,
-      keywords: [
-        ...data?.postTypes,
-        ...(data?.first as string[] | []),
-        ...(data?.second as string[] | []),
-        ...(data?.keywords as string[] | []),
-      ],
+      keywords: newKeywords,
       posterPaths: imageURLList?.length !== 0 ? imageURLList : null,
     };
 

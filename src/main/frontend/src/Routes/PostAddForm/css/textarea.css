@@ -1,0 +1,136 @@
+.notes {
+  background-attachment: local;
+  background-image: linear-gradient(to right, white 10px, transparent 10px),
+    linear-gradient(to left, white 10px, transparent 10px),
+    repeating-linear-gradient(
+      white,
+      white 28px,
+      #ccc 30px,
+      #ccc 30px,
+      white 30px
+    );
+  line-height: 30px;
+  height: 50px;
+}
+
+.notes_slate {
+  background-attachment: local;
+  background-image: linear-gradient(to right, #f1f5f9 10px, transparent 10px),
+    linear-gradient(to left, #f1f5f9 10px, transparent 10px),
+    repeating-linear-gradient(
+      #f1f5f9,
+      #f1f5f9 28px,
+      #ccc 30px,
+      #ccc 30px,
+      #f1f5f9 30px
+    );
+  line-height: 30px;
+  height: 50px;
+}
+
+.notes_gray {
+  background-attachment: local;
+  background-image: linear-gradient(to right, #f3f4f6 10px, transparent 10px),
+    linear-gradient(to left, #f3f4f6 10px, transparent 10px),
+    repeating-linear-gradient(
+      #f3f4f6,
+      #f3f4f6 28px,
+      #ccc 30px,
+      #ccc 30px,
+      #f3f4f6 30px
+    );
+  line-height: 30px;
+  height: 50px;
+}
+
+.notes:focus {
+  outline: none;
+  background-image: linear-gradient(to right, white 10px, transparent 10px),
+    linear-gradient(to left, white 10px, transparent 10px),
+    repeating-linear-gradient(
+      white,
+      white 28px,
+      blue 30px,
+      blue 30px,
+      white 30px
+    );
+
+  animation: expand 0.2s ease forwards;
+}
+
+.notes_slate:focus {
+  outline: none;
+  background-image: linear-gradient(to right, #f1f5f9 10px, transparent 10px),
+    linear-gradient(to left, #f1f5f9 10px, transparent 10px),
+    repeating-linear-gradient(
+      #f1f5f9,
+      #f1f5f9 28px,
+      blue 30px,
+      blue 30px,
+      #f1f5f9 30px
+    );
+  animation: expand 0.2s ease forwards;
+  /* transform-origin: center; */
+}
+
+.notes_gray:focus {
+  outline: none;
+  background-image: linear-gradient(to right, #f3f4f6 10px, transparent 10px),
+    linear-gradient(to left, #f3f4f6 10px, transparent 10px),
+    repeating-linear-gradient(
+      #f3f4f6,
+      #f3f4f6 28px,
+      blue 30px,
+      blue 30px,
+      #f3f4f6 30px
+    );
+  animation: expand 0.2s ease forwards;
+  /* transform-origin: center; */
+}
+
+textarea.center-origin {
+  transform-origin: center;
+}
+
+@keyframes expand {
+  0% {
+    width: 90%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+/* input[type="text"]:focus::-webkit-input-placeholder:not(.KeywordInput) {
+  animation: expand 0.2s ease forwards;
+} */
+
+/* textarea::placeholder {
+  color: blue;
+} */
+
+input[type="text"]:focus:not(.KeywordInput) {
+  border-bottom: solid 2px;
+  border-image: linear-gradient(
+      to right,
+      transparent 0%,
+      blue 0%,
+      blue 100%,
+      transparent 100%
+    )
+    1;
+}
+
+Input[type="text"]:focus:not(.KeywordInput) {
+  outline: none;
+  border-bottom-color: blue;
+  animation: inputExpand 0.2s ease forwards;
+}
+
+@keyframes inputExpand {
+  0% {
+    width: 90%;
+  }
+  100% {
+    width: 100%;
+  }
+}
