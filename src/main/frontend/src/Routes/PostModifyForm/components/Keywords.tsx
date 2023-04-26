@@ -14,7 +14,7 @@ const presenseVariant = {
   },
 };
 
-export function Keywords({ getValues, setValue, register }: UseFormReturn) {
+export function Keywords({ getValues, setValue, register }: any) {
   const MainBLUE = "bg-blue-200";
   const LightMainBLUE = "bg-blue-100";
   return (

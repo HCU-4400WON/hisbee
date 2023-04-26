@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
-export function Grade({ getValues, setValue }: UseFormReturn) {
+export function Grade({ getValues, setValue }: any) {
   const Grades = [
     "23학번 새내기",
     "1학년",

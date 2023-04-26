@@ -24,9 +24,18 @@ function PostDeleteModal({ postId }: any) {
 
   const setIsPostDeleteModal = useSetRecoilState(isPostDeleteModalState);
 
-  const onClick = (event: any) => {
+  const onClick = async (event: any) => {
     if (event.currentTarget.id === "yes") {
-      deletePost(postId);
+      try {
+        await deletePost(postId)?.then((data) => console.log(data));
+
+        alert("모집글이 삭제되었습니다.");
+        navigate("/post");
+        setIsPostDeleteModal(false);
+      } catch (error) {
+        alert("알수 없는 오류입니다.");
+      }
+
       // window.location.replace("/post");
     } else if (event.currentTarget.id === "no") {
       setIsPostDeleteModal(false);

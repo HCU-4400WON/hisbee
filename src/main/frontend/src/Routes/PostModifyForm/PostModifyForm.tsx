@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import "./css/textarea.css";
+import "./css/date.css";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertToRaw, ContentState } from "draft-js";
@@ -130,7 +131,7 @@ function PostModifyForm() {
       return data;
     } else if (type === "postTypes") {
       let newDate = [...data];
-      const judge = (object) =>
+      const judge = (object: any) =>
         [
           "동아리",
           "학회",
@@ -151,7 +152,7 @@ function PostModifyForm() {
 
       return newDate;
     } else if (type === "categoryETC") {
-      const judge = (object) =>
+      const judge = (object: any) =>
         [
           "동아리",
           "학회",
@@ -170,7 +171,7 @@ function PostModifyForm() {
       return "";
     } else if (type === "keywords") {
       console.log("before", data);
-      const newKeywords = data?.filter((elem) => {
+      const newKeywords = data?.filter((elem: string) => {
         const list = [
           ...state?.postTypes,
           ...state?.tags?.first,
@@ -320,7 +321,7 @@ function PostModifyForm() {
 
   const [imageURLList, setImageURLList] = useState<string[] | []>([]);
 
-  const onSubmit = (data: ISubmitDate, e: any) => {
+  const onSubmit = async (data: ISubmitDate, e: any) => {
     console.log(getValues("years"));
     console.log(getValues("departments"));
     console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
@@ -398,7 +399,17 @@ function PostModifyForm() {
     //   years: ["2학년", "4학년"],
     //   keywords: ["포트폴리오필수", "4학기필수"],
     // };
-    updatePost(state?.id, newPost as any);
+    try {
+      await updatePost(state?.id, newPost as any)?.then((data) =>
+        console.log(data)
+      );
+
+      alert("모집글이 수정되었습니다.");
+      navigate(-1);
+    } catch (error) {
+      alert("알수없는 에러입니다.");
+    }
+
     // updatePost(state?.id, nPost);
   };
 
@@ -682,9 +693,9 @@ function PostModifyForm() {
                     {postExampleToggle &&
                       (
                         PostExamples[
-                          getValues("postTypes").length === 0
+                          (getValues("postTypes").length === 0
                             ? "선택안됨"
-                            : getValues("postTypes")[0]
+                            : getValues("postTypes")[0]) as never
                         ] as IPostExample[]
                       )?.map((postExample: IPostExample, index: number) => (
                         <Thumbnail {...postExample} key={index} />
@@ -966,7 +977,7 @@ function PostModifyForm() {
             <div className="flex items-center w-full justify-between">
               {/* <div className="w-[600px] mt-[20px] mr-[100px]"> */}
               <div className="flex items-start w-[45%]">
-                <div className="w-[130px] mt-[8px]">신청 방법</div>
+                <div className="w-[130px] mt-[8px]">신청 경로</div>
                 <div className="w-full">
                   <input
                     // onFocus={{
@@ -980,7 +991,7 @@ function PostModifyForm() {
                 </div>
               </div>
               <span className="flex mt-[10px] items-start w-[45%]">
-                <p className="w-[130px] mt-[8px]">신청 안내</p>
+                <p className="w-[200px]">신청 방법 (선택)</p>
                 <div className="w-full">
                   <textarea
                     wrap="off"
@@ -998,6 +1009,10 @@ function PostModifyForm() {
           </div>
         </div>
 
+        <div className="mb-[30px] px-[10px] text-blue-600">
+          * 아래는 전부 선택 사항입니다. 필요하다고 생각 하는 부분을 추가적으로
+          작성 해주세요
+        </div>
         {/* 선택 옵션 접었을 때 */}
 
         {!optionalFoldToggle[0] && (
@@ -1025,7 +1040,7 @@ function PostModifyForm() {
             {getValues("departments").length === 0 ? (
               <div className={`ml-[30px] ${FunctionBUTTON}`}>전공 무관</div>
             ) : (
-              getValues("departments").map((department) => (
+              getValues("departments").map((department: string) => (
                 <div className={`ml-[30px] ${FunctionBUTTON}`}>
                   {department}
                 </div>
@@ -1034,7 +1049,7 @@ function PostModifyForm() {
             {getValues("years").length === 0 ? (
               <div className={`ml-[30px] ${FunctionBUTTON}`}>학년 무관</div>
             ) : (
-              getValues("years").map((year) => (
+              getValues("years").map((year: string) => (
                 <div className={`ml-[30px] ${FunctionBUTTON}`}>{year}</div>
               ))
             )}
@@ -1077,7 +1092,7 @@ function PostModifyForm() {
                         onKeyPress={textareaResize}
                         onKeyUp={textareaResize}
                         className="notes_gray w-full px-[10px]"
-                        placeholder="지원자 자격에 대해 자유롭게 작성해주세요."
+                        placeholder="지원자가 갖춰야 할 역량에 대해 자유롭게 작성해주세요."
                         {...register("qualifications")}
                       />
                     </div>
@@ -1305,7 +1320,7 @@ function PostModifyForm() {
             className="text-white bg-blue-500  text-[18px] px-[20px] py-[8px] rounded-lg"
           >
             {" "}
-            모집글 등록하기
+            제출하기
           </button>
         </div>
       </form>

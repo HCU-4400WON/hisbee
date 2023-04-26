@@ -228,6 +228,7 @@ function SignUp2() {
 
                   <div className="w-[220px] px-[20px]">
                     <InfoInput
+                      type="text"
                       id="nicknameInput"
                       onKeyPress={onKeyPress}
                       {...register("nickname", {
@@ -269,6 +270,7 @@ function SignUp2() {
                     <Info>1전공</Info>
                     <div className="w-[300px] px-[20px]">
                       <InfoInput
+                        type="text"
                         onKeyPress={onKeyPress}
                         {...register("major1", {
                           required: "필수 항목입니다.",
@@ -285,6 +287,7 @@ function SignUp2() {
                     <Info>2전공</Info>
                     <div className="w-[300px] px-[20px]">
                       <InfoInput
+                        type="text"
                         onKeyPress={onKeyPress}
                         {...register("major2", {
                           required: "필수 항목입니다.",

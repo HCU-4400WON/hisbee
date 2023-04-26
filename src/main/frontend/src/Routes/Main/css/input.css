@@ -1,4 +1,4 @@
-input:focus:not(.KeywordInput) {
+input[type="text"]:focus:not(.KeywordInput) {
   border-bottom: solid 2px;
   border-image: linear-gradient(
       to right,
@@ -10,7 +10,7 @@ input:focus:not(.KeywordInput) {
     1;
 }
 
-Input:focus:not(.KeywordInput) {
+Input[type="text"]:focus:not(.KeywordInput) {
   outline: none;
   border-bottom-color: blue;
   animation: inputExpand 0.4s ease forwards;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
-export function Duration({ getValues, setValue, register }: UseFormReturn) {
+export function Duration({ getValues, setValue, register }: any) {
   const duration = [
     "미설정",
     "봄학기",
@@ -28,11 +28,11 @@ export function Duration({ getValues, setValue, register }: UseFormReturn) {
           ))}
         </select>
         {getValues("duration") === "직접 입력" && (
-          <div className="max-w-[300px] mr-[20px]">
+          <div className="w-[250px] mr-[20px]">
             <input
               {...register("durationText")}
               type="text"
-              className="h-[30px] bg-gray-100 border-b-2 border-gray-400 px-[10px]"
+              className="h-[30px] w-full bg-gray-100 border-b-2 border-gray-400 px-[10px]"
               placeholder="ex) 가을학기 ~ 겨울방학"
             />
           </div>
