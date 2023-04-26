@@ -12,9 +12,6 @@
   line-height: 30px;
   height: 50px;
 }
-::placeholder {
-  color: white;
-}
 
 .notes_slate {
   background-attachment: local;

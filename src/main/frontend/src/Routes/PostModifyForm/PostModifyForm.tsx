@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-import "./textarea.css";
+import "./css/textarea.css";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertToRaw, ContentState } from "draft-js";
@@ -19,7 +19,7 @@ import {
 } from "firebase/storage";
 import { storage } from "../../firebase";
 import { get } from "http";
-import Thumbnail from "./Thumbnail";
+import Thumbnail from "./components/Thumbnail";
 
 import {
   convertDateToString,
@@ -88,87 +88,103 @@ const ThumbnailCategoryButton = tw(motion.div)`
   min-h-[28px] py-[2px] mb-[10px] px-[15px] rounded-full mr-[10px] bg-blue-200
 `;
 
-const stateConverter = (type: string, data: any) => {
-  if (type === "duration") {
-    if (
-      [
-        "미설정",
-        "봄학기",
-        "가을학기",
-        "여름방학",
-        "겨울방학",
-        "1년",
-        "1학기",
-        "2학기",
-        "3학기",
-        "4학기",
-      ].includes(data)
-    ) {
-      return data;
-    }
-    return "직접 입력";
-  } else if (type === "durationText") {
-    if (
-      [
-        "미설정",
-        "봄학기",
-        "가을학기",
-        "여름방학",
-        "겨울방학",
-        "1년",
-        "1학기",
-        "2학기",
-        "3학기",
-        "4학기",
-      ].includes(data)
-    ) {
-      return "";
-    }
-    return data;
-  } else if (type === "postTypes") {
-    let newDate = [...data];
-    const judge = (object) =>
-      [
-        "동아리",
-        "학회",
-        "프로젝트",
-        "학술모임",
-        "공모전/대회",
-        "운동/게임/취미",
-        "전공 스터디",
-      ].includes(object);
-
-    for (let i = 0; i < newDate.length; ++i) {
-      if (judge(newDate[i]) === false) {
-        newDate.splice(i, 1);
-        newDate.push("기타 모임");
-        return newDate;
-      }
-    }
-
-    return newDate;
-  } else if (type === "categoryETC") {
-    const judge = (object) =>
-      [
-        "동아리",
-        "학회",
-        "프로젝트",
-        "학술모임",
-        "공모전/대회",
-        "운동/게임/취미",
-        "전공 스터디",
-      ].includes(object);
-
-    for (let i = 0; i < data.length; ++i) {
-      if (judge(data[i]) === false) {
-        return data[i];
-      }
-    }
-    return "";
-  }
-};
 function PostModifyForm() {
   const { state } = useLocation();
+
+  const stateConverter = (type: string, data: any) => {
+    if (type === "duration") {
+      if (
+        [
+          "미설정",
+          "봄학기",
+          "가을학기",
+          "여름방학",
+          "겨울방학",
+          "1년",
+          "1학기",
+          "2학기",
+          "3학기",
+          "4학기",
+        ].includes(data)
+      ) {
+        return data;
+      }
+      return "직접 입력";
+    } else if (type === "durationText") {
+      if (
+        [
+          "미설정",
+          "봄학기",
+          "가을학기",
+          "여름방학",
+          "겨울방학",
+          "1년",
+          "1학기",
+          "2학기",
+          "3학기",
+          "4학기",
+        ].includes(data)
+      ) {
+        return "";
+      }
+      return data;
+    } else if (type === "postTypes") {
+      let newDate = [...data];
+      const judge = (object) =>
+        [
+          "동아리",
+          "학회",
+          "프로젝트",
+          "학술모임",
+          "공모전/대회",
+          "운동/게임/취미",
+          "전공 스터디",
+        ].includes(object);
+
+      for (let i = 0; i < newDate.length; ++i) {
+        if (judge(newDate[i]) === false) {
+          newDate.splice(i, 1);
+          newDate.push("기타 모임");
+          return newDate;
+        }
+      }
+
+      return newDate;
+    } else if (type === "categoryETC") {
+      const judge = (object) =>
+        [
+          "동아리",
+          "학회",
+          "프로젝트",
+          "학술모임",
+          "공모전/대회",
+          "운동/게임/취미",
+          "전공 스터디",
+        ].includes(object);
+
+      for (let i = 0; i < data.length; ++i) {
+        if (judge(data[i]) === false) {
+          return data[i];
+        }
+      }
+      return "";
+    } else if (type === "keywords") {
+      console.log("before", data);
+      const newKeywords = data?.filter((elem) => {
+        const list = [
+          ...state?.postTypes,
+          ...state?.tags?.first,
+          ...state?.tags?.second,
+        ];
+        console.log("comp", list, elem);
+        console.log(list.includes(elem));
+        if (list.includes(elem) === true) return false;
+        else return true;
+      });
+      console.log("after", newKeywords);
+      return newKeywords;
+    }
+  };
 
   const {
     register,
@@ -204,7 +220,7 @@ function PostModifyForm() {
       years: state?.years,
       departments: state?.departments,
       keyword: "",
-      keywords: state?.keywords,
+      keywords: stateConverter("keywords", state?.keywords),
       firstKeyword: "",
       secondKeyword: "",
       qualifications: state?.qualifications,
@@ -609,7 +625,7 @@ function PostModifyForm() {
             </div>
           </Link>
           <p className="md:text-[25px] text-[20px] font-unique">
-            모집글 작성하기
+            모집글 수정하기
           </p>
         </span>
         {/* <div className="flex justify-between items-center">

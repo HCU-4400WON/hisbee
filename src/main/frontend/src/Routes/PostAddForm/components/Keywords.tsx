@@ -30,7 +30,7 @@ export function Keywords({ getValues, setValue, register }: UseFormReturn) {
               (v: string, index: number) =>
                 v !== "기타 모임" && (
                   <span
-                    key={index}
+                    key={`${v}${index}`}
                     className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
                   >
                     <p>{v}</p>
@@ -58,7 +58,7 @@ export function Keywords({ getValues, setValue, register }: UseFormReturn) {
               initial="initial"
               animate="showing"
               exit="exit"
-              key={index}
+              key={`${keyword}${index}`}
               className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
             >
               <p className="mr-[10px]">{keyword}</p>
