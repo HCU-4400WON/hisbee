@@ -1,9 +1,14 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ImemberSignup, memberSignUp } from "api";
+import {
+  ImemberSignup,
+  IRandomNickname,
+  memberSignUp,
+  randomNickname,
+} from "api";
 import { isExtraSignupModalState, isSignupModalState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
@@ -11,12 +16,11 @@ import { useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import { FunctionButton } from "components/FunctionButton";
 import "./css/input.css";
+import axios from "axios";
 
 const Container = tw.div`
 flex 
 justify-center 
-
-
 `;
 
 const SignUpCard = tw.form`
@@ -140,7 +144,7 @@ const ValidationVariant = {
 
 function SignUp2() {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState } = useForm();
+  const { register, handleSubmit, formState, setValue, watch } = useForm();
 
   interface IOnValid {
     nickname: string;
@@ -221,8 +225,10 @@ function SignUp2() {
               <div className="flex h-[200px] items-start">
                 <InfoBox className=" relative flex w-[50%] items-center">
                   <Info>닉네임</Info>
+
                   <div className="w-[220px] px-[20px]">
                     <InfoInput
+                      id="nicknameInput"
                       onKeyPress={onKeyPress}
                       {...register("nickname", {
                         required: "필수 항목입니다.",
@@ -234,7 +240,15 @@ function SignUp2() {
                       placeholder="00자 이내로 작성해주세요"
                     />
                   </div>
-                  <FunctionButton text="닉네임 자동생성" />
+                  <FunctionButton
+                    text="닉네임 자동생성"
+                    onClick={async () => {
+                      const newNickname: IRandomNickname =
+                        await randomNickname();
+                      await setValue("nickname", newNickname.words[0]);
+                      document.getElementById("nicknameInput")?.focus();
+                    }}
+                  />
                   <AnimatePresence>
                     {(formState.errors.nickname?.message as string) && (
                       <motion.div

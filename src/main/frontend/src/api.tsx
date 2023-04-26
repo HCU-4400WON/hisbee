@@ -1085,3 +1085,14 @@ export const createPost = async (data: ICreatePost) => {
   });
   return response;
 };
+
+export interface IRandomNickname {
+  words: string[];
+  seed: string;
+}
+
+export const randomNickname = async () => {
+  const response = await axios.get("naver/?format=json&max_length=8");
+  console.log("get RandomNickname api 중...");
+  return response.data;
+};
