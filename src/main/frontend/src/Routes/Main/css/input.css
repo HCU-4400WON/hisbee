@@ -1,0 +1,29 @@
+input:focus:not(.KeywordInput) {
+  border-bottom: solid 2px;
+  border-image: linear-gradient(
+      to right,
+      transparent 0%,
+      blue 0%,
+      blue 100%,
+      transparent 100%
+    )
+    1;
+}
+
+Input:focus:not(.KeywordInput) {
+  outline: none;
+  border-bottom-color: blue;
+  animation: inputExpand 0.4s ease forwards;
+}
+
+@keyframes inputExpand {
+  0% {
+    width: 20%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+::placeholder {
+  color: blue;
+}
