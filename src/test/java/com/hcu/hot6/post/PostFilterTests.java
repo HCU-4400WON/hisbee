@@ -1,6 +1,7 @@
 package com.hcu.hot6.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hcu.hot6.domain.Department;
 import com.hcu.hot6.domain.Duration;
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
@@ -67,6 +68,7 @@ public class PostFilterTests {
                 .uid("1")
                 .email(TEST_EMAIL)
                 .pictureUrl("picture")
+                .department(Department.CSEE)
                 .build();
 
         member1.update(MemberRequest.builder()
@@ -400,6 +402,35 @@ public class PostFilterTests {
         // when
         var filter = PostSearchFilter.builder()
                 .department("상담심리사회복지학부")
+                .build();
+        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+
+        // then
+        assertThat(response.getTotal()).isEqualTo(1L);
+    }
+
+    @Test
+    public void 내_학부를_포함한_필터링이_되어야한다(){
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .duration(Duration.FALL)
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .build();
+
+        postService.createPost(request, TEST_EMAIL);
+
+
+        // when
+        var filter = PostSearchFilter.builder()
+                .myDeptOnly(true)
                 .build();
         var response = postService.readFilteredPost(filter, TEST_EMAIL);
 
