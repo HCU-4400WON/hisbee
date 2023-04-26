@@ -296,4 +296,114 @@ public class PostFilterTests {
         assertThat(res.getPosts().size()).isEqualTo(1);
         assertThat(res.getPosts().get(0).getTitle()).isEqualTo("모집글 제목");
     }
+
+    @Test
+    public void 타겟_학부를_포함한_필터링이_되어야한다(){
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .duration(Duration.FALL)
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("콘텐츠융합디자인학부", "전산전자공학부"))
+                .build();
+        final var request2 = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .duration(Duration.FALL)
+                .targetCount("전체00명")
+                .keywords(List.of("온유", "축복"))
+                .contact("example@test.com")
+                .departments(List.of("콘텐츠융합디자인학부"))
+                .build();
+        final var request3 = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .duration(Duration.FALL)
+                .targetCount("전체00명")
+                .keywords(List.of("온유", "축복"))
+                .contact("example@test.com")
+                .departments(List.of("전산전자공학부"))
+                .build();
+
+        postService.createPost(request, TEST_EMAIL);
+        postService.createPost(request2, TEST_EMAIL);
+        postService.createPost(request3, TEST_EMAIL);
+
+
+        // when
+        var filter = PostSearchFilter.builder()
+                .department("전산전자공학부")
+                .build();
+        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+
+        // then
+        assertThat(response.getTotal()).isEqualTo(2L);
+    }
+
+    @Test
+    public void 타겟_전공을_포함한_필터링이_되어야한다(){
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .duration(Duration.FALL)
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .build();
+        final var request2 = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .duration(Duration.FALL)
+                .targetCount("전체00명")
+                .keywords(List.of("온유", "축복"))
+                .contact("example@test.com")
+                .departments(List.of("경제학", "상담심리학"))
+                .build();
+        final var request3 = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .duration(Duration.FALL)
+                .targetCount("전체00명")
+                .keywords(List.of("온유", "축복"))
+                .contact("example@test.com")
+                .departments(List.of("UIL"))
+                .build();
+
+        postService.createPost(request, TEST_EMAIL);
+        postService.createPost(request2, TEST_EMAIL);
+        postService.createPost(request3, TEST_EMAIL);
+
+
+        // when
+        var filter = PostSearchFilter.builder()
+                .department("상담심리사회복지학부")
+                .build();
+        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+
+        // then
+        assertThat(response.getTotal()).isEqualTo(1L);
+    }
 }
