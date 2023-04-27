@@ -1,6 +1,5 @@
 package com.hcu.hot6.domain.request;
 
-import com.hcu.hot6.domain.Duration;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
@@ -43,7 +42,9 @@ public class PostCreationRequest {
     private List<String> departments;
     private String qualifications;
     private String targetCount;
-    private Duration duration;
+
+    @NotNull
+    private String duration;
 
     // #3
     private List<String> keywords;
@@ -60,9 +61,5 @@ public class PostCreationRequest {
 
     public String getTargetCount() {
         return Objects.requireNonNullElse(this.targetCount, "00명");
-    }
-
-    public Duration getDuration() {
-        return Objects.requireNonNullElse(this.duration, Duration.TBD);
     }
 }
