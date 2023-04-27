@@ -82,6 +82,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .targetCount("전체 00명")
                 .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -137,6 +138,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .targetCount("전체00명")
                 .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
                 .build();
 
         final var request2 = PostCreationRequest.builder()
@@ -148,6 +150,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .targetCount("전체00명")
                 .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -175,6 +178,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .targetCount("전체00명")
                 .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
                 .build();
         final var request2 = PostCreationRequest.builder()
                 .title("모집글 제목")
@@ -185,6 +189,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .targetCount("전체00명")
                 .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -215,6 +220,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .targetCount("전체00명")
                 .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
                 .build();
         final var request2 = PostCreationRequest.builder()
                 .title("모집글 제목")
@@ -225,6 +231,7 @@ public class PostFilterTests {
                 .targetCount("전체00명")
                 .keywords(List.of("온유", "축복"))
                 .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -252,6 +259,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .targetCount("전체00명")
                 .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
                 .build();
         final var request2 = PostCreationRequest.builder()
                 .title("보관될 모집글 제목")
@@ -262,6 +270,7 @@ public class PostFilterTests {
                 .targetCount("전체00명")
                 .keywords(List.of("온유", "축복"))
                 .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -423,6 +432,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .targetCount("전체00명")
                 .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
                 .build();
         final var request2 = PostCreationRequest.builder()
                 .title("몬스터즈")
@@ -433,6 +443,7 @@ public class PostFilterTests {
                 .targetCount("전체00명")
                 .keywords(List.of("온유", "축복"))
                 .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -461,6 +472,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .targetCount("전체00명")
                 .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
                 .build();
         final var request2 = PostCreationRequest.builder()
                 .title("몬스터즈")
@@ -471,6 +483,7 @@ public class PostFilterTests {
                 .targetCount("전체00명")
                 .keywords(List.of("온유", "축복"))
                 .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
