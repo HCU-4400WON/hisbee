@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 @RequiredArgsConstructor
 public enum Duration {
-    TBD("미정"),
+    TBD("미설정"),
     SPRING("봄학기"), FALL("가을학기"),
     SUMMER("여름방학"), WINTER("겨울방학"),
     ONE("1학기"), TWO("2학기"),

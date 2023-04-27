@@ -63,7 +63,7 @@ public class PostUpdateTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .duration(Duration.FALL)
+                .duration("미설정")
                 .targetCount("00명")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
@@ -73,7 +73,7 @@ public class PostUpdateTests {
                 .title("수정된 모집글 제목")
                 .tags(new TagForm(List.of("첫줄,태그", "?")))
                 .postTypes(List.of("학회", "스터디"))
-                .duration(Duration.TBD)
+                .duration("봄학기")
                 .build();
 
         // when
@@ -87,6 +87,6 @@ public class PostUpdateTests {
         assertThat(res.getTags().getSecond()).isEqualTo(List.of());
         assertThat(res.getPostTypes()).isEqualTo(List.of("학회", "스터디"));
         assertThat(res.getSummary()).isEqualTo("한 줄 소개");
-        assertThat(res.getDuration()).isEqualTo(Duration.TBD);
+        assertThat(res.getDuration()).isEqualTo("봄학기");
     }
 }

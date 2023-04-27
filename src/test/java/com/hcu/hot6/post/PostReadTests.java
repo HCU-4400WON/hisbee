@@ -63,7 +63,6 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .duration(Duration.SPRING)
                 .targetCount("00명")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
@@ -87,7 +86,6 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .duration(Duration.SPRING)
                 .targetCount("00명")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
@@ -113,7 +111,6 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .duration(Duration.SPRING)
                 .targetCount("00명")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
@@ -139,7 +136,6 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .duration(Duration.SPRING)
                 .targetCount("00명")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
@@ -164,7 +160,6 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .duration(Duration.SPRING)
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
                 .build();
@@ -188,7 +183,6 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .duration(Duration.SPRING)
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
                 .build();
@@ -219,7 +213,7 @@ public class PostReadTests {
         var res = postService.readOnePost(post.getId(), TEST_EMAIL);
 
         // then
-        assertThat(res.getDuration()).isEqualTo(Duration.TBD);
+        assertThat(res.getDuration()).isEqualTo("미설정");
     }
 
     @Test
@@ -231,7 +225,7 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .duration(Duration.FALL)
+                .duration("가을학기")
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
                 .build();
@@ -241,7 +235,7 @@ public class PostReadTests {
         var res = postService.readOnePost(post.getId(), TEST_EMAIL);
 
         // then
-        assertThat(res.getDuration()).isEqualTo(Duration.FALL);
+        assertThat(res.getDuration()).isEqualTo("가을학기");
     }
 
     @Test
@@ -253,7 +247,6 @@ public class PostReadTests {
                 .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
-                .duration(Duration.SPRING)
                 .contact("example@test.com")
                 .qualifications("전산 1전공")
                 .build();
@@ -264,5 +257,27 @@ public class PostReadTests {
 
         // then
         assertThat(res.getViews()).isEqualTo(1);
+    }
+
+    @Test
+    public void 모집글_프로젝트_기간은_직접입력_할_수_있다() throws Exception {
+        // given
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .duration("봄학기 ~ 여름방학")
+                .build();
+
+        // when
+        var post = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
+
+        // then
+        assertThat(res.getDuration()).isEqualTo("봄학기 ~ 여름방학");
     }
 }

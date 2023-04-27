@@ -28,8 +28,7 @@ public class Thumbnail {
     private LocalDateTime recruitStart;     // 미래인 경우 썸네일에 "모집 예정" , 아닌 경우 "D-00" 표시
     private LocalDateTime recruitEnd;
 
-    @Enumerated(value = EnumType.STRING)
-    private Duration duration;
+    private String duration;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "thumbnail")
     private Post post;
@@ -50,7 +49,7 @@ public class Thumbnail {
         // optional
         this.summary = (request.getSummary() != null) ? request.getSummary() : null;
         this.recruitEnd = (request.getRecruitEnd() != null) ? Utils.toLocalDateTime(request.getRecruitEnd()) : null;
-        this.duration = (request.getDuration() != null) ? request.getDuration() : null;
+        this.duration = (request.getDuration() != null) ? request.getDuration() : "미설정";
     }
 
     public PostThumbnailResponse toResponse(String email) {
