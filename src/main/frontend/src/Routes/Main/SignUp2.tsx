@@ -128,7 +128,7 @@ text-white bg-blue-600 text-[17px] px-[40px] py-[6px] rounded-lg
 const ValidationVariant = {
   hidden: {
     y: -10,
-    color: "red",
+    // color: "red",
     opacity: 0,
   },
 
@@ -146,7 +146,13 @@ const ValidationVariant = {
 function SignUp2() {
   const navigate = useNavigate();
   const { register, handleSubmit, formState, setValue, watch, getValues } =
-    useForm();
+    useForm({
+      defaultValues: {
+        nickname: "",
+        major1: "",
+        major2: "",
+      },
+    });
 
   interface IOnValid {
     nickname: string;
@@ -210,11 +216,13 @@ function SignUp2() {
     const validationNickFn = async () => {
       const result = await validationNickname(getValues("nickname"));
 
-      console.log(result);
+      setIsPresent(result.isPresent);
     };
     validationNickFn();
   }, [getValues("nickname")]);
   // console.log(getValues("nickname"));
+
+  const [isPresent, setIsPresent] = useState<boolean>(false);
 
   return (
     <>
@@ -267,12 +275,28 @@ function SignUp2() {
                     {(formState.errors.nickname?.message as string) && (
                       <motion.div
                         variants={ValidationVariant}
-                        className="absolute top-[38px] left-[60px] text-[13px]"
+                        className={`absolute top-[38px] left-[60px] text-[13px] text-red-600 `}
                         initial="hidden"
                         animate="showing"
                         exit="exit"
                       >
                         * {formState.errors.nickname?.message as string}
+                      </motion.div>
+                    )}
+
+                    {getValues("nickname") !== "" && (
+                      <motion.div
+                        variants={ValidationVariant}
+                        className={`absolute top-[38px] left-[60px] text-[13px] ${
+                          isPresent ? "text-red-600" : "text-blue-600"
+                        }`}
+                        initial="hidden"
+                        animate="showing"
+                        exit="exit"
+                      >
+                        {isPresent
+                          ? "* 이미 존재하는 닉네임 입니다."
+                          : "* 사용 가능한 닉네임입니다."}
                       </motion.div>
                     )}
                   </AnimatePresence>

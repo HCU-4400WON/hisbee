@@ -13,7 +13,17 @@ interface IProps {
 }
 
 export function ImageUpload({ imageURLList, setImageURLList }: IProps) {
-  const [posterUploadList, setPosterUploadList] = useState<number[]>([0, 1, 2]);
+  for (let i = 0; i < imageURLList.length; ++i) {
+    [0, 1, 2].pop();
+  }
+
+  const [posterUploadList, setPosterUploadList] = useState<number[]>(() => {
+    let arr = [0, 1, 2];
+    for (let i = 0; i < imageURLList.length; ++i) {
+      arr.pop();
+    }
+    return arr;
+  });
   const [imageURL, setImageURL] = useState<string>("");
 
   const inputRef = useRef<HTMLInputElement | null>(null);
