@@ -199,12 +199,12 @@ function PostModifyForm() {
     mode: "onSubmit",
     defaultValues: {
       title: state?.title ? state?.title : "",
-      summary: state?.summary ? state?.title : "",
+      summary: state?.summary ? state?.summary : "",
       first: state?.tags?.first,
       second: state?.tags?.second,
       postTypes: stateConverter("postTypes", state?.postTypes),
       recruitStart: converter("dateTime", state?.recruitStart), // string
-      recruitEnd: converter("dateTime", new Date()), // string
+      recruitEnd: converter("dateTime", state?.recruitEnd), // string
       projectStart: "",
 
       //duration의 경우 register에 select외의 값이 들어갈 수 있기에.. 그부분을 처리해 줘야 한다.
@@ -319,7 +319,9 @@ function PostModifyForm() {
       }
     );
 
-  const [imageURLList, setImageURLList] = useState<string[] | []>([]);
+  const [imageURLList, setImageURLList] = useState<string[] | []>(
+    state?.posterPaths
+  );
 
   const onSubmit = async (data: ISubmitDate, e: any) => {
     console.log(getValues("years"));
@@ -753,13 +755,13 @@ function PostModifyForm() {
                   type="text"
                   placeholder="제목을 입력해주세요"
                 />
-                <div className="h-[70px]">
+                <div className="h-[70px] w-[350px]">
                   <textarea
                     wrap="off"
                     id="summary"
                     onKeyPress={textareaResize}
                     onKeyUp={textareaResize}
-                    className="notes w-[340px] text-[15px] px-[15px]"
+                    className="notes w-full text-[15px] px-[15px]"
                     {...register("summary")}
                     placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요"
                   />

@@ -1096,3 +1096,11 @@ export const randomNickname = async () => {
   console.log("get RandomNickname api 중...");
   return response.data;
 };
+
+export const validationNickname = async (nickname: string) => {
+  const response = await axios.get(
+    `http://localhost:8080/users/validation?nickname=${nickname}`
+  );
+
+  return response.data;
+};

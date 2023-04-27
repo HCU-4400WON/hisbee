@@ -4,6 +4,7 @@ import {
   IRandomNickname,
   memberSignUp,
   randomNickname,
+  validationNickname,
 } from "api";
 import { isExtraSignupModalState, isSignupModalState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
@@ -144,7 +145,8 @@ const ValidationVariant = {
 
 function SignUp2() {
   const navigate = useNavigate();
-  const { register, handleSubmit, formState, setValue, watch } = useForm();
+  const { register, handleSubmit, formState, setValue, watch, getValues } =
+    useForm();
 
   interface IOnValid {
     nickname: string;
@@ -202,6 +204,17 @@ function SignUp2() {
       opacity: 0,
     },
   };
+
+  watch(["nickname"]);
+  useEffect(() => {
+    const validationNickFn = async () => {
+      const result = await validationNickname(getValues("nickname"));
+
+      console.log(result);
+    };
+    validationNickFn();
+  }, [getValues("nickname")]);
+  // console.log(getValues("nickname"));
 
   return (
     <>

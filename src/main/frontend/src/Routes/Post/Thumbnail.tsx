@@ -46,11 +46,14 @@ function Thumbnail({
   //   (new Date(recruitEnd).getTime() - new Date(recruitStart).getTime()) /
   //   (1000 * 60 * 60 * 24);
   // const soon = dateDiff <= 4 && closed === false;
+  const convertedSummary = summary.split("\n");
+
+  // const convertedSummary = "a\nb";
 
   return (
     <motion.div
       whileHover={{ scale: 1.1 }}
-      className={`min-w-[310px] min-h-[260px] mb-[50px] rounded-xl border mx-[20px] bg-white ${
+      className={`min-w-[310px] min-h-[270px] mb-[50px] rounded-xl border mx-[20px] bg-white ${
         closed && "opacity-40 bg-gray-200"
       }`}
     >
@@ -85,14 +88,18 @@ function Thumbnail({
           <p className="my-[10px] text-[18px]">{title}</p>
         </span>
         <span>
-          <p className="text-[14px]">{summary}</p>
+          {convertedSummary.map((line: string, index: number) => (
+            <p key={index} className="text-[14px]">
+              {line}
+            </p>
+          ))}
         </span>
 
         <div className="flex mt-[25px]">
           {postTypes.map((postType: string, index: number) => (
             <span
               key={index}
-              className="px-[10px] py-[1px] bg-blue-100 mr-[10px] rounded-full text-[15px]"
+              className="px-[10px] py-[2px] bg-blue-200 mr-[10px] rounded-full text-[15px]"
             >
               {postType}
             </span>
@@ -103,7 +110,7 @@ function Thumbnail({
           {first?.map((keyword: string, index: number) => (
             <span
               key={index}
-              className="px-[10px] py-[1px] bg-blue-200 mr-[10px] rounded-full text-[15px]"
+              className="px-[10px] py-[2px] bg-blue-100 mr-[10px] rounded-full text-[15px]"
             >
               {keyword}
             </span>
@@ -113,7 +120,7 @@ function Thumbnail({
           {second?.map((keyword: string, index: number) => (
             <span
               key={index}
-              className="px-[10px] py-[1px] bg-blue-200 mr-[10px] rounded-full text-[15px]"
+              className="px-[10px] py-[2px] bg-blue-100 mr-[10px] rounded-full text-[15px]"
             >
               {keyword}
             </span>
