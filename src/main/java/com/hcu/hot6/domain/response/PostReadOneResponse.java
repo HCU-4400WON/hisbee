@@ -26,7 +26,7 @@ public class PostReadOneResponse {
     private String summary;
     private Date recruitStart;
     private Date recruitEnd;
-    private Duration duration;
+    private String duration;
     private List<String> postTypes;
     private TagForm tags;
 

@@ -130,6 +130,18 @@ public class PostRepository {
                                 .map(post.thumbnail.tags::contains)
                                 .reduce(BooleanExpression::or)
                                 .orElse(null)
+                )
+                .or(
+                        keywords.stream()
+                                .map(post.thumbnail.title::contains)
+                                .reduce(BooleanExpression::or)
+                                .orElse(null)
+                )
+                .or(
+                        keywords.stream()
+                                .map(post.thumbnail.summary::contains)
+                                .reduce(BooleanExpression::or)
+                                .orElse(null)
                 );
     }
 

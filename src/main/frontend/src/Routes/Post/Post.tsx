@@ -28,7 +28,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import Card from "Routes/Post/Card";
 import Thumbnail from "./Thumbnail";
-import { PostExamples } from "Routes/PostAddForm/PostExamples";
+import { PostExamples } from "Routes/PostAddForm/components/PostExamples";
 
 const Banner = tw.img`
 bg-gradient-to-r from-gray-300 to-gray-500
@@ -343,7 +343,7 @@ function Post() {
 
     if (selectedId === "categoryButton") {
       setSelectedCategory(selectedValue);
-      setSelectedKeywords([]);
+      // setSelectedKeywords([]);
       console.log(selectedValue);
     }
 
@@ -440,7 +440,7 @@ function Post() {
                       onClick={onClick}
                       className={`${
                         selectedCategory === category
-                          ? "text-black"
+                          ? "text-blue-600"
                           : "text-gray-400"
                       } mx-[40px]`}
                       key={index}
@@ -468,26 +468,28 @@ function Post() {
                   </select> */}
                   <span className="flex items-center ">
                     <p className="">필터링 키워드</p>
-                    <input
-                      value={keywordInput}
-                      id="keywordInput"
-                      onKeyPress={onKeyPress}
-                      onChange={onChange}
-                      type="text"
-                      className="w-[280px] ml-[20px] px-[10px] border-b border-gray-400 bg-gray-100 mr-[30px]"
-                      placeholder="키워드로 원하는 모집글만 볼 수 있어요."
-                    />
+                    <div className="w-[280px]  ml-[20px] mr-[30px]">
+                      <input
+                        value={keywordInput}
+                        id="keywordInput"
+                        onKeyPress={onKeyPress}
+                        onChange={onChange}
+                        type="text"
+                        className="w-full px-[10px]  border-b border-gray-400 bg-gray-100 "
+                        placeholder="키워드로 원하는 모집글만 볼 수 있어요."
+                      />
+                    </div>
                   </span>
                   <span>
                     <div className="w-full flex items-center ">
-                      {selectedCategory !== "전체" && (
+                      {/* {selectedCategory !== "전체" && (
                         <button
                           id="deleteKeywordButton"
                           className="text-[16px] bg-white flex items-center h-[30px] border-0 rounded-lg text-center px-[10px] mr-[30px]"
                         >
                           {selectedCategory}
                         </button>
-                      )}
+                      )} */}
                       {selectedKeywords.map((keyword, index) => (
                         <button
                           id="deleteKeywordButton"
