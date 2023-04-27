@@ -2,6 +2,7 @@ package com.hcu.hot6.repository;
 
 import com.hcu.hot6.domain.Member;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,5 +39,11 @@ public class MemberRepository {
                 .getResultList()
                 .stream()
                 .findFirst();
+    }
+
+    public Member findByNickname(String nickname) throws NoResultException {
+        return em.createQuery("select m from Member m where nickname = :nickname", Member.class)
+                .setParameter("nickname", nickname)
+                .getSingleResult();
     }
 }

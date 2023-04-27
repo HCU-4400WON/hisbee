@@ -1,10 +1,7 @@
 package com.hcu.hot6.controller;
 
-import com.hcu.hot6.domain.Department;
 import com.hcu.hot6.domain.Member;
-import com.hcu.hot6.domain.filter.PoolSearchFilter;
 import com.hcu.hot6.domain.request.MemberRequest;
-import com.hcu.hot6.domain.response.MemberPoolResponse;
 import com.hcu.hot6.domain.response.MemberProfileResponse;
 import com.hcu.hot6.domain.response.MemberResponse;
 import com.hcu.hot6.repository.MemberRepository;
@@ -16,6 +13,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -51,24 +51,11 @@ public class MemberController {
         return ResponseEntity.ok(memberService.deleteMember(user.getName()));
     }
 
-//    @GetMapping("/pool")
-//    public ResponseEntity<MemberPoolResponse> getProfiles(@AuthenticationPrincipal OAuth2User user,
-//                                                          @RequestParam int page,
-//                                                          @RequestParam(required = false) Department department,
-//                                                          @RequestParam(required = false) Position position,
-//                                                          @RequestParam(required = false) String grade) {
-//
-//        memberRepository.findByEmail(user.getName())
-//                .filter(Member::isPublic)
-//                .orElseThrow(IllegalArgumentException::new);
-//
-//        PoolSearchFilter filter = PoolSearchFilter.builder()
-//                .page(page)
-//                .department(department)
-//                .position(position)
-//                .grade(grade)
-//                .build();
-//
-//        return ResponseEntity.ok(memberService.getMatchedProfilesWith(filter));
-//    }
+    @GetMapping("/users/validation")
+    public ResponseEntity<Map<String, Boolean>> checkNickname(@RequestParam String nickname) {
+        boolean isPresent = memberService.isPresent(nickname);
+        Map<String, Boolean> result = Collections.singletonMap("isPresent", isPresent);
+
+        return ResponseEntity.ok(result);
+    }
 }

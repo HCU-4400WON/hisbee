@@ -8,9 +8,9 @@ import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.*;
+import com.hcu.hot6.repository.LikesRepository;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.repository.PostRepository;
-import com.hcu.hot6.repository.LikesRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class PostService {
 
@@ -28,7 +28,6 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final LikesRepository likesRepository;
 
-    @Transactional
     public PostCreationResponse createPost(PostCreationRequest request, String email) {
         Member author = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Author is not registered"));
@@ -42,7 +41,6 @@ public class PostService {
                 .build();
     }
 
-    @Transactional
     public Long deletePost(Long postId, String email) {
         Post post = postRepository.findOne(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not found."));
@@ -52,10 +50,10 @@ public class PostService {
     public PostReadOneResponse readOnePost(Long postId, String email) {
         Post post = postRepository.findOne(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not found."));
+        post.countUp();
         return post.toResponse(email);
     }
 
-    @Transactional
     public PostModifiedResponse updatePost(Long postId,
                                            PostUpdateRequest request) {
         Post post = postRepository.findOne(postId)
@@ -90,7 +88,6 @@ public class PostService {
         );
     }
 
-    @Transactional
     public LikesResponse addBookmark(Long postId, String name) {
         Member member = memberRepository.findByEmail(name).orElseThrow();
         Post post = postRepository.findOne(postId).orElseThrow();
@@ -101,7 +98,6 @@ public class PostService {
         return new LikesResponse(like);
     }
 
-    @Transactional
     public LikesResponse delBookmark(Long postId, String email) {
         Member member = memberRepository.findByEmail(email).orElseThrow();
         Post post = postRepository.findOne(postId).orElseThrow();
@@ -112,7 +108,6 @@ public class PostService {
         return new LikesResponse(like.get(0));
     }
 
-    @Transactional
     public ArchiveResponse addArchive(Long postId, String email) {
         Member member = memberRepository.findByEmail(email).orElseThrow();
         Post post = postRepository.findOne(postId)
@@ -122,7 +117,6 @@ public class PostService {
         return new ArchiveResponse(post.getId(), post.getArchive().getCreatedDate());
     }
 
-    @Transactional
     public ArchiveResponse delArchive(Long postId, String email) {
         Member member = memberRepository.findByEmail(email).orElseThrow();
         Post post = postRepository.findOne(postId)

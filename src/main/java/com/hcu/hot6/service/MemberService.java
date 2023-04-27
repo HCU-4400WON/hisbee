@@ -1,13 +1,9 @@
 package com.hcu.hot6.service;
 
 import com.hcu.hot6.domain.Member;
-import com.hcu.hot6.domain.Pagination;
-import com.hcu.hot6.domain.filter.PoolSearchFilter;
 import com.hcu.hot6.domain.request.MemberRequest;
-import com.hcu.hot6.domain.response.MemberPoolResponse;
-import com.hcu.hot6.domain.response.MemberProfileResponse;
 import com.hcu.hot6.repository.MemberRepository;
-import com.hcu.hot6.repository.PoolRepository;
+import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +16,6 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final PoolRepository poolRepository;
 
     public Member updateMember(String email, MemberRequest form) {
         Member member = memberRepository.findByEmail(email)
@@ -38,13 +33,12 @@ public class MemberService {
                 : "";
     }
 
-    public MemberPoolResponse getMatchedProfilesWith(PoolSearchFilter filter) {
-        var pagination = new Pagination(filter.getPage(), poolRepository.count(filter));
-        var members = poolRepository.matchWith(filter, pagination.getOffset())
-                .stream()
-                .map(MemberProfileResponse::new)
-                .toList();
-
-        return new MemberPoolResponse(pagination.getTotal(), members);
+    public boolean isPresent(String nickname) {
+        try {
+            memberRepository.findByNickname(nickname);
+        } catch (NoResultException e) {
+            return false;
+        }
+        return true;
     }
 }

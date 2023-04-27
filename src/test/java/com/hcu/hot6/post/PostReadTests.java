@@ -12,6 +12,7 @@ import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
+@ActiveProfiles("dev")
 public class PostReadTests {
 
     private static final String TEST_EMAIL = "test@example.com";
@@ -240,5 +242,27 @@ public class PostReadTests {
 
         // then
         assertThat(res.getDuration()).isEqualTo(Duration.FALL);
+    }
+
+    @Test
+    public void 모집글_조회시_조회수가_증가해야한다() throws Exception {
+        // given
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .duration(Duration.SPRING)
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .build();
+
+        // when
+        var post = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
+
+        // then
+        assertThat(res.getViews()).isEqualTo(1);
     }
 }
