@@ -16,12 +16,17 @@ public class PostSearchFilter {
                             String type,
                             String keywords,
                             OrderBy orderBy,
-                            Integer limit) {
+                            Integer limit,
+                            String department,
+                            Boolean myDeptOnly) {
         this.page = page;
         this.type = (Objects.isNull(type)) ? "" : type;
         this.keywords = Utils.toArray(keywords, ",");
         this.orderBy = (Objects.isNull(orderBy)) ? OrderBy.RECENT : orderBy;
         this.limit = limit;
+        this.department = (Objects.isNull(department)) ? "" : department;
+        this.myDeptOnly = (Objects.isNull(myDeptOnly)) ? false : myDeptOnly;
+
     }
 
     private final Integer page;
@@ -29,4 +34,6 @@ public class PostSearchFilter {
     private final List<String> keywords;
     private final OrderBy orderBy;
     private final Integer limit;
+    private final String department;
+    private final Boolean myDeptOnly;
 }

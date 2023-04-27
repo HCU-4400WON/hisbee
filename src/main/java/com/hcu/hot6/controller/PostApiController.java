@@ -77,6 +77,8 @@ public class PostApiController {
                                                                @RequestParam(required = false) String keywords,
                                                                @RequestParam(required = false, value = "order") OrderBy orderBy,
                                                                @RequestParam(required = false) Integer limit,
+                                                               @RequestParam(required = false) String department,
+                                                               @RequestParam(required = false) Boolean myDeptOnly,
                                                                @AuthenticationPrincipal OAuth2User user) {
         String email = (Objects.isNull(user)) ? "" : user.getName();
         PostSearchFilter filter = PostSearchFilter.builder()
@@ -85,9 +87,20 @@ public class PostApiController {
                 .keywords(keywords)
                 .orderBy(orderBy)
                 .limit(limit)
+                .department(department)
+                .myDeptOnly(myDeptOnly)
                 .build();
 
         return ResponseEntity.ok(postService.readFilteredPost(filter, email));
+    }
+
+    /**
+     * 아카이브된 모집글 조회
+     * */
+    @GetMapping("/posts/archived")
+    public ResponseEntity<PostFilterResponse> readAchivedPosts(@AuthenticationPrincipal OAuth2User user){
+        String email = (Objects.isNull(user)) ? "" : user.getName();
+        return ResponseEntity.ok(postService.readArchivedPost(email));
     }
 
     @PostMapping("/posts/{postId}/likes")
