@@ -1,4 +1,4 @@
-import { convertDateToString, IPostExample } from "./PostExamples";
+import { convertDateToString, IPostExample } from "../PostExamples";
 
 function Thumbnail({
   postStart,

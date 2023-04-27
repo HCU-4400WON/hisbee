@@ -50,7 +50,7 @@ function Thumbnail({
   return (
     <motion.div
       whileHover={{ scale: 1.1 }}
-      className={`min-w-[310px] min-h-[280px] mb-[50px] rounded-xl border mx-[20px] bg-white ${
+      className={`min-w-[310px] min-h-[260px] mb-[50px] rounded-xl border mx-[20px] bg-white ${
         closed && "opacity-40 bg-gray-200"
       }`}
     >
@@ -71,7 +71,7 @@ function Thumbnail({
             fontSize="15"
             bgColor="bg-gray-200"
             closed={closed}
-            recruitStart={recruitStart}
+            recruitStart={new Date()}
             recruitEnd={recruitEnd}
           />
         </div>
@@ -80,7 +80,7 @@ function Thumbnail({
           <Heart id={id} hasLiked={hasLiked} refetch={refetch} />
         </span>
       </div>
-      <div className="px-[15px] pb-[15px] border">
+      <div className="px-[15px] pb-[15px] ">
         <span className="">
           <p className="my-[10px] text-[18px]">{title}</p>
         </span>

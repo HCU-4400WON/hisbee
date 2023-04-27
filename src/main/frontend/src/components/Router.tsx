@@ -4,6 +4,7 @@ import Post from "Routes/Post/Post";
 import Header from "components/Header";
 import Login from "components/LoginModal";
 import SignUp from "Routes/Main/SignUp";
+import SignUp2 from "Routes/Main/SignUp2";
 import Person from "Routes/Person/Person";
 import PostAddForm from "Routes/PostAddForm/PostAddForm";
 import Detail from "Routes/Detail/Detail";
@@ -69,7 +70,7 @@ function Router() {
         <Route path="add2" element={<PostAddForm2 />}></Route>
         <Route path="post2/:id" element={<Detail2 />}></Route>
         <Route path="modify/:id" element={<PostModifyForm />}></Route>
-
+        <Route path="signup2" element={<SignUp2 />}></Route>
         <Route path="*" element={<Main />}></Route>
 
         {/* <Route path="post/:id" element={<Detail />}></Route>

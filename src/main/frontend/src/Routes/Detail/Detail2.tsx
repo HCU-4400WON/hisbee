@@ -643,20 +643,22 @@ function Detail2() {
                 </div>
                 {/* )} */}
                 <div>
-                  <button
-                    className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-gray-200 "
-                    onClick={() => {
-                      const newClosedPost: IUpdatePost = {
-                        isClosed: true,
-                      };
-                      if (window.confirm("마감하시겠습니까?")) {
-                        console.log("!!");
-                        updatePost(Number(id), newClosedPost);
-                      }
-                    }}
-                  >
-                    {data?.closed ? "연장" : "마감"}
-                  </button>
+                  {!data?.closed && (
+                    <button
+                      className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-gray-200 "
+                      onClick={() => {
+                        const newClosedPost: IUpdatePost = {
+                          isClosed: true,
+                        };
+                        if (window.confirm("마감하시겠습니까?")) {
+                          console.log("!!");
+                          updatePost(Number(id), newClosedPost);
+                        }
+                      }}
+                    >
+                      모집 마감
+                    </button>
+                  )}
 
                   <Link to={`/modify/${id}`} state={data as IReadOnePost}>
                     <button className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-blue-100 text-blue-500">
@@ -759,7 +761,7 @@ function Detail2() {
 
                   {data?.contact && (
                     <GridItem>
-                      <ItemTitle>신청 방법</ItemTitle>
+                      <ItemTitle>신청 경로</ItemTitle>
                       <a
                         href="http://google.com"
                         className="md:w-full w-[200px] text-[13px] md:text-[17px] font-bold underline"
@@ -779,7 +781,7 @@ function Detail2() {
 
                   {data?.contactDetails && (
                     <GridItem>
-                      <ItemTitle>신청 안내</ItemTitle>
+                      <ItemTitle>신청 방법</ItemTitle>
                       <ItemText className="pr-[40px]">
                         {data?.contactDetails}
                       </ItemText>
@@ -818,22 +820,24 @@ function Detail2() {
                     )
                 )}
               </div>
-              <div
-                dangerouslySetInnerHTML={{ __html: data?.content as string }}
-                className="p-[50px] text-[20px] bg-gray-100 rounded-3xl"
-              ></div>
+              {data?.content !== "" && (
+                <div
+                  dangerouslySetInnerHTML={{ __html: data?.content as string }}
+                  className="p-[50px] text-[20px] bg-gray-100 rounded-3xl"
+                ></div>
+              )}
+
               {/* <div dangerouslySetInnerHTML={{ __html: editorString }}></div> */}
-              <div className="flex">
+              <div className="flex justify-center">
                 {data?.posterPaths?.map((posterPath: string, index: number) => (
                   <img
-                    className="w-[400px] h-[400px]"
+                    className="w-[50%]"
                     key={index}
                     src={posterPath}
                     alt="poster"
                   />
                 ))}
               </div>
-              {data?.posterPaths[0]}
             </Form>
 
             <div className="min-w-[40px] md:min-w-[100px] "></div>

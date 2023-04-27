@@ -83,7 +83,7 @@ function PostAddForm2() {
     getValues,
     setValue,
     trigger,
-  } = useForm<UseFormReturn>({
+  } = useForm({
     mode: "onSubmit",
     defaultValues: {
       title: "",
@@ -190,6 +190,8 @@ function PostAddForm2() {
       {
         onSuccess: (data) => {
           console.log("모집글이 생성되었습니다.", data);
+          alert("모집글이 생성되었습니다.");
+          navigate("/post");
         },
         onError: (error) => {
           if (
@@ -356,7 +358,6 @@ function PostAddForm2() {
     setEditorState(editorState);
   };
 
-  const [ETCToggle, setETCToggle] = useState<boolean>(false);
   // const [gradeToggle, setGradeToggle] = useState<boolean>(false);
   // const [majorToggle, setMajorToggle] = useState<boolean>(false);
   const [postExampleToggle, setPostExampleToggle] = useState<boolean>(false);
@@ -550,7 +551,7 @@ function PostAddForm2() {
                     </span>
                     <Soon
                       bgColor="bg-gray-200"
-                      recruitStart={getValues("recruitStart")}
+                      recruitStart={new Date()}
                       recruitEnd={getValues("recruitEnd")}
                       closed={false}
                     />
@@ -566,6 +567,7 @@ function PostAddForm2() {
                 />
                 <div className="h-[70px]">
                   <textarea
+                    wrap="off"
                     id="summary"
                     onKeyPress={textareaResize}
                     onKeyUp={textareaResize}
@@ -748,7 +750,6 @@ function PostAddForm2() {
                             ]);
                             if (category === "기타 모임") {
                               document.getElementById("categoryETC")?.focus();
-                              setETCToggle(true);
                             }
                           } else if (
                             gv.includes(category as never) &&
@@ -759,7 +760,6 @@ function PostAddForm2() {
                               ...gv.slice(gvIdx + 1),
                             ]);
                             // 기타모임 포함 x
-                            if (category === "기타 모임") setETCToggle(false);
                           }
                         }}
                       >
@@ -789,7 +789,7 @@ function PostAddForm2() {
             <div className="flex items-center w-full justify-between">
               {/* <div className="w-[600px] mt-[20px] mr-[100px]"> */}
               <div className="flex items-start w-[45%]">
-                <div className="w-[130px] mt-[8px]">신청 방법</div>
+                <div className="w-[130px] mt-[8px]">신청 경로</div>
                 <div className="w-full">
                   <input
                     // onFocus={{
@@ -803,9 +803,10 @@ function PostAddForm2() {
                 </div>
               </div>
               <span className="flex mt-[10px] items-start w-[45%]">
-                <p className="w-[130px] mt-[8px]">신청 안내</p>
+                <p className="w-[200px]">신청 방법 (선택)</p>
                 <div className="w-full">
                   <textarea
+                    wrap="off"
                     id="registerMethod"
                     onKeyPress={textareaResize}
                     onKeyUp={textareaResize}
@@ -820,6 +821,10 @@ function PostAddForm2() {
           </div>
         </div>
 
+        <div className="mb-[30px] px-[10px] text-blue-600">
+          * 아래는 전부 선택 사항입니다. 필요하다고 생각 하는 부분을 추가적으로
+          작성 해주세요
+        </div>
         {/* 선택 옵션 접었을 때 */}
 
         {!optionalFoldToggle[0] && (
@@ -894,11 +899,12 @@ function PostAddForm2() {
                     <p className="mb-[10px] text-[18px] ">지원 자격</p>
                     <div className="flex">
                       <textarea
+                        wrap="off"
                         id="registerMethod"
                         onKeyPress={textareaResize}
                         onKeyUp={textareaResize}
                         className="notes_gray w-full px-[10px]"
-                        placeholder="지원자 자격에 대해 자유롭게 작성해주세요."
+                        placeholder="지원자가 갖춰야 할 역량에 대해 자유롭게 작성해주세요."
                         {...register("qualifications")}
                       />
                     </div>
@@ -970,8 +976,6 @@ function PostAddForm2() {
             ></i>
 
             <Keywords
-              ETCToggle={ETCToggle}
-              setETCToggle={setETCToggle}
               getValues={getValues}
               setValue={setValue}
               register={register}

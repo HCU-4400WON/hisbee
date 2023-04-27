@@ -32,7 +32,7 @@ export function Duration({ getValues, setValue, register }: any) {
             <input
               {...register("durationText")}
               type="text"
-              className="h-[30px] w-full bg-gray-100 border-b-2 border-gray-400 px-[10px]"
+              className="h-[30px] bg-gray-100 w-full border-b-2 border-gray-400 px-[10px]"
               placeholder="ex) 가을학기 ~ 겨울방학"
             />
           </div>
