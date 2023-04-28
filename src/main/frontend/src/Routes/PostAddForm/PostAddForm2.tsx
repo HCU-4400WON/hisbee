@@ -154,6 +154,7 @@ function PostAddForm2() {
   }
 
   watch([
+    "summary",
     "categoryETC",
     "departments",
     "postTypes",
@@ -566,15 +567,21 @@ function PostAddForm2() {
                   placeholder="제목을 입력해주세요"
                 />
                 <div className="h-[70px]">
-                  <textarea
-                    wrap="off"
-                    id="summary"
-                    onKeyPress={textareaResize}
-                    onKeyUp={textareaResize}
-                    className="notes w-[340px] text-[15px] px-[15px]"
-                    {...register("summary")}
-                    placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요"
-                  />
+                  <div className="w-full">
+                    <textarea
+                      wrap="off"
+                      id="summary"
+                      onKeyPress={textareaResize}
+                      onKeyUp={textareaResize}
+                      className="notes w-[350px] text-[15px] px-[15px]"
+                      {...register("summary")}
+                      placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요"
+                    />
+                  </div>
+                  {/* <p className="text-gray-500 text-[13px] float-right">
+                    {" "}
+                    {getValues("summary").length} / 40
+                  </p> */}
                 </div>
               </div>
               <div className="flex items-center">
@@ -656,6 +663,18 @@ function PostAddForm2() {
                         setValue(lineObj.str as any, "");
                       }
                     }}
+                    onBlur={async () => {
+                      if (getValues(lineObj.str as any) !== "") {
+                        setValue(
+                          lineObj.array as any,
+                          (await [
+                            ...getValues(lineObj.array as any),
+                            getValues(lineObj.str as any),
+                          ]) as never
+                        );
+                        setValue(lineObj.str as any, "");
+                      }
+                    }}
                     placeholder="키워드 입력"
                   />
                   <button
@@ -710,10 +729,10 @@ function PostAddForm2() {
                 </span>
                 <button
                   type="button"
-                  className={` ${FunctionBUTTON} ml-[80px] mt-[20px] `}
+                  className={` ${FunctionBUTTON} ml-[100px] mt-[20px] `}
                   onClick={() => setValue("recruitEnd", "")}
                 >
-                  마감일 미설정
+                  상시 모집
                 </button>
               </span>
             </div>
@@ -721,7 +740,10 @@ function PostAddForm2() {
             <div className="w-[600px] h-[350px] px-[40px] py-[30px]">
               <span className="flex items-center">
                 모임 유형(카테고리){" "}
-                <p className="text-[13px] ml-[20px]">최대 2개 선택 가능</p>
+                <span className="text-[13px] ml-[20px]">
+                  <span className="text-blue-600 font-bold">최대 2개</span> 선택
+                  가능
+                </span>
               </span>
 
               <div className="flex">
