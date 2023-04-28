@@ -846,6 +846,18 @@ function PostModifyForm() {
                         setValue(lineObj.str as any, "");
                       }
                     }}
+                    onBlur={async () => {
+                      if (getValues(lineObj.str as any) !== "") {
+                        setValue(
+                          lineObj.array as any,
+                          (await [
+                            ...getValues(lineObj.array as any),
+                            getValues(lineObj.str as any),
+                          ]) as never
+                        );
+                        setValue(lineObj.str as any, "");
+                      }
+                    }}
                     placeholder="키워드 입력"
                   />
                   <button
@@ -903,7 +915,7 @@ function PostModifyForm() {
                   className={` ${FunctionBUTTON} ml-[80px] mt-[20px] `}
                   onClick={() => setValue("recruitEnd", "")}
                 >
-                  마감일 미설정
+                  상시 모집
                 </button>
               </span>
             </div>
@@ -911,7 +923,10 @@ function PostModifyForm() {
             <div className="w-[600px] h-[350px] px-[40px] py-[30px]">
               <span className="flex items-center">
                 모임 유형(카테고리){" "}
-                <p className="text-[13px] ml-[20px]">최대 2개 선택 가능</p>
+                <span className="text-[13px] ml-[20px]">
+                  <span className="text-blue-600 font-bold">최대 2개</span> 선택
+                  가능
+                </span>
               </span>
 
               <div className="flex">
