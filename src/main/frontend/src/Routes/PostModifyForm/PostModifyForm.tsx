@@ -791,7 +791,10 @@ function PostModifyForm() {
                 { array: "first", str: "firstKeyword" },
                 { array: "second", str: "secondKeyword" },
               ].map((lineObj, LineIndex) => (
-                <div key={LineIndex} className="flex mb-[10px] items-center">
+                <div
+                  key={LineIndex}
+                  className="flex mb-[10px] items-center h-[25px]"
+                >
                   {/* firstLine Keyword */}
                   <AnimatePresence>
                     {getValues(lineObj.array as any)?.map(
@@ -826,58 +829,68 @@ function PostModifyForm() {
                       )
                     )}
                   </AnimatePresence>
-                  <input
-                    type="text"
-                    className={`KeywordInput py-[2px] px-[15px] w-[110px] rounded-full ${LightMainBLUE}`}
-                    {...register(lineObj.str as any)}
-                    onKeyPress={async (
-                      e: React.KeyboardEvent<HTMLInputElement>
-                    ) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        if (getValues(lineObj.str as any) === "") return;
-                        setValue(
-                          lineObj.array as any,
-                          (await [
-                            ...getValues(lineObj.array as any),
-                            getValues(lineObj.str as any),
-                          ]) as never
-                        );
-                        setValue(lineObj.str as any, "");
-                      }
-                    }}
-                    onBlur={async () => {
-                      if (getValues(lineObj.str as any) !== "") {
-                        setValue(
-                          lineObj.array as any,
-                          (await [
-                            ...getValues(lineObj.array as any),
-                            getValues(lineObj.str as any),
-                          ]) as never
-                        );
-                        setValue(lineObj.str as any, "");
-                      }
-                    }}
-                    placeholder="키워드 입력"
-                  />
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      if (getValues(lineObj.str as any) === "") return;
-                      setValue(
-                        lineObj.array as any,
-                        (await [
-                          ...getValues(lineObj.array as any),
-                          getValues(lineObj.str as any),
-                        ]) as never
-                      );
-                      setValue(lineObj.str as any, "");
-                    }}
-                    className={`px-[10px] bg-white ml-[5px] rounded-full ${MainBLUE} text-blue-500`}
-                  >
-                    {" "}
-                    +{" "}
-                  </button>
+
+                  <div className="relative flex items-center">
+                    {/* <div className="absolute border flex"> */}
+                    {getValues(lineObj.array as any).length < 3 && (
+                      <>
+                        <input
+                          type="text"
+                          className={`absolute KeywordInput py-[2px] px-[15px] w-[110px] rounded-full ${LightMainBLUE}`}
+                          {...register(lineObj.str as any)}
+                          onKeyPress={async (
+                            e: React.KeyboardEvent<HTMLInputElement>
+                          ) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              if (getValues(lineObj.str as any) === "") return;
+                              setValue(
+                                lineObj.array as any,
+                                (await [
+                                  ...getValues(lineObj.array as any),
+                                  getValues(lineObj.str as any),
+                                ]) as never
+                              );
+                              setValue(lineObj.str as any, "");
+                            }
+                          }}
+                          onBlur={async () => {
+                            if (getValues(lineObj.str as any) !== "") {
+                              setValue(
+                                lineObj.array as any,
+                                (await [
+                                  ...getValues(lineObj.array as any),
+                                  getValues(lineObj.str as any),
+                                ]) as never
+                              );
+                              setValue(lineObj.str as any, "");
+                            }
+                          }}
+                          placeholder="키워드 입력"
+                        />
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            if (getValues(lineObj.str as any) === "") return;
+                            setValue(
+                              lineObj.array as any,
+                              (await [
+                                ...getValues(lineObj.array as any),
+                                getValues(lineObj.str as any),
+                              ]) as never
+                            );
+                            setValue(lineObj.str as any, "");
+                          }}
+                          className={`absolute left-[110px] px-[10px] bg-white ml-[5px] rounded-full ${MainBLUE} text-blue-500`}
+                        >
+                          {" "}
+                          +{" "}
+                        </button>
+                      </>
+                    )}
+
+                    {/* </div> */}
+                  </div>
                 </div>
               ))}
 

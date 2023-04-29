@@ -1,5 +1,5 @@
 import tw from "tailwind-styled-components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -176,6 +176,10 @@ function PostAddForm2() {
     "departments",
     "years",
   ]);
+
+  console.log(getValues("firstKeyword"), getValues("secondKeyword"));
+
+  // const keywordWatchs = [watch("firstKeyword"), watch("secondKeyword")];
 
   const setIsLogin = useSetRecoilState(isLoginState);
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
@@ -527,7 +531,7 @@ function PostAddForm2() {
           </p> */}
 
           <div className="w-full h-[400px] flex items-center justify-between my-[20px] ">
-            <div className="w-[400px] h-[350px] bg-white p-[30px] rounded-2xl">
+            <div className="w-[400px] border h-[350px] bg-white p-[30px] rounded-2xl shadow-sm">
               <div className="mb-[10px]">
                 <span className="flex items-center justify-between mb-[20px]">
                   <span className="flex items-center">
@@ -584,6 +588,7 @@ function PostAddForm2() {
                   </p> */}
                 </div>
               </div>
+
               <div className="flex items-center">
                 <AnimatePresence>
                   {getValues("postTypes").length !== 0 &&
@@ -643,58 +648,69 @@ function PostAddForm2() {
                       )
                     )}
                   </AnimatePresence>
-                  <input
-                    type="text"
-                    className={`KeywordInput py-[2px] px-[15px] w-[110px] rounded-full ${LightMainBLUE}`}
-                    {...register(lineObj.str as any)}
-                    onKeyPress={async (
-                      e: React.KeyboardEvent<HTMLInputElement>
-                    ) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        if (getValues(lineObj.str as any) === "") return;
-                        setValue(
-                          lineObj.array as any,
-                          (await [
-                            ...getValues(lineObj.array as any),
-                            getValues(lineObj.str as any),
-                          ]) as never
-                        );
-                        setValue(lineObj.str as any, "");
-                      }
-                    }}
-                    onBlur={async () => {
-                      if (getValues(lineObj.str as any) !== "") {
-                        setValue(
-                          lineObj.array as any,
-                          (await [
-                            ...getValues(lineObj.array as any),
-                            getValues(lineObj.str as any),
-                          ]) as never
-                        );
-                        setValue(lineObj.str as any, "");
-                      }
-                    }}
-                    placeholder="키워드 입력"
-                  />
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      if (getValues(lineObj.str as any) === "") return;
-                      setValue(
-                        lineObj.array as any,
-                        (await [
-                          ...getValues(lineObj.array as any),
-                          getValues(lineObj.str as any),
-                        ]) as never
-                      );
-                      setValue(lineObj.str as any, "");
-                    }}
-                    className={`px-[10px] bg-white ml-[5px] rounded-full ${MainBLUE} text-blue-500`}
-                  >
-                    {" "}
-                    +{" "}
-                  </button>
+
+                  {getValues(lineObj.array as any).length < 3 && (
+                    <>
+                      <div className="relative flex items-center">
+                        <input
+                          type="text"
+                          className={`KeywordInput py-[2px] text-[15px] px-[15px] rounded-full ${LightMainBLUE}`}
+                          style={{
+                            width:
+                              (getValues(lineObj.str as any).length + 5) * 11,
+                          }}
+                          {...register(lineObj.str as any)}
+                          onKeyPress={async (
+                            e: React.KeyboardEvent<HTMLInputElement>
+                          ) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              if (getValues(lineObj.str as any) === "") return;
+                              setValue(
+                                lineObj.array as any,
+                                (await [
+                                  ...getValues(lineObj.array as any),
+                                  getValues(lineObj.str as any),
+                                ]) as never
+                              );
+                              setValue(lineObj.str as any, "");
+                            }
+                          }}
+                          onBlur={async () => {
+                            if (getValues(lineObj.str as any) !== "") {
+                              setValue(
+                                lineObj.array as any,
+                                (await [
+                                  ...getValues(lineObj.array as any),
+                                  getValues(lineObj.str as any),
+                                ]) as never
+                              );
+                              setValue(lineObj.str as any, "");
+                            }
+                          }}
+                        />
+
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            if (getValues(lineObj.str as any) === "") return;
+                            setValue(
+                              lineObj.array as any,
+                              (await [
+                                ...getValues(lineObj.array as any),
+                                getValues(lineObj.str as any),
+                              ]) as never
+                            );
+                            setValue(lineObj.str as any, "");
+                          }}
+                          className={`absolute right-0 px-[10px] ml-[5px] rounded-full text-blue-500`}
+                        >
+                          {" "}
+                          +{" "}
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
 
