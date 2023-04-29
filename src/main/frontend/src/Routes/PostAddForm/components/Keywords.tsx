@@ -137,15 +137,6 @@ export function Keywords({ getValues, setValue, register }: any) {
                       (allKeywordNodes[i] as any).focus();
                     }
                   }
-                  // (document.querySelectorAll("#vibrate") as any).map(
-                  //   (elem: any) => {
-                  //     // if (
-                  //     //   elem.childNodes[0].textContent === getValues("keyword")
-                  //     // )
-                  //     //   elem.focus();
-                  //     console.log(elem);
-                  //   }
-                  // );
                 } else {
                   await setValue("keywords", [
                     ...getValues("keywords"),

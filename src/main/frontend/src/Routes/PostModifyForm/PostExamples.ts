@@ -22,22 +22,28 @@ export const dateDifference = (end: string) => {
   const date1 = new Date(converter("year", new Date())!);
   const date2 = new Date(end);
 
-  const diffDate = date1.getTime() - date2.getTime();
+  const diffDate = date2.getTime() - date1.getTime();
 
-  return Math.abs(diffDate / (1000 * 60 * 60 * 24));
+  return diffDate / (1000 * 60 * 60 * 24);
 };
 
 // D-Day 를 상시모집 과 같은 스트링으로 바꿔줌
 
 export const convertDateToString = (postStart: any, postEnd: any) => {
-  if (new Date(postStart!) > new Date()) {
-    return "모집 예정";
-  } else if (postEnd === "") {
-    return "상시 모집";
-  } else if (dateDifference(postEnd!) === 0) {
-    return "D-Day";
+  if (dateDifference(postStart) > 0) {
+    if (dateDifference(postEnd!) < 0) return "모집 마감";
+    else return "모집 예정";
+    //return "D+" + Math.abs(dateDifference(postEnd!));
   } else {
-    return "D-" + dateDifference(postEnd!);
+    if (dateDifference(postEnd!) === 0) {
+      return "D-Day";
+    } else if (postEnd === "") {
+      return "상시 모집";
+    } else if (dateDifference(postEnd!) > 0) {
+      return "D-" + dateDifference(postEnd!);
+    } else {
+      return "모집 마감";
+    }
   }
 };
 

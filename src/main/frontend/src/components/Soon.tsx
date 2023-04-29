@@ -9,7 +9,7 @@ export default function Soon({
   const dateDiff =
     (new Date(recruitEnd).getTime() - new Date(recruitStart).getTime()) /
     (1000 * 60 * 60 * 24);
-  const soon = dateDiff <= 4 && closed === false;
+  const soon = dateDiff <= 4 && dateDiff > 0 && closed === false;
 
   return (
     <>

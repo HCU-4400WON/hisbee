@@ -18,6 +18,7 @@ import PrivateRoute from "./PrivateRoute";
 import PostAddForm2 from "Routes/PostAddForm/PostAddForm2";
 import Detail2 from "Routes/Detail/Detail2";
 import PostModifyForm from "Routes/PostModifyForm/PostModifyForm";
+import Profile2 from "Routes/Profile/Profile2";
 
 function Router() {
   return (
@@ -71,6 +72,7 @@ function Router() {
         <Route path="post2/:id" element={<Detail2 />}></Route>
         <Route path="modify/:id" element={<PostModifyForm />}></Route>
         <Route path="signup2" element={<SignUp2 />}></Route>
+        <Route path="profile2" element={<Profile2 />}></Route>
         <Route path="*" element={<Main />}></Route>
 
         {/* <Route path="post/:id" element={<Detail />}></Route>

@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
+import "./css/heading.css";
 import "./css/textarea.css";
 import "./css/date.css";
 import { Editor } from "react-draft-wysiwyg";
@@ -53,6 +54,7 @@ import { Keywords } from "./components/Keywords";
 const MyBlock = styled.div`
   background-color: white;
   .wrapper-class {
+    line-height: 0.5rem;
     margin: 0 auto;
     margin-bottom: 4rem;
     border: 2px solid lightGray !important;

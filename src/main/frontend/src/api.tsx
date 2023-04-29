@@ -1104,3 +1104,18 @@ export const validationNickname = async (nickname: string) => {
 
   return response.data;
 };
+
+export interface IOneUser {
+  nickname: string;
+  major1: string;
+  major2: string;
+}
+
+export const readOneMember = async () => {
+  const TOKEN = localStorage.getItem("key");
+  const response = await axios.get("", {
+    headers: { Authorization: `Bearer ${TOKEN}` },
+    withCredentials: true,
+  });
+  return response.data;
+};

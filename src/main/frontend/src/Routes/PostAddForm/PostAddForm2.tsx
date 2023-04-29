@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 
+import "./css/heading.css";
 import "./css/textarea.css";
 import "./css/date.css";
 import { Editor } from "react-draft-wysiwyg";
@@ -36,6 +37,7 @@ import { Keywords } from "./components/Keywords";
 const MyBlock = styled.div`
   background-color: white;
   .wrapper-class {
+    line-height: 0.5;
     margin: 0 auto;
     margin-bottom: 4rem;
     border: 2px solid lightGray !important;
@@ -579,7 +581,7 @@ function PostAddForm2() {
                       onKeyUp={textareaResize}
                       className="notes w-[350px] text-[15px] px-[15px]"
                       {...register("summary")}
-                      placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요"
+                      placeholder="(선택) 두줄 이내의 간결한 모임 설명글을 적어주세요"
                     />
                   </div>
                   {/* <p className="text-gray-500 text-[13px] float-right">
@@ -723,11 +725,11 @@ function PostAddForm2() {
             </div>
 
             <div className="w-[300px] h-[350px] px-[40px] py-[30px]">
-              <p>모집 기간</p>
+              <span>모집 기간</span>
 
               <span className="pl-[30px] mb-[200px]">
-                <span className="flex items-center mb-[10px]">
-                  <p className="mx-[15px]">시작</p>
+                <span className="mt-[20px] flex items-center mb-[10px]">
+                  <p className="mx-[15px] ">시작</p>
                   <input
                     className={`w-[140px] bg-slate-100 text-blue-500`}
                     type="date"
@@ -1089,6 +1091,11 @@ function PostAddForm2() {
                   textAlign: { inDropdown: true },
                   link: { inDropdown: true },
                   history: { inDropdown: false },
+                  blockType: {
+                    inDropdown: true,
+                    options: ["Normal", "H1", "H2", "H3", "H4", "H5", "H6"],
+                    // 기본값은 'Normal'입니다.
+                  },
                 }}
                 placeholder="내용을 작성해주세요."
                 // 한국어 설정
