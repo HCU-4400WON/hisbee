@@ -454,7 +454,7 @@ function Post() {
 
   return (
     <>
-      {isLoading || isLoginCheckLoading || unionDataLoading ? (
+      {isLoading || isLoginCheckLoading ? (
         <LoadingAnimation />
       ) : (
         <>
