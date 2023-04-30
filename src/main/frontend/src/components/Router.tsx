@@ -18,6 +18,7 @@ import PrivateRoute from "./PrivateRoute";
 import PostAddForm2 from "Routes/PostAddForm/PostAddForm2";
 import Detail2 from "Routes/Detail/Detail2";
 import PostModifyForm from "Routes/PostModifyForm/PostModifyForm";
+import Profile2 from "Routes/Profile/Profile2";
 
 function Router() {
   return (
@@ -25,7 +26,7 @@ function Router() {
       <Header />
       <Routes>
         {/* <Route path="editor" element={<TextEditor />}></Route> */}
-        <Route path="/" element={<Main />}></Route>
+        <Route path="/" element={<Post />}></Route>
         <Route path="post" element={<Post />}></Route>
         <Route path="oauth2/redirect" element={<BlankPage />}></Route>
         <Route path="post/:id" element={<Detail />}></Route>
@@ -33,10 +34,10 @@ function Router() {
           path="add"
           element={<PrivateRoute component={<PostAddForm />} />}
         ></Route>
-        <Route
+        {/* <Route
           path="signUp"
           element={<PrivateRoute component={<SignUp />} />}
-        ></Route>
+        ></Route> */}
         <Route
           path="person"
           element={<PrivateRoute component={<Person />} />}
@@ -70,7 +71,8 @@ function Router() {
         <Route path="add2" element={<PostAddForm2 />}></Route>
         <Route path="post2/:id" element={<Detail2 />}></Route>
         <Route path="modify/:id" element={<PostModifyForm />}></Route>
-        <Route path="signup2" element={<SignUp2 />}></Route>
+        <Route path="signUp" element={<SignUp2 />}></Route>
+        <Route path="profile2" element={<Profile2 />}></Route>
         <Route path="*" element={<Main />}></Route>
 
         {/* <Route path="post/:id" element={<Detail />}></Route>

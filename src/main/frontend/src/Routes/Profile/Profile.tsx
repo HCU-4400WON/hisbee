@@ -178,6 +178,7 @@ const PostItemVariant = {
   },
 };
 
+
 function Profile() {
   const location = useLocation();
   console.log(location);

@@ -23,12 +23,28 @@ import React, {
   useState,
 } from "react";
 import { useLocation, useMatch, useNavigate } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, useFetcher } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import Card from "Routes/Post/Card";
 import Thumbnail from "./Thumbnail";
 import { PostExamples } from "Routes/PostAddForm/components/PostExamples";
+import "./css/button.css";
+
+const SelectFilterBox = tw.select`
+mr-[20px] px-[10px] bg-[#F9FAFB] py-[5px] rounded-lg text-center
+text-gray-500
+`;
+
+const MyMajorBox = tw.div`
+flex items-center  bg-[#F9FAFB] py-[5px] mr-[20px] rounded-lg px-[10px] text-gray-500
+`;
+const MyMajorInput = tw.input`
+mr-[10px] mt-[4px] h-[20px] 
+`;
+const MyMajorText = tw.label`
+w-[175px]
+`;
 
 const Banner = tw.img`
 bg-gradient-to-r from-gray-300 to-gray-500
@@ -89,7 +105,7 @@ mr-5
 `;
 
 const SortSelect = tw.select`
-  w-40
+  
   
   
 `;
@@ -111,10 +127,12 @@ bg-gray-100
 min-w-[480px]
 pb-[100px]
 
+h-[2000px]
+
 `;
 
 const FormCancelIcon = tw.i`
-fa-solid fa-xmark text-[15px] text-black ml-[5px] mt-[1px]
+fa-solid fa-xmark text-[16px] text-black ml-[5px] mt-[2px] 
 `;
 
 // export interface IPost {
@@ -152,33 +170,12 @@ function Post() {
 
   const [order, setOrder] = useState<string>("recent");
 
+  const [myMajorToggle, setMyMajorToggle] = useState<boolean>(false);
+
   // Filtering
   const [filterCategory, setFilterCategory] = useState<string>("");
   const [filterPosition, setFilterPosition] = useState<string>("");
   const [filterPay, setFilterPay] = useState<string>("");
-
-  // const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-  //   if (event.currentTarget.id === "category") {
-  //     // 필터링 취소
-  //     if (filterCategory === event.currentTarget.name) {
-  //       setFilterCategory("");
-  //     } else setFilterCategory(event.currentTarget.name);
-  //     setFilterPosition("");
-  //     setFilterPay("");
-  //   } else if (event.currentTarget.id === "position") {
-  //     // 2차 필터링 취소
-  //     if (filterPosition === event.currentTarget.name) {
-  //       setFilterPosition("");
-  //     } else setFilterPosition(event.currentTarget.name);
-  //   } else if (event.currentTarget.id === "pay") {
-  //     //3차 필터링 취소
-  //     if (filterPay === event.currentTarget.name) {
-  //       setFilterPay("");
-  //     } else {
-  //       setFilterPay(event.currentTarget.name);
-  //     }
-  //   }
-  // };
 
   const [selectedMajor, setSelectedMajor] = useState<string | "">("");
   const [selectedGrade, setSelectedGrade] = useState<string | "">("");
@@ -216,14 +213,14 @@ function Post() {
   };
 
   const windowPx = window.innerWidth;
-  console.log(windowPx, "px");
+  // console.log(windowPx, "px");
 
   const isLoginModal = useRecoilValue(isLoginModalState);
 
   // let TOTAL_POSTS = 10;
   // let POSTS_PER_PAGE = 12;
   // let TOTAL_PAGES = Math.ceil(TOTAL_POSTS / POSTS_PER_PAGE);
-
+  const [getPageNums, setGetPageNums] = useState<number>(12);
   // const TOTAL_POSTS = 200;
   const POSTS_PER_PAGE = 12;
   // let TOTAL_PAGES = Math.ceil(posts?.total as number / POSTS_PER_PAGE);
@@ -254,11 +251,24 @@ function Post() {
     // refetch();
   }, [nowPage]);
 
+  const [LIMIT, useLIMIT] = useState<number>(1);
   useEffect(() => {
-    // refetch();
-  }, [search, order, filterCategory, filterPosition, filterPay]);
+    const pageOneRefetch = async () => {
+      await setNowPage(1);
+      // setGetPageNums(1);
+      refetch();
+    };
+    pageOneRefetch();
+    console.log(
+      nowPage,
+      search,
+      order,
+      selectedCategory,
+      LIMIT,
+      selectedKeywords
+    );
+  }, [search, order, selectedCategory, LIMIT, selectedKeywords]);
 
-  const [LIMIT, useLIMIT] = useState<number>(12);
   // [사이에 필터링을 추가하기]
   const {
     data: posts,
@@ -267,7 +277,6 @@ function Post() {
   } = useQuery<IReadAllPosts>(
     [
       "FilteredPosts",
-
       [nowPage, search, order, selectedCategory, LIMIT + "", selectedKeywords],
     ],
     () =>
@@ -290,8 +299,29 @@ function Post() {
       ),
     {
       onSuccess: (posts) => {
-        // console.log(nowPage,order,filterCategory , filterPosition , filterPay);
+        // keywords 변경
+        // setKeywords(posts.relatedKeywords);
+
+        //   // console.log("1");
+        // }
+
+        // setGetPageNums(posts.total);
+        setGetPageNums(posts.total);
+        console.log("debug", posts.total);
+
+        if (scrolling) {
+          setUnionData((prev) => [...prev, ...posts.posts]);
+        } else {
+          setUnionData(posts.posts);
+        }
+        window.scrollTo(0, 0);
+        // setUnionDataLoading(true);
         console.log("Fetched!", posts as any);
+
+        setScrolling(false);
+        // setTimeout(() => {
+        //   setUnionDataLoading(true);
+        // }, 1000);
       },
     }
   );
@@ -367,11 +397,11 @@ function Post() {
       });
     } else if (selectedId === "allFilterDelete") {
       setSelectedCategory("");
-      setSelectedGrade("모든 학년");
+      setSelectedGrade("학년 무관");
       if (majorRef.current) majorRef.current.selectedIndex = 0;
       if (gradeRef.current) gradeRef.current.selectedIndex = 0;
       setSelectedKeywords([]);
-      setSelectedMajor("모든 전공");
+      setSelectedMajor("전공 무관");
       //다시 전체 모집글 refetch
     }
   };
@@ -388,7 +418,7 @@ function Post() {
     "기타",
   ];
   const Majors = [
-    "모든 전공",
+    "전공 무관",
     "글로벌리더십학부",
     "국제어문학부",
     "경영경제학부",
@@ -402,8 +432,9 @@ function Post() {
     "상담심리사회복지학부",
     "ICT창업학부",
   ];
+
   const Grades = [
-    "모든 학년",
+    "학년 무관",
     "23학번 새내기",
     "1학년",
     "2학년",
@@ -421,6 +452,87 @@ function Post() {
       setKeywords((prev) => [...prev, keywordInput]);
     }
   };
+
+  const [unionData, setUnionData] = useState<IReadOnePost[] | []>([]);
+
+  const [stopFetching, setStopFetching] = useState<boolean>(false);
+  // const handleScroll = async () => {
+  //   // if (stopFetching) return;
+  //   const scrollHeight = document.documentElement.scrollHeight;
+  //   const scrollTop = document.documentElement.scrollTop;
+  //   const clientHeight = document.documentElement.clientHeight;
+
+  //   console.log(scrollHeight, scrollTop, clientHeight);
+
+  //   if (unionDataLoading) return;
+  //   if (scrollHeight - scrollTop === clientHeight) {
+  //     // window.scrollTo(0, 0);
+
+  //     setUnionDataLoading(true);
+  //     setTimeout(() => {
+  //       window.scrollTo(0, 0);
+  //       // sleep(3000).then(() => console.log("1"));
+  //       setNowPage((prev) => prev + 1);
+  //       refetch();
+  //     }, 3000);
+  //   }
+  // };
+
+  // const {isLoading, data, refetch} = useMoreData(page);
+
+  // useEffect(() => {
+
+  //   refetch();
+  // }, [nowPage]);
+
+  // useEffect(() => {
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => {
+  //     window.removeEventListener("scroll", handleScroll);
+  //   };
+  // }, []);
+
+  // const [unionDataLoading, setUnionDataLoading] = useState<boolean>(false);
+
+  const sentinel = document.getElementById("sentinel") as Element;
+
+  const [scrolling, setScrolling] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!sentinel) return;
+
+    const io = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        console.log("a", getPageNums);
+        if (getPageNums < LIMIT) {
+          // window.removeEventListener("scroll", handleScroll);
+          // observer.unobserve(document.getElementById("sentinel") as Element);
+
+          return;
+        }
+
+        console.log("b");
+        if (!entry.isIntersecting) return;
+        //entry가 interscting 중이 아니라면 함수를 실행하지 않습니다.
+        console.log("c");
+        if (isLoading) return;
+        console.log("d");
+        setScrolling(true);
+        //현재 page가 불러오는 중임을 나타내는 flag를 통해 불러오는 중이면 함수를 실행하지 않습니다.
+        observer.observe(document.getElementById("sentinel") as Element);
+        //observer를 등록합니다.
+        // page._page += 1;
+        setNowPage((prev) => prev + 1);
+        //불러올 페이지를 추가합니다.
+        // page.list.search();
+
+        refetch();
+        //페이지를 불러오는 함수를 호출합니다.
+      });
+    });
+    io.observe(sentinel);
+  }, [sentinel]);
+
   return (
     <>
       {isLoading || isLoginCheckLoading ? (
@@ -429,7 +541,7 @@ function Post() {
         <>
           {isLoginModal ? <Login /> : null}
           <Container>
-            <Banner src="/img/postBannerReal.png"></Banner>
+            <Banner className="h-[300px]"></Banner>
 
             <div className="">
               <div className="flex justify-between items-center px-[50px] w-full h-[60px] bg-white">
@@ -442,7 +554,7 @@ function Post() {
                         selectedCategory === category
                           ? "text-blue-600"
                           : "text-gray-400"
-                      } mx-[40px]`}
+                      } mx-[40px] hover:text-[17px]`}
                       key={index}
                     >
                       {category}
@@ -450,7 +562,7 @@ function Post() {
                   ))}
                 </div>
               </div>
-              <div className="flex h-[60px] justify-between px-[50px] ">
+              <div className="flex h-[60px] justify-between px-[20px] ">
                 <div className="flex items-center">
                   {/* <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] border-2 border-black">
                     {Majors.map((major, index) => (
@@ -466,9 +578,11 @@ function Post() {
                       </option>
                     ))}
                   </select> */}
-                  <span className="flex items-center ">
-                    <p className="">필터링 키워드</p>
-                    <div className="w-[280px]  ml-[20px] mr-[30px]">
+                  <span className="flex items-center">
+                    <div className="w-[130px] flex justify-end  mr-[20px]">
+                      <p className="text-[18px]">필터링 키워드</p>
+                    </div>
+                    <div className="w-[280px]  mr-[30px]">
                       <input
                         value={keywordInput}
                         id="keywordInput"
@@ -495,7 +609,7 @@ function Post() {
                           id="deleteKeywordButton"
                           onClick={onClick}
                           key={index}
-                          className="text-[16px] bg-white flex items-center h-[30px] border-0 rounded-lg text-center px-[10px] mr-[30px]"
+                          className="text-[16px] py-[5px] bg-white flex items-center justify-center  border-0 rounded-lg text-center px-[15px] mr-[30px]"
                         >
                           {keyword}
                           <FormCancelIcon />
@@ -509,8 +623,10 @@ function Post() {
                       필터 전체 삭제 버튼
                 </button> */}
               </div>
-              <div className="flex h-[60px] items-center mx-[20px] items-center">
-                <p className="ml-[90px] mr-[20px]">추천 키워드 </p>
+              <div className="flex h-[60px] items-center mx-[20px] items-center mb-[30px]">
+                <div className="w-[130px]  flex justify-end mr-[20px] ">
+                  <p>추천 키워드 </p>
+                </div>
                 {keywords.map(
                   (keyword, index) =>
                     !selectedKeywords.includes(keyword as never) && (
@@ -518,10 +634,10 @@ function Post() {
                         id="insertKeywordButton"
                         onClick={onClick}
                         key={index}
-                        className="text-gray-400 text-[16px] bg-white flex items-center h-[30px] border-0 rounded-lg text-center px-[10px] mr-[30px] "
+                        className="text-[16px] bg-gray-200 flex items-center py-[5px] border-0 rounded-lg text-center px-[15px] mr-[15px]"
                       >
                         <p>{keyword}</p>
-                        <i className="fa-solid fa-plus ml-[5px] mt-[1px] text-[10px]"></i>
+                        <i className="fa-solid fa-plus ml-[5px] mt-[1px] text-[14px]"></i>
                       </button>
                     )
                 )}
@@ -640,36 +756,37 @@ function Post() {
             )} */}
 
             <SortBox>
-              <div className="flex items-center justify-between w-[350px]">
-                {/* <div className="flex">
-                내 전공 관련글만 보기
-                  <input type="checkBox" className=" ml-[10px] mt-[4px] w-[20px] h-[20px] bg-[#eeeeee]" />
-                </div> */}
-                <select
+              <div className="flex items-center justify-between">
+                <MyMajorBox className="">
+                  <MyMajorInput type="checkBox" id="myMajor" />
+                  <MyMajorText htmlFor="myMajor">
+                    내 전공 관련글만 보기
+                  </MyMajorText>
+                </MyMajorBox>
+                <SelectFilterBox
                   ref={majorRef}
                   id="majorSelect"
                   onInput={onInput}
-                  className="mr-[20px] px-[10px] bg-gray-200 py-[10px] rounded-lg text-center"
                 >
                   {Majors.map((major, index) => (
                     <option key={index}>{major}</option>
                   ))}
-                </select>
-                <select
+                </SelectFilterBox>
+                <SelectFilterBox
                   ref={gradeRef}
                   id="gradeSelect"
                   onInput={onInput}
-                  className="mr-[20px] px-[10px] bg-gray-200 py-[10px] rounded-lg text-center"
+                  className=""
                 >
                   {Grades.map((grade, index) => (
                     <option key={index}>{grade}</option>
                   ))}
-                </select>
+                </SelectFilterBox>
                 <div className="flex items-center">
                   {/* <SortTitle>Sort by</SortTitle> */}
-                  <SortSelect
+                  <SelectFilterBox
                     id="sortSelect"
-                    className="px-[10px] bg-gray-200 py-[10px] rounded-lg text-center"
+                    className=""
                     onInput={onInput}
                     value={order}
                   >
@@ -685,12 +802,12 @@ function Post() {
                     <option id="end" value="end">
                       모집마감 임박순
                     </option>
-                  </SortSelect>
+                  </SelectFilterBox>
                 </div>
               </div>
 
               <Link to="/add2">
-                <button className="text-[12px] md:text-[15px] text-white py-[5px] bg-blue-600 px-[20px] rounded-lg py-[10px]">
+                <button className="text-[13px] md:text-[15px] text-white py-[5px] bg-blue-600 px-[15px] rounded-lg py-[8px]">
                   모집글 작성하기
                 </button>
               </Link>
@@ -702,7 +819,7 @@ function Post() {
                 (posts as IPosts).posts.map((post, index) => (
                   <Card key={index} post={post} refetch={refetch} index={index}  />
                 ))} */}
-              {posts?.posts?.map((post: IReadOnePost, index: number) => (
+              {unionData.map((post: IReadOnePost, index: number) => (
                 <Link key={index} to={`/post2/${post?.id}`}>
                   <Thumbnail {...post} refetch={refetch} />
                 </Link>
@@ -710,7 +827,7 @@ function Post() {
             </PostGrid>
 
             {
-              posts?.total === 0 && (
+              unionData.length === 0 && (
                 <div className="flex justify-center items-center w-full h-[50px] text-[20px] ">
                   <i className="fa-solid fa-triangle-exclamation text-yellow-500 ">
                     &nbsp;
@@ -762,6 +879,7 @@ function Post() {
               // )
             }
           </Container>
+          <p id="sentinel">d</p>
         </>
       )}
     </>
