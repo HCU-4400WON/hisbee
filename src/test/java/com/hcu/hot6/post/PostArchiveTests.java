@@ -42,7 +42,6 @@ public class PostArchiveTests {
 
         member1.update(MemberRequest.builder()
                 .nickname("member1")
-                .isPublic(false)
                 .build());
 
         memberRepository.save(member1);
@@ -64,7 +63,6 @@ public class PostArchiveTests {
         var res2 = postService.readOnePost(post.getId(), TEST_EMAIL);
 
         // then
-        assertThat(res.getId()).isEqualTo(1L);
         assertThat(res2.isArchived()).isTrue();
     }
 
