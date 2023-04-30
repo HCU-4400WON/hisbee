@@ -95,7 +95,7 @@ function Header() {
 
   const isPostURL = useMatch("/post");
   const isPersonURL = useMatch("/person");
-  const isProfileURL = useMatch("/profile");
+  const isProfileURL = useMatch("/profile2");
 
   const [isSearch, setIsSearch] = useState(true);
 
@@ -188,10 +188,10 @@ function Header() {
             />
           </Link>
 
-          <Link to="post">
+          {/* <Link to="post">
             <NavButton
               className={`${
-                isPostURL && "text-purple-400"
+                isPostURL && "text-blue-400"
               } md:pr-[30px] relative`}
             >
               {isPostURL && (
@@ -222,15 +222,15 @@ function Header() {
                   />
                 </>
               )}
-              {/* text-purple-500 */}
+              
               모집글
             </NavButton>
-          </Link>
+          </Link> */}
 
-          <Link to="person">
+          {/* <Link to="person">
             <NavButton
               className={`${
-                isPersonURL && "text-purple-400"
+                isPersonURL && "text-blue-400"
               }  md:pr-[30px] relative`}
             >
               {isPersonURL && (
@@ -263,11 +263,11 @@ function Header() {
               )}
               인재풀
             </NavButton>
-          </Link>
+          </Link> */}
         </NavLeftBox>
 
         <NavRightBox className="items-center">
-          <SearchBox
+          {/* <SearchBox
             className="relative hidden md:flex"
             id="searchForm"
             // onBlur={() => {
@@ -319,7 +319,7 @@ function Header() {
                 transition={{ duration: 0.5, type: "tween" }}
               ></motion.i>
             </button>
-          </SearchBox>
+          </SearchBox> */}
           {/* <Link to="login"> */}
           {!isLogin ? (
             <NavButton onClick={onClick} className="md:pl-[60px]">
@@ -331,9 +331,9 @@ function Header() {
             </NavButton>
           )}
           {isLogin && (
-            <Link to="profile" className="relative ">
+            <Link to="profile2" className="relative ">
               <NavButton
-                className={`${isProfileURL && "text-purple-400"} md:pl-[40px]`}
+                className={`${isProfileURL && "text-blue-400"} md:pl-[40px]`}
               >
                 <i className="fa-regular fa-circle-user text-[25px]"></i>
               </NavButton>
