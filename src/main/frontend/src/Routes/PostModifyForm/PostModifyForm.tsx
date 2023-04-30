@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
+import "./css/heading.css";
 import "./css/textarea.css";
 import "./css/date.css";
 import { Editor } from "react-draft-wysiwyg";
@@ -53,6 +54,7 @@ import { Keywords } from "./components/Keywords";
 const MyBlock = styled.div`
   background-color: white;
   .wrapper-class {
+    line-height: 0.5rem;
     margin: 0 auto;
     margin-bottom: 4rem;
     border: 2px solid lightGray !important;
@@ -199,12 +201,12 @@ function PostModifyForm() {
     mode: "onSubmit",
     defaultValues: {
       title: state?.title ? state?.title : "",
-      summary: state?.summary ? state?.title : "",
+      summary: state?.summary ? state?.summary : "",
       first: state?.tags?.first,
       second: state?.tags?.second,
       postTypes: stateConverter("postTypes", state?.postTypes),
       recruitStart: converter("dateTime", state?.recruitStart), // string
-      recruitEnd: converter("dateTime", new Date()), // string
+      recruitEnd: converter("dateTime", state?.recruitEnd), // string
       projectStart: "",
 
       //duration의 경우 register에 select외의 값이 들어갈 수 있기에.. 그부분을 처리해 줘야 한다.
@@ -319,7 +321,9 @@ function PostModifyForm() {
       }
     );
 
-  const [imageURLList, setImageURLList] = useState<string[] | []>([]);
+  const [imageURLList, setImageURLList] = useState<string[] | []>(
+    state?.posterPaths
+  );
 
   const onSubmit = async (data: ISubmitDate, e: any) => {
     console.log(getValues("years"));
@@ -753,13 +757,13 @@ function PostModifyForm() {
                   type="text"
                   placeholder="제목을 입력해주세요"
                 />
-                <div className="h-[70px]">
+                <div className="h-[70px] w-[350px]">
                   <textarea
                     wrap="off"
                     id="summary"
                     onKeyPress={textareaResize}
                     onKeyUp={textareaResize}
-                    className="notes w-[340px] text-[15px] px-[15px]"
+                    className="notes w-full text-[15px] px-[15px]"
                     {...register("summary")}
                     placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요"
                   />
@@ -789,7 +793,10 @@ function PostModifyForm() {
                 { array: "first", str: "firstKeyword" },
                 { array: "second", str: "secondKeyword" },
               ].map((lineObj, LineIndex) => (
-                <div key={LineIndex} className="flex mb-[10px] items-center">
+                <div
+                  key={LineIndex}
+                  className="flex mb-[10px] items-center h-[25px]"
+                >
                   {/* firstLine Keyword */}
                   <AnimatePresence>
                     {getValues(lineObj.array as any)?.map(
@@ -824,46 +831,68 @@ function PostModifyForm() {
                       )
                     )}
                   </AnimatePresence>
-                  <input
-                    type="text"
-                    className={`KeywordInput py-[2px] px-[15px] w-[110px] rounded-full ${LightMainBLUE}`}
-                    {...register(lineObj.str as any)}
-                    onKeyPress={async (
-                      e: React.KeyboardEvent<HTMLInputElement>
-                    ) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        if (getValues(lineObj.str as any) === "") return;
-                        setValue(
-                          lineObj.array as any,
-                          (await [
-                            ...getValues(lineObj.array as any),
-                            getValues(lineObj.str as any),
-                          ]) as never
-                        );
-                        setValue(lineObj.str as any, "");
-                      }
-                    }}
-                    placeholder="키워드 입력"
-                  />
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      if (getValues(lineObj.str as any) === "") return;
-                      setValue(
-                        lineObj.array as any,
-                        (await [
-                          ...getValues(lineObj.array as any),
-                          getValues(lineObj.str as any),
-                        ]) as never
-                      );
-                      setValue(lineObj.str as any, "");
-                    }}
-                    className={`px-[10px] bg-white ml-[5px] rounded-full ${MainBLUE} text-blue-500`}
-                  >
-                    {" "}
-                    +{" "}
-                  </button>
+
+                  <div className="relative flex items-center">
+                    {/* <div className="absolute border flex"> */}
+                    {getValues(lineObj.array as any).length < 3 && (
+                      <>
+                        <input
+                          type="text"
+                          className={`absolute KeywordInput py-[2px] px-[15px] w-[110px] rounded-full ${LightMainBLUE}`}
+                          {...register(lineObj.str as any)}
+                          onKeyPress={async (
+                            e: React.KeyboardEvent<HTMLInputElement>
+                          ) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              if (getValues(lineObj.str as any) === "") return;
+                              setValue(
+                                lineObj.array as any,
+                                (await [
+                                  ...getValues(lineObj.array as any),
+                                  getValues(lineObj.str as any),
+                                ]) as never
+                              );
+                              setValue(lineObj.str as any, "");
+                            }
+                          }}
+                          onBlur={async () => {
+                            if (getValues(lineObj.str as any) !== "") {
+                              setValue(
+                                lineObj.array as any,
+                                (await [
+                                  ...getValues(lineObj.array as any),
+                                  getValues(lineObj.str as any),
+                                ]) as never
+                              );
+                              setValue(lineObj.str as any, "");
+                            }
+                          }}
+                          placeholder="키워드 입력"
+                        />
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            if (getValues(lineObj.str as any) === "") return;
+                            setValue(
+                              lineObj.array as any,
+                              (await [
+                                ...getValues(lineObj.array as any),
+                                getValues(lineObj.str as any),
+                              ]) as never
+                            );
+                            setValue(lineObj.str as any, "");
+                          }}
+                          className={`absolute left-[110px] px-[10px] bg-white ml-[5px] rounded-full ${MainBLUE} text-blue-500`}
+                        >
+                          {" "}
+                          +{" "}
+                        </button>
+                      </>
+                    )}
+
+                    {/* </div> */}
+                  </div>
                 </div>
               ))}
 
@@ -901,7 +930,7 @@ function PostModifyForm() {
                   className={` ${FunctionBUTTON} ml-[80px] mt-[20px] `}
                   onClick={() => setValue("recruitEnd", "")}
                 >
-                  마감일 미설정
+                  상시 모집
                 </button>
               </span>
             </div>
@@ -909,7 +938,10 @@ function PostModifyForm() {
             <div className="w-[600px] h-[350px] px-[40px] py-[30px]">
               <span className="flex items-center">
                 모임 유형(카테고리){" "}
-                <p className="text-[13px] ml-[20px]">최대 2개 선택 가능</p>
+                <span className="text-[13px] ml-[20px]">
+                  <span className="text-blue-600 font-bold">최대 2개</span> 선택
+                  가능
+                </span>
               </span>
 
               <div className="flex">

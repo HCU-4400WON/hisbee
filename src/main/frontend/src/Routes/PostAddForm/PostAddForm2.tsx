@@ -1,8 +1,9 @@
 import tw from "tailwind-styled-components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 
+import "./css/heading.css";
 import "./css/textarea.css";
 import "./css/date.css";
 import { Editor } from "react-draft-wysiwyg";
@@ -36,6 +37,7 @@ import { Keywords } from "./components/Keywords";
 const MyBlock = styled.div`
   background-color: white;
   .wrapper-class {
+    line-height: 0.5;
     margin: 0 auto;
     margin-bottom: 4rem;
     border: 2px solid lightGray !important;
@@ -154,6 +156,7 @@ function PostAddForm2() {
   }
 
   watch([
+    "summary",
     "categoryETC",
     "departments",
     "postTypes",
@@ -175,6 +178,10 @@ function PostAddForm2() {
     "departments",
     "years",
   ]);
+
+  console.log(getValues("firstKeyword"), getValues("secondKeyword"));
+
+  // const keywordWatchs = [watch("firstKeyword"), watch("secondKeyword")];
 
   const setIsLogin = useSetRecoilState(isLoginState);
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
@@ -526,7 +533,7 @@ function PostAddForm2() {
           </p> */}
 
           <div className="w-full h-[400px] flex items-center justify-between my-[20px] ">
-            <div className="w-[400px] h-[350px] bg-white p-[30px] rounded-2xl">
+            <div className="w-[400px] border h-[350px] bg-white p-[30px] rounded-2xl shadow-sm">
               <div className="mb-[10px]">
                 <span className="flex items-center justify-between mb-[20px]">
                   <span className="flex items-center">
@@ -566,17 +573,24 @@ function PostAddForm2() {
                   placeholder="제목을 입력해주세요"
                 />
                 <div className="h-[70px]">
-                  <textarea
-                    wrap="off"
-                    id="summary"
-                    onKeyPress={textareaResize}
-                    onKeyUp={textareaResize}
-                    className="notes w-[340px] text-[15px] px-[15px]"
-                    {...register("summary")}
-                    placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요"
-                  />
+                  <div className="w-full">
+                    <textarea
+                      wrap="off"
+                      id="summary"
+                      onKeyPress={textareaResize}
+                      onKeyUp={textareaResize}
+                      className="notes w-[350px] text-[15px] px-[15px]"
+                      {...register("summary")}
+                      placeholder="(선택) 두줄 이내의 간결한 모임 설명글을 적어주세요"
+                    />
+                  </div>
+                  {/* <p className="text-gray-500 text-[13px] float-right">
+                    {" "}
+                    {getValues("summary").length} / 40
+                  </p> */}
                 </div>
               </div>
+
               <div className="flex items-center">
                 <AnimatePresence>
                   {getValues("postTypes").length !== 0 &&
@@ -636,46 +650,69 @@ function PostAddForm2() {
                       )
                     )}
                   </AnimatePresence>
-                  <input
-                    type="text"
-                    className={`KeywordInput py-[2px] px-[15px] w-[110px] rounded-full ${LightMainBLUE}`}
-                    {...register(lineObj.str as any)}
-                    onKeyPress={async (
-                      e: React.KeyboardEvent<HTMLInputElement>
-                    ) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        if (getValues(lineObj.str as any) === "") return;
-                        setValue(
-                          lineObj.array as any,
-                          (await [
-                            ...getValues(lineObj.array as any),
-                            getValues(lineObj.str as any),
-                          ]) as never
-                        );
-                        setValue(lineObj.str as any, "");
-                      }
-                    }}
-                    placeholder="키워드 입력"
-                  />
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      if (getValues(lineObj.str as any) === "") return;
-                      setValue(
-                        lineObj.array as any,
-                        (await [
-                          ...getValues(lineObj.array as any),
-                          getValues(lineObj.str as any),
-                        ]) as never
-                      );
-                      setValue(lineObj.str as any, "");
-                    }}
-                    className={`px-[10px] bg-white ml-[5px] rounded-full ${MainBLUE} text-blue-500`}
-                  >
-                    {" "}
-                    +{" "}
-                  </button>
+
+                  {getValues(lineObj.array as any).length < 3 && (
+                    <>
+                      <div className="relative flex items-center">
+                        <input
+                          type="text"
+                          className={`KeywordInput py-[2px] text-[15px] px-[15px] rounded-full ${LightMainBLUE}`}
+                          style={{
+                            width:
+                              (getValues(lineObj.str as any).length + 5) * 11,
+                          }}
+                          {...register(lineObj.str as any)}
+                          onKeyPress={async (
+                            e: React.KeyboardEvent<HTMLInputElement>
+                          ) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              if (getValues(lineObj.str as any) === "") return;
+                              setValue(
+                                lineObj.array as any,
+                                (await [
+                                  ...getValues(lineObj.array as any),
+                                  getValues(lineObj.str as any),
+                                ]) as never
+                              );
+                              setValue(lineObj.str as any, "");
+                            }
+                          }}
+                          onBlur={async () => {
+                            if (getValues(lineObj.str as any) !== "") {
+                              setValue(
+                                lineObj.array as any,
+                                (await [
+                                  ...getValues(lineObj.array as any),
+                                  getValues(lineObj.str as any),
+                                ]) as never
+                              );
+                              setValue(lineObj.str as any, "");
+                            }
+                          }}
+                        />
+
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            if (getValues(lineObj.str as any) === "") return;
+                            setValue(
+                              lineObj.array as any,
+                              (await [
+                                ...getValues(lineObj.array as any),
+                                getValues(lineObj.str as any),
+                              ]) as never
+                            );
+                            setValue(lineObj.str as any, "");
+                          }}
+                          className={`absolute right-0 px-[10px] ml-[5px] rounded-full text-blue-500`}
+                        >
+                          {" "}
+                          +{" "}
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
 
@@ -688,11 +725,11 @@ function PostAddForm2() {
             </div>
 
             <div className="w-[300px] h-[350px] px-[40px] py-[30px]">
-              <p>모집 기간</p>
+              <span>모집 기간</span>
 
               <span className="pl-[30px] mb-[200px]">
-                <span className="flex items-center mb-[10px]">
-                  <p className="mx-[15px]">시작</p>
+                <span className="mt-[20px] flex items-center mb-[10px]">
+                  <p className="mx-[15px] ">시작</p>
                   <input
                     className={`w-[140px] bg-slate-100 text-blue-500`}
                     type="date"
@@ -710,10 +747,10 @@ function PostAddForm2() {
                 </span>
                 <button
                   type="button"
-                  className={` ${FunctionBUTTON} ml-[80px] mt-[20px] `}
+                  className={` ${FunctionBUTTON} ml-[100px] mt-[20px] `}
                   onClick={() => setValue("recruitEnd", "")}
                 >
-                  마감일 미설정
+                  상시 모집
                 </button>
               </span>
             </div>
@@ -721,7 +758,10 @@ function PostAddForm2() {
             <div className="w-[600px] h-[350px] px-[40px] py-[30px]">
               <span className="flex items-center">
                 모임 유형(카테고리){" "}
-                <p className="text-[13px] ml-[20px]">최대 2개 선택 가능</p>
+                <span className="text-[13px] ml-[20px]">
+                  <span className="text-blue-600 font-bold">최대 2개</span> 선택
+                  가능
+                </span>
               </span>
 
               <div className="flex">
@@ -1051,6 +1091,11 @@ function PostAddForm2() {
                   textAlign: { inDropdown: true },
                   link: { inDropdown: true },
                   history: { inDropdown: false },
+                  blockType: {
+                    inDropdown: true,
+                    options: ["Normal", "H1", "H2", "H3", "H4", "H5", "H6"],
+                    // 기본값은 'Normal'입니다.
+                  },
                 }}
                 placeholder="내용을 작성해주세요."
                 // 한국어 설정

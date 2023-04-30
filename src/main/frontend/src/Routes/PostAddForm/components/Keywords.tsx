@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { AnimatePresence, motion } from "framer-motion";
+import { NONAME } from "dns";
 
 const presenseVariant = {
   initial: {
@@ -8,17 +9,34 @@ const presenseVariant = {
   },
   showing: {
     scale: 1,
+
+    // backgroundColor: "blue",
   },
   exit: {
     scale: 0,
   },
+  vibrate: {
+    scale: 1,
+    x: [3, -3, 3, -3, 3, -3, 3, -3, 3, -3, 3, -3, 3, -3, 3],
+    outline: "none",
+    backgroundColor: "#fA8072",
+    transition: {
+      duration: 1,
+      loop: Infinity,
+    },
+  },
+  vibrateInit: {
+    scale: 1,
+    outline: "none",
+  },
 };
 
 export function Keywords({ getValues, setValue, register }: any) {
+  // const [vibrate, setVibrate] = useState<boolean>(false);
   const MainBLUE = "bg-blue-200";
   const LightMainBLUE = "bg-blue-100";
   return (
-    <div>
+    <div id="kk">
       <p className=" text-[20px]">
         모임과 관련된 키워드를 입력하여 검색 결과에 노출될 수 있게 해보세요!
       </p>
@@ -29,12 +47,17 @@ export function Keywords({ getValues, setValue, register }: any) {
             getValues(elem as any)?.map(
               (v: string, index: number) =>
                 v !== "기타 모임" && (
-                  <span
+                  <motion.button
+                    whileFocus="vibrate"
+                    initial="vibrateInit"
+                    // animate="vibrateInit"
+                    variants={presenseVariant}
+                    id="vibrate"
                     key={`${v}${index}`}
                     className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
                   >
                     <p>{v}</p>
-                  </span>
+                  </motion.button>
                 )
             )
           )}
@@ -53,10 +76,15 @@ export function Keywords({ getValues, setValue, register }: any) {
             )}
 
           {getValues("keywords").map((keyword: string, index: number) => (
-            <motion.span
+            <motion.button
+              // whileHover={{
+              // x: [10, -10, -10, -10, 10, -10, 10, -10, 10, -10],
+              // }}
+              whileFocus="vibrate"
               variants={presenseVariant}
               initial="initial"
-              animate="showing"
+              id="vibrate"
+              animate="vibrateInit"
               exit="exit"
               key={`${keyword}${index}`}
               className={`flex items-center px-[20px] ${LightMainBLUE} rounded-lg py-[5px] mr-[10px]`}
@@ -71,7 +99,7 @@ export function Keywords({ getValues, setValue, register }: any) {
                   ])
                 }
               ></i>
-            </motion.span>
+            </motion.button>
           ))}
         </AnimatePresence>
       </div>
@@ -86,10 +114,35 @@ export function Keywords({ getValues, setValue, register }: any) {
             onKeyPress={async (e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                await setValue("keywords", [
+
+                const unionKeywords = [
                   ...getValues("keywords"),
-                  getValues("keyword") as never,
-                ]);
+                  ...getValues("postTypes"),
+                  ...getValues("first"),
+                  ...getValues("second"),
+                ];
+
+                if (unionKeywords.includes(getValues("keyword"))) {
+                  // setVibrate(true);
+
+                  // setTimeout(() => setVibrate(false), 1000);
+                  console.log(document.querySelectorAll("#vibrate"));
+
+                  const allKeywordNodes = document.querySelectorAll("#vibrate");
+                  for (let i = 0; i < allKeywordNodes.length; ++i) {
+                    if (
+                      allKeywordNodes[i].childNodes[0].textContent ===
+                      getValues("keyword")
+                    ) {
+                      (allKeywordNodes[i] as any).focus();
+                    }
+                  }
+                } else {
+                  await setValue("keywords", [
+                    ...getValues("keywords"),
+                    getValues("keyword") as never,
+                  ]);
+                }
 
                 setValue("keyword", "");
               }

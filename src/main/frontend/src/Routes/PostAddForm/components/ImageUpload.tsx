@@ -12,7 +12,11 @@ interface IProps {
   setImageURLList: React.Dispatch<React.SetStateAction<string[] | []>>;
 }
 
+
 export function ImageUpload({ imageURLList, setImageURLList }: IProps) {
+
+  
+
   const [posterUploadList, setPosterUploadList] = useState<number[]>([0, 1, 2]);
   const [imageURL, setImageURL] = useState<string>("");
 
