@@ -49,7 +49,8 @@ public class PostRepository {
                             eqType(filter.getType()),
                             eqKeywords(filter.getKeywords()),
                             eqDepartment(filter.getDepartment()),
-                            //eqDepartment(member.get().getDepartment().getName()),
+                            eqMajor(member.get().getMajor1().getName()),
+                            eqMajor(member.get().getMajor2().getName()),
                             eqYear(filter.getYear()),
                             post.archive.isNull()
                     )
@@ -83,7 +84,8 @@ public class PostRepository {
                             eqType(filter.getType()),
                             eqKeywords(filter.getKeywords()),
                             eqDepartment(filter.getDepartment()),
-                            //eqDepartment(member.get().getDepartment().getName()),
+                            eqMajor(member.get().getMajor1().getName()),
+                            eqMajor(member.get().getMajor2().getName()),
                             eqYear(filter.getYear()),
                             post.archive.isNull()
                     )
@@ -236,6 +238,10 @@ public class PostRepository {
 
         return builder
                 .or(post.targetDepartment.contains(department));
+    }
+
+    private BooleanExpression eqMajor(String major) {
+        return post.targetDepartment.contains(major);
     }
 
     private OrderSpecifier<?> orderCond(OrderBy orderBy) {
