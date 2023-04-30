@@ -23,7 +23,7 @@ import React, {
   useState,
 } from "react";
 import { useLocation, useMatch, useNavigate } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, useFetcher } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import Card from "Routes/Post/Card";
@@ -289,11 +289,18 @@ function Post() {
       onSuccess: (posts) => {
         // keywords 변경
         // setKeywords(posts.relatedKeywords);
-        console.log("page", nowPage);
         setGetPageNums(posts.total);
+        //   // console.log("1");
+        // }
+
+        // setGetPageNums(posts.total);
         setUnionData((prev) => [...prev, ...posts.posts]);
-        setUnionDataLoading(true);
+        window.scrollTo(0, 0);
+        // setUnionDataLoading(true);
         console.log("Fetched!", posts as any);
+        // setTimeout(() => {
+        //   setUnionDataLoading(true);
+        // }, 1000);
       },
     }
   );
@@ -404,6 +411,7 @@ function Post() {
     "상담심리사회복지학부",
     "ICT창업학부",
   ];
+
   const Grades = [
     "학년 무관",
     "23학번 새내기",
@@ -426,32 +434,69 @@ function Post() {
 
   const [unionData, setUnionData] = useState<IReadOnePost[] | []>([]);
   const [getPageNums, setGetPageNums] = useState<number>(12);
-  const handleScroll = () => {
-    const scrollHeight = document.documentElement.scrollHeight;
-    const scrollTop = document.documentElement.scrollTop;
-    const clientHeight = document.documentElement.clientHeight;
+  const [stopFetching, setStopFetching] = useState<boolean>(false);
+  // const handleScroll = async () => {
+  //   // if (stopFetching) return;
+  //   const scrollHeight = document.documentElement.scrollHeight;
+  //   const scrollTop = document.documentElement.scrollTop;
+  //   const clientHeight = document.documentElement.clientHeight;
 
-    if (scrollHeight - scrollTop >= clientHeight) {
-      setNowPage((prev) => prev + 1);
-    }
-  };
+  //   console.log(scrollHeight, scrollTop, clientHeight);
+
+  //   if (unionDataLoading) return;
+  //   if (scrollHeight - scrollTop === clientHeight) {
+  //     // window.scrollTo(0, 0);
+
+  //     setUnionDataLoading(true);
+  //     setTimeout(() => {
+  //       window.scrollTo(0, 0);
+  //       // sleep(3000).then(() => console.log("1"));
+  //       setNowPage((prev) => prev + 1);
+  //       refetch();
+  //     }, 3000);
+  //   }
+  // };
 
   // const {isLoading, data, refetch} = useMoreData(page);
 
-  useEffect(() => {
-    setUnionDataLoading(false);
-    refetch();
-  }, [nowPage]);
+  // useEffect(() => {
+
+  //   refetch();
+  // }, [nowPage]);
+
+  // useEffect(() => {
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => {
+  //     window.removeEventListener("scroll", handleScroll);
+  //   };
+  // }, []);
+
+  // const [unionDataLoading, setUnionDataLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    const io = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (getPageNums < LIMIT) {
+          // window.removeEventListener("scroll", handleScroll);
+          observer.unobserve(document.getElementById("sentinel") as Element);
+        }
+
+        if (!entry.isIntersecting) return;
+        //entry가 interscting 중이 아니라면 함수를 실행하지 않습니다.
+        if (isLoading) return;
+        //현재 page가 불러오는 중임을 나타내는 flag를 통해 불러오는 중이면 함수를 실행하지 않습니다.
+        observer.observe(document.getElementById("sentinel") as Element);
+        //observer를 등록합니다.
+        // page._page += 1;
+        setNowPage((prev) => prev + 1);
+        //불러올 페이지를 추가합니다.
+        // page.list.search();
+        refetch();
+        //페이지를 불러오는 함수를 호출합니다.
+      });
+      io.observe(document.getElementById("sentinel") as any);
+    });
   }, []);
-
-  const [unionDataLoading, setUnionDataLoading] = useState<boolean>(true);
-
   return (
     <>
       {isLoading || isLoginCheckLoading ? (
@@ -798,6 +843,7 @@ function Post() {
               // )
             }
           </Container>
+          <p id="sentinel">d</p>
         </>
       )}
     </>
