@@ -49,7 +49,8 @@ public class PostRepository {
                             eqType(filter.getType()),
                             eqKeywords(filter.getKeywords()),
                             eqDepartment(filter.getDepartment()),
-                            //eqDepartment(member.get().getDepartment().getName()),
+                            eqMajor(member.get().getMajor1().getName()),
+                            eqMajor(member.get().getMajor2().getName()),
                             eqYear(filter.getYear()),
                             post.archive.isNull()
                     )
@@ -63,6 +64,7 @@ public class PostRepository {
                         eqType(filter.getType()),
                         eqKeywords(filter.getKeywords()),
                         eqDepartment(filter.getDepartment()),
+                        eqYear(filter.getYear()),
                         post.archive.isNull()
                 )
                 .offset(offset)
@@ -82,7 +84,8 @@ public class PostRepository {
                             eqType(filter.getType()),
                             eqKeywords(filter.getKeywords()),
                             eqDepartment(filter.getDepartment()),
-                            //eqDepartment(member.get().getDepartment().getName()),
+                            eqMajor(member.get().getMajor1().getName()),
+                            eqMajor(member.get().getMajor2().getName()),
                             eqYear(filter.getYear()),
                             post.archive.isNull()
                     )
@@ -94,6 +97,7 @@ public class PostRepository {
                         eqType(filter.getType()),
                         eqKeywords(filter.getKeywords()),
                         eqDepartment(filter.getDepartment()),
+                        eqYear(filter.getYear()),
                         post.archive.isNull()
                 )
                 .orderBy(orderCond(filter.getOrderBy()))
@@ -118,13 +122,12 @@ public class PostRepository {
     }
 
     private BooleanExpression eqType(String type) {
+//        if(type.compareTo("기타") == 0) return post.isETC;
         return post.postTypes.contains(type);
     }
 
-    private BooleanBuilder eqYear(String year){
-        var builder = new BooleanBuilder();
-
-        return builder.or(post.targetYears.contains(year));
+    private BooleanExpression eqYear(String year){
+        return post.targetYears.contains(year);
     }
 
     private BooleanBuilder eqKeywords(List<String> keywords) {
@@ -234,6 +237,10 @@ public class PostRepository {
 
         return builder
                 .or(post.targetDepartment.contains(department));
+    }
+
+    private BooleanExpression eqMajor(String major) {
+        return post.targetDepartment.contains(major);
     }
 
     private OrderSpecifier<?> orderCond(OrderBy orderBy) {
