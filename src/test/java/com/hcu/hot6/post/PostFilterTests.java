@@ -3,6 +3,7 @@ package com.hcu.hot6.post;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcu.hot6.domain.Department;
 import com.hcu.hot6.domain.Member;
+import com.hcu.hot6.domain.enums.Major;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.request.PostCreationRequest;
@@ -57,6 +58,8 @@ public class PostFilterTests {
 
         member1.update(MemberRequest.builder()
                 .nickname("member1")
+                .major1(Major.VCD)
+                .major2(Major.CS)
                 .build());
 
         memberRepository.save(member1);
@@ -401,16 +404,20 @@ public class PostFilterTests {
                 .years(List.of("1학년", "4학년"))
                 .build();
 
-        postService.createPost(request, TEST_EMAIL);
+        var response1 = postService.createPost(request, TEST_EMAIL);
+        var createdPost = postService.readOnePost(response1.getId(), TEST_EMAIL);
+        createdPost.getYears();
 
         // when
         var filter = PostSearchFilter.builder()
-                .year("2학년")
+                .year("1학년")
+                .page(1)
+                .limit(1)
                 .build();
         var response = postService.readFilteredPost(filter, TEST_EMAIL);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(0L);
+        assertThat(response.getTotal()).isEqualTo(1L);
     }
 
     @Test
@@ -534,7 +541,7 @@ public class PostFilterTests {
                 .departments(List.of("시각디자인", "GE", "전산전자공학부"))
                 .build();
 
-        for(int i=0; i<13; i++)
+        for (int i = 0; i < 13; i++)
             postService.createPost(request, TEST_EMAIL);
 
         // when
@@ -546,5 +553,65 @@ public class PostFilterTests {
 
         // then
         assertThat(response.getTotal()).isEqualTo(5L);
+    }
+
+    @Test
+    public void 기타_모집글_필터링() throws Exception {
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("최강")
+                .summary("몬스터즈 경기 직관하실 분 구합니다")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "선교모임"))
+//                .isETC(true)
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .build();
+
+        postService.createPost(request, TEST_EMAIL);
+
+        // when
+        var filter = PostSearchFilter.builder()
+                .page(1)
+                .limit(3)
+                .type("기타")
+                .build();
+        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+
+        // then
+        assertThat(response.getTotal()).isEqualTo(1L);
+    }
+
+    @Test
+    public void 내_전공글_모아보기() throws Exception {
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("최강")
+                .summary("몬스터즈 경기 직관하실 분 구합니다")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "동아리"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .build();
+
+        postService.createPost(request, TEST_EMAIL);
+
+        // when
+        var filter = PostSearchFilter.builder()
+                .page(1)
+                .limit(3)
+                .myDeptOnly(true)
+                .build();
+        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+
+        // then
+        assertThat(response.getTotal()).isEqualTo(1L);
+
     }
 }
