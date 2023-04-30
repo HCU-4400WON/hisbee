@@ -51,6 +51,8 @@ public class PostCreationRequest {
     // #5
     private List<String> posterPaths;
 
+//    private boolean isETC;
+
     public TagForm getTags() {
         return Objects.requireNonNullElse(this.tags, new TagForm());
     }

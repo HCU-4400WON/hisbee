@@ -49,8 +49,8 @@ public class PostRepository {
                             eqType(filter.getType()),
                             eqKeywords(filter.getKeywords()),
                             eqDepartment(filter.getDepartment()),
-//                            eqMajor(member.get().getMajor1().getName()),
-//                            eqMajor(member.get().getMajor2().getName()),
+                            eqMajor(member.get().getMajor1().getName()),
+                            eqMajor(member.get().getMajor2().getName()),
                             eqYear(filter.getYear()),
                             post.archive.isNull()
                     )
@@ -84,8 +84,8 @@ public class PostRepository {
                             eqType(filter.getType()),
                             eqKeywords(filter.getKeywords()),
                             eqDepartment(filter.getDepartment()),
-//                            eqMajor(member.get().getMajor1().getName()),
-//                            eqMajor(member.get().getMajor2().getName()),
+                            eqMajor(member.get().getMajor1().getName()),
+                            eqMajor(member.get().getMajor2().getName()),
                             eqYear(filter.getYear()),
                             post.archive.isNull()
                     )
@@ -122,6 +122,7 @@ public class PostRepository {
     }
 
     private BooleanExpression eqType(String type) {
+//        if(type.compareTo("기타") == 0) return post.isETC;
         return post.postTypes.contains(type);
     }
 
