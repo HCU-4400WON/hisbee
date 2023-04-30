@@ -46,7 +46,6 @@ public class PostReadTests {
 
         member1.update(MemberRequest.builder()
                 .nickname("member1")
-                .isPublic(false)
                 .build());
 
         memberRepository.save(member1);

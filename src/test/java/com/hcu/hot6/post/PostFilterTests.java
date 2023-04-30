@@ -2,7 +2,6 @@ package com.hcu.hot6.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcu.hot6.domain.Department;
-import com.hcu.hot6.domain.Duration;
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.MemberRequest;
@@ -12,22 +11,18 @@ import com.hcu.hot6.domain.response.PostFilterResponse;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.service.PostService;
 import jakarta.annotation.PostConstruct;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -58,12 +53,10 @@ public class PostFilterTests {
                 .uid("1")
                 .email(TEST_EMAIL)
                 .pictureUrl("picture")
-                .department(Department.CSEE)
                 .build();
 
         member1.update(MemberRequest.builder()
                 .nickname("member1")
-                .isPublic(false)
                 .build());
 
         memberRepository.save(member1);
@@ -289,7 +282,7 @@ public class PostFilterTests {
     }
 
     @Test
-    public void 타겟_학부를_포함한_필터링이_되어야한다(){
+    public void 타겟_학부를_포함한_필터링이_되어야한다() {
         // given
         final var request = PostCreationRequest.builder()
                 .title("모집글 제목")
@@ -341,7 +334,7 @@ public class PostFilterTests {
     }
 
     @Test
-    public void 타겟_전공을_포함한_필터링이_되어야한다(){
+    public void 타겟_전공을_포함한_필터링이_되어야한다() {
         // given
         final var request = PostCreationRequest.builder()
                 .title("모집글 제목")
@@ -393,7 +386,7 @@ public class PostFilterTests {
     }
 
     @Test
-    public void 내_학부를_포함한_필터링이_되어야한다(){
+    public void 내_학부를_포함한_필터링이_되어야한다() {
         // given
         final var request = PostCreationRequest.builder()
                 .title("모집글 제목")
