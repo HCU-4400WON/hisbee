@@ -58,7 +58,7 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/posts/**", "/users/validation").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/posts/**", "/users/validation", "/major").permitAll()
                         .requestMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
