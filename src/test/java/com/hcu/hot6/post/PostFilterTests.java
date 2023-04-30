@@ -409,15 +409,19 @@ public class PostFilterTests {
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
+        var createdPost = postService.readOnePost(1L, TEST_EMAIL);
+        createdPost.getYears();
 
         // when
         var filter = PostSearchFilter.builder()
-                .year("2학년")
+                .year("1학년")
+                .page(1)
+                .limit(1)
                 .build();
         var response = postService.readFilteredPost(filter, TEST_EMAIL);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(0L);
+        assertThat(response.getTotal()).isEqualTo(1L);
     }
 
     @Test

@@ -63,6 +63,7 @@ public class PostRepository {
                         eqType(filter.getType()),
                         eqKeywords(filter.getKeywords()),
                         eqDepartment(filter.getDepartment()),
+                        eqYear(filter.getYear()),
                         post.archive.isNull()
                 )
                 .offset(offset)
@@ -94,6 +95,7 @@ public class PostRepository {
                         eqType(filter.getType()),
                         eqKeywords(filter.getKeywords()),
                         eqDepartment(filter.getDepartment()),
+                        eqYear(filter.getYear()),
                         post.archive.isNull()
                 )
                 .orderBy(orderCond(filter.getOrderBy()))
