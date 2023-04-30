@@ -404,8 +404,8 @@ public class PostFilterTests {
                 .years(List.of("1학년", "4학년"))
                 .build();
 
-        postService.createPost(request, TEST_EMAIL);
-        var createdPost = postService.readOnePost(1L, TEST_EMAIL);
+        var response1 = postService.createPost(request, TEST_EMAIL);
+        var createdPost = postService.readOnePost(response1.getId(), TEST_EMAIL);
         createdPost.getYears();
 
         // when

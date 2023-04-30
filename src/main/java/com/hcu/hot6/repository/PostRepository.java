@@ -49,8 +49,8 @@ public class PostRepository {
                             eqType(filter.getType()),
                             eqKeywords(filter.getKeywords()),
                             eqDepartment(filter.getDepartment()),
-                            eqMajor(member.get().getMajor1().getName()),
-                            eqMajor(member.get().getMajor2().getName()),
+//                            eqMajor(member.get().getMajor1().getName()),
+//                            eqMajor(member.get().getMajor2().getName()),
                             eqYear(filter.getYear()),
                             post.archive.isNull()
                     )
@@ -84,8 +84,8 @@ public class PostRepository {
                             eqType(filter.getType()),
                             eqKeywords(filter.getKeywords()),
                             eqDepartment(filter.getDepartment()),
-                            eqMajor(member.get().getMajor1().getName()),
-                            eqMajor(member.get().getMajor2().getName()),
+//                            eqMajor(member.get().getMajor1().getName()),
+//                            eqMajor(member.get().getMajor2().getName()),
                             eqYear(filter.getYear()),
                             post.archive.isNull()
                     )
@@ -125,10 +125,8 @@ public class PostRepository {
         return post.postTypes.contains(type);
     }
 
-    private BooleanBuilder eqYear(String year){
-        var builder = new BooleanBuilder();
-
-        return builder.or(post.targetYears.contains(year));
+    private BooleanExpression eqYear(String year){
+        return post.targetYears.contains(year);
     }
 
     private BooleanBuilder eqKeywords(List<String> keywords) {
