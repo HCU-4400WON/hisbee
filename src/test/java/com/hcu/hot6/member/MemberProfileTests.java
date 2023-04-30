@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -165,5 +166,43 @@ public class MemberProfileTests {
         assertThat(res.getLikes()).isEmpty();
         assertThat(res.getArchives()).isNotEmpty();
         assertThat(res.getPosts()).isEmpty();
+    }
+
+    @Test
+    public void 유저_정보는_수정될_수_있다() throws Exception {
+        // given
+        MemberRequest req = MemberRequest.builder()
+                .nickname("monsters")
+                .major1(Major.GLS)
+                .major2(Major.NONE)
+                .build();
+        memberService.updateMember(TEST_EMAIL, req);
+
+        // when
+        MemberRequest req2 = MemberRequest.builder()
+                .nickname("godisgood")
+                .major1(Major.CS)
+                .major2(Major.EE)
+                .build();
+        var form = mapper.writeValueAsString(req2);
+
+        MvcResult mvcResult = mvc
+                .perform(put("/users/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(form)
+                        .with(oauth2Login()
+                                .attributes(attr -> attr
+                                        .put("sub", TEST_EMAIL))))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andReturn();
+
+        String data = mvcResult.getResponse().getContentAsString();
+        MemberResponse res = mapper.readValue(data, MemberResponse.class);
+
+        // then
+        assertThat(res.getNickname()).isEqualTo("godisgood");
+        assertThat(res.getMajor1()).isEqualTo(Major.CS);
+        assertThat(res.getMajor2()).isEqualTo(Major.EE);
     }
 }
