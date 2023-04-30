@@ -169,7 +169,6 @@ export default function UserProfileInputs({
               type="text"
               onKeyPress={onKeyPress}
               {...register("major2", {
-                required: "필수 항목입니다.",
                 maxLength: {
                   value: 10,
                   message: "10자 이하만 가능합니다",
