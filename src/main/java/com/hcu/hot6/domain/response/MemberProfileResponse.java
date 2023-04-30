@@ -1,6 +1,5 @@
 package com.hcu.hot6.domain.response;
 
-import com.hcu.hot6.domain.Department;
 import com.hcu.hot6.domain.Member;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +13,7 @@ public class MemberProfileResponse {
 
     public MemberProfileResponse(Member member) {
         this.email = member.getEmail();
-        this.pictureUrl = member.getPictureUrl();
         this.nickname = member.getNickname();
-        this.department = member.getDepartment();
 
         this.posts = member.getPosts()
                 .stream()
@@ -25,8 +22,6 @@ public class MemberProfileResponse {
     }
 
     private final String email;
-    private final String pictureUrl;
     private final String nickname;
-    private final Department department;
     private final List<PostReadOneResponse> posts;
 }
