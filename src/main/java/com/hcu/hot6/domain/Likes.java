@@ -37,4 +37,9 @@ public class Likes {
         post.getLikes().add(this);
         member.getLikes().add(this);
     }
+
+    public void detach() {
+        this.post = null;
+        this.member = null;
+    }
 }
