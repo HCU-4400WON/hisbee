@@ -40,7 +40,7 @@ public class PostRepository {
         return Optional.ofNullable(em.find(Post.class, postId));
     }
 
-    public List<Post> findAll(PostSearchFilter filter, long offset, String email) {
+    public List<Post> findAll(PostSearchFilter filter, long offset, int limit, String email) {
         if(filter.getMyDeptOnly()){
             Optional<Member> member = memberRepository.findByEmail(email);
 
@@ -50,10 +50,11 @@ public class PostRepository {
                             eqKeywords(filter.getKeywords()),
                             eqDepartment(filter.getDepartment()),
                             eqDepartment(member.get().getDepartment().getName()),
+                            eqYear(filter.getYear()),
                             post.archive.isNull()
                     )
                     .offset(offset)
-                    .limit(Pagination.LIMIT)
+                    .limit(limit)
                     .orderBy(orderCond(filter.getOrderBy()))
                     .fetch();
         }
@@ -65,10 +66,12 @@ public class PostRepository {
                         post.archive.isNull()
                 )
                 .offset(offset)
-                .limit(Pagination.LIMIT)
+                .limit(limit)
                 .orderBy(orderCond(filter.getOrderBy()))
                 .fetch();
     }
+
+
 
     public List<Post> findAll(PostSearchFilter filter, String email) {
         if(filter.getMyDeptOnly()){
@@ -80,6 +83,7 @@ public class PostRepository {
                             eqKeywords(filter.getKeywords()),
                             eqDepartment(filter.getDepartment()),
                             eqDepartment(member.get().getDepartment().getName()),
+                            eqYear(filter.getYear()),
                             post.archive.isNull()
                     )
                     .orderBy(orderCond(filter.getOrderBy()))
@@ -115,6 +119,12 @@ public class PostRepository {
 
     private BooleanExpression eqType(String type) {
         return post.postTypes.contains(type);
+    }
+
+    private BooleanBuilder eqYear(String year){
+        var builder = new BooleanBuilder();
+
+        return builder.or(post.targetYears.contains(year));
     }
 
     private BooleanBuilder eqKeywords(List<String> keywords) {
