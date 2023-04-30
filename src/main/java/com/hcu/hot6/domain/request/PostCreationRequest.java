@@ -16,10 +16,7 @@ public class PostCreationRequest {
     // #1
     @NotNull
     private String title;
-
     private String summary;
-
-    @NotNull
     private TagForm tags;
 
     @NotNull
@@ -34,7 +31,6 @@ public class PostCreationRequest {
 
     @NotNull
     private String contact;
-
     private String contactDetails;
 
     // #2

@@ -1,5 +1,6 @@
 package com.hcu.hot6.domain;
 
+import com.hcu.hot6.domain.enums.Major;
 import com.hcu.hot6.domain.request.MemberRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +11,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.requireNonNullElse;
 
 @Entity
 @Getter
@@ -31,11 +34,15 @@ public class Member {
     @NotNull
     private String pictureUrl;
 
-    @Enumerated(value = EnumType.STRING)
-    private Department department;
-
     private String nickname;
-    private boolean isRegistered = true;
+
+    @Enumerated(value = EnumType.STRING)
+    private Major major1 = Major.NONE;
+
+    @Enumerated(value = EnumType.STRING)
+    private Major major2 = Major.NONE;
+
+    private boolean isRegistered;
 
     @OneToMany(mappedBy = "member")
     private List<Likes> likes = new ArrayList<>();
@@ -46,41 +53,24 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Archive> archives = new ArrayList<>();
 
-    //=== 생성 메서드 ===//
-    @Builder(builderClassName = "ByMemberBuilder", builderMethodName = "ByMemberBuilder")
-    public Member(String email, String pictureUrl, Department department, boolean isPublic, String nickname, String bio, String grade, String club, String contact, String externalLinks, List<Post> likes, List<Post> posts) {
-        this.email = email;
-        this.pictureUrl = pictureUrl;
-        this.department = department;
-        this.nickname = nickname;
-        this.posts = posts;
-    }
-
     @Builder
     public Member(String uid,
                   String email,
                   String pictureUrl,
-                  boolean isRegistered,
-                  String nickname,
-                  Department department) {
+                  Boolean isRegistered,
+                  String nickname) {
         this.uid = uid;
         this.email = email;
         this.pictureUrl = pictureUrl;
-        this.isRegistered = isRegistered;
+        this.isRegistered = requireNonNullElse(isRegistered, true);
 
         this.nickname = nickname;
-        this.department = department;
     }
 
     public void update(MemberRequest form) {
-        // 기본 정보
-        this.nickname = Objects.isNull(form.getNickname()) ? nickname : form.getNickname();
-        this.pictureUrl = Objects.isNull(form.getPictureUrl()) ? pictureUrl : form.getPictureUrl();
-
-        // 인재풀 등록시 필수 공개 정보
-        this.department = Objects.isNull(form.getDepartment()) ? department : form.getDepartment();
-
-        // 선택 정보
+        this.nickname = isNull(form.getNickname()) ? nickname : form.getNickname();
+        this.major1 = requireNonNullElse(form.getMajor1(), major1);
+        this.major2 = requireNonNullElse(form.getMajor2(), major2);
         if (!this.isRegistered) this.isRegistered = true;
     }
 }
