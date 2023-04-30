@@ -6,7 +6,7 @@ import { isLoginModalState, isLoginState } from "components/atom";
 import { motion } from "framer-motion";
 import { useSetRecoilState } from "recoil";
 
-export default function Heart({ hasLiked, id, refetch }: any) {
+export default function Heart({ hasLiked, id, refetch, closed }: any) {
   const setIsLogin = useSetRecoilState(isLoginState);
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
@@ -59,9 +59,11 @@ export default function Heart({ hasLiked, id, refetch }: any) {
       onClick={onHeartClick}
       className={`${
         hasLiked
-          ? "fa-solid fa-heart text-blue-300 stroke-black shadow-stone-400"
+          ? `fa-solid fa-heart ${
+              closed ? "text-gray-600" : "text-blue-300"
+            } stroke-black shadow-stone-400`
           : "fa-regular fa-heart"
-      } text-[18px] text-gray-400 `}
+      }  text-[18px] text-gray-400 `}
     ></motion.i>
   );
 }

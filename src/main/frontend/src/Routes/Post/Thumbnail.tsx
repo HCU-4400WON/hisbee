@@ -54,7 +54,7 @@ function Thumbnail({
     <motion.div
       whileHover={{ scale: 1.1 }}
       className={`min-w-[310px] min-h-[270px] mb-[50px] rounded-xl border mx-[20px] bg-white ${
-        closed && "opacity-40 bg-gray-200"
+        closed && "bg-gray-300 opacity-60"
       }`}
     >
       <div
@@ -62,7 +62,11 @@ function Thumbnail({
         onClick={(e) => e.preventDefault()}
       >
         <div className="flex items-center ">
-          <span className="px-[10px] py-[1px] rounded-full bg-gray-200 text-[14px]">
+          <span
+            className={`px-[10px] py-[1px] rounded-full ${
+              closed ? "bg-gray-400" : "bg-gray-200"
+            }  text-[14px] `}
+          >
             <p>{closed ? "모집마감" : dDay}</p>
           </span>
           {/* {soon && (
@@ -80,7 +84,12 @@ function Thumbnail({
         </div>
         <span className="flex items-center ">
           <p className="mr-[10px]">{nlike}</p>
-          <Heart id={id} hasLiked={hasLiked} refetch={refetch} />
+          <Heart
+            id={id}
+            hasLiked={hasLiked}
+            refetch={refetch}
+            closed={closed}
+          />
         </span>
       </div>
       <div className="px-[15px] pb-[15px] ">
@@ -99,7 +108,9 @@ function Thumbnail({
           {postTypes.map((postType: string, index: number) => (
             <span
               key={index}
-              className="px-[10px] py-[2px] bg-blue-200 mr-[10px] rounded-full text-[15px]"
+              className={`px-[10px] py-[2px] bg-blue-200 mr-[10px] rounded-full text-[15px] ${
+                closed ? "bg-gray-400" : "bg-blue-100"
+              }`}
             >
               {postType}
             </span>
@@ -110,7 +121,9 @@ function Thumbnail({
           {first?.map((keyword: string, index: number) => (
             <span
               key={index}
-              className="px-[10px] py-[2px] bg-blue-100 mr-[10px] rounded-full text-[15px]"
+              className={`px-[10px] py-[2px]  mr-[10px] rounded-full text-[15px] ${
+                closed ? "bg-gray-400" : "bg-blue-100"
+              }`}
             >
               {keyword}
             </span>
@@ -120,7 +133,9 @@ function Thumbnail({
           {second?.map((keyword: string, index: number) => (
             <span
               key={index}
-              className="px-[10px] py-[2px] bg-blue-100 mr-[10px] rounded-full text-[15px]"
+              className={`px-[10px] py-[2px] bg-blue-100 mr-[10px] rounded-full text-[15px] ${
+                closed ? "bg-gray-400" : "bg-blue-100"
+              }`}
             >
               {keyword}
             </span>
