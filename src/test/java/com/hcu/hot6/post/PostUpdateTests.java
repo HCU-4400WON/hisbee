@@ -1,6 +1,5 @@
 package com.hcu.hot6.post;
 
-import com.hcu.hot6.domain.Duration;
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.request.PostCreationRequest;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Date;
 import java.util.List;
 
@@ -87,5 +85,43 @@ public class PostUpdateTests {
         assertThat(res.getPostTypes()).isEqualTo(List.of("학회", "스터디"));
         assertThat(res.getSummary()).isEqualTo("한 줄 소개");
         assertThat(res.getDuration()).isEqualTo("봄학기");
+    }
+
+    @Test
+    public void 모집마감일_수정_자동재오픈() throws Exception{
+        // given
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .tags(new TagForm(List.of("첫줄,태그", "마지막,태그")))
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .duration("미설정")
+                .targetCount("00명")
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .build();
+
+        var post = postService.createPost(req, TEST_EMAIL);
+
+        final var upReq1 = PostUpdateRequest.builder()
+                .isClosed(true)
+                .build();
+        postService.updatePost(post.getId(), upReq1);
+        var res1 = postService.readOnePost(post.getId(), TEST_EMAIL);
+
+        assertThat(res1.isClosed()).isEqualTo(true);
+
+        final var upReq2 = PostUpdateRequest.builder()
+                .recruitEnd(new Date(2023, 11, 11))
+                .build();
+
+        // when
+        postService.updatePost(post.getId(), upReq2);
+        var res2 = postService.readOnePost(post.getId(), TEST_EMAIL);
+
+        // then
+        assertThat(res2.isClosed()).isEqualTo(false);
     }
 }

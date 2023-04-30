@@ -18,7 +18,8 @@ public class PostSearchFilter {
                             OrderBy orderBy,
                             Integer limit,
                             String department,
-                            Boolean myDeptOnly) {
+                            Boolean myDeptOnly,
+                            String year) {
         this.page = page;
         this.type = (Objects.isNull(type)) ? "" : type;
         this.keywords = Utils.toArray(keywords, ",");
@@ -26,6 +27,8 @@ public class PostSearchFilter {
         this.limit = limit;
         this.department = (Objects.isNull(department)) ? "" : department;
         this.myDeptOnly = (Objects.isNull(myDeptOnly)) ? false : myDeptOnly;
+        this.year = (Objects.isNull(year)) ? "" : year;
+
 
     }
 
@@ -36,4 +39,5 @@ public class PostSearchFilter {
     private final Integer limit;
     private final String department;
     private final Boolean myDeptOnly;
+    private final String year;
 }

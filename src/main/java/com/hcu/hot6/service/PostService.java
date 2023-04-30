@@ -75,14 +75,14 @@ public class PostService {
                     thumbnailResponses
             );
         }
-        var pagination = new Pagination(filter.getPage(), postRepository.count(filter));
-        var postResponseList = postRepository.findAll(filter, pagination.getOffset(), email)
+        var pagination = new Pagination(filter.getPage(), postRepository.count(filter), filter.getLimit());
+        var postResponseList = postRepository.findAll(filter, pagination.getOffset(), pagination.getLimit(), email)
                 .stream()
                 .map(post -> post.getThumbnail().toResponse(email))
                 .toList();
 
         return new PostFilterResponse(
-                pagination.getTotal(),
+                postResponseList.size(),
                 List.of(),
                 postResponseList
         );
