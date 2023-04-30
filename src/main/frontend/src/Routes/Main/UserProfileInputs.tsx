@@ -84,7 +84,7 @@ export default function UserProfileInputs({
   const [isPresent, setIsPresent] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log("!!", majorAutoComplete(getValues("major1")));
+    majorAutoComplete(getValues("major1")).then((data) => console.log(data));
   }, [getValues("major1")]);
 
   useEffect(() => {
