@@ -220,7 +220,7 @@ function Post() {
   // let TOTAL_POSTS = 10;
   // let POSTS_PER_PAGE = 12;
   // let TOTAL_PAGES = Math.ceil(TOTAL_POSTS / POSTS_PER_PAGE);
-
+  const [getPageNums, setGetPageNums] = useState<number>(12);
   // const TOTAL_POSTS = 200;
   const POSTS_PER_PAGE = 12;
   // let TOTAL_PAGES = Math.ceil(posts?.total as number / POSTS_PER_PAGE);
@@ -251,11 +251,24 @@ function Post() {
     // refetch();
   }, [nowPage]);
 
-  useEffect(() => {
-    // refetch();
-  }, [search, order, filterCategory, filterPosition, filterPay]);
-
   const [LIMIT, useLIMIT] = useState<number>(1);
+  useEffect(() => {
+    const pageOneRefetch = async () => {
+      await setNowPage(1);
+      // setGetPageNums(1);
+      refetch();
+    };
+    pageOneRefetch();
+    console.log(
+      nowPage,
+      search,
+      order,
+      selectedCategory,
+      LIMIT,
+      selectedKeywords
+    );
+  }, [search, order, selectedCategory, LIMIT, selectedKeywords]);
+
   // [사이에 필터링을 추가하기]
   const {
     data: posts,
@@ -264,7 +277,6 @@ function Post() {
   } = useQuery<IReadAllPosts>(
     [
       "FilteredPosts",
-
       [nowPage, search, order, selectedCategory, LIMIT + "", selectedKeywords],
     ],
     () =>
@@ -289,15 +301,24 @@ function Post() {
       onSuccess: (posts) => {
         // keywords 변경
         // setKeywords(posts.relatedKeywords);
-        setGetPageNums(posts.total);
+
         //   // console.log("1");
         // }
 
         // setGetPageNums(posts.total);
-        setUnionData((prev) => [...prev, ...posts.posts]);
+        setGetPageNums(posts.total);
+        console.log("debug", posts.total);
+
+        if (scrolling) {
+          setUnionData((prev) => [...prev, ...posts.posts]);
+        } else {
+          setUnionData(posts.posts);
+        }
         window.scrollTo(0, 0);
         // setUnionDataLoading(true);
         console.log("Fetched!", posts as any);
+
+        setScrolling(false);
         // setTimeout(() => {
         //   setUnionDataLoading(true);
         // }, 1000);
@@ -433,7 +454,7 @@ function Post() {
   };
 
   const [unionData, setUnionData] = useState<IReadOnePost[] | []>([]);
-  const [getPageNums, setGetPageNums] = useState<number>(12);
+
   const [stopFetching, setStopFetching] = useState<boolean>(false);
   // const handleScroll = async () => {
   //   // if (stopFetching) return;
@@ -473,17 +494,30 @@ function Post() {
 
   // const [unionDataLoading, setUnionDataLoading] = useState<boolean>(false);
 
+  const sentinel = document.getElementById("sentinel") as Element;
+
+  const [scrolling, setScrolling] = useState<boolean>(false);
+
   useEffect(() => {
+    if (!sentinel) return;
+
     const io = new IntersectionObserver((entries, observer) => {
       entries.forEach((entry) => {
+        console.log("a", getPageNums);
         if (getPageNums < LIMIT) {
           // window.removeEventListener("scroll", handleScroll);
-          observer.unobserve(document.getElementById("sentinel") as Element);
+          // observer.unobserve(document.getElementById("sentinel") as Element);
+
+          return;
         }
 
+        console.log("b");
         if (!entry.isIntersecting) return;
         //entry가 interscting 중이 아니라면 함수를 실행하지 않습니다.
+        console.log("c");
         if (isLoading) return;
+        console.log("d");
+        setScrolling(true);
         //현재 page가 불러오는 중임을 나타내는 flag를 통해 불러오는 중이면 함수를 실행하지 않습니다.
         observer.observe(document.getElementById("sentinel") as Element);
         //observer를 등록합니다.
@@ -491,12 +525,14 @@ function Post() {
         setNowPage((prev) => prev + 1);
         //불러올 페이지를 추가합니다.
         // page.list.search();
+
         refetch();
         //페이지를 불러오는 함수를 호출합니다.
       });
-      io.observe(document.getElementById("sentinel") as any);
     });
-  }, []);
+    io.observe(sentinel);
+  }, [sentinel]);
+
   return (
     <>
       {isLoading || isLoginCheckLoading ? (
@@ -783,7 +819,7 @@ function Post() {
                 (posts as IPosts).posts.map((post, index) => (
                   <Card key={index} post={post} refetch={refetch} index={index}  />
                 ))} */}
-              {posts?.posts?.map((post: IReadOnePost, index: number) => (
+              {unionData.map((post: IReadOnePost, index: number) => (
                 <Link key={index} to={`/post2/${post?.id}`}>
                   <Thumbnail {...post} refetch={refetch} />
                 </Link>
@@ -791,7 +827,7 @@ function Post() {
             </PostGrid>
 
             {
-              posts?.total === 0 && (
+              unionData.length === 0 && (
                 <div className="flex justify-center items-center w-full h-[50px] text-[20px] ">
                   <i className="fa-solid fa-triangle-exclamation text-yellow-500 ">
                     &nbsp;
