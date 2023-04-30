@@ -1,6 +1,5 @@
 package com.hcu.hot6.post;
 
-import com.hcu.hot6.domain.Duration;
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.request.PostCreationRequest;
