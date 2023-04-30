@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ImemberSignup,
   IRandomNickname,
+  majorAutoComplete,
   memberSignUp,
   randomNickname,
   validationNickname,
@@ -81,6 +82,14 @@ export default function UserProfileInputs({
   console.log(inputBgColor);
 
   const [isPresent, setIsPresent] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log("!!", majorAutoComplete(getValues("major1")));
+  }, [getValues("major1")]);
+
+  useEffect(() => {
+    console.log(majorAutoComplete(getValues("major2")));
+  }, [getValues("major2")]);
 
   return (
     <div className="flex h-[200px] items-start">

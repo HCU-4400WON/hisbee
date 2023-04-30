@@ -103,29 +103,6 @@ const Banner = tw.form`
 h-[300px] bg-slate-100 flex
 `;
 function Profile2() {
-  //   const {
-  //     isLoading: getUserLoading,
-  //     data,
-  //     refetch,
-  //   } = useQuery<IOneUser>(["User"], readOneMember, {
-  //     onSuccess: async (data) => {
-  //       setValue("nickname", data.nickname);
-  //       setValue("major1", data.major1);
-  //       setValue("major2", data.major2);
-
-  //       //   setOnSuccessLoading(false);
-  //     },
-  //     onError: (error) => {
-  //       //   if (((error as AxiosError).response as AxiosResponse).status === 401) {
-  //       // alert("로그인이 필요합니다.");
-  //       // setIsLoginModal(true);
-  //       // setIsLogin(false);
-  //       // if (localStorage.getItem("key")) localStorage.removeItem("key");
-  //       // navigate("/");
-  //       //   }
-  //     },
-  //   });
-
   const navigate = useNavigate();
   const setIsLogin = useSetRecoilState(isLoginState);
   const setIsLoginModal = useSetRecoilState(isLoginModalState);

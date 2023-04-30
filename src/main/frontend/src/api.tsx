@@ -1196,3 +1196,8 @@ export interface IUserRead {
   likes: IReadOnePost[];
   archives: IReadOnePost[];
 }
+
+export const majorAutoComplete = async (q: string) => {
+  const response = await axios.get(`http://localhost:8080/major?q=${q}`);
+  return response.data;
+};
