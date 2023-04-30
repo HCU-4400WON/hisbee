@@ -1,23 +1,22 @@
 package com.hcu.hot6.domain.response;
 
 import com.hcu.hot6.domain.Member;
-import lombok.Builder;
+import com.hcu.hot6.domain.enums.Major;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberResponse {
-
-    @Builder
-    public MemberResponse(String nickname, Boolean isPublic, Boolean isRegistered) {
-        this.nickname = nickname;
-        this.isRegistered = isRegistered;
-    }
 
     public MemberResponse(Member member) {
         this.nickname = member.getNickname();
-        this.isRegistered = member.isRegistered();
+        this.major1 = member.getMajor1();
+        this.major2 = member.getMajor2();
     }
 
-    private final String nickname;
-    private final Boolean isRegistered;
+    private String nickname;
+    private Major major1;
+    private Major major2;
 }
