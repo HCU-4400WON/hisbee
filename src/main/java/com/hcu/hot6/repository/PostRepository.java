@@ -49,7 +49,7 @@ public class PostRepository {
                             eqType(filter.getType()),
                             eqKeywords(filter.getKeywords()),
                             eqDepartment(filter.getDepartment()),
-                            eqDepartment(member.get().getDepartment().getName()),
+                            //eqDepartment(member.get().getDepartment().getName()),
                             post.archive.isNull()
                     )
                     .offset(offset)
@@ -79,7 +79,7 @@ public class PostRepository {
                             eqType(filter.getType()),
                             eqKeywords(filter.getKeywords()),
                             eqDepartment(filter.getDepartment()),
-                            eqDepartment(member.get().getDepartment().getName()),
+                            //eqDepartment(member.get().getDepartment().getName()),
                             post.archive.isNull()
                     )
                     .orderBy(orderCond(filter.getOrderBy()))

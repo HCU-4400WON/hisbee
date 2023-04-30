@@ -1,7 +1,11 @@
 package com.hcu.hot6.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.hcu.hot6.domain.Department;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Arrays;
 
 @RequiredArgsConstructor
 public enum Major {
@@ -46,4 +50,17 @@ public enum Major {
 
     private final Department department;
     private final String name;
+
+    @JsonCreator
+    public static Major from(String code) {
+        return Arrays.stream(Major.values())
+                .filter(major -> code.equals(major.name))
+                .findFirst()
+                .orElseThrow();
+    }
+
+    @JsonValue
+    public String toKor() {
+        return name;
+    }
 }
