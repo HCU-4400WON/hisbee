@@ -393,6 +393,34 @@ public class PostFilterTests {
     }
 
     @Test
+    public void 타겟_학년을_포함한_필터링이_되어야한다(){
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("국제어문학부"))
+                .years(List.of("1학년", "4학년"))
+                .build();
+
+        postService.createPost(request, TEST_EMAIL);
+
+        // when
+        var filter = PostSearchFilter.builder()
+                .year("2학년")
+                .build();
+        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+
+        // then
+        assertThat(response.getTotal()).isEqualTo(0L);
+    }
+
+    @Test
     public void 내_학부를_포함한_필터링이_되어야한다(){
         // given
         final var request = PostCreationRequest.builder()
@@ -408,7 +436,6 @@ public class PostFilterTests {
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
-
 
         // when
         var filter = PostSearchFilter.builder()
@@ -497,5 +524,34 @@ public class PostFilterTests {
 
         // then
         assertThat(response.getTotal()).isEqualTo(2L);
+    }
+
+    @Test
+    public void 페이지_limit만큼만_읽어온다() throws Exception {
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("최강")
+                .summary("몬스터즈 경기 직관하실 분 구합니다")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .build();
+
+        for(int i=0; i<13; i++)
+            postService.createPost(request, TEST_EMAIL);
+
+        // when
+        var filter = PostSearchFilter.builder()
+                .page(2)
+                .limit(8)
+                .build();
+        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+
+        // then
+        assertThat(response.getTotal()).isEqualTo(5L);
     }
 }
