@@ -1113,7 +1113,7 @@ export interface IOneUser {
 
 export const readOneMember = async () => {
   const TOKEN = localStorage.getItem("key");
-  const response = await axios.get("", {
+  const response = await axios.get("http://localhost:8080/users/me", {
     headers: { Authorization: `Bearer ${TOKEN}` },
     withCredentials: true,
   });
@@ -1184,10 +1184,14 @@ export interface IUserUpdate {
   major2?: string;
 }
 
-export interface IUserRead {
+export interface IProfile {
   nickname: string;
   major1: string;
   major2: string;
+}
+
+export interface IUserRead {
+  profile: IProfile;
   posts: IReadOnePost[];
   likes: IReadOnePost[];
   archives: IReadOnePost[];

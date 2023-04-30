@@ -166,6 +166,8 @@ function SignUp2() {
       {
         onSuccess: () => {
           console.log("성공!");
+          setIsSignupModal(false);
+          navigate("/");
         },
         onError: () => {
           console.log("유저 회원 가입이 작동하지 않습니다.");
@@ -183,7 +185,6 @@ function SignUp2() {
     // memberSignUp(newMember);
     // memberSignUp(newMember);
     signupMemberMutate(newMember);
-    setIsSignupModal(false);
 
     // setIsExtraSignupModal(true);
     // signupMemberMutate(newMember);
