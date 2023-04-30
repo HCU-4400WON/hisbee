@@ -67,4 +67,31 @@ public class PostArchiveTests {
         assertThat(res.getId()).isEqualTo(1L);
         assertThat(res2.isArchived()).isTrue();
     }
+
+    @Test
+    public void 보관한_모집글을_모아본다() throws Exception{
+        // given
+        // 아카이브 한 모집글
+        var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .postTypes(List.of("학회"))
+                .contact(TEST_EMAIL)
+                .build();
+        var post = postService.createPost(req, TEST_EMAIL);
+        var res = postService.addArchive(post.getId(), TEST_EMAIL);
+
+        // 아카이브 안 한 모집글
+        var req2 = PostCreationRequest.builder()
+                .title("모집글 제목2")
+                .postTypes(List.of("학회2"))
+                .contact(TEST_EMAIL)
+                .build();
+        var post2 = postService.createPost(req2, TEST_EMAIL);
+
+        // when
+        var archivedPosts = postService.readArchivedPost(TEST_EMAIL);
+
+        assertThat(archivedPosts.getPosts().get(0).getTitle()).isEqualTo("모집글 제목");
+        assertThat(archivedPosts.getTotal()).isEqualTo(1);
+    }
 }

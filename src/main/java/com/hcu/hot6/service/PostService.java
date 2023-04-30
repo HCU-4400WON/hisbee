@@ -65,7 +65,7 @@ public class PostService {
 
     public PostFilterResponse readFilteredPost(PostSearchFilter filter, String email) {
         if (Objects.isNull(filter.getPage())) {
-            var thumbnailResponses = postRepository.findAll(filter).stream()
+            var thumbnailResponses = postRepository.findAll(filter, email).stream()
                     .map(post -> post.getThumbnail().toResponse(email))
                     .toList();
 
@@ -76,7 +76,7 @@ public class PostService {
             );
         }
         var pagination = new Pagination(filter.getPage(), postRepository.count(filter));
-        var postResponseList = postRepository.findAll(filter, pagination.getOffset())
+        var postResponseList = postRepository.findAll(filter, pagination.getOffset(), email)
                 .stream()
                 .map(post -> post.getThumbnail().toResponse(email))
                 .toList();
@@ -124,5 +124,12 @@ public class PostService {
                 .unarchivedBy(member);
 
         return new ArchiveResponse(post.getId());
+    }
+
+    public PostFilterResponse readArchivedPost(String email) {
+        List<PostThumbnailResponse> archivedPosts = postRepository.findAllArchived().stream()
+                .map(post -> (post.getArchive().getMember().getEmail().equals(email)) ? post.getThumbnail().toResponse(email) : null)
+                .toList();
+        return new PostFilterResponse(archivedPosts.size(), List.of(), archivedPosts);
     }
 }
