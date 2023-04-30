@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import static com.hcu.hot6.util.Utils.nonNullOrElse;
 
@@ -64,5 +65,7 @@ public class Thumbnail {
         this.recruitEnd = nonNullOrElse(Utils.toLocalDateTime(req.getRecruitEnd()), recruitEnd);
         this.duration = nonNullOrElse(req.getDuration(), duration);
         this.isClosed = nonNullOrElse(req.getIsClosed(), isClosed);
+
+        if(req.getRecruitEnd() != null && req.getRecruitEnd().after(new Date())) this.isClosed = false;
     }
 }
