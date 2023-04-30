@@ -1,4 +1,5 @@
 import tw from "tailwind-styled-components";
+import "./css/heading.css";
 import React, { useEffect, useState } from "react";
 import {
   IPost,
@@ -37,10 +38,11 @@ import {
   PostDetailExample,
   PostExamples,
 } from "Routes/PostAddForm/components/PostExamples";
-import { DragControls } from "framer-motion";
+import { AnimatePresence, DragControls } from "framer-motion";
 import { Link } from "react-router-dom";
 import Heart from "components/Heart";
 import Soon from "components/Soon";
+import { ImageModal } from "./ImageModal";
 
 const Container = tw.div`
 md:w-[1470px] 
@@ -608,6 +610,11 @@ function Detail2() {
     );
   };
 
+  const [isImageModal, setIsImageModal] = useState<boolean>(false);
+  const [clickedPosterSrc, setClickedPosterSrc] = useState("");
+  const onImageModalClick = () => {
+    setIsImageModal(false);
+  };
   const dataExample = PostDetailExample;
 
   return (
@@ -616,6 +623,13 @@ function Detail2() {
         <LoadingAnimation />
       ) : (
         <>
+          {isImageModal && (
+            <ImageModal
+              ImageSrc={clickedPosterSrc}
+              onClick={onImageModalClick}
+            />
+          )}
+
           {isPostDeleteModal && <PostDeleteModal postId={data?.id} />}
           <Container>
             <GoBackSpan>
@@ -820,21 +834,47 @@ function Detail2() {
                     )
                 )}
               </div>
-              {data?.content !== "" && (
-                <div
-                  dangerouslySetInnerHTML={{ __html: data?.content as string }}
-                  className="p-[50px] text-[20px] bg-gray-100 rounded-3xl"
-                ></div>
-              )}
 
-              {/* <div dangerouslySetInnerHTML={{ __html: editorString }}></div> */}
-              <div className="flex justify-center">
+              <div className="flex justify-start mb-[50px]">
                 {data?.posterPaths?.map((posterPath: string, index: number) => (
                   <img
-                    className="w-[50%]"
+                    className="w-[100px] mr-[30px]"
                     key={index}
                     src={posterPath}
                     alt="poster"
+                    onClick={async () => {
+                      await setClickedPosterSrc(posterPath);
+                      setIsImageModal(true);
+                      window.scrollTo(0, 200);
+                    }}
+                  />
+                ))}
+              </div>
+
+              {data?.content !== "" && (
+                <>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: data?.content as string,
+                    }}
+                    className="p-[50px] bg-gray-100 rounded-3xl "
+                  ></div>
+                </>
+              )}
+
+              {/* <div dangerouslySetInnerHTML={{ __html: editorString }}></div> */}
+              <div className="flex justify-evenly mt-[50px]">
+                {data?.posterPaths?.map((posterPath: string, index: number) => (
+                  <img
+                    className="w-[400px]"
+                    key={index}
+                    src={posterPath}
+                    alt="poster"
+                    onClick={async () => {
+                      await setClickedPosterSrc(posterPath);
+                      setIsImageModal(true);
+                      window.scrollTo(0, 200);
+                    }}
                   />
                 ))}
               </div>
