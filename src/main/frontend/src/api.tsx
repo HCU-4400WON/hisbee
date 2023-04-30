@@ -880,7 +880,7 @@ export interface ImemberSignup {
   externalLinks?: string[];
 }
 
-export const memberSignUp = (data: ImemberSignup) => {
+export const userSignUp = (data: ImemberSignup) => {
   try {
     console.log("!!!");
     const TOKEN = localStorage.getItem("key");
@@ -897,7 +897,7 @@ export const memberSignUp = (data: ImemberSignup) => {
 
 // export const member
 
-export const memberUpdate = (data: IUser) => {
+export const userUpdate = (data: IUser) => {
   try {
     const TOKEN = localStorage.getItem("key");
     const response = axios.put("http://localhost:8080/users/me", data, {
@@ -911,7 +911,7 @@ export const memberUpdate = (data: IUser) => {
   }
 };
 
-export const memberProfile = async () => {
+export const userProfile = async () => {
   const TOKEN = localStorage.getItem("key");
   const response = await axios.get("http://localhost:8080/users/me", {
     headers: { Authorization: `Bearer ${TOKEN}` },
@@ -920,7 +920,7 @@ export const memberProfile = async () => {
   return response.data;
 };
 
-export const memberDelete = () => {
+export const userDelete = () => {
   try {
     const TOKEN = localStorage.getItem("key");
     const response = axios.delete("http://localhost:8080/users/me", {
@@ -1113,9 +1113,91 @@ export interface IOneUser {
 
 export const readOneMember = async () => {
   const TOKEN = localStorage.getItem("key");
-  const response = await axios.get("", {
+  const response = await axios.get("http://localhost:8080/users/me", {
     headers: { Authorization: `Bearer ${TOKEN}` },
     withCredentials: true,
   });
+  return response.data;
+};
+
+export const memberSignUp = (data: IUserSignup) => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    const response = axios.post("http://localhost:8080/users", data, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// export const member
+
+export const memberUpdate = (data: IUserUpdate) => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    const response = axios.put("http://localhost:8080/users/me", data, {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const memberProfile = async () => {
+  const TOKEN = localStorage.getItem("key");
+  const response = await axios.get("http://localhost:8080/users/me", {
+    headers: { Authorization: `Bearer ${TOKEN}` },
+    withCredentials: true,
+  });
+  return response.data;
+};
+
+export const memberDelete = () => {
+  try {
+    const TOKEN = localStorage.getItem("key");
+    const response = axios.delete("http://localhost:8080/users/me", {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export interface IUserSignup {
+  nickname: string;
+  major1: string;
+  major2?: string;
+}
+
+export interface IUserUpdate {
+  nickname?: string;
+  major1?: string;
+  major2?: string;
+}
+
+export interface IProfile {
+  nickname: string;
+  major1: string;
+  major2: string;
+}
+
+export interface IUserRead {
+  profile: IProfile;
+  posts: IReadOnePost[];
+  likes: IReadOnePost[];
+  archives: IReadOnePost[];
+}
+
+export const majorAutoComplete = async (q: string) => {
+  const response = await axios.get(`http://localhost:8080/major?q=${q}`);
   return response.data;
 };
