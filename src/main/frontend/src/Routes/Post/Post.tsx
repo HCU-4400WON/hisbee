@@ -548,7 +548,7 @@ function Post() {
           {isLoginModal ? <Login /> : null}
           {isSignupModal ? <SignUp2 /> : null}
           <Container>
-            <Banner className="h-[300px]"></Banner>
+            <Banner src="./img/banner_post.png"></Banner>
 
             <div className="">
               <div className="flex justify-between items-center px-[50px] w-full h-[60px] bg-white">
@@ -835,11 +835,11 @@ function Post() {
 
             {
               unionData.length === 0 && (
-                <div className="flex justify-center items-center w-full h-[50px] text-[20px] ">
-                  <i className="fa-solid fa-triangle-exclamation text-yellow-500 ">
+                <div className="flex justify-center items-center w-full h-[50px] text-[17px] text-black mt-[50px]">
+                  <i className="fa-solid fa-circle-exclamation text-black mx-[10px]">
                     &nbsp;
                   </i>
-                  <p className="font-bold">게시물이 존재하지 않습니다.</p>
+                  <p className="font-bold">게시물이 존재하지 않습니다</p>
                 </div>
               )
 
@@ -886,7 +886,7 @@ function Post() {
               // )
             }
           </Container>
-          <p id="sentinel">d</p>
+          <p id="sentinel"></p>
         </>
       )}
     </>

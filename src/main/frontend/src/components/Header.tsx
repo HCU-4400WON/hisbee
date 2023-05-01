@@ -24,16 +24,17 @@ const NavButton = tw.button`
  min-w-[80px]
  
 h-[30px]
-hover:text-purple-400
+hover:text-blue-400
  sm:text-[16px]
  text-slate-500
  
 `;
 
 const Logo = tw(motion.img)`
-    min-w-[150px]
-    md : w-[200px]
-    hover:text-purple-500
+    min-w-[100px]
+    md : w-[100px]
+    hover:text-blue-500
+    ml-[100px]
 `;
 const NavFlexBox = tw.div`
     flex
@@ -181,7 +182,7 @@ function Header() {
         <NavLeftBox>
           <Link to="/">
             <Logo
-              src="/img/logo.png"
+              src="/img/logo_hibe.png"
               variants={LogoVairants}
               initial="initial"
               whileHover="hover"
@@ -333,9 +334,10 @@ function Header() {
           {isLogin && (
             <Link to="profile2" className="relative ">
               <NavButton
-                className={`${isProfileURL && "text-blue-400"} md:pl-[40px]`}
+                className={`${isProfileURL && "text-blue-500"} md:pl-[40px]`}
               >
-                <i className="fa-regular fa-circle-user text-[25px]"></i>
+                <i className="fa-solid fa-user text-[22px]"></i>
+                {/* <i className="fa-regular fa-circle-user text-[25px]"></i> */}
               </NavButton>
             </Link>
           )}
