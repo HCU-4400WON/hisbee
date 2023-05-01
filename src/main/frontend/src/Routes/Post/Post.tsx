@@ -12,7 +12,11 @@ import {
   readPosts,
 } from "api";
 import { AxiosError, AxiosResponse } from "axios";
-import { isLoginModalState, isLoginState } from "components/atom";
+import {
+  isLoginModalState,
+  isLoginState,
+  isSignupModalState,
+} from "components/atom";
 import Login from "components/LoginModal";
 import { motion } from "framer-motion";
 import React, {
@@ -30,6 +34,7 @@ import Card from "Routes/Post/Card";
 import Thumbnail from "./Thumbnail";
 import { PostExamples } from "Routes/PostAddForm/components/PostExamples";
 import "./css/button.css";
+import SignUp2 from "Routes/Main/SignUp2";
 
 const SelectFilterBox = tw.select`
 mr-[20px] px-[10px] bg-[#F9FAFB] py-[5px] rounded-lg text-center
@@ -216,6 +221,7 @@ function Post() {
   // console.log(windowPx, "px");
 
   const isLoginModal = useRecoilValue(isLoginModalState);
+  const isSignupModal = useRecoilValue(isSignupModalState);
 
   // let TOTAL_POSTS = 10;
   // let POSTS_PER_PAGE = 12;
@@ -540,6 +546,7 @@ function Post() {
       ) : (
         <>
           {isLoginModal ? <Login /> : null}
+          {isSignupModal ? <SignUp2 /> : null}
           <Container>
             <Banner className="h-[300px]"></Banner>
 

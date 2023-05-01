@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ImemberSignup, memberSignUp } from "api";
+import { ImemberSignup, userSignUp } from "api";
 import { isExtraSignupModalState, isSignupModalState } from "components/atom";
 import LoadingAnimation from "components/LoadingAnimation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -152,7 +152,7 @@ function SignUp() {
   const { mutate: signupMemberMutate, isLoading: signupMemberLoading } =
     useMutation(
       ["signupMemberr" as string],
-      (newMember: ImemberSignup) => memberSignUp(newMember) as any,
+      (newMember: ImemberSignup) => userSignUp(newMember) as any,
       {
         onSuccess: () => {
           console.log("성공!");
@@ -170,7 +170,7 @@ function SignUp() {
       isPublic: false,
     };
     console.log(newMember);
-    // memberSignUp(newMember);
+    // userSignUp(newMember);
     setIsSignupModal(false);
     setIsExtraSignupModal(true);
     signupMemberMutate(newMember);

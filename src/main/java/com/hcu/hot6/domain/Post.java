@@ -49,7 +49,7 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member author;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Likes> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -154,5 +154,9 @@ public class Post {
 
     public void countUp() {
         views++;
+    }
+
+    public void detach() {
+        this.author = null;
     }
 }

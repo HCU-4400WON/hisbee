@@ -113,7 +113,7 @@ public class MemberProfileTests {
         var res = new MemberProfileResponse(member);
 
         // then
-        //assertThat(res.getNickname()).isEqualTo("monsters");
+        assertThat(res.getProfile().getNickname()).isEqualTo("monsters");
         assertThat(res.getPosts()).isNotEmpty();
     }
 
