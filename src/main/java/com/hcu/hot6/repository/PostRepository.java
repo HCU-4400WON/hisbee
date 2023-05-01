@@ -48,9 +48,9 @@ public class PostRepository {
                     .where(
                             eqType(filter.getType()),
                             eqKeywords(filter.getKeywords()),
-                            eqDepartment(filter.getDepartment()),
-                            eqMajor(member.get().getMajor1().getName()),
-                            eqMajor(member.get().getMajor2().getName()),
+                            (filter.getDepartment().compareTo("") != 0) ? eqDepartment(filter.getDepartment()) : null,
+                            (filter.getDepartment().compareTo("") != 0) ? post.targetDepartment.contains(member.get().getMajor1().getName()) : null,
+                            (filter.getDepartment().compareTo("") != 0) ? post.targetDepartment.contains(member.get().getMajor2().getName()) : null,
                             (filter.getYear().compareTo("") != 0) ? post.targetYears.contains(filter.getYear()) : null,
 //                            eqYear(filter.getYear()),
                             post.archive.isNull()
@@ -64,7 +64,7 @@ public class PostRepository {
                 .where(
                         eqType(filter.getType()),
                         eqKeywords(filter.getKeywords()),
-                        eqDepartment(filter.getDepartment()),
+                        (filter.getDepartment().compareTo("") != 0) ? eqDepartment(filter.getDepartment()) : null,
                         (filter.getYear().compareTo("") != 0) ? post.targetYears.contains(filter.getYear()) : null,
 //                        eqYear(filter.getYear()),
                         post.archive.isNull()
@@ -85,11 +85,10 @@ public class PostRepository {
                     .where(
                             eqType(filter.getType()),
                             eqKeywords(filter.getKeywords()),
-                            eqDepartment(filter.getDepartment()),
-                            eqMajor(member.get().getMajor1().getName()),
-                            eqMajor(member.get().getMajor2().getName()),                            post.targetYears.contains(filter.getYear()),
+                            (filter.getDepartment().compareTo("") != 0) ? eqDepartment(filter.getDepartment()) : null,
+                            (filter.getDepartment().compareTo("") != 0) ? post.targetDepartment.contains(member.get().getMajor1().getName()) : null,
+                            (filter.getDepartment().compareTo("") != 0) ? post.targetDepartment.contains(member.get().getMajor2().getName()) : null,
                             (filter.getYear().compareTo("") != 0) ? post.targetYears.contains(filter.getYear()) : null,
-//                            eqYear(filter.getYear()),
                             post.archive.isNull()
                     )
                     .orderBy(orderCond(filter.getOrderBy()))
@@ -99,9 +98,8 @@ public class PostRepository {
                 .where(
                         eqType(filter.getType()),
                         eqKeywords(filter.getKeywords()),
-                        eqDepartment(filter.getDepartment()),
+                        (filter.getDepartment().compareTo("") != 0) ? eqDepartment(filter.getDepartment()) : null,
                         (filter.getYear().compareTo("") != 0) ? post.targetYears.contains(filter.getYear()) : null,
-//                        eqYear(filter.getYear()),
                         post.archive.isNull()
                 )
                 .orderBy(orderCond(filter.getOrderBy()))
