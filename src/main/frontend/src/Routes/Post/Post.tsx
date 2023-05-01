@@ -559,7 +559,7 @@ function Post() {
                       onClick={onClick}
                       className={`${
                         selectedCategory === category
-                          ? "text-blue-600"
+                          ? "text-blue-600 font-semibold"
                           : "text-gray-400"
                       } mx-[40px] hover:text-[17px]`}
                       key={index}
