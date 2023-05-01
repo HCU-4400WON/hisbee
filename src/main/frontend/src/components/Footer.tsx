@@ -28,7 +28,10 @@ function Footer() {
   return (
     <div className="min-w-[480px] h-[150px] pr-[50px] flex justify-between items-center mt-[150px]">
       <div className="flex justify-start items-end">
-        <img src="/img/logo.png" className="w-[150px] md:w-[250px]" />
+        <img
+          src="/img/logo_hibe.png"
+          className="w-[100px] md:w-[120px] mx-[30px]"
+        />
         <span className="text-[12px] pb-[6px] z-10 min-w-[220px] font-unique text-gray-500 hidden md:block">
           <strong>ⓒ</strong> 2022 Team.Hot6 All rights reserved
         </span>
@@ -96,7 +99,7 @@ function Footer() {
                 </div>
                 <div className="flex w-full justify-between">
                   <div className="w-[80px] flex justify-center items-center h-[25px] text-center text-[15px]  text-gray-500 font-semibold">
-                    이채원
+                    강이경
                   </div>
                   <div className="w-[80px] flex justify-center items-center h-[25px] text-center text-[15px]  text-gray-500 font-semibold">
                     오인혁

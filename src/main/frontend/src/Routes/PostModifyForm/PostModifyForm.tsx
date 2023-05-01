@@ -956,7 +956,7 @@ function PostModifyForm() {
                           getValues("postTypes")?.includes(category as never)
                             ? MajorSeletedBUTTON
                             : UnSelectedBUTTON
-                        } px-[15px] py-[8px] rounded-lg w-[130px]`}
+                        } px-[15px] py-[8px] rounded-lg w-[135px]`}
                         onClick={async () => {
                           const gv = getValues("postTypes");
                           const gvIdx = gv.indexOf(category as never);
