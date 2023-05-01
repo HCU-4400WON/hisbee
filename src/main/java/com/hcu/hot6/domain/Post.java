@@ -83,7 +83,7 @@ public class Post {
         this.targetCount = (request.getTargetCount() != null) ? request.getTargetCount() : null;
         this.views = 0L;
         this.isAutoClose = false;
-        this.isETC = request.isETC();
+        this.isETC = nonNullOrElse(request.isETC(), false);
         registerAuthor(author);
         createThumbnail(new Thumbnail(request));
         savePosters(request.getPosterPaths());
@@ -143,6 +143,7 @@ public class Post {
                 ? Utils.toString(req.getKeywords(), ",")
                 : keywords;
         this.content = nonNullOrElse(req.getContent(), content);
+        this.isETC = nonNullOrElse(req.getIsETC(), isETC);
 
         thumbnail.update(req);
         savePosters(req.getPosterPaths());
