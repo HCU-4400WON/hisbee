@@ -44,7 +44,7 @@ public class Post {
     private String content;
     private Long views;
     private boolean isAutoClose;
-//    private boolean isETC;
+    private boolean isETC;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member author;
@@ -83,7 +83,7 @@ public class Post {
         this.targetCount = (request.getTargetCount() != null) ? request.getTargetCount() : null;
         this.views = 0L;
         this.isAutoClose = false;
-//        this.isETC = request.isETC();
+        this.isETC = request.isETC();
         registerAuthor(author);
         createThumbnail(new Thumbnail(request));
         savePosters(request.getPosterPaths());
