@@ -424,32 +424,60 @@ public class PostFilterTests {
         assertThat(response.getTotal()).isEqualTo(0L);
     }
 
-//    @Test
-//    public void 내_학부를_포함한_필터링이_되어야한다(){
-//        // given
-//        final var request = PostCreationRequest.builder()
-//                .title("모집글 제목")
-//                .summary("한 줄 소개")
-//                .tags(new TagForm(List.of("소망", "축복")))
-//                .postTypes(List.of("학회", "학술모임"))
-//                .recruitStart(new Date())
-//                .recruitEnd(new Date())
-//                .targetCount("전체00명")
-//                .contact("example@test.com")
-//                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
-//                .build();
-//
-//        postService.createPost(request, TEST_EMAIL);
-//
-//        // when
-//        var filter = PostSearchFilter.builder()
-//                .myDeptOnly(true)
-//                .build();
-//        var response = postService.readFilteredPost(filter, TEST_EMAIL);
-//
-//        // then
-//        assertThat(response.getTotal()).isEqualTo(1L);
-//    }
+    @Test
+    public void 내_전공을_포함한_필터링이_되어야한다(){
+        // 1전공 시각디자인, 2전공 컴퓨터공학 으로 세팅한 상태에서 테스트 진행함
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("필터링 되어 나와야 함")
+                .summary("한 줄 소개")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE"))
+                .build();
+        final var request2 = PostCreationRequest.builder()
+                .title("필터링 되어 나와야 함")
+                .summary("한 줄 소개")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("컴퓨터공학", "GE"))
+                .build();
+        final var request3 = PostCreationRequest.builder()
+                .title("필터링에서 걸러져야 함")
+                .summary("한 줄 소개")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("전산전자공학부"))
+                .build();
+
+        postService.createPost(request, TEST_EMAIL);
+        postService.createPost(request2, TEST_EMAIL);
+        postService.createPost(request3, TEST_EMAIL);
+
+
+        // when
+        var filter = PostSearchFilter.builder()
+                .myDeptOnly(true)
+                .page(1)
+                .limit(4)
+                .build();
+        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+
+        // then
+        assertThat(response.getTotal()).isEqualTo(2L);
+    }
 
     @Test
     public void 썸네일_제목도_포함하여_필터링한다() throws Exception {
