@@ -46,7 +46,7 @@ function Thumbnail({
   //   (new Date(recruitEnd).getTime() - new Date(recruitStart).getTime()) /
   //   (1000 * 60 * 60 * 24);
   // const soon = dateDiff <= 4 && closed === false;
-  const convertedSummary = summary.split("\n");
+  const convertedSummary = summary?.split("\n");
 
   // const convertedSummary = "a\nb";
 
@@ -97,7 +97,7 @@ function Thumbnail({
           <p className="my-[10px] text-[18px]">{title}</p>
         </span>
         <span>
-          {convertedSummary.map((line: string, index: number) => (
+          {convertedSummary?.map((line: string, index: number) => (
             <p key={index} className="text-[14px]">
               {line}
             </p>
