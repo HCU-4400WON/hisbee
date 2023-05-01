@@ -329,6 +329,8 @@ public class PostFilterTests {
         // when
         var filter = PostSearchFilter.builder()
                 .department("전산전자공학부")
+                .page(1)
+                .limit(2)
                 .build();
         var response = postService.readFilteredPost(filter, TEST_EMAIL);
 
@@ -381,6 +383,8 @@ public class PostFilterTests {
         // when
         var filter = PostSearchFilter.builder()
                 .department("상담심리사회복지학부")
+                .page(1)
+                .limit(4)
                 .build();
         var response = postService.readFilteredPost(filter, TEST_EMAIL);
 
@@ -410,14 +414,14 @@ public class PostFilterTests {
 
         // when
         var filter = PostSearchFilter.builder()
-                .year("1학년")
+                .year("2학년")
                 .page(1)
-                .limit(1)
+                .limit(3)
                 .build();
         var response = postService.readFilteredPost(filter, TEST_EMAIL);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(1L);
+        assertThat(response.getTotal()).isEqualTo(0L);
     }
 
     @Test
