@@ -122,7 +122,7 @@ public class PostRepository {
     }
 
     private BooleanExpression eqType(String type) {
-//        if(type.compareTo("기타") == 0) return post.isETC;
+        if(type.compareTo("기타") == 0) return post.isETC;
         return post.postTypes.contains(type);
     }
 
