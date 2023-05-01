@@ -7,6 +7,7 @@ import com.hcu.hot6.domain.enums.Major;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.request.PostCreationRequest;
+import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.request.TagForm;
 import com.hcu.hot6.domain.response.PostFilterResponse;
 import com.hcu.hot6.repository.MemberRepository;
@@ -595,12 +596,12 @@ public class PostFilterTests {
                 .summary("몬스터즈 경기 직관하실 분 구합니다")
                 .tags(new TagForm(List.of("소망", "축복")))
                 .postTypes(List.of("학회", "선교모임"))
-                .isETC(true)
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
                 .targetCount("전체00명")
                 .contact("example@test.com")
                 .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .isETC(true)
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -615,6 +616,38 @@ public class PostFilterTests {
 
         // then
         assertThat(response.getTotal()).isEqualTo(1L);
+    }
+
+    @Test
+    public void 기타_false수정_모집글_필터링() throws Exception {
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("최강")
+                .summary("몬스터즈 경기 직관하실 분 구합니다")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "선교모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .isETC(true)
+                .build();
+
+        var res = postService.createPost(request, TEST_EMAIL);
+        var updateReq = PostUpdateRequest.builder().isETC(false).build();
+        postService.updatePost(res.getId(), updateReq);
+
+        // when
+        var filter = PostSearchFilter.builder()
+                .page(1)
+                .limit(3)
+                .type("기타")
+                .build();
+        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+
+        // then
+        assertThat(response.getTotal()).isEqualTo(0L);
     }
 
 
