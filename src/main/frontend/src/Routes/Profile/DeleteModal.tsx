@@ -1,4 +1,4 @@
-import { memberDelete } from "api";
+import { memberDelete, userDelete } from "api";
 import { useNavigate } from "react-router";
 import { useSetRecoilState } from "recoil";
 import { isDeleteModalState, isLoginState } from "../../components/atom";

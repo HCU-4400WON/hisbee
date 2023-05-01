@@ -22,7 +22,7 @@ function BlankPage() {
     } else {
       setIsSignupModal(true);
       navigate("/");
-      //   navigate("/signUp");
+      // navigate("/signUp");
     }
   }, []);
 

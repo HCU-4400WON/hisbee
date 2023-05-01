@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
-  ImemberSignup,
+  IUserSignup,
   IRandomNickname,
   memberSignUp,
   randomNickname,
@@ -162,10 +162,12 @@ function SignUp2() {
   const { mutate: signupMemberMutate, isLoading: signupMemberLoading } =
     useMutation(
       ["signupMemberr" as string],
-      (newMember: ImemberSignup) => memberSignUp(newMember) as any,
+      (newMember: IUserSignup) => memberSignUp(newMember) as any,
       {
         onSuccess: () => {
           console.log("성공!");
+          setIsSignupModal(false);
+          navigate("/");
         },
         onError: () => {
           console.log("유저 회원 가입이 작동하지 않습니다.");
@@ -173,17 +175,19 @@ function SignUp2() {
       }
     );
 
-  const onValid = (submitData: IOnValid) => {
-    console.log("!!!!!");
-    const newMember: ImemberSignup = {
+  const onValid = (submitData: IUserSignup) => {
+    const newMember: IUserSignup = {
       nickname: submitData.nickname,
-      isPublic: false,
+      major1: submitData?.major1,
+      major2: submitData.major2 === "" ? "해당없음" : submitData.major2,
     };
     console.log(newMember);
     // memberSignUp(newMember);
-    setIsSignupModal(false);
-    setIsExtraSignupModal(true);
+    // memberSignUp(newMember);
     signupMemberMutate(newMember);
+
+    // setIsExtraSignupModal(true);
+    // signupMemberMutate(newMember);
     // navigate("/oauth2/redirect/optional");
   };
   // console.log(f);
