@@ -1,10 +1,12 @@
 package com.hcu.hot6.repository;
 
+import com.hcu.hot6.domain.Department;
 import com.hcu.hot6.domain.Member;
-import com.hcu.hot6.domain.Pagination;
 import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.QPost;
+import com.hcu.hot6.domain.enums.Major;
 import com.hcu.hot6.domain.enums.OrderBy;
+import com.hcu.hot6.domain.enums.Year;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.NullExpression;
@@ -16,7 +18,9 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -25,7 +29,6 @@ public class PostRepository {
     private final EntityManager em;
     private final JPAQueryFactory query;
     private final QPost post = QPost.post;
-    private final MemberRepository memberRepository;
 
     public void save(Post post) {
         em.persist(post);
@@ -40,32 +43,17 @@ public class PostRepository {
         return Optional.ofNullable(em.find(Post.class, postId));
     }
 
-    public List<Post> findAll(PostSearchFilter filter, long offset, int limit, String email) {
-        if(filter.getMyDeptOnly()){
-            Optional<Member> member = memberRepository.findByEmail(email);
-
-            return query.selectFrom(post)
-                    .where(
-                            eqType(filter.getType()),
-                            eqKeywords(filter.getKeywords()),
-                            (filter.getDepartment().compareTo("") != 0) ? eqDepartment(filter.getDepartment()) : null,
-                            eqMajor(member.get()),
-                            (filter.getYear().compareTo("") != 0) ? post.targetYears.contains(filter.getYear()) : null,
-//                            eqYear(filter.getYear()),
-                            post.archive.isNull()
-                    )
-                    .offset(offset)
-                    .limit(limit)
-                    .orderBy(orderCond(filter.getOrderBy()))
-                    .fetch();
-        }
+    public List<Post> findAll(PostSearchFilter filter,
+                              Member member,
+                              long offset,
+                              int limit) {
         return query.selectFrom(post)
                 .where(
                         eqType(filter.getType()),
                         eqKeywords(filter.getKeywords()),
-                        (filter.getDepartment().compareTo("") != 0) ? eqDepartment(filter.getDepartment()) : null,
-                        (filter.getYear().compareTo("") != 0) ? post.targetYears.contains(filter.getYear()) : null,
-//                        eqYear(filter.getYear()),
+                        eqDepartment(filter.getDepartment()),
+                        eqYear(filter.getYear()),
+                        isMyDepartment(filter.getMyDeptOnly(), member),
                         post.archive.isNull()
                 )
                 .offset(offset)
@@ -74,30 +62,14 @@ public class PostRepository {
                 .fetch();
     }
 
-
-
-    public List<Post> findAll(PostSearchFilter filter, String email) {
-        if(filter.getMyDeptOnly()){
-            Optional<Member> member = memberRepository.findByEmail(email);
-
-            return query.selectFrom(post)
-                    .where(
-                            eqType(filter.getType()),
-                            eqKeywords(filter.getKeywords()),
-                            (filter.getDepartment().compareTo("") != 0) ? eqDepartment(filter.getDepartment()) : null,
-                            eqMajor(member.get()),
-                            (filter.getYear().compareTo("") != 0) ? post.targetYears.contains(filter.getYear()) : null,
-                            post.archive.isNull()
-                    )
-                    .orderBy(orderCond(filter.getOrderBy()))
-                    .fetch();
-        }
+    public List<Post> findAll(PostSearchFilter filter, Member member) {
         return query.selectFrom(post)
                 .where(
                         eqType(filter.getType()),
                         eqKeywords(filter.getKeywords()),
-                        (filter.getDepartment().compareTo("") != 0) ? eqDepartment(filter.getDepartment()) : null,
-                        (filter.getYear().compareTo("") != 0) ? post.targetYears.contains(filter.getYear()) : null,
+                        eqDepartment(filter.getDepartment()),
+                        eqYear(filter.getYear()),
+                        isMyDepartment(filter.getMyDeptOnly(), member),
                         post.archive.isNull()
                 )
                 .orderBy(orderCond(filter.getOrderBy()))
@@ -112,22 +84,28 @@ public class PostRepository {
                 .fetch();
     }
 
-    public Long count(PostSearchFilter filter) {
+    public Long count(PostSearchFilter filter, Member member) {
         return query.select(post.count())
                 .from(post)
                 .where(
-
+                        eqType(filter.getType()),
+                        eqKeywords(filter.getKeywords()),
+                        eqDepartment(filter.getDepartment()),
+                        eqYear(filter.getYear()),
+                        isMyDepartment(filter.getMyDeptOnly(), member),
+                        post.archive.isNull()
                 )
                 .fetchOne();
     }
 
     private BooleanExpression eqType(String type) {
-        if(type.compareTo("기타") == 0) return post.isETC;
+        if (type == null) return null;
+        else if (type.equals("기타")) return post.isETC;
         return post.postTypes.contains(type);
     }
 
-    private BooleanExpression eqYear(String year){
-        return post.targetYears.contains(year);
+    private BooleanExpression eqYear(Year year) {
+        return (year != null) ? post.targetYears.eq(year.toKor()) : null;
     }
 
     private BooleanBuilder eqKeywords(List<String> keywords) {
@@ -158,92 +136,19 @@ public class PostRepository {
                 );
     }
 
-    private BooleanBuilder eqDepartment(String department) {
-        var builder = new BooleanBuilder();
-
-        List<String> majors = new ArrayList<>();
-        if(department.compareTo("ICT창업학부") == 0){
-            majors.add("GE");
-            majors.add("ICT융합");
-            majors.add("ACE");
-        }
-        else if(department.compareTo("국제어문학부") == 0){
-            majors.add("국제지역학");
-            majors.add("영어");
-        }
-        else if(department.compareTo("생명공학부") == 0){
-            majors.add("생명공학부");
-        }
-        else if(department.compareTo("경영경제학부") == 0){
-            majors.add("경영학");
-            majors.add("경제학");
-            majors.add("GM");
-        }
-        else if(department.compareTo("법학부") == 0){
-            majors.add("한국법");
-            majors.add("UIL");
-        }
-        else if(department.compareTo("상담심리사회복지학부") == 0){
-            majors.add("상담심리학");
-            majors.add("사회복지학");
-        }
-        else if(department.compareTo("커뮤니케이션학부") == 0){
-            majors.add("언론정보학");
-            majors.add("공연영상학");
-        }
-        else if(department.compareTo("공간환경시스템공학부") == 0){
-            majors.add("건설공학");
-            majors.add("도시환경공학");
-        }
-        else if(department.compareTo("기계제어공학부") == 0){
-            majors.add("기계공학");
-            majors.add("전자제어공학");
-        }
-        else if(department.compareTo("전산전자공학부") == 0){
-            majors.add("AI컴퓨터공학심화");
-            majors.add("컴퓨터공학");
-            majors.add("전자공학심화");
-            majors.add("전자공학");
-            majors.add("IT");
-
-        }
-        else if(department.compareTo("콘텐츠융합디자인학부") == 0){
-            majors.add("시각디자인");
-            majors.add("제품디자인");
-        }
-
-        if(department.compareTo("ICT창업학부") == 0 || department.compareTo("경영경제학부") == 0){
-            return builder
-                    .or(post.targetDepartment.contains(department))
-                    .or(post.targetDepartment.contains(majors.get(0)))
-                    .or(post.targetDepartment.contains(majors.get(1)))
-                    .or(post.targetDepartment.contains(majors.get(2)));
-        }
-        else if(department.compareTo("전산전자공학부") == 0){
-            return builder
-                    .or(post.targetDepartment.contains(department))
-                    .or(post.targetDepartment.contains(majors.get(0)))
-                    .or(post.targetDepartment.contains(majors.get(1)))
-                    .or(post.targetDepartment.contains(majors.get(2)))
-                    .or(post.targetDepartment.contains(majors.get(3)))
-                    .or(post.targetDepartment.contains(majors.get(4)));
-        }
-        else if(department.compareTo("국제어문학부") == 0 || department.compareTo("법학부") == 0 || department.compareTo("상담심리사회복지학부") == 0 || department.compareTo("커뮤니케이션학부") == 0 || department.compareTo("공간환경시스템공학부") == 0 || department.compareTo("기계제어공학부") == 0 || department.compareTo("콘텐츠융합디자인학부") == 0){
-            return builder
-                    .or(post.targetDepartment.contains(department))
-                    .or(post.targetDepartment.contains(majors.get(0)))
-                    .or(post.targetDepartment.contains(majors.get(1)));
-        }
-
-        return builder
-                .or(post.targetDepartment.contains(department));
+    private BooleanExpression eqDepartment(Department department) {
+        return Arrays.stream(Major.values())
+                .filter(major -> major.getDepartment().equals(department))
+                .map(major -> post.targetDepartment.contains(major.toKor()))
+                .reduce(BooleanExpression::or)
+                .orElse(null);
     }
 
-    private BooleanBuilder eqMajor(Member member) {
-        var builder = new BooleanBuilder();
-        return builder
-                .or(post.targetDepartment.contains(member.getMajor1().getName()))
-                .or(post.targetDepartment.contains(member.getMajor2().getName()));
+    private BooleanExpression isMyDepartment(Boolean myDeptOnly, Member member) {
+        return (myDeptOnly != null)
+                ? post.targetDepartment.contains(member.getMajor1().toKor())
+                .or(post.targetDepartment.contains(member.getMajor2().toKor()))
+                : null;
     }
 
     private OrderSpecifier<?> orderCond(OrderBy orderBy) {

@@ -1,6 +1,8 @@
 package com.hcu.hot6.domain.filter;
 
+import com.hcu.hot6.domain.Department;
 import com.hcu.hot6.domain.enums.OrderBy;
+import com.hcu.hot6.domain.enums.Year;
 import com.hcu.hot6.util.Utils;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,19 +19,17 @@ public class PostSearchFilter {
                             String keywords,
                             OrderBy orderBy,
                             Integer limit,
-                            String department,
+                            Department department,
                             Boolean myDeptOnly,
-                            String year) {
+                            Year year) {
         this.page = page;
-        this.type = (Objects.isNull(type)) ? "" : type;
+        this.type = type;
         this.keywords = Utils.toArray(keywords, ",");
-        this.orderBy = (Objects.isNull(orderBy)) ? OrderBy.RECENT : orderBy;
+        this.orderBy = Objects.requireNonNullElse(orderBy, OrderBy.RECENT);
         this.limit = limit;
-        this.department = (Objects.isNull(department)) ? "" : department;
-        this.myDeptOnly = (Objects.isNull(myDeptOnly)) ? false : myDeptOnly;
-        this.year = (Objects.isNull(year)) ? "" : year;
-
-
+        this.department = department;
+        this.myDeptOnly = myDeptOnly;
+        this.year = year;
     }
 
     private final Integer page;
@@ -37,7 +37,7 @@ public class PostSearchFilter {
     private final List<String> keywords;
     private final OrderBy orderBy;
     private final Integer limit;
-    private final String department;
+    private final Department department;
     private final Boolean myDeptOnly;
-    private final String year;
+    private final Year year;
 }
