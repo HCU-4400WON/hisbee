@@ -35,11 +35,11 @@ export function Grade({ getValues, setValue }: any) {
             setValue("years", []);
           }}
           value="상관없음"
-          className={`border-2 px-[10px] py-[5px] rounded-lg ${
+          className={`border-[1px]  border-[#007AFF] px-[13px] h-[36px]  flex justify-center items-center text-[16px] rounded-[10px] ${
             !gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
           }`}
         >
-          상관 없음
+          상관없음
         </button>
 
         {/* <p className="mx-[10px]">학년 선택하기</p> */}

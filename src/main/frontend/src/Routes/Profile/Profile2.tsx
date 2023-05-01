@@ -228,7 +228,7 @@ function Profile2() {
                       formState={formState}
                       inputBgColor="bg-slate-100"
                     />
-                    <div className="flex justify-end mt-[20px] ">
+                    <div className="flex justify-end mt-[60px] ">
                       <button
                         type="button"
                         onClick={(e) => {
