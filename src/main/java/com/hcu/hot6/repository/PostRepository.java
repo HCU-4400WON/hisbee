@@ -51,7 +51,8 @@ public class PostRepository {
                             eqDepartment(filter.getDepartment()),
                             eqMajor(member.get().getMajor1().getName()),
                             eqMajor(member.get().getMajor2().getName()),
-                            eqYear(filter.getYear()),
+                            (filter.getYear().compareTo("") != 0) ? post.targetYears.contains(filter.getYear()) : null,
+//                            eqYear(filter.getYear()),
                             post.archive.isNull()
                     )
                     .offset(offset)
@@ -64,7 +65,8 @@ public class PostRepository {
                         eqType(filter.getType()),
                         eqKeywords(filter.getKeywords()),
                         eqDepartment(filter.getDepartment()),
-                        eqYear(filter.getYear()),
+                        (filter.getYear().compareTo("") != 0) ? post.targetYears.contains(filter.getYear()) : null,
+//                        eqYear(filter.getYear()),
                         post.archive.isNull()
                 )
                 .offset(offset)
@@ -85,8 +87,9 @@ public class PostRepository {
                             eqKeywords(filter.getKeywords()),
                             eqDepartment(filter.getDepartment()),
                             eqMajor(member.get().getMajor1().getName()),
-                            eqMajor(member.get().getMajor2().getName()),
-                            eqYear(filter.getYear()),
+                            eqMajor(member.get().getMajor2().getName()),                            post.targetYears.contains(filter.getYear()),
+                            (filter.getYear().compareTo("") != 0) ? post.targetYears.contains(filter.getYear()) : null,
+//                            eqYear(filter.getYear()),
                             post.archive.isNull()
                     )
                     .orderBy(orderCond(filter.getOrderBy()))
@@ -97,7 +100,8 @@ public class PostRepository {
                         eqType(filter.getType()),
                         eqKeywords(filter.getKeywords()),
                         eqDepartment(filter.getDepartment()),
-                        eqYear(filter.getYear()),
+                        (filter.getYear().compareTo("") != 0) ? post.targetYears.contains(filter.getYear()) : null,
+//                        eqYear(filter.getYear()),
                         post.archive.isNull()
                 )
                 .orderBy(orderCond(filter.getOrderBy()))
