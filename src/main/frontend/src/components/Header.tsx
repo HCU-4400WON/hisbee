@@ -11,9 +11,11 @@ const Nav = tw.nav`
 flex 
 justify-center
 items-center 
-px-[20px]
+px-[0px]
+cd:px-[20px]
 sm:justify-between
-pr-[60px]
+pr-[20px]
+md:pr-[60px]
 min-w-[480px]
 `;
 
@@ -31,10 +33,12 @@ hover:text-blue-400
 `;
 
 const Logo = tw(motion.img)`
-    min-w-[100px]
-    md : w-[100px]
+    
+    w-[80px]
+    md:min-w-[100px]
     hover:text-blue-500
-    ml-[100px]
+    md:ml-[100px]
+    ml-[50px]
 `;
 const NavFlexBox = tw.div`
     flex
