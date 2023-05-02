@@ -1075,6 +1075,7 @@ export interface ICreatePost {
   departments?: string[];
   keywords?: string[];
   posterPaths?: string[];
+  isETC: boolean;
 }
 
 export const createPost = async (data: ICreatePost) => {
