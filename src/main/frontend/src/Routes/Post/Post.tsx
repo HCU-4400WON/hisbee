@@ -183,6 +183,7 @@ function Post() {
   const [filterPosition, setFilterPosition] = useState<string>("");
   const [filterPay, setFilterPay] = useState<string>("");
 
+  const [selectedMyDeptOnly, setSelectedMyDeptOnly] = useState<boolean>(true);
   const [selectedMajor, setSelectedMajor] = useState<string | "">("");
   const [selectedGrade, setSelectedGrade] = useState<string | "">("");
   const [selectedCategory, setSelectedCategory] = useState<string | "">("전체"); // about category
@@ -274,7 +275,16 @@ function Post() {
       LIMIT,
       selectedKeywords
     );
-  }, [search, order, selectedCategory, LIMIT, selectedKeywords]);
+  }, [
+    search,
+    order,
+    selectedCategory,
+    LIMIT,
+    selectedKeywords,
+    selectedMyDeptOnly,
+    selectedGrade,
+    selectedMajor,
+  ]);
 
   // [사이에 필터링을 추가하기]
   const {
@@ -299,10 +309,13 @@ function Post() {
         // limit:
         LIMIT + "",
         // keywords:
-        selectedKeywords
+        selectedKeywords,
         // filterPosition === "" ? null : filterPosition,
         // filterPay === "" ? null : filterPay,
         // null
+        selectedMyDeptOnly,
+        selectedGrade,
+        selectedMajor
       ),
     {
       onSuccess: (posts) => {
@@ -311,7 +324,25 @@ function Post() {
 
         //   // console.log("1");
         // }
-
+        console.log(
+          nowPage + "",
+          // search:
+          search,
+          // order:
+          order,
+          // type:
+          selectedCategory === "전체" ? null : selectedCategory,
+          // limit:
+          LIMIT + "",
+          // keywords:
+          selectedKeywords,
+          // filterPosition === "" ? null : filterPosition,
+          // filterPay === "" ? null : filterPay,
+          // null
+          selectedMyDeptOnly,
+          selectedGrade,
+          selectedMajor
+        );
         // setGetPageNums(posts.total);
         setGetPageNums(posts.total);
         console.log("debug", posts.total);
@@ -772,7 +803,14 @@ function Post() {
             <SortBox>
               <div className="md:flex items-center justify-between">
                 <MyMajorBox className="">
-                  <MyMajorInput type="checkBox" id="myMajor" />
+                  <MyMajorInput
+                    checked={selectedMyDeptOnly}
+                    onChange={async () => {
+                      setSelectedMyDeptOnly((prev) => !prev);
+                    }}
+                    type="checkBox"
+                    id="myMajor"
+                  />
                   <MyMajorText htmlFor="myMajor">
                     내 전공 관련글만 보기
                   </MyMajorText>

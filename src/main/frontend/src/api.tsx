@@ -706,7 +706,10 @@ export const readPosts = async (
   order: string | null,
   type: string | null,
   limit: string | null,
-  keywords: string[] | null
+  keywords: string[] | null,
+  myDeptOnly?: boolean | null,
+  grade?: string | null,
+  major?: string | null
   // position: string | null,
   // pay: string | null,
 ) => {
@@ -719,6 +722,9 @@ export const readPosts = async (
     let paramLimit = "";
     let paramKeywords = "";
     let paramSearch = "";
+    let paramMyDeptOnly = "";
+    let paramGrade = "";
+    let paramMajor = "";
     // let paramPosition = "";
     // let paramPay = "";
 
@@ -751,11 +757,20 @@ export const readPosts = async (
       paramKeywords = "&keywords=" + keywords.join(",");
       console.log(paramKeywords);
     }
+    if (paramMyDeptOnly) {
+      paramMyDeptOnly = `&myDeptOnly=${true}`;
+    }
+    if (grade) {
+      paramGrade = `grade=${grade}`;
+    }
+    if (major) {
+      paramMajor = `major=${major}`;
+    }
 
     const response = await axios.get(
       // `http://localhost:8080/posts?${paramPage}${paramSearch}${paramOrder}${paramType}${paramPosition}${paramPay}${paramLimit}`,
 
-      `http://localhost:8080/posts?${paramPage}${paramOrder}${paramType}${paramLimit}${paramKeywords}`,
+      `http://localhost:8080/posts?${paramPage}${paramOrder}${paramType}${paramLimit}${paramKeywords}${paramMyDeptOnly}${paramGrade}${paramMajor}`,
       // `http://localhost:8080/posts?${paramPage}${paramSearch}${paramOrder}${paramType}${paramLimit}${paramKeywords}`,
       {
         headers: { Authorization: `Bearer ${TOKEN}` },
