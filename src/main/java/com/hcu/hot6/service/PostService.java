@@ -41,7 +41,7 @@ public class PostService {
                 .build();
     }
 
-    public Long deletePost(Long postId, String email) {
+    public Long deletePost(Long postId) {
         Post post = postRepository.findOne(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not found."));
         return postRepository.delete(post);
@@ -64,8 +64,10 @@ public class PostService {
     }
 
     public PostFilterResponse readFilteredPost(PostSearchFilter filter, String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow();
+
         if (Objects.isNull(filter.getPage())) {
-            var thumbnailResponses = postRepository.findAll(filter, email).stream()
+            var thumbnailResponses = postRepository.findAll(filter, member).stream()
                     .map(post -> post.getThumbnail().toResponse(email))
                     .toList();
 
@@ -75,8 +77,8 @@ public class PostService {
                     thumbnailResponses
             );
         }
-        var pagination = new Pagination(filter.getPage(), postRepository.count(filter), filter.getLimit());
-        var postResponseList = postRepository.findAll(filter, pagination.getOffset(), pagination.getLimit(), email)
+        var pagination = new Pagination(filter.getPage(), postRepository.count(filter, member), filter.getLimit());
+        var postResponseList = postRepository.findAll(filter, member, pagination.getOffset(), pagination.getLimit())
                 .stream()
                 .map(post -> post.getThumbnail().toResponse(email))
                 .toList();

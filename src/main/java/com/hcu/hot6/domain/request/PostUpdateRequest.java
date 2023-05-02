@@ -47,4 +47,5 @@ public class PostUpdateRequest {
 
     //
     private Boolean isClosed;
+    private Boolean isETC;
 }

@@ -1,7 +1,8 @@
 package com.hcu.hot6.controller;
 
-import com.hcu.hot6.domain.Likes;
+import com.hcu.hot6.domain.Department;
 import com.hcu.hot6.domain.enums.OrderBy;
+import com.hcu.hot6.domain.enums.Year;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
@@ -43,9 +44,8 @@ public class PostApiController {
      * 모집글 삭제(DELETE) -> 권한 설정 미완
      */
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<Long> deletePost(@PathVariable Long postId, @AuthenticationPrincipal OAuth2User user) {
-        String email = user.getName();
-        return ResponseEntity.ok(postService.deletePost(postId, email));
+    public ResponseEntity<Long> deletePost(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.deletePost(postId));
     }
 
     /**
@@ -75,18 +75,18 @@ public class PostApiController {
     public ResponseEntity<PostFilterResponse> readFilteredPost(@RequestParam(required = false) Integer page,
                                                                @RequestParam(required = false) String type,
                                                                @RequestParam(required = false) String keywords,
-                                                               @RequestParam(required = false, value = "order") OrderBy orderBy,
+                                                               @RequestParam(required = false) OrderBy order,
                                                                @RequestParam(required = false) Integer limit,
-                                                               @RequestParam(required = false) String department,
+                                                               @RequestParam(required = false) Department department,
                                                                @RequestParam(required = false) Boolean myDeptOnly,
-                                                               @RequestParam(required = false) String year,
+                                                               @RequestParam(required = false) Year year,
                                                                @AuthenticationPrincipal OAuth2User user) {
         String email = (Objects.isNull(user)) ? "" : user.getName();
         PostSearchFilter filter = PostSearchFilter.builder()
                 .page(page)
                 .type(type)
                 .keywords(keywords)
-                .orderBy(orderBy)
+                .orderBy(order)
                 .limit(limit)
                 .department(department)
                 .myDeptOnly(myDeptOnly)

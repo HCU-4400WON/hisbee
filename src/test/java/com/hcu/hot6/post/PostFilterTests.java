@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hcu.hot6.domain.Department;
 import com.hcu.hot6.domain.Member;
 import com.hcu.hot6.domain.enums.Major;
+import com.hcu.hot6.domain.enums.Year;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.request.PostCreationRequest;
+import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.request.TagForm;
 import com.hcu.hot6.domain.response.PostFilterResponse;
 import com.hcu.hot6.repository.MemberRepository;
@@ -328,7 +330,7 @@ public class PostFilterTests {
 
         // when
         var filter = PostSearchFilter.builder()
-                .department("전산전자공학부")
+                .department(Department.ECE)
                 .page(1)
                 .limit(2)
                 .build();
@@ -382,7 +384,7 @@ public class PostFilterTests {
 
         // when
         var filter = PostSearchFilter.builder()
-                .department("상담심리사회복지학부")
+                .department(Department.CSW)
                 .page(1)
                 .limit(4)
                 .build();
@@ -393,7 +395,7 @@ public class PostFilterTests {
     }
 
     @Test
-    public void 타겟_학년을_포함한_필터링이_되어야한다(){
+    public void 타겟_학년을_포함한_필터링이_되어야한다() {
         // given
         final var request = PostCreationRequest.builder()
                 .title("모집글 제목")
@@ -414,7 +416,7 @@ public class PostFilterTests {
 
         // when
         var filter = PostSearchFilter.builder()
-                .year("2학년")
+                .year(Year.SOPHOMORE)
                 .page(1)
                 .limit(3)
                 .build();
@@ -425,7 +427,7 @@ public class PostFilterTests {
     }
 
     @Test
-    public void 내_전공을_포함한_필터링이_되어야한다(){
+    public void 내_전공을_포함한_필터링이_되어야한다() {
         // 1전공 시각디자인, 2전공 컴퓨터공학 으로 세팅한 상태에서 테스트 진행함
         // given
         final var request = PostCreationRequest.builder()
@@ -437,7 +439,7 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .targetCount("전체00명")
                 .contact("example@test.com")
-                .departments(List.of("시각디자인", "GE"))
+                .departments(List.of("GE"))
                 .build();
         final var request2 = PostCreationRequest.builder()
                 .title("필터링 되어 나와야 함")
@@ -448,35 +450,20 @@ public class PostFilterTests {
                 .recruitEnd(new Date())
                 .targetCount("전체00명")
                 .contact("example@test.com")
-                .departments(List.of("컴퓨터공학", "GE"))
-                .build();
-        final var request3 = PostCreationRequest.builder()
-                .title("필터링에서 걸러져야 함")
-                .summary("한 줄 소개")
-                .tags(new TagForm(List.of("소망", "축복")))
-                .postTypes(List.of("학회", "학술모임"))
-                .recruitStart(new Date())
-                .recruitEnd(new Date())
-                .targetCount("전체00명")
-                .contact("example@test.com")
-                .departments(List.of("전산전자공학부"))
+                .departments(List.of("기계공학"))
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
         postService.createPost(request2, TEST_EMAIL);
-        postService.createPost(request3, TEST_EMAIL);
-
 
         // when
         var filter = PostSearchFilter.builder()
                 .myDeptOnly(true)
-                .page(1)
-                .limit(4)
                 .build();
         var response = postService.readFilteredPost(filter, TEST_EMAIL);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(2L);
+        assertThat(response.getTotal()).isZero();
     }
 
     @Test
@@ -595,12 +582,12 @@ public class PostFilterTests {
                 .summary("몬스터즈 경기 직관하실 분 구합니다")
                 .tags(new TagForm(List.of("소망", "축복")))
                 .postTypes(List.of("학회", "선교모임"))
-                .isETC(true)
                 .recruitStart(new Date())
                 .recruitEnd(new Date())
                 .targetCount("전체00명")
                 .contact("example@test.com")
                 .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .isETC(true)
                 .build();
 
         postService.createPost(request, TEST_EMAIL);
@@ -615,6 +602,38 @@ public class PostFilterTests {
 
         // then
         assertThat(response.getTotal()).isEqualTo(1L);
+    }
+
+    @Test
+    public void 기타_false수정_모집글_필터링() throws Exception {
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("최강")
+                .summary("몬스터즈 경기 직관하실 분 구합니다")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "선교모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .isETC(true)
+                .build();
+
+        var res = postService.createPost(request, TEST_EMAIL);
+        var updateReq = PostUpdateRequest.builder().isETC(false).build();
+        postService.updatePost(res.getId(), updateReq);
+
+        // when
+        var filter = PostSearchFilter.builder()
+                .page(1)
+                .limit(3)
+                .type("기타")
+                .build();
+        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+
+        // then
+        assertThat(response.getTotal()).isEqualTo(0L);
     }
 
 
