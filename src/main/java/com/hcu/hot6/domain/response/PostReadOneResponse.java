@@ -50,6 +50,7 @@ public class PostReadOneResponse {
     private boolean hasLiked;
     private Date createdDate;
     private Date lastModifiedDate;
+    private boolean isETC;
 
     public PostReadOneResponse(Post post, String email) {
         final Thumbnail thumbnail = post.getThumbnail();
@@ -86,5 +87,6 @@ public class PostReadOneResponse {
         this.isVerified = email.equals(post.getAuthor().getEmail());
         this.hasLiked = post.getLikes().stream()
                 .anyMatch(bookmark -> email.equals(bookmark.getMember().getEmail()));
+        this.isETC = post.isETC();
     }
 }
