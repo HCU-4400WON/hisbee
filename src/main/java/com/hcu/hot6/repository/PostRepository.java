@@ -105,7 +105,7 @@ public class PostRepository {
     }
 
     private BooleanExpression eqYear(Year year) {
-        return (year != null) ? post.targetYears.eq(year.toKor()) : null;
+        return (year != null) ? post.targetYears.contains(year.toKor()) : null;
     }
 
     private BooleanBuilder eqKeywords(List<String> keywords) {
