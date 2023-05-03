@@ -183,7 +183,7 @@ function Post() {
   const [filterPosition, setFilterPosition] = useState<string>("");
   const [filterPay, setFilterPay] = useState<string>("");
 
-  const [selectedMyDeptOnly, setSelectedMyDeptOnly] = useState<boolean>(true);
+  const [selectedMyDeptOnly, setSelectedMyDeptOnly] = useState<boolean>(false);
   const [selectedMajor, setSelectedMajor] = useState<string | "">("");
   const [selectedGrade, setSelectedGrade] = useState<string | "">("");
   const [selectedCategory, setSelectedCategory] = useState<string | "">("전체"); // about category
@@ -259,7 +259,7 @@ function Post() {
     // refetch();
   }, [nowPage]);
 
-  const [LIMIT, useLIMIT] = useState<number>(1);
+  const [LIMIT, useLIMIT] = useState<number>(12);
   useEffect(() => {
     const pageOneRefetch = async () => {
       await setNowPage(1);
@@ -314,8 +314,12 @@ function Post() {
         // filterPay === "" ? null : filterPay,
         // null
         selectedMyDeptOnly,
-        selectedGrade,
-        selectedMajor
+        selectedGrade === "" || selectedGrade === "학년 무관"
+          ? null
+          : selectedGrade,
+        selectedMajor === "" || selectedMajor === "학부 무관"
+          ? null
+          : selectedMajor
       ),
     {
       onSuccess: (posts) => {
@@ -456,7 +460,7 @@ function Post() {
     "기타",
   ];
   const Majors = [
-    "전공 무관",
+    "학부 무관",
     "글로벌리더십학부",
     "국제어문학부",
     "경영경제학부",
@@ -473,7 +477,7 @@ function Post() {
 
   const Grades = [
     "학년 무관",
-    "23학번 새내기",
+
     "1학년",
     "2학년",
     "3학년",
@@ -570,6 +574,8 @@ function Post() {
     });
     io.observe(sentinel);
   }, [sentinel]);
+
+  const isLogin = useRecoilValue(isLoginState);
 
   return (
     <>
@@ -802,37 +808,53 @@ function Post() {
 
             <SortBox>
               <div className="md:flex items-center justify-between">
-                <MyMajorBox className="">
-                  <MyMajorInput
-                    checked={selectedMyDeptOnly}
-                    onChange={async () => {
-                      setSelectedMyDeptOnly((prev) => !prev);
-                    }}
-                    type="checkBox"
-                    id="myMajor"
-                  />
-                  <MyMajorText htmlFor="myMajor">
-                    내 전공 관련글만 보기
-                  </MyMajorText>
-                </MyMajorBox>
+                {isLogin && (
+                  <MyMajorBox className="">
+                    <MyMajorInput
+                      checked={selectedMyDeptOnly}
+                      onChange={async () => {
+                        setSelectedMyDeptOnly((prev) => !prev);
+                      }}
+                      type="checkBox"
+                      id="myMajor"
+                    />
+
+                    <MyMajorText htmlFor="myMajor">
+                      내 전공 관련글만 보기
+                    </MyMajorText>
+                  </MyMajorBox>
+                )}
+
                 <div className="flex md:none mt-[10px] md:mt-[0px]">
                   <SelectFilterBox
-                    ref={majorRef}
+                    value={selectedMajor}
+                    onChange={(e: any) => {
+                      setSelectedMajor(e.currentTarget.value);
+                      // console.log(selectedGrade);
+                    }}
+                    // ref={majorRef}
                     id="majorSelect"
-                    onInput={onInput}
+                    // onInput={onInput}
                   >
                     {Majors.map((major, index) => (
                       <option key={index}>{major}</option>
                     ))}
                   </SelectFilterBox>
                   <SelectFilterBox
-                    ref={gradeRef}
+                    // ref={gradeRef}
+                    value={selectedGrade}
+                    onChange={(e: any) => {
+                      setSelectedGrade(e.currentTarget.value);
+                      console.log(selectedGrade);
+                    }}
                     id="gradeSelect"
-                    onInput={onInput}
+                    // onInput={onInput}
                     className=""
                   >
                     {Grades.map((grade, index) => (
-                      <option key={index}>{grade}</option>
+                      <option key={index} value={grade}>
+                        {grade}
+                      </option>
                     ))}
                   </SelectFilterBox>
                   <div className="flex items-center">

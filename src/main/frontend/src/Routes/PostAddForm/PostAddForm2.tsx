@@ -663,7 +663,10 @@ function PostAddForm2() {
                           className={`KeywordInput py-[2px] text-[15px] px-[15px] rounded-full ${LightMainBLUE}`}
                           style={{
                             width:
-                              (getValues(lineObj.str as any).length + 5) * 11,
+                              getValues(lineObj.str as any).length > 5
+                                ? (getValues(lineObj.str as any).length + 5) *
+                                  12
+                                : "110px",
                           }}
                           {...register(lineObj.str as any)}
                           onKeyPress={async (
@@ -694,6 +697,7 @@ function PostAddForm2() {
                               setValue(lineObj.str as any, "");
                             }
                           }}
+                          placeholder="키워드 입력"
                         />
 
                         <button
@@ -733,7 +737,7 @@ function PostAddForm2() {
 
               <span className="pl-[30px] mb-[200px]">
                 <span className="mt-[20px] flex items-center mb-[10px]">
-                  <p className="mx-[15px] ">시작</p>
+                  <p className="mx-[15px] w-[30px]">시작</p>
                   <input
                     className={`w-[140px] bg-slate-100 text-blue-500`}
                     type="date"
