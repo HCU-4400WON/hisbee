@@ -64,8 +64,8 @@ function PostDeleteModal({ postId }: any) {
           </span>
           <span className="flex justify-center">
             <span className="flex flex-col w-[300px] h-[100px] items-center">
-              <img className="w-[200px]" src="/img/logo.png " />
-              <p className="font-semibold text-[20px] md:text-[25px] mt-[10px] md:mt-[0px]">
+              <img className="w-[150px]" src="/img/logo_hisbee.png " />
+              <p className="font-semibold text-[20px] md:text-[25px] mt-[10px] md:mt-[10px]">
                 정말로 삭제하시겠습니까?
               </p>
             </span>

@@ -33,6 +33,7 @@ import { Department } from "./components/Department";
 import { People } from "./components/People";
 import { Duration } from "./components/Duration";
 import { Keywords } from "./components/Keywords";
+import { Helmet } from "react-helmet";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -451,6 +452,9 @@ function PostAddForm2() {
 
   return (
     <div className="p-[50px] w-[1470px]">
+      <Helmet>
+        <title>모집 글 작성하기</title>
+      </Helmet>
       <div className="flex justify-between pb-[20px]">
         <span className="flex w-[210px] items-center justify-between">
           <Link to="/post">

@@ -29,8 +29,8 @@ function Footer() {
     <div className="min-w-[480px] h-[150px] pr-[50px] flex justify-between items-center mt-[150px]">
       <div className="flex justify-start items-end">
         <img
-          src="/img/logo_hibe.png"
-          className="w-[100px] md:w-[120px] mx-[30px]"
+          src="/img/logo_hisbee.png"
+          className="w-[120px] md:w-[140px] mx-[30px]"
         />
         <span className="text-[12px] pb-[6px] z-10 min-w-[220px] font-unique text-gray-500 hidden md:block">
           <strong>ⓒ</strong> 2022 Team.Hot6 All rights reserved
