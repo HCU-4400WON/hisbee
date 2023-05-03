@@ -919,7 +919,7 @@ function PostModifyForm() {
 
               <span className="pl-[30px] mb-[200px]">
                 <span className="flex items-center mb-[10px]">
-                  <p className="mx-[15px]">시작</p>
+                  <p className="mx-[15px] w-[30px]">시작</p>
                   <input
                     className={`w-[140px] bg-slate-100 text-blue-500`}
                     type="date"

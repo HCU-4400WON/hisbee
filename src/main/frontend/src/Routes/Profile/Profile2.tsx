@@ -100,7 +100,7 @@ text-[20px]
 `;
 
 const Banner = tw.form`
-h-[300px] bg-slate-100 flex
+py-[50px] bg-slate-100 flex
 `;
 function Profile2() {
   const navigate = useNavigate();
@@ -152,7 +152,7 @@ function Profile2() {
     setIsDeleteModal(true);
   };
 
-  const [mode, setMode] = useState("like");
+  const [mode, setMode] = useState("likes");
 
   const onValid = async (submitData: IUserUpdate) => {
     const newMember: IUserUpdate = {
@@ -208,12 +208,12 @@ function Profile2() {
             <i className="fa-solid fa-user-slash mx-[10px]"></i>탈퇴하기
           </SidebarButton>
         </Sidebar>
-        <div className="w-full h-[1300px] ">
+        <div className="w-full  ">
           <Banner
             className="flex justify-center items-center"
             onSubmit={handleSubmit(onValid as any)}
           >
-            <div className="flex h-[150px] w-full px-[100px] py-[10px]">
+            <div className="flex w-full px-[100px] py-[10px]">
               <div>
                 <img src="./img/user.png" className="mr-[100px] w-[100px]" />
               </div>
