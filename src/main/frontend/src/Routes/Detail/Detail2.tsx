@@ -43,6 +43,7 @@ import { Link } from "react-router-dom";
 import Heart from "components/Heart";
 import Soon from "components/Soon";
 import { ImageModal } from "./ImageModal";
+import { Helmet } from "react-helmet";
 
 const Container = tw.div`
 w-[1470px]
@@ -112,7 +113,7 @@ grid
 md:grid-cols-2  
 grid-cols-1
 border-gray-300 
-p-[50px]
+
 
 items-center
 w-full
@@ -122,7 +123,7 @@ const GridItem = tw.div`
 flex 
 mb-[20px]
 items-start
-h-[40px]
+
 
 `;
 
@@ -138,7 +139,7 @@ font-unique
 
 const ItemText = tw.span`
 text-[13px] 
-md:text-[17px]
+md:text-[16px]
 font-medium
 
 `;
@@ -418,6 +419,9 @@ function Detail2() {
         <LoadingAnimation />
       ) : (
         <>
+          <Helmet>
+            <title>{data?.title}</title>
+          </Helmet>
           {isImageModal && (
             <ImageModal
               ImageSrc={clickedPosterSrc}
@@ -517,7 +521,7 @@ function Detail2() {
               </FormAuthorNButtonRow>
 
               {/* 요약정보 */}
-              <div className="bg-slate-100 rounded-3xl">
+              <div className="p-[50px] bg-slate-100 rounded-3xl">
                 <Grid>
                   <GridItem>
                     <ItemTitle>모집 기간</ItemTitle>
@@ -572,7 +576,7 @@ function Detail2() {
                     <GridItem>
                       <ItemTitle>신청 경로</ItemTitle>
                       <a
-                        href="http://google.com"
+                        href={`${data?.contact}`}
                         className="md:w-full w-[200px] text-[13px] md:text-[17px] font-bold underline"
                       >
                         {data?.contact}

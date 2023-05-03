@@ -50,6 +50,7 @@ import { Department } from "./components/Department";
 import { People } from "./components/People";
 import { Duration } from "./components/Duration";
 import { Keywords } from "./components/Keywords";
+import { Helmet } from "react-helmet";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -637,6 +638,9 @@ function PostModifyForm() {
   };
   return (
     <div className="p-[50px]">
+      <Helmet>
+        <title>수정 페이지 - {getValues("title")}</title>
+      </Helmet>
       <div className="flex justify-between pb-[20px]">
         <span className="flex w-[210px] items-center justify-between">
           <Link to="/post">

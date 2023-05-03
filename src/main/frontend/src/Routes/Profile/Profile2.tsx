@@ -16,6 +16,7 @@ import {
 } from "components/atom";
 import { FunctionButton } from "components/FunctionButton";
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -174,6 +175,9 @@ function Profile2() {
   return (
     <>
       {isDeleteModal && <DeleteModal />}
+      <Helmet>
+        <title>{data?.profile.nickname}</title>
+      </Helmet>
       <div className="w-full flex">
         <Sidebar>
           <SidebarTitle className="relative">마이 페이지</SidebarTitle>

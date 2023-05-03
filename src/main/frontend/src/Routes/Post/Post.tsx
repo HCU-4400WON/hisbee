@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import LoadingAnimation from "components/LoadingAnimation";
+import { Helmet } from "react-helmet";
 import {
   addLikePost,
   createMentoring,
@@ -35,6 +36,7 @@ import Thumbnail from "./Thumbnail";
 import { PostExamples } from "Routes/PostAddForm/components/PostExamples";
 import "./css/button.css";
 import SignUp2 from "Routes/Main/SignUp2";
+import LoadingLottie from "components/LoadingLottie";
 
 const SelectFilterBox = tw.select`
 mr-[20px] px-[10px] bg-[#F9FAFB] py-[5px] rounded-lg text-center
@@ -583,8 +585,12 @@ function Post() {
         <LoadingAnimation />
       ) : (
         <>
+          <Helmet>
+            <title>Hisbee</title>
+          </Helmet>
           {isLoginModal ? <Login /> : null}
           {isSignupModal ? <SignUp2 /> : null}
+
           <Container>
             <Banner src="./img/banner_post.png"></Banner>
 
