@@ -39,8 +39,8 @@ function Login() {
       <div className="w-4/5 rounded-2xl md:rounded-3xl fixed top-[150px] z-20 md:w-[940px] h-[480px] md:h-[540px] bg-[#fff] flex md:flex-row flex-col items-center  md:justify-evenly">
         <div className="flex items-center justify-center w-[400px] md:h-full md:mt-[0px] md:mb-[0px] mt-[50px] mb-[10px]">
           <img
-            src="/img/loginLogo.png"
-            className=" w-[250px] md:w-[350px]"
+            src="/img/logo_hisbee.png"
+            className=" w-[150px] md:w-[250px]"
             // style={{
             //   // background:
             //   //   "radial-gradient(closest-side,#7b87e7, lightgray 80% , white)",

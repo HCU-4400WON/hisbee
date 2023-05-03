@@ -34,8 +34,8 @@ hover:text-blue-400
 
 const Logo = tw(motion.img)`
     
-    w-[80px]
-    md:min-w-[100px]
+    w-[100px]
+    md:min-w-[120px]
     hover:text-blue-500
     md:ml-[100px]
     ml-[50px]
@@ -186,7 +186,7 @@ function Header() {
         <NavLeftBox>
           <Link to="/">
             <Logo
-              src="/img/logo_hibe.png"
+              src="/img/logo_hisbee.png"
               variants={LogoVairants}
               initial="initial"
               whileHover="hover"

@@ -17,7 +17,7 @@ export const dateDifference = (end: string) => {
 
   const diffDate = date2.getTime() - date1.getTime();
 
-  return diffDate / (1000 * 60 * 60 * 24);
+  return Math.floor(diffDate / (1000 * 60 * 60 * 24));
 };
 
 // D-Day 를 상시모집 과 같은 스트링으로 바꿔줌
