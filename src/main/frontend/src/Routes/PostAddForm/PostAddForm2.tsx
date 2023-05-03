@@ -224,12 +224,15 @@ function PostAddForm2() {
 
     console.log("데이터");
 
+    let newIsETC = false;
+
     const categoryETCIdx = data?.postTypes.findIndex(
       (elem) => elem === "기타 모임"
     );
     let newKeywords: string[] = [];
 
     if (categoryETCIdx !== -1 && data?.categoryETC !== "") {
+      newIsETC = true;
       data?.postTypes.splice(categoryETCIdx, 1);
       data?.postTypes.push(data?.categoryETC as string);
     } else if (categoryETCIdx !== -1 && data?.categoryETC === "") {
@@ -286,6 +289,7 @@ function PostAddForm2() {
       departments: data?.departments?.length !== 0 ? data?.departments : null,
       keywords: newKeywords,
       posterPaths: imageURLList?.length !== 0 ? imageURLList : null,
+      isETC: newIsETC,
     };
 
     console.log(newPost);
