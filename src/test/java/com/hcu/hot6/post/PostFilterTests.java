@@ -20,12 +20,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -88,9 +92,10 @@ public class PostFilterTests {
         // when
         final var filter = PostSearchFilter.builder()
                 .type("학회")
+                .email(TEST_EMAIL)
                 .build();
 
-        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+        var response = postService.readFilteredPost(filter);
 
         // then
         assertThat(response.getTotal()).isEqualTo(1L);
@@ -116,9 +121,10 @@ public class PostFilterTests {
         // when
         final var filter = PostSearchFilter.builder()
                 .type("동아리")
+                .email(TEST_EMAIL)
                 .build();
 
-        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+        var response = postService.readFilteredPost(filter);
 
         // then
         assertThat(response.getTotal()).isZero();
@@ -157,8 +163,9 @@ public class PostFilterTests {
         // when
         var filter = PostSearchFilter.builder()
                 .keywords("축복")
+                .email(TEST_EMAIL)
                 .build();
-        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+        var response = postService.readFilteredPost(filter);
 
         // then
         assertThat(response.getTotal()).isEqualTo(2L);
@@ -197,8 +204,9 @@ public class PostFilterTests {
         var filter = PostSearchFilter.builder()
                 .type("학회")
                 .keywords("온유")
+                .email(TEST_EMAIL)
                 .build();
-        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+        var response = postService.readFilteredPost(filter);
 
         // then
         assertThat(response.getTotal()).isEqualTo(1L);
@@ -238,8 +246,9 @@ public class PostFilterTests {
         // when
         var filter = PostSearchFilter.builder()
                 .keywords("축복")
+                .email(TEST_EMAIL)
                 .build();
-        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+        var response = postService.readFilteredPost(filter);
 
         // then
         assertThat(response.getTotal()).isEqualTo(2L);
@@ -278,7 +287,7 @@ public class PostFilterTests {
 
         // when
         postService.addArchive(target.getId(), TEST_EMAIL);
-        PostFilterResponse res = postService.readFilteredPost(filter, TEST_EMAIL);
+        var res = postService.readFilteredPost(filter);
 
         // then
         assertThat(res.getTotal()).isEqualTo(1L);
@@ -333,8 +342,9 @@ public class PostFilterTests {
                 .department(Department.ECE)
                 .page(1)
                 .limit(2)
+                .email(TEST_EMAIL)
                 .build();
-        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+        var response = postService.readFilteredPost(filter);
 
         // then
         assertThat(response.getTotal()).isEqualTo(2L);
@@ -387,8 +397,9 @@ public class PostFilterTests {
                 .department(Department.CSW)
                 .page(1)
                 .limit(4)
+                .email(TEST_EMAIL)
                 .build();
-        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+        var response = postService.readFilteredPost(filter);
 
         // then
         assertThat(response.getTotal()).isEqualTo(1L);
@@ -419,8 +430,9 @@ public class PostFilterTests {
                 .year(Year.SOPHOMORE)
                 .page(1)
                 .limit(3)
+                .email(TEST_EMAIL)
                 .build();
-        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+        var response = postService.readFilteredPost(filter);
 
         // then
         assertThat(response.getTotal()).isEqualTo(0L);
@@ -459,8 +471,9 @@ public class PostFilterTests {
         // when
         var filter = PostSearchFilter.builder()
                 .myDeptOnly(true)
+                .email(TEST_EMAIL)
                 .build();
-        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+        var response = postService.readFilteredPost(filter);
 
         // then
         assertThat(response.getTotal()).isZero();
@@ -498,8 +511,9 @@ public class PostFilterTests {
         // when
         var filter = PostSearchFilter.builder()
                 .keywords("최강")
+                .email(TEST_EMAIL)
                 .build();
-        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+        var response = postService.readFilteredPost(filter);
 
         // then
         assertThat(response.getTotal()).isEqualTo(1L);
@@ -538,8 +552,9 @@ public class PostFilterTests {
         // when
         var filter = PostSearchFilter.builder()
                 .keywords("직관")
+                .email(TEST_EMAIL)
                 .build();
-        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+        var response = postService.readFilteredPost(filter);
 
         // then
         assertThat(response.getTotal()).isEqualTo(2L);
@@ -567,8 +582,9 @@ public class PostFilterTests {
         var filter = PostSearchFilter.builder()
                 .page(2)
                 .limit(8)
+                .email(TEST_EMAIL)
                 .build();
-        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+        var response = postService.readFilteredPost(filter);
 
         // then
         assertThat(response.getTotal()).isEqualTo(5L);
@@ -597,8 +613,9 @@ public class PostFilterTests {
                 .page(1)
                 .limit(3)
                 .type("기타")
+                .email(TEST_EMAIL)
                 .build();
-        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+        var response = postService.readFilteredPost(filter);
 
         // then
         assertThat(response.getTotal()).isEqualTo(1L);
@@ -629,12 +646,44 @@ public class PostFilterTests {
                 .page(1)
                 .limit(3)
                 .type("기타")
+                .email(TEST_EMAIL)
                 .build();
-        var response = postService.readFilteredPost(filter, TEST_EMAIL);
+        var response = postService.readFilteredPost(filter);
 
         // then
         assertThat(response.getTotal()).isEqualTo(0L);
     }
 
+    @Test
+    public void 모든_모집글_불러오기() throws Exception {
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("최강")
+                .summary("몬스터즈 경기 직관하실 분 구합니다")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "선교모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .isETC(true)
+                .build();
 
+        var res = postService.createPost(request, TEST_EMAIL);
+
+        // when
+        MvcResult mvcResult = mvc
+                .perform(get("/posts"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        var response = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(),
+                PostFilterResponse.class);
+
+        // then
+        assertThat(response.getTotal()).isNotZero();
+    }
 }

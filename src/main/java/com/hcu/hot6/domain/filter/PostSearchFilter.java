@@ -21,7 +21,9 @@ public class PostSearchFilter {
                             Integer limit,
                             Department department,
                             Boolean myDeptOnly,
-                            Year year) {
+                            Year year,
+                            Boolean isClosed,
+                            String email) {
         this.page = page;
         this.type = type;
         this.keywords = Utils.toArray(keywords, ",");
@@ -30,6 +32,8 @@ public class PostSearchFilter {
         this.department = department;
         this.myDeptOnly = myDeptOnly;
         this.year = year;
+        this.isClosed = isClosed;
+        this.email = email;
     }
 
     private final Integer page;
@@ -40,4 +44,6 @@ public class PostSearchFilter {
     private final Department department;
     private final Boolean myDeptOnly;
     private final Year year;
+    private final Boolean isClosed;
+    private final String email;
 }

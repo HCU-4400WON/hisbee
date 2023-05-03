@@ -63,12 +63,13 @@ public class PostService {
         return new PostModifiedResponse(post.getId(), post.getLastModifiedDate());
     }
 
-    public PostFilterResponse readFilteredPost(PostSearchFilter filter, String email) {
-        Member member = memberRepository.findByEmail(email).orElseThrow();
+    public PostFilterResponse readFilteredPost(PostSearchFilter filter) {
+        Member member = memberRepository.findByEmail(filter.getEmail())
+                .orElse(null);
 
         if (Objects.isNull(filter.getPage())) {
             var thumbnailResponses = postRepository.findAll(filter, member).stream()
-                    .map(post -> post.getThumbnail().toResponse(email))
+                    .map(post -> post.getThumbnail().toResponse(filter.getEmail()))
                     .toList();
 
             return new PostFilterResponse(
@@ -80,7 +81,7 @@ public class PostService {
         var pagination = new Pagination(filter.getPage(), postRepository.count(filter, member), filter.getLimit());
         var postResponseList = postRepository.findAll(filter, member, pagination.getOffset(), pagination.getLimit())
                 .stream()
-                .map(post -> post.getThumbnail().toResponse(email))
+                .map(post -> post.getThumbnail().toResponse(filter.getEmail()))
                 .toList();
 
         return new PostFilterResponse(
