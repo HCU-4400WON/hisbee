@@ -80,8 +80,9 @@ public class PostApiController {
                                                                @RequestParam(required = false) Department department,
                                                                @RequestParam(required = false) Boolean myDeptOnly,
                                                                @RequestParam(required = false) Year year,
+                                                               @RequestParam(required = false) Boolean closed,
                                                                @AuthenticationPrincipal OAuth2User user) {
-        String email = (Objects.isNull(user)) ? "" : user.getName();
+        String email = (user != null) ? user.getName() : null;
         PostSearchFilter filter = PostSearchFilter.builder()
                 .page(page)
                 .type(type)
@@ -91,16 +92,18 @@ public class PostApiController {
                 .department(department)
                 .myDeptOnly(myDeptOnly)
                 .year(year)
+                .isClosed(closed)
+                .email(email)
                 .build();
 
-        return ResponseEntity.ok(postService.readFilteredPost(filter, email));
+        return ResponseEntity.ok(postService.readFilteredPost(filter));
     }
 
     /**
      * 아카이브된 모집글 조회
-     * */
+     */
     @GetMapping("/posts/archived")
-    public ResponseEntity<PostFilterResponse> readAchivedPosts(@AuthenticationPrincipal OAuth2User user){
+    public ResponseEntity<PostFilterResponse> readAchivedPosts(@AuthenticationPrincipal OAuth2User user) {
         String email = (Objects.isNull(user)) ? "" : user.getName();
         return ResponseEntity.ok(postService.readArchivedPost(email));
     }
@@ -113,7 +116,7 @@ public class PostApiController {
 
     @DeleteMapping("/posts/{postId}/likes")
     public ResponseEntity<LikesResponse> undoBookmark(@PathVariable Long postId,
-                                                            @AuthenticationPrincipal OAuth2User user) {
+                                                      @AuthenticationPrincipal OAuth2User user) {
         return ResponseEntity.ok(postService.delBookmark(postId, user.getName()));
     }
 
@@ -125,7 +128,7 @@ public class PostApiController {
 
     @DeleteMapping("/posts/{postId}/archive")
     public ResponseEntity<ArchiveResponse> undoArchive(@PathVariable Long postId,
-                                                            @AuthenticationPrincipal OAuth2User user) {
+                                                       @AuthenticationPrincipal OAuth2User user) {
         return ResponseEntity.ok(postService.delArchive(postId, user.getName()));
     }
 }
