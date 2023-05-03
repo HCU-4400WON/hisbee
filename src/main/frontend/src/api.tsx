@@ -698,6 +698,16 @@ export enum positions {
 //   category: string;
 // }
 
+// const checkHasIncode = (keyword: string) => {
+//   const check_kor = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/; // 한글인지 식별해주기 위한 정규표현식
+
+//   if (keyword.match(check_kor)) {
+//     const encodeKeyword = encodeURI(keyword); // 한글 인코딩
+//     return encodeKeyword;
+//   } else {
+//     return keyword;
+//   }
+// };
 //api
 
 export const readPosts = async (
@@ -757,14 +767,14 @@ export const readPosts = async (
       paramKeywords = "&keywords=" + keywords.join(",");
       console.log(paramKeywords);
     }
-    if (paramMyDeptOnly) {
+    if (myDeptOnly) {
       paramMyDeptOnly = `&myDeptOnly=${true}`;
     }
     if (grade) {
-      paramGrade = `&grade=${grade}`;
+      paramGrade = `&year=${decodeURI(grade)}`;
     }
     if (major) {
-      paramMajor = `&major=${major}`;
+      paramMajor = `&department=${decodeURI(major)}`;
     }
 
     const response = await axios.get(
@@ -776,6 +786,9 @@ export const readPosts = async (
         headers: { Authorization: `Bearer ${TOKEN}` },
         withCredentials: true,
       }
+    );
+    console.log(
+      `${process.env.REACT_APP_BACK_BASE_URL}/posts?${paramPage}${paramOrder}${paramType}${paramLimit}${paramKeywords}${paramMyDeptOnly}${paramGrade}${paramMajor}`
     );
     return response.data;
   } catch (error) {
@@ -1085,6 +1098,7 @@ export interface IReadOnePost {
   createdDate: Date;
   lastModifiedDate: Date;
   qualifications: string;
+  etc: boolean;
   // 지원 자격
 }
 

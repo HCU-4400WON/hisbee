@@ -259,7 +259,7 @@ function Post() {
     // refetch();
   }, [nowPage]);
 
-  const [LIMIT, useLIMIT] = useState<number>(1);
+  const [LIMIT, useLIMIT] = useState<number>(4);
   useEffect(() => {
     const pageOneRefetch = async () => {
       await setNowPage(1);
@@ -571,6 +571,8 @@ function Post() {
     io.observe(sentinel);
   }, [sentinel]);
 
+  const isLogin = useRecoilValue(isLoginState);
+
   return (
     <>
       {isLoading || isLoginCheckLoading ? (
@@ -802,19 +804,23 @@ function Post() {
 
             <SortBox>
               <div className="md:flex items-center justify-between">
-                <MyMajorBox className="">
-                  <MyMajorInput
-                    checked={selectedMyDeptOnly}
-                    onChange={async () => {
-                      setSelectedMyDeptOnly((prev) => !prev);
-                    }}
-                    type="checkBox"
-                    id="myMajor"
-                  />
-                  <MyMajorText htmlFor="myMajor">
-                    내 전공 관련글만 보기
-                  </MyMajorText>
-                </MyMajorBox>
+                {isLogin && (
+                  <MyMajorBox className="">
+                    <MyMajorInput
+                      checked={selectedMyDeptOnly}
+                      onChange={async () => {
+                        setSelectedMyDeptOnly((prev) => !prev);
+                      }}
+                      type="checkBox"
+                      id="myMajor"
+                    />
+
+                    <MyMajorText htmlFor="myMajor">
+                      내 전공 관련글만 보기
+                    </MyMajorText>
+                  </MyMajorBox>
+                )}
+
                 <div className="flex md:none mt-[10px] md:mt-[0px]">
                   <SelectFilterBox
                     ref={majorRef}
