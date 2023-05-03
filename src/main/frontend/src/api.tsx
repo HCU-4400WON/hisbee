@@ -761,16 +761,16 @@ export const readPosts = async (
       paramMyDeptOnly = `&myDeptOnly=${true}`;
     }
     if (grade) {
-      paramGrade = `grade=${grade}`;
+      paramGrade = `&grade=${grade}`;
     }
     if (major) {
-      paramMajor = `major=${major}`;
+      paramMajor = `&major=${major}`;
     }
 
     const response = await axios.get(
       // `http://localhost:8080/posts?${paramPage}${paramSearch}${paramOrder}${paramType}${paramPosition}${paramPay}${paramLimit}`,
 
-      `http://localhost:8080/posts?${paramPage}${paramOrder}${paramType}${paramLimit}${paramKeywords}${paramMyDeptOnly}${paramGrade}${paramMajor}`,
+      `${process.env.REACT_APP_BACK_BASE_URL}/posts?${paramPage}${paramOrder}${paramType}${paramLimit}${paramKeywords}${paramMyDeptOnly}${paramGrade}${paramMajor}`,
       // `http://localhost:8080/posts?${paramPage}${paramSearch}${paramOrder}${paramType}${paramLimit}${paramKeywords}`,
       {
         headers: { Authorization: `Bearer ${TOKEN}` },
@@ -791,10 +791,13 @@ export const readOnePost = async (id: number) => {
 
     const TOKEN = localStorage.getItem("key");
     // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
-    const response = await axios.get(`http://localhost:8080/posts/${id}`, {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
+    const response = await axios.get(
+      `${process.env.REACT_APP_BACK_BASE_URL}/posts/${id}`,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+        withCredentials: true,
+      }
+    );
     return response.data;
   } catch (error) {
     console.error(error);
@@ -834,10 +837,13 @@ export const deletePost = (id: number) => {
   try {
     const TOKEN = localStorage.getItem("key");
     // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
-    const response = axios.delete(`http://localhost:8080/posts/${id}`, {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
+    const response = axios.delete(
+      `${process.env.REACT_APP_BACK_BASE_URL}/posts/${id}`,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+        withCredentials: true,
+      }
+    );
     return response;
   } catch (error) {
     console.error(error);
@@ -872,10 +878,14 @@ export const updatePost = (id: number, data: IUpdatePost) => {
     console.log("DD", data);
     const TOKEN = localStorage.getItem("key");
     // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
-    const response = axios.put(`http://localhost:8080/posts/${id}`, data, {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
+    const response = axios.put(
+      `${process.env.REACT_APP_BACK_BASE_URL}/posts/${id}`,
+      data,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+        withCredentials: true,
+      }
+    );
     return response;
   } catch (error) {
     console.error(error);
@@ -899,10 +909,14 @@ export const userSignUp = (data: ImemberSignup) => {
   try {
     console.log("!!!");
     const TOKEN = localStorage.getItem("key");
-    const response = axios.post("http://localhost:8080/users", data, {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
+    const response = axios.post(
+      `${process.env.REACT_APP_BACK_BASE_URL}/users`,
+      data,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+        withCredentials: true,
+      }
+    );
 
     return response;
   } catch (error) {
@@ -915,10 +929,14 @@ export const userSignUp = (data: ImemberSignup) => {
 export const userUpdate = (data: IUser) => {
   try {
     const TOKEN = localStorage.getItem("key");
-    const response = axios.put("http://localhost:8080/users/me", data, {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
+    const response = axios.put(
+      `${process.env.REACT_APP_BACK_BASE_URL}/users/me`,
+      data,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+        withCredentials: true,
+      }
+    );
     console.log(response);
     return response;
   } catch (error) {
@@ -928,20 +946,26 @@ export const userUpdate = (data: IUser) => {
 
 export const userProfile = async () => {
   const TOKEN = localStorage.getItem("key");
-  const response = await axios.get("http://localhost:8080/users/me", {
-    headers: { Authorization: `Bearer ${TOKEN}` },
-    withCredentials: true,
-  });
+  const response = await axios.get(
+    `${process.env.REACT_APP_BACK_BASE_URL}/users/me`,
+    {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    }
+  );
   return response.data;
 };
 
 export const userDelete = () => {
   try {
     const TOKEN = localStorage.getItem("key");
-    const response = axios.delete("http://localhost:8080/users/me", {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
+    const response = axios.delete(
+      `${process.env.REACT_APP_BACK_BASE_URL}/users/me`,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+        withCredentials: true,
+      }
+    );
     return response;
   } catch (error) {
     console.error(error);
@@ -971,7 +995,7 @@ export const readMembers = async (
   }
 
   const response = await axios.get(
-    `http://localhost:8080/pool?page=${
+    `${process.env.REACT_APP_BACK_BASE_URL}/pool?page=${
       page + ""
     }${paramPosition}${paramDepartment}${paramGrade}`,
     {
@@ -986,7 +1010,7 @@ export const readMembers = async (
 export const addLikePost = async (postId: number) => {
   const TOKEN = localStorage.getItem("key");
   const response = await axios.post(
-    `http://localhost:8080/posts/${postId}/likes`,
+    `${process.env.REACT_APP_BACK_BASE_URL}/posts/${postId}/likes`,
     postId,
     {
       headers: { Authorization: `Bearer ${TOKEN}` },
@@ -1000,7 +1024,7 @@ export const addLikePost = async (postId: number) => {
 export const deleteLikePost = async (postId: number) => {
   const TOKEN = localStorage.getItem("key");
   const response = await axios.delete(
-    `http://localhost:8080/posts/${postId}/likes`,
+    `${process.env.REACT_APP_BACK_BASE_URL}/posts/${postId}/likes`,
     {
       headers: { Authorization: `Bearer ${TOKEN}` },
       withCredentials: true,
@@ -1012,7 +1036,7 @@ export const deleteLikePost = async (postId: number) => {
 
 export const loginCheckApi = () => {
   const TOKEN = localStorage.getItem("key");
-  const response = axios.get(`http://localhost:8080/auth`, {
+  const response = axios.get(`${process.env.REACT_APP_BACK_BASE_URL}/auth`, {
     headers: { Authorization: `Bearer ${TOKEN}` },
     withCredentials: true,
   });
@@ -1095,10 +1119,14 @@ export interface ICreatePost {
 
 export const createPost = async (data: ICreatePost) => {
   const TOKEN = localStorage.getItem("key");
-  const response = axios.post("http://localhost:8080/posts", data, {
-    headers: { Authorization: `Bearer ${TOKEN}` },
-    withCredentials: true,
-  });
+  const response = axios.post(
+    `${process.env.REACT_APP_BACK_BASE_URL}/posts`,
+    data,
+    {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    }
+  );
   return response;
 };
 
@@ -1115,7 +1143,7 @@ export const randomNickname = async () => {
 
 export const validationNickname = async (nickname: string) => {
   const response = await axios.get(
-    `http://localhost:8080/users/validation?nickname=${nickname}`
+    `${process.env.REACT_APP_BACK_BASE_URL}/users/validation?nickname=${nickname}`
   );
 
   return response.data;
@@ -1126,23 +1154,31 @@ export interface IOneUser {
   major1: string;
   major2: string;
 }
-
+// API_REST_API_ROOT_URL
+// "http://localhost:8080/users/me"
 export const readOneMember = async () => {
   const TOKEN = localStorage.getItem("key");
-  const response = await axios.get("http://localhost:8080/users/me", {
-    headers: { Authorization: `Bearer ${TOKEN}` },
-    withCredentials: true,
-  });
+  const response = await axios.get(
+    `${process.env.REACT_APP_BACK_BASE_URL}/users/me`,
+    {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    }
+  );
   return response.data;
 };
 
 export const memberSignUp = (data: IUserSignup) => {
   try {
     const TOKEN = localStorage.getItem("key");
-    const response = axios.post("http://localhost:8080/users", data, {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
+    const response = axios.post(
+      `${process.env.REACT_APP_BACK_BASE_URL}/users`,
+      data,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+        withCredentials: true,
+      }
+    );
 
     return response;
   } catch (error) {
@@ -1155,10 +1191,14 @@ export const memberSignUp = (data: IUserSignup) => {
 export const memberUpdate = (data: IUserUpdate) => {
   try {
     const TOKEN = localStorage.getItem("key");
-    const response = axios.put("http://localhost:8080/users/me", data, {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
+    const response = axios.put(
+      `${process.env.REACT_APP_BACK_BASE_URL}/users/me`,
+      data,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+        withCredentials: true,
+      }
+    );
     console.log(response);
     return response;
   } catch (error) {
@@ -1168,20 +1208,26 @@ export const memberUpdate = (data: IUserUpdate) => {
 
 export const memberProfile = async () => {
   const TOKEN = localStorage.getItem("key");
-  const response = await axios.get("http://localhost:8080/users/me", {
-    headers: { Authorization: `Bearer ${TOKEN}` },
-    withCredentials: true,
-  });
+  const response = await axios.get(
+    `${process.env.REACT_APP_BACK_BASE_URL}/users/me`,
+    {
+      headers: { Authorization: `Bearer ${TOKEN}` },
+      withCredentials: true,
+    }
+  );
   return response.data;
 };
 
 export const memberDelete = () => {
   try {
     const TOKEN = localStorage.getItem("key");
-    const response = axios.delete("http://localhost:8080/users/me", {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    });
+    const response = axios.delete(
+      `${process.env.REACT_APP_BACK_BASE_URL}/users/me`,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+        withCredentials: true,
+      }
+    );
     return response;
   } catch (error) {
     console.error(error);
@@ -1214,6 +1260,8 @@ export interface IUserRead {
 }
 
 export const majorAutoComplete = async (q: string) => {
-  const response = await axios.get(`http://localhost:8080/major?q=${q}`);
+  const response = await axios.get(
+    `${process.env.REACT_APP_BACK_BASE_URL}/major?q=${q}`
+  );
   return response.data;
 };
