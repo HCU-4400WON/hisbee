@@ -87,56 +87,6 @@ export default function UserProfileInputs({
 
   const [isPresent, setIsPresent] = useState<boolean>(false);
 
-  // const [cv, setCollectionView] = useState(new wjCore.CollectionView([], {}));
-  // useEffect(() => {
-  //   fetch("https://mocki.io/v1/c8e84317-feaa-40ea-89cf-2af1fb611d49")
-  //     ?.then((response) => response.json())
-  //     .then((data) => {
-  //       // cv.sourceCollection = data;
-  //       cv.sourceCollection = autoCompleteObj;
-  //       console.log(data);
-  //     });
-  // });
-
-  const autoCompleteObj = [
-    "글로벌리더십학부",
-    "GE",
-    "ICT융합",
-    "ACE",
-    "국제지역학",
-    "영어",
-    "경영학",
-    "경제학",
-    "GM",
-    "한국법",
-    "UIL",
-    "상담심리학",
-    "사회복지학",
-    "공연영상학",
-    "언론정보학",
-    "건설공학",
-    "도시환경공학",
-    "생명과학부",
-    "기계공학",
-    "전자제어공학",
-    "컴퓨터공학",
-    "전자공학",
-    "시각디자인",
-    "제품디자인",
-    "해당없음",
-  ];
-
-  // watch("major2");
-  // console.log(getValues("major2"));
-  // useEffect(() => {
-  //   majorAutoComplete(getValues("major1")).then((data) => {
-  //     let newArr = [];
-  //     data?.results.map((result, index) => {
-  //       newArr;
-  //     });
-  //   });
-  // }, [getValues("major1")]);
-
   const [showList1, setShowList1] = useState<string[] | []>([]);
   const [showList2, setShowList2] = useState<string[] | []>([]);
 
@@ -150,10 +100,11 @@ export default function UserProfileInputs({
     majorAutoComplete(getValues("major2")).then((data) =>
       setShowList2(data.results)
     );
+    console.log("!!");
   }, [getValues("major2")]);
 
   return (
-    <div className="flex h-[200px] items-start">
+    <div className="flex h-[250px] items-start">
       <InfoBox className="relative flex w-[50%] items-center">
         <Info>닉네임</Info>
 
