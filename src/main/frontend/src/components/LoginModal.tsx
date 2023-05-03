@@ -73,7 +73,7 @@ function Login() {
             >
               <img src="img/google.png" className="w-[20px] mr-3" />
               <a
-                href="http://localhost:8080/oauth2/authorization/google"
+                href={`${process.env.REACT_APP_BACK_BASE_URL}/oauth2/authorization/google`}
                 className="text-[17px]"
               >
                 <span className="font-medium">Google</span> 계정으로 로그인
