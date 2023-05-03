@@ -38,7 +38,7 @@ public class PostThumbnailResponse {
         this.createdDate = toDate(thumbnail.getPost().getCreatedDate());
         this.recruitStart = toDate(thumbnail.getRecruitStart());
         this.recruitEnd = toDate(thumbnail.getRecruitEnd());
-        this.hasLiked = thumbnail.getPost().getLikes().stream()
+        this.hasLiked = email != null && thumbnail.getPost().getLikes().stream()
                 .anyMatch(bookmark -> email.equals(bookmark.getMember().getEmail()));
         this.nLike = thumbnail.getPost().getLikes().size();
         this.isClosed = thumbnail.isClosed();

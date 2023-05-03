@@ -34,6 +34,8 @@ public class MemberRepository {
     }
 
     public Optional<Member> findByEmail(String email) {
+        if (email == null) return Optional.empty();
+
         return em.createQuery("select m from Member m where email = :email", Member.class)
                 .setParameter("email", email)
                 .getResultList()

@@ -50,7 +50,7 @@ public class Thumbnail {
         // optional
         this.summary = (request.getSummary() != null) ? request.getSummary() : null;
         this.recruitEnd = (request.getRecruitEnd() != null) ? Utils.toLocalDateTime(request.getRecruitEnd()) : null;
-        this.duration = (request.getDuration() != null) ? request.getDuration() : "미설정";
+        this.duration = (request.getDuration() != null) ? request.getDuration() : Duration.TBD.toKor();
     }
 
     public PostThumbnailResponse toResponse(String email) {
@@ -67,5 +67,9 @@ public class Thumbnail {
         this.isClosed = nonNullOrElse(req.getIsClosed(), isClosed);
 
         if(req.getRecruitEnd() != null && req.getRecruitEnd().after(new Date())) this.isClosed = false;
+    }
+
+    public void close() {
+        this.isClosed = true;
     }
 }
