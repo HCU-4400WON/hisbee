@@ -216,7 +216,7 @@ function SignUp2() {
     },
   };
 
-  watch(["nickname"]);
+  watch(["nickname", "major1", "major2"]);
   useEffect(() => {
     const validationNickFn = async () => {
       const result = await validationNickname(getValues("nickname"));

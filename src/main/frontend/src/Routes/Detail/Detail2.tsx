@@ -45,11 +45,11 @@ import Soon from "components/Soon";
 import { ImageModal } from "./ImageModal";
 
 const Container = tw.div`
-md:w-[1470px] 
-flex w-full
+w-[1470px]
+flex
 `;
 const GoBackSpan = tw.span`
-md:min-w-[100px] min-w-[40px] py-[62px] border-gray-300  flex justify-end
+md:min-w-[100px] py-[62px] border-gray-300  flex justify-end
 `;
 
 const GoBackButton = tw.button`

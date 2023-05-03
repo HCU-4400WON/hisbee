@@ -450,7 +450,7 @@ function PostAddForm2() {
   };
 
   return (
-    <div className="p-[50px]">
+    <div className="p-[50px] w-[1470px]">
       <div className="flex justify-between pb-[20px]">
         <span className="flex w-[210px] items-center justify-between">
           <Link to="/post">
@@ -477,7 +477,7 @@ function PostAddForm2() {
                     </div> */}
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit as any)} className="px-[20px]">
+      <form onSubmit={handleSubmit(onSubmit as any)} className="px-[20px] ">
         <div className="bg-slate-100 p-[50px] rounded-3xl mb-[50px]">
           <div className="flex justify-between w-full relative">
             <p className="text-[20px] font-main">
