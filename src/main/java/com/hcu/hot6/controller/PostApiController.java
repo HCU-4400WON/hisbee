@@ -5,6 +5,7 @@ import com.hcu.hot6.domain.enums.OrderBy;
 import com.hcu.hot6.domain.enums.Year;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
+import com.hcu.hot6.domain.request.PostKeywordRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.*;
 import com.hcu.hot6.service.KeywordService;
@@ -127,5 +128,15 @@ public class PostApiController {
     public ResponseEntity<ArchiveResponse> undoArchive(@PathVariable Long postId,
                                                             @AuthenticationPrincipal OAuth2User user) {
         return ResponseEntity.ok(postService.delArchive(postId, user.getName()));
+    }
+
+    /**
+     * 키워드 추출
+     * */
+    @PostMapping("/posts/keyword")
+    public void extractKeyword(@RequestBody @Validated PostKeywordRequest request){
+        String content = request.getContent();
+
+
     }
 }
