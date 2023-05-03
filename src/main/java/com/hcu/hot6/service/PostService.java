@@ -64,7 +64,7 @@ public class PostService {
     }
 
     public PostFilterResponse readFilteredPost(PostSearchFilter filter, String email) {
-        Member member = memberRepository.findByEmail(email).orElseThrow();
+        Member member = memberRepository.findByEmail(email).orElse(null);
 
         if (Objects.isNull(filter.getPage())) {
             var thumbnailResponses = postRepository.findAll(filter, member).stream()
