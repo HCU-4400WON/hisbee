@@ -156,8 +156,4 @@ public class Post {
     public void countUp() {
         views++;
     }
-
-    public void detach() {
-        this.author = null;
-    }
 }

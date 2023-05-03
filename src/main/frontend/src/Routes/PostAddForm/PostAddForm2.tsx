@@ -224,12 +224,15 @@ function PostAddForm2() {
 
     console.log("데이터");
 
+    let newIsETC = false;
+
     const categoryETCIdx = data?.postTypes.findIndex(
       (elem) => elem === "기타 모임"
     );
     let newKeywords: string[] = [];
 
     if (categoryETCIdx !== -1 && data?.categoryETC !== "") {
+      newIsETC = true;
       data?.postTypes.splice(categoryETCIdx, 1);
       data?.postTypes.push(data?.categoryETC as string);
     } else if (categoryETCIdx !== -1 && data?.categoryETC === "") {
@@ -286,6 +289,7 @@ function PostAddForm2() {
       departments: data?.departments?.length !== 0 ? data?.departments : null,
       keywords: newKeywords,
       posterPaths: imageURLList?.length !== 0 ? imageURLList : null,
+      isETC: newIsETC,
     };
 
     console.log(newPost);
@@ -446,7 +450,7 @@ function PostAddForm2() {
   };
 
   return (
-    <div className="p-[50px]">
+    <div className="p-[50px] w-[1470px]">
       <div className="flex justify-between pb-[20px]">
         <span className="flex w-[210px] items-center justify-between">
           <Link to="/post">
@@ -473,7 +477,7 @@ function PostAddForm2() {
                     </div> */}
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit as any)} className="px-[20px]">
+      <form onSubmit={handleSubmit(onSubmit as any)} className="px-[20px] ">
         <div className="bg-slate-100 p-[50px] rounded-3xl mb-[50px]">
           <div className="flex justify-between w-full relative">
             <p className="text-[20px] font-main">
@@ -659,7 +663,10 @@ function PostAddForm2() {
                           className={`KeywordInput py-[2px] text-[15px] px-[15px] rounded-full ${LightMainBLUE}`}
                           style={{
                             width:
-                              (getValues(lineObj.str as any).length + 5) * 11,
+                              getValues(lineObj.str as any).length > 5
+                                ? (getValues(lineObj.str as any).length + 5) *
+                                  12
+                                : "110px",
                           }}
                           {...register(lineObj.str as any)}
                           onKeyPress={async (
@@ -690,6 +697,7 @@ function PostAddForm2() {
                               setValue(lineObj.str as any, "");
                             }
                           }}
+                          placeholder="키워드 입력"
                         />
 
                         <button
@@ -729,7 +737,7 @@ function PostAddForm2() {
 
               <span className="pl-[30px] mb-[200px]">
                 <span className="mt-[20px] flex items-center mb-[10px]">
-                  <p className="mx-[15px] ">시작</p>
+                  <p className="mx-[15px] w-[30px]">시작</p>
                   <input
                     className={`w-[140px] bg-slate-100 text-blue-500`}
                     type="date"

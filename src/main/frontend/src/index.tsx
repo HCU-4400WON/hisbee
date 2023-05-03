@@ -88,6 +88,8 @@ window.addEventListener("beforeunload", function (e) {
   }
 });
 
+// require("dotenv").config();
+
 root.render(
   // <React.StrictMode>
   <RecoilRoot>

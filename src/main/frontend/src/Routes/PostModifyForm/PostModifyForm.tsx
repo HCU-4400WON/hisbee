@@ -232,6 +232,7 @@ function PostModifyForm() {
       categoryETC: stateConverter("categoryETC", state?.postTypes),
 
       durationText: stateConverter("durationText", state?.duration),
+      etc: state?.etc,
       // first: [],
       // second: [],
 
@@ -338,7 +339,10 @@ function PostModifyForm() {
     );
     let newKeywords: string[] = [];
 
+    let newISETC = false;
+
     if (categoryETCIdx !== -1 && data?.categoryETC !== "") {
+      newISETC = true;
       data?.postTypes.splice(categoryETCIdx, 1);
       data?.postTypes.push(data?.categoryETC as string);
     } else if (categoryETCIdx !== -1 && data?.categoryETC === "") {
@@ -394,6 +398,7 @@ function PostModifyForm() {
       departments: data?.departments?.length !== 0 ? data?.departments : null,
       keywords: newKeywords,
       posterPaths: imageURLList?.length !== 0 ? imageURLList : null,
+      isETC: newISETC,
     };
 
     console.log(newPost);
@@ -832,13 +837,19 @@ function PostModifyForm() {
                     )}
                   </AnimatePresence>
 
-                  <div className="relative flex items-center">
-                    {/* <div className="absolute border flex"> */}
-                    {getValues(lineObj.array as any).length < 3 && (
-                      <>
+                  {getValues(lineObj.array as any).length < 3 && (
+                    <>
+                      <div className="relative flex items-center">
                         <input
                           type="text"
-                          className={`absolute KeywordInput py-[2px] px-[15px] w-[110px] rounded-full ${LightMainBLUE}`}
+                          className={`KeywordInput py-[2px] text-[15px] px-[15px] rounded-full ${LightMainBLUE}`}
+                          style={{
+                            width:
+                              getValues(lineObj.str as any).length > 5
+                                ? (getValues(lineObj.str as any).length + 5) *
+                                  12
+                                : "110px",
+                          }}
                           {...register(lineObj.str as any)}
                           onKeyPress={async (
                             e: React.KeyboardEvent<HTMLInputElement>
@@ -870,6 +881,7 @@ function PostModifyForm() {
                           }}
                           placeholder="키워드 입력"
                         />
+
                         <button
                           type="button"
                           onClick={async () => {
@@ -883,16 +895,14 @@ function PostModifyForm() {
                             );
                             setValue(lineObj.str as any, "");
                           }}
-                          className={`absolute left-[110px] px-[10px] bg-white ml-[5px] rounded-full ${MainBLUE} text-blue-500`}
+                          className={`absolute right-0 px-[10px] ml-[5px] rounded-full text-blue-500`}
                         >
                           {" "}
                           +{" "}
                         </button>
-                      </>
-                    )}
-
-                    {/* </div> */}
-                  </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
 
@@ -909,7 +919,7 @@ function PostModifyForm() {
 
               <span className="pl-[30px] mb-[200px]">
                 <span className="flex items-center mb-[10px]">
-                  <p className="mx-[15px]">시작</p>
+                  <p className="mx-[15px] w-[30px]">시작</p>
                   <input
                     className={`w-[140px] bg-slate-100 text-blue-500`}
                     type="date"

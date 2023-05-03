@@ -45,11 +45,11 @@ import Soon from "components/Soon";
 import { ImageModal } from "./ImageModal";
 
 const Container = tw.div`
-md:w-[1470px] 
-flex w-full
+w-[1470px]
+flex
 `;
 const GoBackSpan = tw.span`
-md:min-w-[100px] min-w-[40px] py-[62px] border-gray-300  flex justify-end
+md:min-w-[100px] py-[62px] border-gray-300  flex justify-end
 `;
 
 const GoBackButton = tw.button`
@@ -242,107 +242,6 @@ function Detail2() {
     )}`;
   };
 
-  //   const { isLoading, data, refetch, isSuccess } = useQuery<IReadOnePost>(
-  //     ["PostInfo", id],
-  //     () => readOnePost(+(id as any)),
-  //     {
-  //       onSuccess: (data) => {
-  //         console.log("debug", data);
-  //         // setValue("maxMentor", data.maxMentor + "");
-  //         // setValue("maxMentee", data.maxMentee + "");
-  //         // setValue("maxMember", data.maxMember + "");
-  //         // setValue("maxDesigner", data.maxDesigner + "");
-  //         // setValue("maxDeveloper", data.maxDeveloper + "");
-  //         // setValue("maxPlanner", data.maxPlanner + "");
-
-  //         // setValue("varified", data.varified);
-  //         // setValue("dtype", data.dtype);
-  //         // setValue("currMentor", data.currMentor + "");
-  //         // setValue("currMentee", data.currMentee + "");
-  //         // setValue("currMember", data.currMember + "");
-  //         // setValue("currPlanner", data.currPlanner + "");
-  //         // setValue("currDeveloper", data.currDeveloper + "");
-  //         // setValue("currDesigner", data.currDesigner + "");
-  //         // setValue(
-  //         //   "projectStart",
-  //         //   `${new Date(data.projectStart).getFullYear()}-${(
-  //         //     new Date(data.projectStart).getMonth() +
-  //         //     1 +
-  //         //     ""
-  //         //   ).padStart(2, "0")}-${(
-  //         //     new Date(data.projectStart).getDate() + ""
-  //         //   ).padStart(2, "0")}`
-  //         // );
-  //         // setValue(
-  //         //   "projectEnd",
-  //         //   `${new Date(data.projectEnd).getFullYear()}-${(
-  //         //     new Date(data.projectEnd).getMonth() +
-  //         //     1 +
-  //         //     ""
-  //         //   ).padStart(2, "0")}-${(
-  //         //     new Date(data.projectEnd).getDate() + ""
-  //         //   ).padStart(2, "0")}`
-  //         // );
-  //         // setValue(
-  //         //   "postStart",
-  //         //   `${new Date(data.postStart).getFullYear()}-${(
-  //         //     new Date(data.postStart).getMonth() +
-  //         //     1 +
-  //         //     ""
-  //         //   ).padStart(2, "0")}-${(
-  //         //     new Date(data.postStart).getDate() + ""
-  //         //   ).padStart(2, "0")}`
-  //         // );
-  //         // setValue(
-  //         //   "postEnd",
-  //         //   `${new Date(data.postEnd).getFullYear()}-${(
-  //         //     new Date(data.postEnd).getMonth() +
-  //         //     1 +
-  //         //     ""
-  //         //   ).padStart(2, "0")}-${(
-  //         //     new Date(data.postEnd).getDate() + ""
-  //         //   ).padStart(2, "0")}`
-  //         // );
-
-  //         // setValue("pay", data.hasPay ? "Yes" : "No");
-  //         // setValue("contact", data.contact);
-  //         // setValue("content", data.content);
-  //         // setValue("title", data.title);
-
-  //         setValue("title", data.title);
-  //         setValue("recruitStart", datetimeToString(data.recruitStart) );
-  //         setValue("recruitEnd" , datetimeToString(data.recruitEnd) );
-  //         setValue("years" , data.years);
-  //         setValue("positions" , data.positions);
-  //         setValue("contact",data.contact);
-  //         setValue("contactDetails" ,data.contactDetails);
-  //         // setValue("지원자격" , )
-  //         setValue("keywords", data.keywords);
-  //         setValue("content" , data.content);
-  //         setValue("posterPaths", data.posterPaths);
-  //         // setValue("views" , data.views);
-  //         // setValue("verified" , data.verified);
-  //         setValue("departments",data.departments)
-
-  //         const contentDraft = htmlToDraft(data.content);
-  //         const { contentBlocks, entityMap } = contentDraft;
-  //         const contentState = ContentState.createFromBlockArray(
-  //           contentBlocks,
-  //           entityMap
-  //         );
-  //         const editorState = EditorState.createWithContent(contentState);
-
-  //         setEditorState(editorState);
-  //         setEditorString(data.content);
-  //       },
-  //       onError: () => {
-  //         console.log("존재하지 않는 게시물입니다.");
-  //         alert("존재하지 않는 게시물입니다.");
-  //         navigate(-1);
-  //       },
-  //     }
-  //   );
-
   const { isLoading, data, refetch, isSuccess } = useQuery<IReadOnePost>(
     ["readOnePost", id],
     () => readOnePost(+(id as any)),
@@ -371,31 +270,6 @@ function Detail2() {
     mode: "onSubmit",
   });
 
-  interface IData {
-    maxMentor: string;
-    maxMentee: string;
-    maxMember: string;
-    maxPlanner: string;
-    maxDesigner: string;
-    maxDeveloper: string;
-
-    currMentor: string;
-    currMentee: string;
-    currMember: string;
-    dtype?: string;
-    projectStart: string | Date;
-    projectEnd: string | Date;
-    postStart: string | Date;
-    postEnd: string | Date;
-    contact: string;
-    currDeveloper: string;
-    currPlanner: string;
-    currDesigner: string;
-    pay: string;
-    title: string;
-    content: string;
-  }
-
   const [isPostDeleteModal, setIsPostDeleteModal] = useRecoilState(
     isPostDeleteModalState
   );
@@ -417,85 +291,6 @@ function Detail2() {
   const [isModifying, setIsModifying] = useState(false);
 
   const navigate = useNavigate();
-  const onValid = async (data: IData) => {
-    if (data.projectStart >= data.projectEnd) {
-      setError("projectEnd", { message: "마감일 이릅니다" });
-      return;
-    }
-    if (data.postStart >= data.postEnd) {
-      setError("postEnd", { message: "마감일이 이릅니다." });
-      return;
-    }
-
-    if (data.dtype === "S") {
-      if (data.maxMember === "0") {
-        setError("maxMember", { message: "0보다 커야 합니다." });
-        return;
-      } else if (data.maxMember < data.currMember) {
-        data.maxMember = data.currMember;
-      }
-    } else if (data.dtype === "M") {
-      if (Number(data.maxMentor) + Number(data.maxMentee) === 0) {
-        setError("maxMentor", { message: "0보다 커야 합니다." });
-        return;
-      } else if (data.maxMentor < data.currMentor) {
-        data.maxMentor = data.currMentor;
-      } else if (data.maxMentee < data.currMentee) {
-        data.maxMentee = data.currMentee;
-      }
-    } else if (data.dtype === "P") {
-      if (
-        Number(data.maxDeveloper) +
-          Number(data.maxPlanner) +
-          Number(data.maxDesigner) ===
-        0
-      ) {
-        setError("maxPlanner", { message: "0보다 커야 합니다." });
-        return;
-      } else if (data.maxPlanner < data.currPlanner) {
-        data.maxPlanner = data.currPlanner;
-      } else if (data.maxDesigner < data.currDesigner) {
-        data.maxDesigner = data.currDesigner;
-      } else if (data.maxDeveloper < data.currDeveloper) {
-        data.maxDeveloper = data.currDeveloper;
-      }
-
-      console.log("제출되었습니다.");
-    }
-
-    const newData = {
-      maxMentor: +data.maxMentor,
-      maxMentee: +data.maxMentee,
-      maxMember: +data.maxMember,
-      maxDeveloper: +data.maxDeveloper,
-      maxDesigner: +data.maxDesigner,
-      maxPlanner: +data.maxPlanner,
-      currMentor: +data.currMentor,
-      currMentee: +data.currMentee,
-      currMember: +data.currMember,
-      currDeveloper: +data.currDeveloper,
-      currPlanner: +data.currPlanner,
-      currDesigner: +data.currDesigner,
-      dtype: data?.dtype,
-      projectStart: new Date(data.projectStart),
-      projectEnd: new Date(data.projectEnd),
-      postStart: new Date(data.postStart),
-      postEnd: new Date(data.postEnd),
-      contact: data.contact,
-      hasPay: data.pay === "Yes" ? true : false,
-      title: data.title,
-      // content: data.content,
-      content: draftToHtml(convertToRaw(editorState.getCurrentContent())),
-    };
-    if (id) {
-      console.log(newData, "new");
-      await updatePost(+id, newData);
-
-      //   refetch();
-    }
-
-    setIsModifying(false);
-  };
 
   const setIsLogin = useSetRecoilState(isLoginState);
 
