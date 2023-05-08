@@ -335,7 +335,7 @@ function Header() {
               Logout
             </NavButton>
           )}
-          {!isLogin && (
+          {isLogin && (
             <Link to="profile2" className="relative ">
               <NavButton
                 className={`${isProfileURL && "text-blue-500"} md:pl-[40px]`}

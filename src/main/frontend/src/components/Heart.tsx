@@ -22,6 +22,7 @@ export default function Heart({ hasLiked, id, refetch, closed }: any) {
           alert("로그인이 필요합니다.");
           if (localStorage.getItem("key")) localStorage.removeItem("key");
           setIsLoginModal(true);
+          setIsLogin(false);
         }
       },
     }

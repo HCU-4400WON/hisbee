@@ -457,11 +457,20 @@ function PostAddForm2() {
       </Helmet>
       <div className="flex justify-between pb-[20px]">
         <span className="flex w-[210px] items-center justify-between">
-          <Link to="/post">
-            <div className="">
-              <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
-            </div>
-          </Link>
+          <button
+            className=""
+            onClick={() => {
+              if (
+                window.confirm(
+                  "정말 글 작성을 취소하시겠습니까?\n작성한 내용이 사라집니다."
+                )
+              )
+                navigate("/post");
+            }}
+          >
+            <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
+          </button>
+
           <p className="md:text-[25px] text-[20px] font-unique">
             모집글 작성하기
           </p>

@@ -398,7 +398,7 @@ function PostModifyForm() {
       years: data?.years?.length !== 0 ? data?.years : null,
       departments: data?.departments?.length !== 0 ? data?.departments : null,
       keywords: newKeywords,
-      posterPaths: imageURLList?.length !== 0 ? imageURLList : null,
+      posterPaths: imageURLList?.length !== 0 ? imageURLList : [],
       isETC: newISETC,
     };
 
