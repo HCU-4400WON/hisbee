@@ -198,11 +198,11 @@ function Profile2() {
     if (paraMode === "likes") {
       switch (paraFilter) {
         case "전체":
-          return data.likes;
+          return data?.likes;
         case "모집 중인 글":
-          return data.likes.filter((post) => !post.closed);
+          return data?.likes.filter((post) => !post.closed);
         case "마감된 글":
-          return data.likes.filter((post) => post.closed || post.archived);
+          return data?.likes.filter((post) => post.closed || post.archived);
       }
     } else if (paraMode === "posts") {
       switch (paraFilter) {

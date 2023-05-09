@@ -15,7 +15,7 @@ export default function LoadingLottie({ isPost }: any) {
     <div
       className={`${
         isPost ? "bg-opacity-30 fixed" : "absolute"
-      } z-[30] top-0 left-0 w-full h-[1200px] justify-center py-[200px] flex bg-white `}
+      } modal z-[30] w-full justify-center py-[200px] h-full flex bg-white `}
     >
       <div className="z-[100] opacity-100">
         <Lottie
