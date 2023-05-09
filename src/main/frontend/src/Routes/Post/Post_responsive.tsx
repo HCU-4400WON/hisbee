@@ -41,12 +41,12 @@ import Outline from "components/Outline";
 
 const SelectFilterBox = tw.select`
 mr-[20px] px-[10px] bg-[#F9FAFB] py-[5px] rounded-lg text-center
-text-gray-500 text-[16px] w-auto
+text-gray-500 text-[10px] w-[80px] md:w-[100px] md:text-[14px] lg:text-[16px] lg:w-auto
 `;
 
 const MyMajorBox = tw.div`
 flex items-center bg-[#F9FAFB] py-[5px] mr-[20px] rounded-lg px-[10px] text-gray-500
-text-[16px] w-auto
+text-[9px] w-[135px] md:text-[14px] lg:text-[16px] md:w-auto
 `;
 const MyMajorInput = tw.input`
 mr-[10px] h-[20px] 
@@ -69,7 +69,10 @@ pb-[40px]
 
 const PostGrid = tw.div`
 grid
-grid-cols-4
+grid-cols-1
+sm:grid-cols-2
+lg:grid-cols-3
+xl:grid-cols-4
 
 place-content-center
 
@@ -86,7 +89,7 @@ min-h-[2000px]
 
 `;
 
-function Post() {
+function Post_responsive() {
   const location = useLocation();
   const search = location.state ? location.state.search : null;
 
@@ -449,8 +452,8 @@ function Post() {
 
           <Outline bgColor="bg-white">
             {/* <div className=" mx-auto flex items-center w-full h-[40px] md:h-[60px] bg-white "> */}
-            <div className="w-[1470px] mx-auto flex items-center w-full h-[60px] bg-white ">
-              <div className="flex justify-between items-center w-full px-[70px] ">
+            <div className="max-w-[1500px] mx-auto flex items-center w-full h-[40px] md:h-[60px] bg-white ">
+              <div className="flex justify-between items-center w-full px-[20px] sm:px-[40px] md:px-[70px]">
                 {Categories.map((category, index) => (
                   <button
                     id="categoryButton"
@@ -459,7 +462,7 @@ function Post() {
                       selectedCategory === category
                         ? "text-blue-600 font-semibold"
                         : "text-gray-400"
-                    }   text-[16px] hover:text-blue-300`}
+                    }   md:text-[16px] text-[10px] hover:text-blue-300`}
                     key={index}
                   >
                     {category}
@@ -471,9 +474,9 @@ function Post() {
 
           <Outline bgColor="bg-gray-100">
             {/* <div className="mt-[20px]"> */}
-            <div className="w-[1470px] mt-[20px]">
-              <div className="flex py-[20px] px-[70px] ">
-                <div className="flex items-start ">
+            <div className="max-w-[1500px] mt-[20px]">
+              <div className="flex py-[0px] md:py-[20px] px-[20px] sm:px-[40px] md:px-[70px] ">
+                <div className="md:flex items-start ">
                   {/* <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] border-2 border-black">
                     {Majors.map((major, index) => (
                       <option key={index}>
@@ -489,8 +492,10 @@ function Post() {
                     ))}
                   </select> */}
                   <span className="flex items-center">
-                    <div className=" mr-[20px] py-[0px]">
-                      <p className="text-[16px] font-[500]">필터링 키워드</p>
+                    <div className=" mr-[20px] py-[10px] md:py-[0px]">
+                      <p className="md:text-[16px] text-[12px] font-[500]">
+                        필터링 키워드
+                      </p>
                     </div>
                     <div className="w-[280px] mr-[30px]">
                       <input
@@ -499,13 +504,13 @@ function Post() {
                         onKeyPress={onKeyPress}
                         onChange={onChange}
                         type="text"
-                        className="w-full text-[15px] border-b border-gray-400 bg-gray-100 "
+                        className="w-full md:text-[15px] text-[12px]  border-b border-gray-400 bg-gray-100 "
                         placeholder="키워드로 원하는 모집글만 볼 수 있어요."
                       />
                     </div>
                   </span>
                   <div className="">
-                    <div className="mb-[0px] grid grid-cols-7 gap-x-[10px] gap-y-[10px]">
+                    <div className="mb-[20px] md:mb-[0px] grid grid-cols-7 gap-x-[10px] gap-y-[10px]">
                       {/* {selectedCategory !== "전체" && (
                         <button
                           id="deleteKeywordButton"
@@ -519,10 +524,10 @@ function Post() {
                           id="deleteKeywordButton"
                           onClick={onClick}
                           key={index}
-                          className=" flex justify-center text-[14px] bg-white flex items-center py-[5px] border-0 rounded-lg text-center px-[13px] h-[30px]"
+                          className=" flex justify-center text-[10px] md:text-[14px] bg-white flex items-center py-[5px] border-0 rounded-lg text-center px-[7px] md:px-[13px] h-[20px] md:h-[30px]"
                         >
                           {keyword}
-                          <div className="text-[15px] font-[100] text-black ml-[5px] ">
+                          <div className="text-[10px] lg:text-[15px] font-[100] text-black ml-[5px] ">
                             X
                           </div>
                         </button>
@@ -535,11 +540,13 @@ function Post() {
                       필터 전체 삭제 버튼
                 </button> */}
               </div>
-              <div className=" flex items-start px-[70px]  mb-[30px] ">
+              <div className=" md:flex items-start px-[20px] sm:px-[40px] md:px-[70px]  mb-[0px] md:mb-[30px] ">
                 <div className="flex mr-[20px] mt-[4px]">
-                  <p className="text-[14px] mb-[0px]">추천 키워드 </p>
+                  <p className="text-[12px] md:text-[14px] mb-[10px] md:mb-[0px]">
+                    추천 키워드{" "}
+                  </p>
                 </div>
-                <div className="grid grid-cols-8 gap-x-[10px] gap-y-[10px]">
+                <div className="grid grid-cols-5 lg:grid-cols-8 gap-y-[5px] md:gap-y-[10px] gap-x-[10px]">
                   {keywords.map(
                     (keyword, index) =>
                       !selectedKeywords.includes(keyword as never) && (
@@ -547,10 +554,10 @@ function Post() {
                           id="insertKeywordButton"
                           onClick={onClick}
                           key={index}
-                          className="flex justify-center text-[14px] bg-gray-200 flex items-center py-[5px] border-0 rounded-lg text-center px-[13px] h-[30px]"
+                          className="flex justify-center text-[10px] md:text-[14px] bg-gray-200 flex items-center py-[5px] border-0 rounded-lg text-center px-[7px] md:px-[13px] h-[20px] md:h-[30px]"
                         >
                           <p>{keyword}</p>
-                          <div className="text-[25px] font-[100] ml-[5px]">
+                          <div className="text-[15px] md:text-[25px] font-[100] ml-[5px]">
                             +
                           </div>
                         </button>
@@ -559,9 +566,120 @@ function Post() {
                 </div>
               </div>
 
-              <div className="px-[0px] max-w-[1220px] mx-auto">
+              {/* keyword */}
+              {/* <div className="flex items-center h-[60px] border-b-2 border-gray-300 px-[50px] text-[17px]">
+                <div className="flex items-center min-w-[330px] justify-between">
+                <label htmlFor="filtering" className="">키워드</label>
+                <input id="filtering" type="text" className="border-2 border-gray-400 px-[10px]" placeholder="키워드 입력"></input>
+                <button className="px-[10px] text-white h-[29px] bg-black">검색</button>
+                </div>
+                <div className="w-full ml-[50px] flex items-center">
+                {selectedKeywords.map((keyword , index) => (
+                  <div id={keyword} onClick={() => {
+                    setSelectedKeywords( (prev) => {
+                      const deleteIdx = prev.findIndex( (elem) => elem === keyword)
+                    return [...prev.splice(0,deleteIdx) , ...prev.splice(deleteIdx+1)];
+                    })
+                  }} 
+                  key={index} className="border-2 bg-black flex items-center h-[33px] text-white rounded-full text-center px-[20px] mr-[30px] ">
+                    <p>{keyword}</p>
+                    </div>))}
+                    
+
+                  {keywords.map( ( keyword, index) => (
+                    !selectedKeywords.includes(keyword as never) &&(<div id={keyword} onClick={
+                      () => {
+                        setSelectedKeywords(prev => [...prev , keyword]);
+                      }
+                    } key={index} className=" flex items-center border-2 h-[33px] border-gray-300 rounded-full text-center px-[20px] mr-[30px] ">
+                      <p>{keyword}</p>
+                      </div>)
+                    
+                  ))}
+                  
+
+                </div>
+              </div> */}
+
+              {/* <FilterRow>
+              <FilterTitle>CATEGORY</FilterTitle>
+              <FilterButtonBox>
+                {categories.map((category) => (
+                  <Button
+                    key={category}
+                    id="category"
+                    name={category}
+                    onClick={onClick}
+                    className={`${
+                      category === filterCategory &&
+                      "border-black bg-black text-white "
+                    }`}
+                  >
+                    {category === "study"
+                      ? "스터디"
+                      : category === "mentoring"
+                      ? "멘토링"
+                      : "프로젝트"}
+                  </Button>
+                ))}
+              </FilterButtonBox>
+            </FilterRow>
+            {filterCategory === "" ? null : (
+              <FilterRow>
+                <FilterTitle>POSITION</FilterTitle>
+                <FilterButtonBox>
+                  {positions[filterCategory].map((position) => (
+                    <Button
+                      id="position"
+                      name={position}
+                      key={position}
+                      onClick={onClick}
+                      className={`${
+                        position === filterPosition &&
+                        "border-black bg-black text-white"
+                      }`}
+                    >
+                      {position === "member"
+                        ? "멤버"
+                        : position === "mentor"
+                        ? "멘토"
+                        : position === "mentee"
+                        ? "멘티"
+                        : position === "planner"
+                        ? "기획자"
+                        : position === "developer"
+                        ? "개발자"
+                        : "디자이너"}
+                    </Button>
+                  ))}
+                </FilterButtonBox>
+              </FilterRow>
+            )}
+
+            {filterCategory === "" || filterCategory === "study" ? null : (
+              <FilterRow>
+                <FilterTitle>PAY</FilterTitle>
+                <FilterButtonBox>
+                  {pays[filterCategory].map((pay) => (
+                    <Button
+                      id="pay"
+                      name={pay}
+                      key={pay}
+                      onClick={onClick}
+                      className={`${
+                        pay === filterPay && "border-black bg-black text-white"
+                      }`}
+                    >
+                      {pay === "yes" ? "있음" : "없음"}
+                    </Button>
+                  ))}
+                </FilterButtonBox>
+              </FilterRow>
+            )} */}
+
+              <div className="w-auto px-[20px] sm:px-[0px] sm:max-w-[600px] lg:max-w-[910px] xl:max-w-[1220px] mx-[auto]">
                 <SortBox className="">
-                  <div className=" flex items-center justify-between">
+                  <div className=" md:flex items-center justify-between">
                     {isLogin && (
                       <MyMajorBox className="">
                         <MyMajorInput
@@ -579,7 +697,7 @@ function Post() {
                       </MyMajorBox>
                     )}
 
-                    <div className="flex mt-[0px]">
+                    <div className="flex md:none mt-[10px] md:mt-[0px] w-[500px]">
                       <SelectFilterBox
                         className=""
                         value={selectedMajor}
@@ -637,7 +755,7 @@ function Post() {
                     </div>
                   </div>
                   <Link to="/add2">
-                    <button className="min-w-[130px] text-[15px] text-white py-[5px] bg-blue-600 px-[15px] rounded-lg py-[8px]">
+                    <button className=" md:min-w-[130px] text-[10px] md:text-[15px] text-white py-[5px] bg-blue-600 px-[15px] rounded-lg py-[8px]">
                       모집글 작성하기
                     </button>
                   </Link>
@@ -660,15 +778,59 @@ function Post() {
               </div>
             </div>
             {/* </Outline> */}
+            {
+              unionData.length === 0 && (
+                <div className="flex justify-center items-center w-full h-[50px] text-[17px] text-black mt-[50px]">
+                  <i className="fa-solid fa-circle-exclamation text-black mx-[10px]">
+                    &nbsp;
+                  </i>
+                  <p className="font-bold">게시물이 존재하지 않습니다</p>
+                </div>
+              )
+
+              // : (
+              // <div className="flex justify-center items-center w-full h-[100px]  ">
+              //   <button
+              //     id="prev"
+              //     onClick={onPageClick}
+              //     className="w-[70px] h-[30px] flex justify-center items-center "
+              //   >
+              //     <i className="fa-solid fa-circle-left text-[30px]"></i>
+              //   </button>
+
+              //   {Array.from(
+              //     {
+              //       length: Math.ceil(
+              //         (Number(posts?.total)) / POSTS_PER_PAGE
+              //       ),
+              //     },
+              //     (v, i) => i + 1
+              //   )
+              //     .slice(prevPage, nextPage - 1)
+              //     .map((page) => (
+              //       <button
+              //         id={page + ""}
+              //         onClick={onPageClick}
+              //         className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold hover:opacity-70
+              //        ${page === nowPage && "opacity-30"} `}
+              //       >
+              //         {page}
+              //       </button>
+              //     ))}
+              //   {/* </>
+              // )} */}
+
+              //   <button
+              //     id="next"
+              //     onClick={onPageClick}
+              //     className="w-[70px] h-[30px] flex justify-center items-center"
+              //   >
+              //     <i className="fa-solid fa-circle-right text-[30px]"></i>
+              //   </button>
+              // </div>
+              // )
+            }
           </Outline>
-          {unionData.length === 0 && (
-            <div className="flex justify-center items-center w-full h-[50px] text-[17px] text-black mt-[50px]">
-              <i className="fa-solid fa-circle-exclamation text-black mx-[10px]">
-                &nbsp;
-              </i>
-              <p className="font-bold">게시물이 존재하지 않습니다</p>
-            </div>
-          )}
         </Container>
 
         <p id="sentinel"></p>
@@ -677,4 +839,4 @@ function Post() {
   );
 }
 
-export default Post;
+export default Post_responsive;

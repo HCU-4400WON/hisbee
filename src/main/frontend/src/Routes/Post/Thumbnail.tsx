@@ -53,7 +53,7 @@ function Thumbnail({
   return (
     <motion.div
       whileHover={{ scale: 1.1 }}
-      className={`flex flex-col max-w-[290px] h-[240px] mb-[50px] rounded-[15px] border bg-white ${
+      className={`flex flex-col w-[290px] h-[240px] mb-[50px] rounded-[15px] border bg-white ${
         closed && "bg-gray-300 opacity-60"
       }`}
     >

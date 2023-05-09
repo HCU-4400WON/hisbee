@@ -89,12 +89,7 @@ function App() {
   // useEffect(() => {
   //   console.log(closingWindow);
   // }, [closingWindow]);
-  return (
-    <>
-      <Router />
-      {/* <ReactQueryDevtools initialIsOpen={true} /> */}
-    </>
-  );
+  return <Router />;
 }
 
 export default App;

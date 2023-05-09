@@ -802,14 +802,14 @@ export const readOnePost = async (id: number) => {
     // axios.defaults.headers.common["Authorization"] = await `Bearer ${TOKEN}`;
     // const response = await axios.get(`http://localhost:8080/posts/${id}`);
 
-    // const TOKEN = localStorage.getItem("key");
-    // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
+    const TOKEN = localStorage.getItem("key");
+    axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
     const response = await axios.get(
-      `${process.env.REACT_APP_BACK_BASE_URL}/posts/${id}`
-      // {
-      // headers: { Authorization: `Bearer ${TOKEN}` },
-      //   withCredentials: true,
-      // }
+      `${process.env.REACT_APP_BACK_BASE_URL}/posts/${id}`,
+      {
+        headers: { Authorization: `Bearer ${TOKEN}` },
+        withCredentials: true,
+      }
     );
     return response.data;
   } catch (error) {

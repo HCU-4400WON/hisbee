@@ -234,6 +234,7 @@ function Detail2() {
 
   const { id } = useParams();
   const datetimeToString = (datetime: Date) => {
+    if (!datetime) return "상시 모집";
     return `${new Date(datetime).getFullYear()}-${(
       new Date(datetime).getMonth() +
       1 +
