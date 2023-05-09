@@ -1150,8 +1150,12 @@ export interface IRandomNickname {
 }
 
 export const randomNickname = async () => {
-  const response = await axios.get("naver/?format=json&max_length=8");
+  const response = await axios.get(
+    `${process.env.REACT_APP_RANDOM_NICKNAME_URL}`
+  );
+  // const response = await axios.get("naver/?format=json&max_length=8");
   console.log("get RandomNickname api 중...");
+  console.log(process.env.REACT_APP_RANDOM_NICKNAME_URL);
   return response.data;
 };
 

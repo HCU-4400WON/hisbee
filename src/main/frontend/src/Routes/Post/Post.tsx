@@ -191,11 +191,14 @@ function Post() {
   const [selectedCategory, setSelectedCategory] = useState<string | "">("전체"); // about category
   const [keywordInput, setKeywordInput] = useState<string | "">("");
   const [keywords, setKeywords] = useState<string[] | []>([
-    "프로젝트",
+    "취업",
     "스터디",
-    "멘토링",
     "밥고",
     "팀 프로젝트",
+    "기독교",
+    "주말",
+    "취미",
+    "보컬",
   ]);
   const [selectedKeywords, setSelectedKeywords] = useState<string[] | []>([]);
 

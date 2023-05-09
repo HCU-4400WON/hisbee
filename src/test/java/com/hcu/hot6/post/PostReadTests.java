@@ -348,26 +348,22 @@ public class PostReadTests {
         assertThat(like.size()).isEqualTo(0);
         assertThat(res.isHasLiked()).isEqualTo(false);
     }
-
+  
     @Test
-    public void 내가_작성한글_verified() throws Exception {
+    public void 내가_작성한_글에_대한_권한_확인() throws Exception {
         // given
-        final var req = PostCreationRequest.builder()
-                .title("모집글 제목")
-                .summary("한 줄 소개")
-                .postTypes(List.of("학회", "학술모임"))
+        var req = PostCreationRequest.builder()
+                .title("제목")
                 .recruitStart(new Date())
-                .recruitEnd(new Date())
-                .contact("example@test.com")
-                .qualifications("전산 1전공")
-                .duration("봄학기 ~ 여름방학")
+                .recruitEnd(null)
                 .build();
 
         // when
-        PostCreationResponse postRes = postService.createPost(req, TEST_EMAIL);
-        var res = postService.readOnePost(postRes.getId(), TEST_EMAIL);
+        var post = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
 
         // then
+        assertThat(res.getTitle()).isEqualTo("제목");
         assertThat(res.isVerified()).isTrue();
     }
 
@@ -391,5 +387,23 @@ public class PostReadTests {
 
         // then
         assertThat(res.isVerified()).isFalse();
+    }
+
+    @Test
+    public void 모집글_마감기간_미설정() throws Exception {
+        // given
+        var req = PostCreationRequest.builder()
+                .title("제목")
+                .recruitStart(new Date())
+                .recruitEnd(null)
+                .build();
+
+        // when
+        var post = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
+
+        // then
+        assertThat(res.getTitle()).isEqualTo("제목");
+        assertThat(res.getRecruitEnd()).isNull();
     }
 }
