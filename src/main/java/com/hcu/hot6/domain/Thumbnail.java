@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 import static com.hcu.hot6.util.Utils.nonNullOrElse;
+import static com.hcu.hot6.util.Utils.toLocalDateTime;
 
 @Getter
 @Entity
@@ -62,11 +63,11 @@ public class Thumbnail {
         this.tags = (req.getTags() != null) ? req.getTags().combine() : tags;
         this.summary = nonNullOrElse(req.getSummary(), summary);
         this.recruitStart = nonNullOrElse(Utils.toLocalDateTime(req.getRecruitStart()), recruitStart);
-        this.recruitEnd = nonNullOrElse(Utils.toLocalDateTime(req.getRecruitEnd()), recruitEnd);
+        this.recruitEnd = toLocalDateTime(req.getRecruitEnd());
         this.duration = nonNullOrElse(req.getDuration(), duration);
         this.isClosed = nonNullOrElse(req.getIsClosed(), isClosed);
 
-        if(req.getRecruitEnd() != null && req.getRecruitEnd().after(new Date())) this.isClosed = false;
+        if (req.getRecruitEnd() != null && req.getRecruitEnd().after(new Date())) this.isClosed = false;
     }
 
     public void close() {

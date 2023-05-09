@@ -278,4 +278,22 @@ public class PostReadTests {
         // then
         assertThat(res.getDuration()).isEqualTo("봄학기 ~ 여름방학");
     }
+
+    @Test
+    public void 모집글_마감기간_미설정() throws Exception {
+        // given
+        var req = PostCreationRequest.builder()
+                .title("제목")
+                .recruitStart(new Date())
+                .recruitEnd(null)
+                .build();
+
+        // when
+        var post = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
+
+        // then
+        assertThat(res.getTitle()).isEqualTo("제목");
+        assertThat(res.getRecruitEnd()).isNull();
+    }
 }
