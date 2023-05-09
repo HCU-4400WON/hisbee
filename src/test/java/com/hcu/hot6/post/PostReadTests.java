@@ -296,4 +296,22 @@ public class PostReadTests {
         assertThat(res.getTitle()).isEqualTo("제목");
         assertThat(res.getRecruitEnd()).isNull();
     }
+
+    @Test
+    public void 내가_작성한_글에_대한_권한_확인() throws Exception {
+        // given
+        var req = PostCreationRequest.builder()
+                .title("제목")
+                .recruitStart(new Date())
+                .recruitEnd(null)
+                .build();
+
+        // when
+        var post = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
+
+        // then
+        assertThat(res.getTitle()).isEqualTo("제목");
+        assertThat(res.isVerified()).isTrue();
+    }
 }
