@@ -6,6 +6,7 @@ import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.request.TagForm;
 import com.hcu.hot6.repository.MemberRepository;
+import com.hcu.hot6.schedule.ScheduledTasks;
 import com.hcu.hot6.service.PostService;
 import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +34,9 @@ public class PostUpdateTests {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private ScheduledTasks scheduledTasks;
 
     @PostConstruct
     void memberSetup() {
@@ -168,5 +173,28 @@ public class PostUpdateTests {
         // then
         assertThat(res.getTitle()).isEqualTo("제목");
         assertThat(res.getRecruitEnd()).isNotNull();
+    }
+
+    @Test
+    public void 마감일지난_모집글_마감처리() throws Exception {
+        // given
+        Calendar instance = Calendar.getInstance();
+        instance.setTime(new Date());
+        Date start = instance.getTime();
+        instance.add(Calendar.DAY_OF_MONTH, -1);
+
+        var req = PostCreationRequest.builder()
+                .title("제목")
+                .recruitStart(start)
+                .recruitEnd(instance.getTime())
+                .build();
+        var post = postService.createPost(req, TEST_EMAIL);
+
+        // when
+        scheduledTasks.midnightPostClose();
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
+
+        // then
+        assertThat(res.isClosed()).isTrue();
     }
 }
