@@ -23,8 +23,13 @@ import {
 import { createPost, ICreatePost } from "api";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
-import { useSetRecoilState } from "recoil";
-import { isLoginModalState, isLoginState } from "components/atom";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  isAlertModalState,
+  isConfirmModalState,
+  isLoginModalState,
+  isLoginState,
+} from "components/atom";
 import Soon from "components/Soon";
 import { AnimatePresence, motion } from "framer-motion";
 import { ImageUpload } from "./components/ImageUpload";
@@ -34,6 +39,8 @@ import { People } from "./components/People";
 import { Duration } from "./components/Duration";
 import { Keywords } from "./components/Keywords";
 import { Helmet } from "react-helmet";
+import ConfirmModal from "components/ConfirmModal";
+import AlertModal from "components/AlertModal";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -184,6 +191,9 @@ function PostAddForm2() {
 
   // const keywordWatchs = [watch("firstKeyword"), watch("secondKeyword")];
 
+  const [isPostSubmitAlertModal, setIsPostSubmitAlertModal] =
+    useRecoilState(isAlertModalState);
+
   const setIsLogin = useSetRecoilState(isLoginState);
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
@@ -198,14 +208,15 @@ function PostAddForm2() {
       {
         onSuccess: (data) => {
           console.log("모집글이 생성되었습니다.", data);
-          alert("모집글이 생성되었습니다.");
-          navigate("/post");
+          // alert("모집글이 생성되었습니다.");
+          // navigate("/post");
+          setIsPostSubmitAlertModal(true);
         },
         onError: (error) => {
           if (
             ((error as AxiosError).response as AxiosResponse).status === 401
           ) {
-            // alert("로그인이 필요합니다.");
+            alert("로그인이 필요합니다.");
             // setIsLoginModal(true);
             // setIsLogin(false);
             // if (localStorage.getItem("key")) localStorage.removeItem("key");
@@ -450,8 +461,35 @@ function PostAddForm2() {
     },
   };
 
+  const handleConfirmModal = async (event: any) => {
+    setIsGoBackConfirmModal(false);
+    if (event.currentTarget.id === "yes") {
+      navigate("/");
+    }
+  };
+
+  const handleAlertModal = () => {
+    setIsPostSubmitAlertModal(false);
+    navigate("/");
+  };
+
+  const [isGoBackConfirmModal, setIsGoBackConfirmModal] =
+    useRecoilState(isConfirmModalState);
   return (
     <div className="p-[50px] w-[1470px]">
+      {isGoBackConfirmModal && (
+        <ConfirmModal
+          text="정말 글 작성을 취소하시겠습니까?; 작성한 내용이 사라집니다."
+          onClick={handleConfirmModal}
+        />
+      )}
+
+      {isPostSubmitAlertModal && (
+        <AlertModal
+          text="모집글이 생성되었습니다."
+          onClick={handleAlertModal}
+        />
+      )}
       <Helmet>
         <title>모집 글 작성하기</title>
       </Helmet>
@@ -460,12 +498,7 @@ function PostAddForm2() {
           <button
             className=""
             onClick={() => {
-              if (
-                window.confirm(
-                  "정말 글 작성을 취소하시겠습니까?\n작성한 내용이 사라집니다."
-                )
-              )
-                navigate("/post");
+              setIsGoBackConfirmModal(true);
             }}
           >
             <i className="fa-solid fa-arrow-left-long text-[20px]"></i>

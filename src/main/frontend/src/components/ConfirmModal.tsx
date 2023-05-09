@@ -14,18 +14,9 @@ const LayoutVariant = {
   },
 };
 
-export default function ConfirmModal({ text }: any) {
+export default function ConfirmModal({ text, onClick }: any) {
+  const convertedText = text?.split(";");
   const setConfirmModal = useSetRecoilState(isConfirmModalState);
-
-  const onClick = async (event: any) => {
-    setConfirmModal(false);
-
-    if (event.currentTarget.id === "yes") {
-      return true;
-    } else if (event.currentTarget.id === "no") {
-      return false;
-    }
-  };
 
   return (
     <div>
@@ -39,8 +30,11 @@ export default function ConfirmModal({ text }: any) {
         className="z-10 bg-[rgba(0,0,0,0.5)] fixed top-0 left-0 w-full h-screen opacity-100"
       ></motion.div>
       <div className="modal fixed z-20 flex justify-center w-full ">
-        <div className="w-[400px] rounded-2xl bg-[white] h-[250px] py-[30px] px-[30px] flex-col">
-          <span className="flex justify-end ">
+        <div className="w-[400px] bg-[white] h-[250px] py-[30px] px-[30px] flex-col">
+          <span className="flex justify-between ">
+            <div className="w-[10px]"></div>
+
+            <img className="w-[120px]" src="/img/logo_hisbee.png " />
             <i
               onClick={onClick}
               id="no"
@@ -49,8 +43,13 @@ export default function ConfirmModal({ text }: any) {
           </span>
           <span className="flex justify-center  ">
             <span className="flex flex-col w-[300px] items-center">
-              <img className="w-[120px]" src="/img/logo_hisbee.png " />
-              <p className="text-[20px] mt-[30px] mb-[50px]">{text}</p>
+              <p className="text-[18px] mt-[40px] mb-[40px] text-center">
+                {convertedText?.map((line: string, index: number) => (
+                  <p className="" key={index}>
+                    {line}
+                  </p>
+                ))}
+              </p>
             </span>
           </span>
 
@@ -62,7 +61,7 @@ export default function ConfirmModal({ text }: any) {
                 className="bg-gray-100 w-[110px] rounded-lg px-[20px] py-[4px] text-[15px]"
               >
                 {" "}
-                취소 !
+                취소
               </button>
               <button
                 onClick={onClick}
