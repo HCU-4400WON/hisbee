@@ -95,9 +95,6 @@ public class PostService {
         Member member = memberRepository.findByEmail(email).orElseThrow();
         Post post = postRepository.findOne(postId).orElseThrow();
 
-//        Likes like = new Likes(post, member);
-//        likesRepository.save(like);
-//        post.getLikes().add(like);
         post.addBookmark(member);
         List<Likes> like = likesRepository.findOne(post, member);
 

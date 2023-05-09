@@ -348,4 +348,48 @@ public class PostReadTests {
         assertThat(like.size()).isEqualTo(0);
         assertThat(res.isHasLiked()).isEqualTo(false);
     }
+
+    @Test
+    public void 내가_작성한글_verified() throws Exception {
+        // given
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .duration("봄학기 ~ 여름방학")
+                .build();
+
+        // when
+        PostCreationResponse postRes = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(postRes.getId(), TEST_EMAIL);
+
+        // then
+        assertThat(res.isVerified()).isTrue();
+    }
+
+    @Test
+    public void 내가_작성하지_않은글_verified() throws Exception {
+        // given
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .duration("봄학기 ~ 여름방학")
+                .build();
+
+        // when
+        PostCreationResponse postRes = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(postRes.getId(), "22000630@handong.ac.kr");
+
+        // then
+        assertThat(res.isVerified()).isFalse();
+    }
 }
