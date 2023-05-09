@@ -102,7 +102,7 @@ flex
 justify-between
 pt-[20px]
 pb-[40px]
-px-[20px]
+
 
 `;
 
@@ -114,28 +114,30 @@ mr-5
 
 const SortSelect = tw.select`
   
-  
-  
 `;
 
 const PostGrid = tw.div`
 grid
 grid-cols-1
-md:grid-cols-2
+sm:grid-cols-2
 lg:grid-cols-3
 xl:grid-cols-4
-gap-x-10
-px-5
-place-items-center
+
+place-content-center
+
+
+
+gap-x-[20px]
+
 
 `;
 
 const Container = tw.div`
 bg-gray-100
-min-w-[480px]
 pb-[100px]
 
-h-[2000px]
+
+min-h-[2000px]
 
 `;
 
@@ -143,6 +145,11 @@ const FormCancelIcon = tw.i`
 fa-solid fa-xmark text-[10px] lg:text-[16px] text-black ml-[5px] lg:mt-[2px] 
 `;
 
+const FilteringContainer = tw.div`
+
+lg:w-[930px]
+xl:w-[1220px]
+`;
 // export interface IPost {
 //   id: number;
 //   writer: string;
@@ -584,41 +591,39 @@ function Post() {
 
   return (
     <>
-      {isLoading || isLoginCheckLoading ? (
-        <LoadingAnimation />
-      ) : (
-        <>
-          <Helmet>
-            <title>Hisbee</title>
-          </Helmet>
-          {isLoginModal ? <Login /> : null}
-          {isSignupModal ? <SignUp2 /> : null}
+      {(isLoading || isLoginCheckLoading) && <LoadingLottie isPost={true} />}
+      <>
+        <Helmet>
+          <title>Hisbee</title>
+        </Helmet>
+        {isLoginModal ? <Login /> : null}
+        {isSignupModal ? <SignUp2 /> : null}
 
-          <Container>
-            <Banner src="./img/banner_post.png"></Banner>
+        <Container>
+          <Banner src="./img/banner_post.png"></Banner>
 
-            <div className="">
-              <div className="flex justify-center items-center w-full h-[40px] md:h-[60px] bg-white">
-                <div className=" flex justify-evenly w-[90%]  ">
-                  {Categories.map((category, index) => (
-                    <button
-                      id="categoryButton"
-                      onClick={onClick}
-                      className={`${
-                        selectedCategory === category
-                          ? "text-blue-600 font-semibold"
-                          : "text-gray-400"
-                      }   md:text-[16px] text-[10px] hover:text-blue-300`}
-                      key={index}
-                    >
-                      {category}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex py-[0px] md:py-[20px] justify-between px-[20px] ">
-                <div className="md:flex items-center">
-                  {/* <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] border-2 border-black">
+          <div className="flex justify-center items-center w-full h-[40px] md:h-[60px] bg-white">
+            <div className=" flex justify-evenly w-[90%]  ">
+              {Categories.map((category, index) => (
+                <button
+                  id="categoryButton"
+                  onClick={onClick}
+                  className={`${
+                    selectedCategory === category
+                      ? "text-blue-600 font-semibold"
+                      : "text-gray-400"
+                  }   md:text-[16px] text-[10px] hover:text-blue-300`}
+                  key={index}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="max-w-[1500px] mx-auto">
+            <div className="flex py-[0px] md:py-[20px] justify-between px-[20px] sm:px-[40px] md:px-[70px] ">
+              <div className="md:flex items-center ">
+                {/* <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] border-2 border-black">
                     {Majors.map((major, index) => (
                       <option key={index}>
                         {major}
@@ -632,27 +637,25 @@ function Post() {
                       </option>
                     ))}
                   </select> */}
-                  <span className="flex items-center">
-                    <div className="md:w-[130px] flex md:justify-end mr-[20px] py-[10px] md:py-[0px]">
-                      <p className="md:text-[18px] text-[12px] ">
-                        필터링 키워드
-                      </p>
-                    </div>
-                    <div className="w-[280px] mr-[30px]">
-                      <input
-                        value={keywordInput}
-                        id="keywordInput"
-                        onKeyPress={onKeyPress}
-                        onChange={onChange}
-                        type="text"
-                        className="w-full md:text-[16px] text-[12px] px-[10px]  border-b border-gray-400 bg-gray-100 "
-                        placeholder="키워드로 원하는 모집글만 볼 수 있어요."
-                      />
-                    </div>
-                  </span>
-                  <span>
-                    <div className="mb-[20px] md:mb-[0px] w-full flex items-center ">
-                      {/* {selectedCategory !== "전체" && (
+                <span className="flex items-center">
+                  <div className=" mr-[20px] py-[10px] md:py-[0px]">
+                    <p className="md:text-[18px] text-[12px] ">필터링 키워드</p>
+                  </div>
+                  <div className="w-[280px] mr-[30px]">
+                    <input
+                      value={keywordInput}
+                      id="keywordInput"
+                      onKeyPress={onKeyPress}
+                      onChange={onChange}
+                      type="text"
+                      className="w-full md:text-[16px] text-[12px]  border-b border-gray-400 bg-gray-100 "
+                      placeholder="키워드로 원하는 모집글만 볼 수 있어요."
+                    />
+                  </div>
+                </span>
+                <span>
+                  <div className="mb-[20px] md:mb-[0px] w-full flex items-center ">
+                    {/* {selectedCategory !== "전체" && (
                         <button
                           id="deleteKeywordButton"
                           className="text-[16px] bg-white flex items-center h-[30px] border-0 rounded-lg text-center px-[10px] mr-[30px]"
@@ -660,47 +663,46 @@ function Post() {
                           {selectedCategory}
                         </button>
                       )} */}
-                      {selectedKeywords.map((keyword, index) => (
-                        <button
-                          id="deleteKeywordButton"
-                          onClick={onClick}
-                          key={index}
-                          className="  min-w-[80px] text-[10px] lg:min-w-[100px] lg:text-[16px] py-[3px] lg:py-[5px] bg-white flex items-center justify-center border-0 rounded-lg text-center px-[7px] lg:px-[15px] mr-[15px] lg:mr-[30px]"
-                        >
-                          {keyword}
-                          <FormCancelIcon />
-                        </button>
-                      ))}
-                    </div>
-                  </span>
-                </div>
+                    {selectedKeywords.map((keyword, index) => (
+                      <button
+                        id="deleteKeywordButton"
+                        onClick={onClick}
+                        key={index}
+                        className="  min-w-[80px] text-[10px] lg:min-w-[100px] lg:text-[16px] py-[3px] lg:py-[5px] bg-white flex items-center justify-center border-0 rounded-lg text-center px-[7px] lg:px-[15px] mr-[15px] lg:mr-[30px]"
+                      >
+                        {keyword}
+                        <FormCancelIcon />
+                      </button>
+                    ))}
+                  </div>
+                </span>
+              </div>
 
-                {/* <button id="allFilterDelete" onClick={onClick}>
+              {/* <button id="allFilterDelete" onClick={onClick}>
                       필터 전체 삭제 버튼
                 </button> */}
+            </div>
+            <div className=" md:flex items-center px-[20px] sm:px-[40px] md:px-[70px] items-center mb-[0px] md:mb-[30px] ">
+              <div className="flex mr-[20px] ">
+                <p className="text-[12px] md:text-[16px] mb-[10px] md:mb-[0px]">
+                  추천 키워드{" "}
+                </p>
               </div>
-              <div className="md:flex items-center mx-[20px] items-center mb-[0px] md:mb-[30px] ">
-                <div className="md:w-[130px] flex md:justify-end mr-[20px] ">
-                  <p className="text-[12px] md:text-[16px] mb-[10px] md:mb-[0px]">
-                    추천 키워드{" "}
-                  </p>
-                </div>
-                <div className="grid grid-cols-5 md:flex">
-                  {keywords.map(
-                    (keyword, index) =>
-                      !selectedKeywords.includes(keyword as never) && (
-                        <button
-                          id="insertKeywordButton"
-                          onClick={onClick}
-                          key={index}
-                          className="flex justify-center text-[10px] md:text-[16px] bg-gray-200 flex items-center py-[5px] border-0 rounded-lg text-center px-[5px] md:px-[15px] mr-[15px]"
-                        >
-                          <p>{keyword}</p>
-                          <i className="fa-solid fa-plus ml-[5px] md:mt-[1px] text-[10px] md:text-[14px]"></i>
-                        </button>
-                      )
-                  )}
-                </div>
+              <div className="grid grid-cols-5 lg:grid-cols-8 gap-y-[5px] gap-x-[10px]">
+                {keywords.map(
+                  (keyword, index) =>
+                    !selectedKeywords.includes(keyword as never) && (
+                      <button
+                        id="insertKeywordButton"
+                        onClick={onClick}
+                        key={index}
+                        className="flex justify-center text-[10px] md:text-[16px] bg-gray-200 flex items-center py-[5px] border-0 rounded-lg text-center px-[5px] md:px-[10px] h-[20px] md:h-[35px]"
+                      >
+                        <p>{keyword}</p>
+                        <i className="fa-solid fa-plus ml-[5px] md:mt-[1px] text-[10px] md:text-[14px]"></i>
+                      </button>
+                    )
+                )}
               </div>
             </div>
 
@@ -815,157 +817,161 @@ function Post() {
               </FilterRow>
             )} */}
 
-            <SortBox>
-              <div className="md:flex items-center justify-between">
-                {isLogin && (
-                  <MyMajorBox className="">
-                    <MyMajorInput
-                      checked={selectedMyDeptOnly}
-                      onChange={async () => {
-                        setSelectedMyDeptOnly((prev) => !prev);
-                      }}
-                      type="checkBox"
-                      id="myMajor"
-                    />
+            <div className="w-auto px-[20px] sm:px-[0px] sm:max-w-[600px] lg:max-w-[910px] xl:max-w-[1220px] mx-[auto]">
+              <SortBox className="">
+                <div className=" md:flex items-center justify-between">
+                  {isLogin && (
+                    <MyMajorBox className="">
+                      <MyMajorInput
+                        checked={selectedMyDeptOnly}
+                        onChange={async () => {
+                          setSelectedMyDeptOnly((prev) => !prev);
+                        }}
+                        type="checkBox"
+                        id="myMajor"
+                      />
 
-                    <MyMajorText htmlFor="myMajor">
-                      내 전공 관련글만 보기
-                    </MyMajorText>
-                  </MyMajorBox>
-                )}
+                      <MyMajorText htmlFor="myMajor">
+                        내 전공 관련글만 보기
+                      </MyMajorText>
+                    </MyMajorBox>
+                  )}
 
-                <div className="flex md:none mt-[10px] md:mt-[0px]">
-                  <SelectFilterBox
-                    value={selectedMajor}
-                    onChange={(e: any) => {
-                      setSelectedMajor(e.currentTarget.value);
-                      // console.log(selectedGrade);
-                    }}
-                    // ref={majorRef}
-                    id="majorSelect"
-                    // onInput={onInput}
-                  >
-                    {Majors.map((major, index) => (
-                      <option key={index}>{major}</option>
-                    ))}
-                  </SelectFilterBox>
-                  <SelectFilterBox
-                    // ref={gradeRef}
-                    value={selectedGrade}
-                    onChange={(e: any) => {
-                      setSelectedGrade(e.currentTarget.value);
-                      console.log(selectedGrade);
-                    }}
-                    id="gradeSelect"
-                    // onInput={onInput}
-                    className=""
-                  >
-                    {Grades.map((grade, index) => (
-                      <option key={index} value={grade}>
-                        {grade}
-                      </option>
-                    ))}
-                  </SelectFilterBox>
-                  <div className="flex items-center">
-                    {/* <SortTitle>Sort by</SortTitle> */}
+                  <div className="flex md:none mt-[10px] md:mt-[0px]">
                     <SelectFilterBox
-                      id="sortSelect"
-                      className=""
-                      onInput={onInput}
-                      value={order}
+                      value={selectedMajor}
+                      onChange={(e: any) => {
+                        setSelectedMajor(e.currentTarget.value);
+                        // console.log(selectedGrade);
+                      }}
+                      // ref={majorRef}
+                      id="majorSelect"
+                      // onInput={onInput}
                     >
-                      <option id="recent" value="recent">
-                        최신 순
-                      </option>
-                      <option id="likes" value="likes">
-                        찜 많은 순
-                      </option>
-                      <option id="member" value="member">
-                        모집 인원 마감 임박
-                      </option>
-                      <option id="end" value="end">
-                        모집마감 임박순
-                      </option>
+                      {Majors.map((major, index) => (
+                        <option key={index}>{major}</option>
+                      ))}
                     </SelectFilterBox>
+                    <SelectFilterBox
+                      // ref={gradeRef}
+                      value={selectedGrade}
+                      onChange={(e: any) => {
+                        setSelectedGrade(e.currentTarget.value);
+                        console.log(selectedGrade);
+                      }}
+                      id="gradeSelect"
+                      // onInput={onInput}
+                      className=""
+                    >
+                      {Grades.map((grade, index) => (
+                        <option key={index} value={grade}>
+                          {grade}
+                        </option>
+                      ))}
+                    </SelectFilterBox>
+                    <div className="flex items-center">
+                      {/* <SortTitle>Sort by</SortTitle> */}
+                      <SelectFilterBox
+                        id="sortSelect"
+                        className=""
+                        onInput={onInput}
+                        value={order}
+                      >
+                        <option id="recent" value="recent">
+                          최신 순
+                        </option>
+                        <option id="likes" value="likes">
+                          찜 많은 순
+                        </option>
+                        <option id="member" value="member">
+                          모집 인원 마감 임박
+                        </option>
+                        <option id="end" value="end">
+                          모집마감 임박순
+                        </option>
+                      </SelectFilterBox>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <Link to="/add2">
-                <button className=" md:min-w-[130px] text-[10px] md:text-[15px] text-white py-[5px] bg-blue-600 px-[15px] rounded-lg py-[8px]">
-                  모집글 작성하기
-                </button>
-              </Link>
-            </SortBox>
+                <Link to="/add2">
+                  <button className=" md:min-w-[130px] text-[10px] md:text-[15px] text-white py-[5px] bg-blue-600 px-[15px] rounded-lg py-[8px]">
+                    모집글 작성하기
+                  </button>
+                </Link>
+              </SortBox>
+            </div>
 
             {/* { ( */}
-            <PostGrid>
-              {/* {(posts?.posts.length as number) > 0 &&
+            <div className="w-full flex justify-center">
+              <PostGrid>
+                {/* {(posts?.posts.length as number) > 0 &&
                 (posts as IPosts).posts.map((post, index) => (
                   <Card key={index} post={post} refetch={refetch} index={index}  />
                 ))} */}
-              {unionData.map((post: IReadOnePost, index: number) => (
-                <Link key={index} to={`/post2/${post?.id}`}>
-                  <Thumbnail {...post} refetch={refetch} />
-                </Link>
-              ))}
-            </PostGrid>
+                {unionData.map((post: IReadOnePost, index: number) => (
+                  <Link key={index} to={`/post2/${post?.id}`}>
+                    <Thumbnail {...post} refetch={refetch} />
+                  </Link>
+                ))}
+              </PostGrid>
+            </div>
+          </div>
+          {
+            unionData.length === 0 && (
+              <div className="flex justify-center items-center w-full h-[50px] text-[17px] text-black mt-[50px]">
+                <i className="fa-solid fa-circle-exclamation text-black mx-[10px]">
+                  &nbsp;
+                </i>
+                <p className="font-bold">게시물이 존재하지 않습니다</p>
+              </div>
+            )
 
-            {
-              unionData.length === 0 && (
-                <div className="flex justify-center items-center w-full h-[50px] text-[17px] text-black mt-[50px]">
-                  <i className="fa-solid fa-circle-exclamation text-black mx-[10px]">
-                    &nbsp;
-                  </i>
-                  <p className="font-bold">게시물이 존재하지 않습니다</p>
-                </div>
-              )
+            // : (
+            // <div className="flex justify-center items-center w-full h-[100px]  ">
+            //   <button
+            //     id="prev"
+            //     onClick={onPageClick}
+            //     className="w-[70px] h-[30px] flex justify-center items-center "
+            //   >
+            //     <i className="fa-solid fa-circle-left text-[30px]"></i>
+            //   </button>
 
-              // : (
-              // <div className="flex justify-center items-center w-full h-[100px]  ">
-              //   <button
-              //     id="prev"
-              //     onClick={onPageClick}
-              //     className="w-[70px] h-[30px] flex justify-center items-center "
-              //   >
-              //     <i className="fa-solid fa-circle-left text-[30px]"></i>
-              //   </button>
+            //   {Array.from(
+            //     {
+            //       length: Math.ceil(
+            //         (Number(posts?.total)) / POSTS_PER_PAGE
+            //       ),
+            //     },
+            //     (v, i) => i + 1
+            //   )
+            //     .slice(prevPage, nextPage - 1)
+            //     .map((page) => (
+            //       <button
+            //         id={page + ""}
+            //         onClick={onPageClick}
+            //         className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold hover:opacity-70
+            //        ${page === nowPage && "opacity-30"} `}
+            //       >
+            //         {page}
+            //       </button>
+            //     ))}
+            //   {/* </>
+            // )} */}
 
-              //   {Array.from(
-              //     {
-              //       length: Math.ceil(
-              //         (Number(posts?.total)) / POSTS_PER_PAGE
-              //       ),
-              //     },
-              //     (v, i) => i + 1
-              //   )
-              //     .slice(prevPage, nextPage - 1)
-              //     .map((page) => (
-              //       <button
-              //         id={page + ""}
-              //         onClick={onPageClick}
-              //         className={`w-[30px] h-[30px] mx-1 border-2 rounded bg-black text-white border-black font-bold hover:opacity-70
-              //        ${page === nowPage && "opacity-30"} `}
-              //       >
-              //         {page}
-              //       </button>
-              //     ))}
-              //   {/* </>
-              // )} */}
+            //   <button
+            //     id="next"
+            //     onClick={onPageClick}
+            //     className="w-[70px] h-[30px] flex justify-center items-center"
+            //   >
+            //     <i className="fa-solid fa-circle-right text-[30px]"></i>
+            //   </button>
+            // </div>
+            // )
+          }
+        </Container>
 
-              //   <button
-              //     id="next"
-              //     onClick={onPageClick}
-              //     className="w-[70px] h-[30px] flex justify-center items-center"
-              //   >
-              //     <i className="fa-solid fa-circle-right text-[30px]"></i>
-              //   </button>
-              // </div>
-              // )
-            }
-          </Container>
-          <p id="sentinel"></p>
-        </>
-      )}
+        <p id="sentinel"></p>
+      </>
     </>
   );
 }

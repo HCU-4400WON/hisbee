@@ -44,6 +44,7 @@ import Heart from "components/Heart";
 import Soon from "components/Soon";
 import { ImageModal } from "./ImageModal";
 import { Helmet } from "react-helmet";
+import LoadingLottie from "components/LoadingLottie";
 
 const Container = tw.div`
 w-[1470px]
@@ -416,7 +417,7 @@ function Detail2() {
   return (
     <>
       {isLoading || isLoginCheckLoading ? (
-        <LoadingAnimation />
+        <LoadingLottie isPost={false} />
       ) : (
         <>
           <Helmet>
