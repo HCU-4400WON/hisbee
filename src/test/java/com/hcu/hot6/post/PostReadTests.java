@@ -1,10 +1,16 @@
 package com.hcu.hot6.post;
 
+import com.hcu.hot6.domain.Likes;
 import com.hcu.hot6.domain.Member;
+import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.TagForm;
+import com.hcu.hot6.domain.response.PostCreationResponse;
+import com.hcu.hot6.domain.response.PostReadOneResponse;
+import com.hcu.hot6.repository.LikesRepository;
 import com.hcu.hot6.repository.MemberRepository;
+import com.hcu.hot6.repository.PostRepository;
 import com.hcu.hot6.service.PostService;
 import com.hcu.hot6.util.Utils;
 import jakarta.annotation.PostConstruct;
@@ -16,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,7 +38,14 @@ public class PostReadTests {
     private PostService postService;
 
     @Autowired
+    private LikesRepository likesRepository;
+
+    @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private PostRepository postRepository;
+
 
     @PostConstruct
     void memberSetup() {
@@ -280,23 +294,61 @@ public class PostReadTests {
     }
 
     @Test
-    public void 모집글_마감기간_미설정() throws Exception {
+    public void 좋아요_hasLike() throws Exception {
         // given
-        var req = PostCreationRequest.builder()
-                .title("제목")
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
                 .recruitStart(new Date())
-                .recruitEnd(null)
+                .recruitEnd(new Date())
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .duration("봄학기 ~ 여름방학")
                 .build();
 
         // when
-        var post = postService.createPost(req, TEST_EMAIL);
-        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
+        PostCreationResponse postRes = postService.createPost(req, TEST_EMAIL);
+
+        postService.addBookmark(postRes.getId(), TEST_EMAIL);
+        Optional<Member> member = memberRepository.findByEmail(TEST_EMAIL);
+        Optional<Post> post = postRepository.findOne(postRes.getId());
+        List<Likes> like = likesRepository.findOne(post.get(), member.get());
+        var res = postService.readOnePost(postRes.getId(), TEST_EMAIL);
 
         // then
-        assertThat(res.getTitle()).isEqualTo("제목");
-        assertThat(res.getRecruitEnd()).isNull();
+        assertThat(like.size()).isEqualTo(1);
+        assertThat(res.isHasLiked()).isEqualTo(true);
     }
 
+    @Test
+    public void 좋아요취소_hasLike() throws Exception {
+        // given
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .duration("봄학기 ~ 여름방학")
+                .build();
+
+        // when
+        PostCreationResponse postRes = postService.createPost(req, TEST_EMAIL);
+
+        postService.addBookmark(postRes.getId(), TEST_EMAIL);
+        postService.delBookmark(postRes.getId(), TEST_EMAIL);
+        Optional<Member> member = memberRepository.findByEmail(TEST_EMAIL);
+        Optional<Post> post = postRepository.findOne(postRes.getId());
+        List<Likes> like = likesRepository.findOne(post.get(), member.get());
+        var res = postService.readOnePost(postRes.getId(), TEST_EMAIL);
+
+        assertThat(like.size()).isEqualTo(0);
+        assertThat(res.isHasLiked()).isEqualTo(false);
+    }
+  
     @Test
     public void 내가_작성한_글에_대한_권한_확인() throws Exception {
         // given
@@ -313,5 +365,45 @@ public class PostReadTests {
         // then
         assertThat(res.getTitle()).isEqualTo("제목");
         assertThat(res.isVerified()).isTrue();
+    }
+
+    @Test
+    public void 내가_작성하지_않은글_verified() throws Exception {
+        // given
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .duration("봄학기 ~ 여름방학")
+                .build();
+
+        // when
+        PostCreationResponse postRes = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(postRes.getId(), "22000630@handong.ac.kr");
+
+        // then
+        assertThat(res.isVerified()).isFalse();
+    }
+
+    @Test
+    public void 모집글_마감기간_미설정() throws Exception {
+        // given
+        var req = PostCreationRequest.builder()
+                .title("제목")
+                .recruitStart(new Date())
+                .recruitEnd(null)
+                .build();
+
+        // when
+        var post = postService.createPost(req, TEST_EMAIL);
+        var res = postService.readOnePost(post.getId(), TEST_EMAIL);
+
+        // then
+        assertThat(res.getTitle()).isEqualTo("제목");
+        assertThat(res.getRecruitEnd()).isNull();
     }
 }

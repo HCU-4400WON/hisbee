@@ -85,7 +85,7 @@ public class PostReadOneResponse {
         this.createdDate = toDate(post.getCreatedDate());
         this.lastModifiedDate = toDate(post.getLastModifiedDate());
         this.isVerified = email.equals(post.getAuthor().getEmail());
-        this.hasLiked = post.getLikes().stream()
+        this.hasLiked = email != null && post.getLikes().stream()
                 .anyMatch(bookmark -> email.equals(bookmark.getMember().getEmail()));
         this.isETC = post.isETC();
     }

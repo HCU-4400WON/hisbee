@@ -11,6 +11,7 @@ import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.request.TagForm;
 import com.hcu.hot6.domain.response.PostFilterResponse;
+import com.hcu.hot6.domain.response.PostReadOneResponse;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.service.PostService;
 import jakarta.annotation.PostConstruct;
@@ -685,5 +686,171 @@ public class PostFilterTests {
 
         // then
         assertThat(response.getTotal()).isNotZero();
+    }
+
+    @Test
+    public void 좋아요_hasLike_true_test() throws Exception {
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("최강")
+                .summary("몬스터즈 경기 직관하실 분 구합니다")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "선교모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .isETC(true)
+                .build();
+
+        var res = postService.createPost(request, TEST_EMAIL);
+        postService.addBookmark(res.getId(), TEST_EMAIL);
+
+        // when
+        var filter = PostSearchFilter.builder()
+                .page(1)
+                .limit(3)
+                .email(TEST_EMAIL)
+                .build();
+        var response = postService.readFilteredPost(filter);
+
+        // then
+        assertThat(response.getPosts().get(0).isHasLiked()).isEqualTo(true);
+    }
+
+    @Test
+    public void 좋아요_hasLike_false_test() throws Exception {
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("최강")
+                .summary("몬스터즈 경기 직관하실 분 구합니다")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "선교모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .isETC(true)
+                .build();
+
+        var res = postService.createPost(request, TEST_EMAIL);
+
+        // when
+        var filter = PostSearchFilter.builder()
+                .page(1)
+                .limit(3)
+                .email(TEST_EMAIL)
+                .build();
+        var response = postService.readFilteredPost(filter);
+
+        // then
+        assertThat(response.getPosts().get(0).isHasLiked()).isFalse();
+    }
+
+    @Test
+    public void 좋아요_readOne_hasLike_true_test() throws Exception {
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("최강")
+                .summary("몬스터즈 경기 직관하실 분 구합니다")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "선교모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .isETC(true)
+                .build();
+
+        var res = postService.createPost(request, TEST_EMAIL);
+        postService.addBookmark(res.getId(), TEST_EMAIL);
+
+        // when
+        PostReadOneResponse postReadOneResponse = postService.readOnePost(res.getId(), TEST_EMAIL);
+
+
+        // then
+        assertThat(postReadOneResponse.isHasLiked()).isTrue();
+    }
+
+    @Test
+    public void 좋아요_readOne_hasLike_false_test() throws Exception {
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("최강")
+                .summary("몬스터즈 경기 직관하실 분 구합니다")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "선교모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .isETC(true)
+                .build();
+
+        var res = postService.createPost(request, TEST_EMAIL);
+        postService.addBookmark(res.getId(), TEST_EMAIL);
+        postService.delBookmark(res.getId(), TEST_EMAIL);
+
+        // when
+        PostReadOneResponse postReadOneResponse = postService.readOnePost(res.getId(), TEST_EMAIL);
+
+
+        // then
+        assertThat(postReadOneResponse.isHasLiked()).isFalse();
+    }
+
+    @Test
+    public void 마감된모집글제외() throws Exception {
+        // given
+        final var request = PostCreationRequest.builder()
+                .title("최강")
+                .summary("몬스터즈 경기 직관하실 분 구합니다")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "선교모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .isETC(true)
+                .build();
+
+        final var request2 = PostCreationRequest.builder()
+                .title("최강2")
+                .summary("몬스터즈 경기 직관하실 분 구합니다")
+                .tags(new TagForm(List.of("소망", "축복")))
+                .postTypes(List.of("학회", "선교모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .targetCount("전체00명")
+                .contact("example@test.com")
+                .departments(List.of("시각디자인", "GE", "전산전자공학부"))
+                .isETC(true)
+                .build();
+
+        var res = postService.createPost(request, TEST_EMAIL);
+        var res2 = postService.createPost(request2, TEST_EMAIL);
+
+        PostUpdateRequest updateRequest = PostUpdateRequest.builder().isClosed(true).build();
+        postService.updatePost(res2.getId(), updateRequest);
+
+
+        // when
+        var filter = PostSearchFilter.builder()
+                .page(1)
+                .limit(3)
+                .openOnly(true)
+                .email(TEST_EMAIL)
+                .build();
+        var response = postService.readFilteredPost(filter);
+
+
+        // then
+        assertThat(response.getTotal()).isEqualTo(1);
     }
 }

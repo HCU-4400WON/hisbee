@@ -55,6 +55,7 @@ public class PostRepository {
                         eqYear(filter.getYear()),
                         isMyDepartment(filter.getMyDeptOnly(), member),
                         isClosed(filter.getIsClosed()),
+                        isOpen(filter.getOpenOnly()),
                         post.archive.isNull()
                 )
                 .offset(offset)
@@ -72,6 +73,7 @@ public class PostRepository {
                         eqYear(filter.getYear()),
                         isMyDepartment(filter.getMyDeptOnly(), member),
                         isClosed(filter.getIsClosed()),
+                        isOpen(filter.getOpenOnly()),
                         post.archive.isNull()
                 )
                 .orderBy(orderCond(filter.getOrderBy()))
@@ -151,6 +153,12 @@ public class PostRepository {
         return (myDeptOnly != null)
                 ? post.targetDepartment.contains(member.getMajor1().toKor())
                 .or(post.targetDepartment.contains(member.getMajor2().toKor()))
+                : null;
+    }
+
+    private BooleanExpression isOpen(Boolean openOnly){
+        return (openOnly != null)
+                ? post.thumbnail.isClosed.isFalse()
                 : null;
     }
 

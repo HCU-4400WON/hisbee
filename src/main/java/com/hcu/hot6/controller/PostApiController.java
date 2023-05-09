@@ -81,6 +81,7 @@ public class PostApiController {
                                                                @RequestParam(required = false) Boolean myDeptOnly,
                                                                @RequestParam(required = false) Year year,
                                                                @RequestParam(required = false) Boolean closed,
+                                                               @RequestParam(required = false) Boolean openOnly,
                                                                @AuthenticationPrincipal OAuth2User user) {
         String email = (user != null) ? user.getName() : null;
         PostSearchFilter filter = PostSearchFilter.builder()
@@ -93,6 +94,7 @@ public class PostApiController {
                 .myDeptOnly(myDeptOnly)
                 .year(year)
                 .isClosed(closed)
+                .openOnly(openOnly)
                 .email(email)
                 .build();
 
