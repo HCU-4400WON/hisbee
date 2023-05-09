@@ -47,7 +47,7 @@ export function Department({ getValues, setValue }: any) {
               setValue("departments", []);
             }}
             value="상관없음"
-            className={`border-2 px-[15px] min-w-[120px] py-[5px] rounded-lg ${
+            className={`border-2 px-[15px] w-[100px] py-[5px] rounded-lg ${
               !majorToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
             }`}
           >
@@ -57,7 +57,7 @@ export function Department({ getValues, setValue }: any) {
           {!majorToggle && (
             <button
               type="button"
-              className={`border-2 ${UnSelectedBUTTON}  w-[120px] px-[15px] py-[5px] rounded-lg ml-[10px]`}
+              className={`border-2 ${UnSelectedBUTTON}  w-[100px] px-[15px] py-[5px] rounded-lg ml-[10px]`}
               onClick={() => {
                 // if(majorToggle) setValue("departments" , ["상관없음"] as any);
                 // setValue("departments", []);

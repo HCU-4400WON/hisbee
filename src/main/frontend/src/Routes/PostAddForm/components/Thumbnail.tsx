@@ -22,7 +22,7 @@ function Thumbnail({
   return (
     <div className="min-w-[310px] h-[260px] p-[15px] bg-white rounded-xl border mx-[20px]">
       <div className="flex justify-between">
-        <span className="px-[10px] py-[1px] rounded-full bg-gray-200 text-[13px]">
+        <span className="px-[10px] flex items-center rounded-full bg-gray-200 text-[13px]">
           <p>{duration}</p>
         </span>
         <span className="flex items-center ">
@@ -32,17 +32,17 @@ function Thumbnail({
       </div>
 
       <span className="">
-        <p className="my-[10px] text-[18px]">{title}</p>
+        <p className="my-[10px] text-[17px] font-[500]">{title}</p>
       </span>
       <span>
-        <p className="text-[14px]">{subTitle}</p>
+        <p className="text-[14px] mb-[10px]">{subTitle}</p>
       </span>
 
       <div className="flex mt-[25px]">
         {categories.map((category, index) => (
           <span
             key={index}
-            className="px-[10px] py-[1px] bg-blue-100 mr-[10px] rounded-full text-[15px]"
+            className="px-[11px] py-[2px] rounded-full text-[13px] bg-blue-100 mr-[10px] rounded-full"
           >
             {category}
           </span>
@@ -53,7 +53,7 @@ function Thumbnail({
         {keywordsFirstLine.map((keyword, index) => (
           <span
             key={index}
-            className="px-[10px] py-[1px] bg-blue-200 mr-[10px] rounded-full text-[15px]"
+            className="px-[11px] py-[2px] rounded-full text-[13px] bg-blue-200 mr-[10px] rounded-full"
           >
             {keyword}
           </span>
@@ -63,7 +63,7 @@ function Thumbnail({
         {keywordsSecondLine.map((keyword, index) => (
           <span
             key={index}
-            className="px-[10px] py-[1px] bg-blue-200 mr-[10px] rounded-full text-[15px]"
+            className="px-[11px] py-[2px] rounded-full text-[13px] bg-blue-200 mr-[10px] rounded-full "
           >
             {keyword}
           </span>

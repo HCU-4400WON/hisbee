@@ -549,7 +549,7 @@ function PostAddForm2() {
             썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
           </p> */}
 
-          <div className="w-full h-[400px] flex items-center justify-between my-[20px] ">
+          <div className="w-full h-[400px] flex items-center justify-between mb-[20px] ">
             <div className="w-[400px] border h-[350px] bg-white p-[30px] rounded-2xl shadow-sm">
               <div className="mb-[10px]">
                 <span className="flex items-center justify-between mb-[20px]">
@@ -582,13 +582,25 @@ function PostAddForm2() {
                   </span>
                   <i className="fa-regular fa-heart text-[23px] text-gray-400"></i>
                 </span>
-
+                {/* <div id="input-custom-css"> */}
                 <input
-                  className="w-[340px] text-[19px] py-[5px] px-[15px] mb-[10px] border-b-2"
+                  className="w-[330px] mx-[10px] text-[19px] py-[5px] mb-[10px] border-b-2"
+                  onFocus={() => {
+                    document.getElementById("titleBorder")?.focus();
+                  }}
                   {...register("title")}
                   type="text"
                   placeholder="제목을 입력해주세요"
                 />
+                {/* <motion.input
+                    whileFocus="animate"
+                    variants={inputVariants}
+                    initial="initial"
+                    animate="animate"
+                    id="titleBorder"
+                    className="w-[340px] border"
+                  ></motion.input>
+                </div> */}
                 <div className="h-[70px]">
                   <div className="w-full">
                     <textarea
@@ -596,7 +608,7 @@ function PostAddForm2() {
                       id="summary"
                       onKeyPress={textareaResize}
                       onKeyUp={textareaResize}
-                      className="notes w-[350px] text-[15px] px-[15px]"
+                      className=" px-[8px] notes w-[350px] text-[15px] "
                       {...register("summary")}
                       placeholder="(선택) 두줄 이내의 간결한 모임 설명글을 적어주세요"
                     />
@@ -856,6 +868,7 @@ function PostAddForm2() {
                     // onFocus={{
 
                     // }}
+
                     type="text"
                     className="w-full border-b border-gray-300 h-[40px] px-[10px] bg-slate-100"
                     placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
@@ -902,7 +915,7 @@ function PostAddForm2() {
             onClick={() =>
               setOptionalFoldToggle((prev) => [true, ...prev.slice(1)])
             }
-            className="flex  items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]"
+            className="flex  items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-3xl mb-[30px]"
           >
             {optionalFoldText[0].first} &nbsp;{" "}
             <span className={`text-blue-500`}>
@@ -943,8 +956,8 @@ function PostAddForm2() {
                 setOptionalFoldToggle((prev) => [false, ...prev.slice(1)])
               }
             ></i>
-            <p className="text-[20px] font-main">모집 대상 조건 설정하기</p>
-            <p className="mt-[10px]">
+            <p className="text-[20px] font-[500]">모집 대상 조건 설정하기</p>
+            <p className="mt-[10px] text-[18px]">
               모집글들을 필터링할 때 쓰이는 정보이니 채워주시면 좋습니다.
             </p>
 
@@ -1005,7 +1018,7 @@ function PostAddForm2() {
             onClick={() =>
               setOptionalFoldToggle((prev) => [prev[0], true, ...prev.slice(2)])
             }
-            className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]"
+            className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-3xl mb-[30px]"
           >
             {optionalFoldText[1].first} &nbsp;{" "}
             <span className={`text-blue-500`}>
@@ -1062,7 +1075,7 @@ function PostAddForm2() {
                 prev[3],
               ])
             }
-            className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]"
+            className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-3xl mb-[30px]"
           >
             {optionalFoldText[2].first} &nbsp;{" "}
             <span className={`text-blue-500`}>
@@ -1092,8 +1105,8 @@ function PostAddForm2() {
                 ])
               }
             ></i>
-            <p className="text-[20px] font-main">자유 내용 입력</p>
-            <p className="mt-[10px] mb-[20px]">
+            <p className="text-[20px] font-[500]">자유 내용 입력</p>
+            <p className="mt-[10px] mb-[20px] text-[18px]">
               모임의 목적,활동 내용 등에 대한 자세한 내용을 자유롭게
               작성해주세요!
             </p>
@@ -1146,7 +1159,7 @@ function PostAddForm2() {
             onClick={() =>
               setOptionalFoldToggle((prev) => [...prev.slice(0, 3), true])
             }
-            className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-lg mb-[30px]"
+            className="flex items-center w-full px-[50px] py-[20px] bg-gray-100 text-[18px] rounded-3xl mb-[30px]"
           >
             {optionalFoldText[3].first} &nbsp;{" "}
             <span className={`text-blue-500`}>

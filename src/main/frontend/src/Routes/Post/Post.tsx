@@ -35,6 +35,7 @@ import Card from "Routes/Post/Card";
 import Thumbnail from "./Thumbnail";
 import { PostExamples } from "Routes/PostAddForm/components/PostExamples";
 import "./css/button.css";
+import "./css/textfield.css";
 import SignUp2 from "Routes/Main/SignUp2";
 import LoadingLottie from "components/LoadingLottie";
 import Outline from "components/Outline";
@@ -559,7 +560,7 @@ function Post() {
                 </div>
               </div>
 
-              <div className="px-[0px] max-w-[1220px] mx-auto">
+              <div className="px-[65px] mx-auto">
                 <SortBox className="">
                   <div className=" flex items-center justify-between">
                     {isLogin && (
