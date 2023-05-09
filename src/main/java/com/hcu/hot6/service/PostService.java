@@ -91,8 +91,8 @@ public class PostService {
         );
     }
 
-    public LikesResponse addBookmark(Long postId, String name) {
-        Member member = memberRepository.findByEmail(name).orElseThrow();
+    public LikesResponse addBookmark(Long postId, String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow();
         Post post = postRepository.findOne(postId).orElseThrow();
 
 //        Likes like = new Likes(post, member);
