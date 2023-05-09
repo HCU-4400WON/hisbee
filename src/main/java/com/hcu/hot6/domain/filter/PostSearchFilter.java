@@ -23,6 +23,7 @@ public class PostSearchFilter {
                             Boolean myDeptOnly,
                             Year year,
                             Boolean isClosed,
+                            Boolean openOnly,
                             String email) {
         this.page = page;
         this.type = type;
@@ -33,6 +34,7 @@ public class PostSearchFilter {
         this.myDeptOnly = myDeptOnly;
         this.year = year;
         this.isClosed = isClosed;
+        this.openOnly = openOnly;
         this.email = email;
     }
 
@@ -45,5 +47,6 @@ public class PostSearchFilter {
     private final Boolean myDeptOnly;
     private final Year year;
     private final Boolean isClosed;
+    private final Boolean openOnly;
     private final String email;
 }
