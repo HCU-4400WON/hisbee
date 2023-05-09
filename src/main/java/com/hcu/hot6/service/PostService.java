@@ -95,10 +95,13 @@ public class PostService {
         Member member = memberRepository.findByEmail(name).orElseThrow();
         Post post = postRepository.findOne(postId).orElseThrow();
 
-        Likes like = new Likes(post, member);
-        likesRepository.save(like);
+//        Likes like = new Likes(post, member);
+//        likesRepository.save(like);
+//        post.getLikes().add(like);
+        post.addBookmark(member);
+        List<Likes> like = likesRepository.findOne(post, member);
 
-        return new LikesResponse(like);
+        return new LikesResponse(like.get(0));
     }
 
     public LikesResponse delBookmark(Long postId, String email) {
@@ -106,7 +109,7 @@ public class PostService {
         Post post = postRepository.findOne(postId).orElseThrow();
 
         List<Likes> like = likesRepository.findOne(post, member);
-        likesRepository.delete(like.get(0));
+        post.delBookmark(like.get(0), member);
 
         return new LikesResponse(like.get(0));
     }
