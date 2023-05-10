@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -105,7 +106,17 @@ public class PostApiController {
                 .email(email)
                 .build();
 
-        return ResponseEntity.ok(postService.readFilteredPost(filter));
+        List<String> suggestions = keywordService.suggestKeyword(filter.getKeywords());
+        List<Post> posts = postService.readFilteredPost(filter);
+
+        return ResponseEntity.ok(
+                new PostFilterResponse(
+                        posts.size(),
+                        suggestions,
+                        posts.stream()
+                                .map(post -> post.getThumbnail().toResponse(email))
+                                .toList())
+        );
     }
 
     /**

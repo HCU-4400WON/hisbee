@@ -1,6 +1,9 @@
 package com.hcu.hot6.service;
 
-import com.hcu.hot6.domain.*;
+import com.hcu.hot6.domain.Likes;
+import com.hcu.hot6.domain.Member;
+import com.hcu.hot6.domain.Pagination;
+import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
@@ -64,32 +67,15 @@ public class PostService {
         return new PostModifiedResponse(post.getId(), post.getLastModifiedDate());
     }
 
-    public PostFilterResponse readFilteredPost(PostSearchFilter filter) {
+    public List<Post> readFilteredPost(PostSearchFilter filter) {
         Member member = memberRepository.findByEmail(filter.getEmail())
                 .orElse(null);
 
         if (Objects.isNull(filter.getPage())) {
-            var thumbnailResponses = postRepository.findAll(filter, member).stream()
-                    .map(post -> post.getThumbnail().toResponse(filter.getEmail()))
-                    .toList();
-
-            return new PostFilterResponse(
-                    thumbnailResponses.size(),
-                    List.of(),
-                    thumbnailResponses
-            );
+            return postRepository.findAll(filter, member);
         }
         var pagination = new Pagination(filter.getPage(), postRepository.count(filter, member), filter.getLimit());
-        var postResponseList = postRepository.findAll(filter, member, pagination.getOffset(), pagination.getLimit())
-                .stream()
-                .map(post -> post.getThumbnail().toResponse(filter.getEmail()))
-                .toList();
-
-        return new PostFilterResponse(
-                postResponseList.size(),
-                List.of(),
-                postResponseList
-        );
+        return postRepository.findAll(filter, member, pagination.getOffset(), pagination.getLimit());
     }
 
     public LikesResponse addBookmark(Long postId, String email) {
