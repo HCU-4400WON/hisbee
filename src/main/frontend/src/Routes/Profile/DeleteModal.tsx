@@ -46,7 +46,7 @@ function DeleteModal() {
           className="z-10 bg-[rgba(0,0,0,0.5)] fixed top-0 left-0 w-full h-screen opacity-100"
         ></motion.div>
       </AnimatePresence>
-      <div className="fixed z-20 flex justify-center mt-[150px] w-full h-screen">
+      <div className="modal fixed z-20 flex justify-center  w-full ">
         <div className="w-4/5 rounded-2xl md:w-[1000px] bg-[white] h-[330px] py-[30px] px-[30px] md:rounded-3xl flex flex-col justify-between">
           <span className="flex justify-end">
             <i

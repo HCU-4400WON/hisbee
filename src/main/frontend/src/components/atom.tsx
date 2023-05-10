@@ -33,3 +33,13 @@ export const isLoginState = atom({
   default: false,
   effects_UNSTABLE: [persistAtom],
 });
+
+export const isConfirmModalState = atom({
+  key: "isConfirmState",
+  default: false,
+});
+
+export const isAlertModalState = atom({
+  key: "isAlertState",
+  default: false,
+});

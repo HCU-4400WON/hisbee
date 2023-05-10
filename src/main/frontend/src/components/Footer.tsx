@@ -26,36 +26,36 @@ const FooterVariant = {
 function Footer() {
   const [isTeamModal, setIsTeamModal] = useState(false);
   return (
-    <div className="min-w-[480px] h-[150px] pr-[50px] flex justify-between items-center mt-[150px]">
+    <div className="min-w-[480px] h-[150px] pr-[50px] flex justify-between items-center mt-[0px]">
       <div className="flex justify-start items-end">
         <img
           src="/img/logo_hisbee.png"
           className="w-[120px] md:w-[140px] mx-[30px]"
         />
         <span className="text-[12px] pb-[6px] z-10 min-w-[220px] font-unique text-gray-500 hidden md:block">
-          <strong>ⓒ</strong> 2022 Team.Hot6 All rights reserved
+          <strong>ⓒ</strong> 2023 Team.Hot6 All rights reserved
         </span>
       </div>
 
-      <div className="flex justify-between w-[300px] items-center relative">
-        <a href="https://github.com/HCU-4400WON/hot6" target="_blank">
+      <div className="flex justify-end w-[300px] items-center relative">
+        {/* <a href="https://github.com/HCU-4400WON/hot6" target="_blank">
           <img
             src="/img/github.png"
             className="w-[80px] h-[40px] md:w-[100px] md:h-[50px]"
           />
-        </a>
-        <span className="text-[20px] mr-[10px] font-unique md:text-[25px]">
-          WALAB
+        </a> */}
+        <span className="text-[18px] mr-[10px] font-unique md:text-[23px]">
+          CONTACT
         </span>
         <span>
-          <p
+          {/* <p
             onMouseOver={() => setIsTeamModal(true)}
             onMouseLeave={() => setIsTeamModal(false)}
             className="hover:opacity-60 text-[20px] font-unique md:text-[25px]"
           >
             팀원
-          </p>
-          <AnimatePresence>
+          </p> */}
+          {/* <AnimatePresence>
             {isTeamModal && (
               <motion.div
                 className="absolute left-[-100px] top-[-180px] w-[400px]  flex flex-col "
@@ -113,7 +113,7 @@ function Footer() {
                 </div>
               </motion.div>
             )}
-          </AnimatePresence>
+          </AnimatePresence> */}
         </span>
       </div>
     </div>

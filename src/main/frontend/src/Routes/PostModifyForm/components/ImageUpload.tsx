@@ -82,7 +82,7 @@ export function ImageUpload({ imageURLList, setImageURLList }: IProps) {
       />
       <div className="flex">
         {imageURLList?.map((imageUrl: string, index: number) => (
-          <div className="relative mt-[30px] mr-[30px]">
+          <div key={index} className="relative mt-[30px] mr-[30px]">
             <img className="w-[400px]" src={imageUrl} key={index} />
             <button
               type="button"

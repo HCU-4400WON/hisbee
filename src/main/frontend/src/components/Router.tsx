@@ -19,6 +19,8 @@ import PostAddForm2 from "Routes/PostAddForm/PostAddForm2";
 import Detail2 from "Routes/Detail/Detail2";
 import PostModifyForm from "Routes/PostModifyForm/PostModifyForm";
 import Profile2 from "Routes/Profile/Profile2";
+import ConfirmModal from "./ConfirmModal";
+import AlertModal from "./AlertModal";
 
 function Router() {
   return (
@@ -73,7 +75,15 @@ function Router() {
         <Route path="modify/:id" element={<PostModifyForm />}></Route>
         <Route path="signUp" element={<SignUp2 />}></Route>
         <Route path="profile2" element={<Profile2 />}></Route>
-        <Route path="*" element={<Main />}></Route>
+        <Route
+          path="aaa"
+          element={<ConfirmModal text="모집글이 생성되었습니다." />}
+        ></Route>
+        <Route
+          path="bbb"
+          element={<AlertModal text="모집글이 생성되었습니다." />}
+        ></Route>
+        <Route path="*" element={<Post />}></Route>
 
         {/* <Route path="post/:id" element={<Detail />}></Route>
         <Route path="add" element={<PostAddForm />}></Route>

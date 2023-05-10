@@ -44,6 +44,7 @@ import Heart from "components/Heart";
 import Soon from "components/Soon";
 import { ImageModal } from "./ImageModal";
 import { Helmet } from "react-helmet";
+import LoadingLottie from "components/LoadingLottie";
 
 const Container = tw.div`
 w-[1470px]
@@ -233,6 +234,7 @@ function Detail2() {
 
   const { id } = useParams();
   const datetimeToString = (datetime: Date) => {
+    if (!datetime) return "상시 모집";
     return `${new Date(datetime).getFullYear()}-${(
       new Date(datetime).getMonth() +
       1 +
@@ -416,7 +418,7 @@ function Detail2() {
   return (
     <>
       {isLoading || isLoginCheckLoading ? (
-        <LoadingAnimation />
+        <LoadingLottie isPost={false} />
       ) : (
         <>
           <Helmet>

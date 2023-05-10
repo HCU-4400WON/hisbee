@@ -13,9 +13,9 @@ export function Grade({ getValues, setValue }: any) {
 
   const MainBLUE = "bg-blue-200";
   const LightMainBLUE = "bg-blue-100";
-  const DetailSelectedBUTTON = `border-2 border-blue-300 ${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
-  const DetailUnSelectedBUTTON = `${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
-  const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8px] rounded-lg`;
+  const DetailSelectedBUTTON = `border-2 border-blue-300 bg-blue-100 px-[15px] py-[8px] rounded-lg`;
+  const DetailUnSelectedBUTTON = `bg-blue-100 px-[15px] py-[8px] rounded-lg`;
+  const MajorSeletedBUTTON = `border-2 border-blue-300 bg-blue-200 px-[15px] py-[8px] rounded-lg`;
   const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg`;
   const [gradeToggle, setGradeToggle] = useState<boolean>(false);
 
@@ -35,7 +35,7 @@ export function Grade({ getValues, setValue }: any) {
             setValue("years", []);
           }}
           value="상관없음"
-          className={`border-[1px]  border-[#007AFF] px-[13px] h-[36px]  flex justify-center items-center text-[16px] rounded-[10px] ${
+          className={`border-2 px-[15px] py-[5px] rounded-lg ${
             !gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
           }`}
         >
@@ -48,7 +48,7 @@ export function Grade({ getValues, setValue }: any) {
             type="button"
             className={`border-2 ${
               gradeToggle ? MajorSeletedBUTTON : UnSelectedBUTTON
-            } px-[10px] py-[5px] rounded-lg ml-[10px] `}
+            } px-[15px] py-[5px] rounded-lg ml-[10px] `}
             onClick={() => {
               // if(gradeToggle) setValue("years" , ["상관없음"] as any);
               // setValue("years", []);

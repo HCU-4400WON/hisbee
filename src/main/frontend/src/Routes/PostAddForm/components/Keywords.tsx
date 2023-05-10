@@ -37,10 +37,10 @@ export function Keywords({ getValues, setValue, register }: any) {
   const LightMainBLUE = "bg-blue-100";
   return (
     <div id="kk">
-      <p className=" text-[20px]">
+      <p className="text-[20px] font-[500]">
         모임과 관련된 키워드를 입력하여 검색 결과에 노출될 수 있게 해보세요!
       </p>
-      <p className="mt-[30px] mb-[15px] text-[17px]">키워드</p>
+      <p className="mt-[30px] mb-[15px] text-[18px]">키워드</p>
       <div className="flex items-center">
         <AnimatePresence>
           {["postTypes", "first", "second"].map((elem) =>

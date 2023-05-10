@@ -22,6 +22,7 @@ export default function Heart({ hasLiked, id, refetch, closed }: any) {
           alert("로그인이 필요합니다.");
           if (localStorage.getItem("key")) localStorage.removeItem("key");
           setIsLoginModal(true);
+          setIsLogin(false);
         }
       },
     }
@@ -63,7 +64,7 @@ export default function Heart({ hasLiked, id, refetch, closed }: any) {
               closed ? "text-gray-600" : "text-blue-300"
             } stroke-black shadow-stone-400`
           : "fa-regular fa-heart"
-      }  text-[18px] text-gray-400 `}
+      }  text-[13px] text-gray-400 mb-[1px] `}
     ></motion.i>
   );
 }

@@ -8,6 +8,7 @@ export const converter = (what: string, info?: string | Date) => {
     // console.log("이거? " ,convertedDate);
     return convertedDate;
   } else if (what === "dateTime") {
+    if (!info) return null;
     let year = (new Date(info as string).getFullYear() + "").padStart(2, "0");
     let month = (new Date(info as string).getMonth() + 1 + "").padStart(2, "0");
     let date = (new Date(info as string).getDate() + "").padStart(2, "0");

@@ -15,7 +15,7 @@ export default function Soon({
     <>
       {soon && (
         <span
-          className={`px-[10px] py-[1px] rounded-full ${bgColor} text-[${fontSize}px] ml-[10px] ${color}`}
+          className={`px-[8px] py-[3px] rounded-full ${bgColor} text-[${fontSize}px] ml-[10px] ${color}`}
         >
           마감 임박🔥
         </span>
