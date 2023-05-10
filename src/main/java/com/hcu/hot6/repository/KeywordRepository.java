@@ -17,6 +17,10 @@ public class KeywordRepository {
         return keyword.getName();
     }
 
+    public void delete(Keyword keyword) {
+        em.remove(keyword);
+    }
+
     public Optional<Keyword> findByName(String keyword) {
         return em.createQuery("select k from Keyword as k where k.name = :keyword", Keyword.class)
                 .setParameter("keyword", keyword)

@@ -1,13 +1,11 @@
 package com.hcu.hot6.service;
 
-import com.hcu.hot6.domain.Likes;
-import com.hcu.hot6.domain.Member;
-import com.hcu.hot6.domain.Pagination;
-import com.hcu.hot6.domain.Post;
+import com.hcu.hot6.domain.*;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.*;
+import com.hcu.hot6.repository.KeywordRepository;
 import com.hcu.hot6.repository.LikesRepository;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.repository.PostRepository;
@@ -27,23 +25,26 @@ public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final LikesRepository likesRepository;
+    private final KeywordRepository keywordRepository;
 
-    public PostCreationResponse createPost(PostCreationRequest request, String email) {
+    public Post createPost(PostCreationRequest request, String email) {
         Member author = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Author is not registered"));
         Post post = new Post(request, author);
         postRepository.save(post);
 
-        return PostCreationResponse.builder()
-                .id(post.getId())
-                .title(post.getThumbnail().getTitle())
-                .createdDate(post.getCreatedDate())
-                .build();
+        return post;
     }
 
     public Long deletePost(Long postId) {
         Post post = postRepository.findOne(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not found."));
+        post.getPostKeywords()
+                .stream()
+                .map(postKeyword -> postKeyword.getKeyword().countDown())
+                .filter(keyword -> keyword.getCount() == 0L)
+                .forEach(keywordRepository::delete);
+
         return postRepository.delete(post);
     }
 
