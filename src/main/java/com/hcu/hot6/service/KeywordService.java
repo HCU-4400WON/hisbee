@@ -7,10 +7,12 @@ import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.repository.KeywordRepository;
 import com.hcu.hot6.repository.PostKeywordRepository;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -71,5 +73,16 @@ public class KeywordService {
                 .map(Keyword::getName)
                 .limit(10)
                 .toList();
+    }
+
+    public List<String> keywordAutoCompletion(String q) {
+        final List<Keyword> list = keywordRepository.keywordAutoCompletion(q);
+        List<String> keywordNameList = new ArrayList<>();
+        list.stream().forEach(keyword -> keywordNameList.add(keyword.getName()));
+        return keywordNameList;
+    }
+
+    public List<Keyword> findAll(){
+        return keywordRepository.findAll();
     }
 }
