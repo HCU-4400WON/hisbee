@@ -78,15 +78,15 @@ public class KeywordTest {
                 .keywords(List.of("car", "cat", "doctor", "degree", "대한민국"))
                 .build();
         var post = postService.createPost(req, TEST_EMAIL);
-        keywordService.addKeywords(req.getKeywords(), req.getTags());
+        keywordService.addKeywords(post, req);
 
         // when
         List<String> res = keywordService.keywordAutoCompletion("a");
         List<Keyword> keywordList  = keywordService.findAll();
 
         // then
-        assertThat(keywordList.size()).isGreaterThan(0);
-        assertThat(res.size()).isEqualTo(4);
+        assertThat(keywordList.size()).isNotZero();
+        assertThat(res.size()).isEqualTo(2);
     }
 
 }
