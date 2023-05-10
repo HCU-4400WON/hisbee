@@ -35,7 +35,6 @@ import { Link } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import Card from "Routes/Profile/Card";
-import Outline from "components/Outline";
 
 const Container = tw.div`
 flex
@@ -52,7 +51,7 @@ border-gray-200
 
 const Sidebar = tw.div`
 hidden
-bg-gray-200
+bg-gray-100
 lg:flex
 min-w-[220px] 
 pl-[30px]
@@ -178,6 +177,7 @@ const PostItemVariant = {
     opacity: 0,
   },
 };
+
 
 function Profile() {
   const location = useLocation();
@@ -402,429 +402,419 @@ function Profile() {
   };
   return (
     <>
-      <Outline bgColor="bg-slate-100">
-        {onSuccessLoading || getUserLoading ? (
-          <LoadingAnimation />
-        ) : (
-          <>
-            {isDeleteModal ? <DeletePopup /> : null}
-            <Container>
-              <Sidebar>
-                <SidebarTitle>My profile</SidebarTitle>
-                <SidebarItemText onClick={onSidebarClick} id="1">
-                  프로필 정보
-                </SidebarItemText>
+      {onSuccessLoading || getUserLoading ? (
+        <LoadingAnimation />
+      ) : (
+        <>
+          {isDeleteModal ? <DeletePopup /> : null}
+          <Container>
+            <Sidebar>
+              <SidebarTitle>My profile</SidebarTitle>
+              <SidebarItemText onClick={onSidebarClick} id="1">
+                프로필 정보
+              </SidebarItemText>
 
-                <SidebarItemText onClick={onSidebarClick} id="2">
-                  내가 쓴 모집글
-                </SidebarItemText>
-                <SidebarItemText onClick={onSidebarClick} id="3">
-                  찜한 모집글
-                </SidebarItemText>
-                <SidebarItemText onClick={onSidebarClick} id="4">
-                  탈퇴하기
-                </SidebarItemText>
-              </Sidebar>
-              <Main>
-                <ProfileBanner
-                  id="profileInfo"
-                  className="relative"
-                  onSubmit={handleSubmit(onValid as any)}
-                >
-                  <input
-                    className="hidden"
-                    type="file"
-                    accept="image/*"
-                    ref={inputRef}
-                    onChange={onImageChange}
-                  />
-                  {nowModifying && (
-                    <div className="absolute items-center justify-between flex left-[30px] top-[20px] w-[90%] md:w-[190px]">
-                      <i
-                        className="fa-solid fa-panorama w-[40px]"
-                        onClick={onUploadImageButtonClick}
-                      ></i>
-                      <button
-                        id="basicImage"
-                        className=" text-[10px] border-[2px] font-bold px-2 rounded-md border-black"
-                        onClick={onBasicImageClick}
-                      >
-                        기본 이미지
-                      </button>
-                    </div>
+              <SidebarItemText onClick={onSidebarClick} id="2">
+                내가 쓴 모집글
+              </SidebarItemText>
+              <SidebarItemText onClick={onSidebarClick} id="3">
+                찜한 모집글
+              </SidebarItemText>
+              <SidebarItemText onClick={onSidebarClick} id="4">
+                탈퇴하기
+              </SidebarItemText>
+            </Sidebar>
+            <Main>
+              <ProfileBanner
+                id="profileInfo"
+                className="relative"
+                onSubmit={handleSubmit(onValid as any)}
+              >
+                <input
+                  className="hidden"
+                  type="file"
+                  accept="image/*"
+                  ref={inputRef}
+                  onChange={onImageChange}
+                />
+                {nowModifying && (
+                  <div className="absolute items-center justify-between flex left-[30px] top-[20px] w-[90%] md:w-[190px]">
+                    <i
+                      className="fa-solid fa-panorama w-[40px]"
+                      onClick={onUploadImageButtonClick}
+                    ></i>
+                    <button
+                      id="basicImage"
+                      className=" text-[10px] border-[2px] font-bold px-2 rounded-md border-black"
+                      onClick={onBasicImageClick}
+                    >
+                      기본 이미지
+                    </button>
+                  </div>
+                )}
+
+                <div className="w-[120px] flex flex-col items-center ">
+                  {nowModifying ? (
+                    <img
+                      className="w-[100%] h-[120px] border border-black rounded-full my-[10px]"
+                      src={getValues("pictureUrl")}
+                    ></img>
+                  ) : (
+                    <img
+                      src={data?.pictureUrl}
+                      className="w-[100%] h-[120px] border-black rounded-full my-[10px]"
+                    />
                   )}
 
-                  <div className="w-[120px] flex flex-col items-center ">
-                    {nowModifying ? (
-                      <img
-                        className="w-[100%] h-[120px] border border-black rounded-full my-[10px]"
-                        src={getValues("pictureUrl")}
-                      ></img>
-                    ) : (
-                      <img
-                        src={data?.pictureUrl}
-                        className="w-[100%] h-[120px] border-black rounded-full my-[10px]"
+                  {nowModifying ? (
+                    <div className="flex flex-col justify-start items-center">
+                      <input
+                        type="text"
+                        placeholder="닉네임"
+                        {...register("nickname", {
+                          required: "필수 사항 입니다",
+                          maxLength: {
+                            value: 10,
+                            message: "10자 이하만 가능합니다",
+                          },
+                        })}
+                        className="mt-[10px] text-[17px] px-[10px] w-[150px] rounded-md border-2 border-gray-200"
                       />
-                    )}
 
-                    {nowModifying ? (
-                      <div className="flex flex-col justify-start items-center">
-                        <input
-                          type="text"
-                          placeholder="닉네임"
-                          {...register("nickname", {
-                            required: "필수 사항 입니다",
-                            maxLength: {
-                              value: 10,
-                              message: "10자 이하만 가능합니다",
-                            },
-                          })}
-                          className="mt-[10px] text-[17px] px-[10px] w-[150px] rounded-md border-2 border-gray-200"
-                        />
-
-                        <AnimatePresence>
-                          {(formState.errors.nickname?.message as string) && (
-                            <motion.span
-                              variants={ValidationVariant}
-                              className="text-xs my-auto mt-2"
-                              initial="hidden"
-                              animate="showing"
-                              exit="exit"
-                            >
-                              * {formState.errors.nickname?.message as string}
-                            </motion.span>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center w-[150px] mt-[10px]">
-                        <span className=" text-[17px] font-semibold text-gray-500 bg-white px-[20px]">
-                          <i className="fa-solid fa-user mr-[10px] text-gray-600"></i>
-                          {data?.nickname}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="md:pl-[70px] w-full text-[17px] flex flex-col justify-between mt-[20px] md:mt-[0px]">
-                    <ProfileInfoRow>
-                      <ProfileInfoBox>
-                        <ProfileInfoIcon className="fa-solid fa-graduation-cap"></ProfileInfoIcon>
-                        <ProfileInfoTitle>학부</ProfileInfoTitle>
-                      </ProfileInfoBox>
-                      {nowModifying ? (
-                        <select
-                          className="border-2 h-[35px] px-2 rounded-lg"
-                          {...register("department")}
-                        >
-                          <option>글로벌리더십학부</option>
-                          <option>국제어문학부</option>
-                          <option>경영경제학부</option>
-                          <option>법학부</option>
-                          <option>커뮤니케이션학부</option>
-                          <option>공간환경시스템공학부</option>
-                          <option>기계제어공학부</option>
-                          <option>콘텐츠융합디자인학부</option>
-                          <option>생명과학부</option>
-                          <option>전산전자공학부</option>
-                          <option>상담심리사회복지학부</option>
-                          <option>ICT창업학부</option>
-                          <option>AI융합교육원</option>
-                          <option>창의융합교육원</option>
-                        </select>
-                      ) : (
-                        <ProfileInfoContent>
-                          {data?.department}
-                        </ProfileInfoContent>
-                      )}
-                    </ProfileInfoRow>
-                    <ProfileInfoRow>
-                      <ProfileInfoBox>
-                        <ProfileInfoIcon className="fa-solid fa-wand-magic-sparkles"></ProfileInfoIcon>
-                        <ProfileInfoTitle>포지션</ProfileInfoTitle>
-                      </ProfileInfoBox>
-                      {nowModifying ? (
-                        <select
-                          className="border-2 h-[35px] px-2 rounded-lg"
-                          {...register("position")}
-                        >
-                          <option>일반</option>
-                          <option>기획자</option>
-                          <option>개발자</option>
-                          <option>디자이너</option>
-                        </select>
-                      ) : (
-                        <ProfileInfoContent>
-                          {data?.position}
-                        </ProfileInfoContent>
-                      )}
-                    </ProfileInfoRow>
-                    <ProfileInfoRow>
-                      <ProfileInfoBox>
-                        <ProfileInfoIcon className="fa-solid fa-stairs"></ProfileInfoIcon>
-                        <ProfileInfoTitle>학년</ProfileInfoTitle>
-                      </ProfileInfoBox>
-                      {nowModifying ? (
-                        <select
-                          className="border-2 h-[35px] px-2 rounded-lg"
-                          {...register("grade")}
-                        >
-                          <option>1학년</option>
-                          <option>2학년</option>
-                          <option>3학년</option>
-                          <option>4학년</option>
-                        </select>
-                      ) : (
-                        <ProfileInfoContent>{data?.grade}</ProfileInfoContent>
-                      )}
-                    </ProfileInfoRow>
-
-                    <ProfileInfoRow>
-                      <ProfileInfoBox>
-                        <ProfileInfoIcon className="fa-regular fa-id-card"></ProfileInfoIcon>
-
-                        <ProfileInfoTitle>연락수단</ProfileInfoTitle>
-                      </ProfileInfoBox>
-                      <ProfileInfoContent>
-                        {nowModifying ? (
-                          <div>
-                            <input
-                              className="border-2 h-[35px] px-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px]"
-                              type="text"
-                              {...register("contact", {
-                                required: "필수 사항 입니다",
-                                maxLength: {
-                                  value: 30,
-                                  message: "너무 깁니다.",
-                                },
-                              })}
-                              placeholder="Ex) 전화 번호 , 이메일 , 카톡 아이디 등"
-                            />
-                            <AnimatePresence>
-                              {(formState.errors.contact
-                                ?.message as string) && (
-                                <motion.span
-                                  variants={ValidationVariant}
-                                  className="text-xs ml-3"
-                                  initial="hidden"
-                                  animate="showing"
-                                  exit="exit"
-                                >
-                                  *{" "}
-                                  {formState.errors.contact?.message as string}
-                                </motion.span>
-                              )}
-                            </AnimatePresence>
-                          </div>
-                        ) : (
-                          <ProfileInfoContent>
-                            {data?.contact}
-                          </ProfileInfoContent>
+                      <AnimatePresence>
+                        {(formState.errors.nickname?.message as string) && (
+                          <motion.span
+                            variants={ValidationVariant}
+                            className="text-xs my-auto mt-2"
+                            initial="hidden"
+                            animate="showing"
+                            exit="exit"
+                          >
+                            * {formState.errors.nickname?.message as string}
+                          </motion.span>
                         )}
+                      </AnimatePresence>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center w-[150px] mt-[10px]">
+                      <span className=" text-[17px] font-semibold text-gray-500 bg-white px-[20px]">
+                        <i className="fa-solid fa-user mr-[10px] text-gray-600"></i>
+                        {data?.nickname}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="md:pl-[70px] w-full text-[17px] flex flex-col justify-between mt-[20px] md:mt-[0px]">
+                  <ProfileInfoRow>
+                    <ProfileInfoBox>
+                      <ProfileInfoIcon className="fa-solid fa-graduation-cap"></ProfileInfoIcon>
+                      <ProfileInfoTitle>학부</ProfileInfoTitle>
+                    </ProfileInfoBox>
+                    {nowModifying ? (
+                      <select
+                        className="border-2 h-[35px] px-2 rounded-lg"
+                        {...register("department")}
+                      >
+                        <option>글로벌리더십학부</option>
+                        <option>국제어문학부</option>
+                        <option>경영경제학부</option>
+                        <option>법학부</option>
+                        <option>커뮤니케이션학부</option>
+                        <option>공간환경시스템공학부</option>
+                        <option>기계제어공학부</option>
+                        <option>콘텐츠융합디자인학부</option>
+                        <option>생명과학부</option>
+                        <option>전산전자공학부</option>
+                        <option>상담심리사회복지학부</option>
+                        <option>ICT창업학부</option>
+                        <option>AI융합교육원</option>
+                        <option>창의융합교육원</option>
+                      </select>
+                    ) : (
+                      <ProfileInfoContent>
+                        {data?.department}
                       </ProfileInfoContent>
-                    </ProfileInfoRow>
+                    )}
+                  </ProfileInfoRow>
+                  <ProfileInfoRow>
+                    <ProfileInfoBox>
+                      <ProfileInfoIcon className="fa-solid fa-wand-magic-sparkles"></ProfileInfoIcon>
+                      <ProfileInfoTitle>포지션</ProfileInfoTitle>
+                    </ProfileInfoBox>
+                    {nowModifying ? (
+                      <select
+                        className="border-2 h-[35px] px-2 rounded-lg"
+                        {...register("position")}
+                      >
+                        <option>일반</option>
+                        <option>기획자</option>
+                        <option>개발자</option>
+                        <option>디자이너</option>
+                      </select>
+                    ) : (
+                      <ProfileInfoContent>{data?.position}</ProfileInfoContent>
+                    )}
+                  </ProfileInfoRow>
+                  <ProfileInfoRow>
+                    <ProfileInfoBox>
+                      <ProfileInfoIcon className="fa-solid fa-stairs"></ProfileInfoIcon>
+                      <ProfileInfoTitle>학년</ProfileInfoTitle>
+                    </ProfileInfoBox>
+                    {nowModifying ? (
+                      <select
+                        className="border-2 h-[35px] px-2 rounded-lg"
+                        {...register("grade")}
+                      >
+                        <option>1학년</option>
+                        <option>2학년</option>
+                        <option>3학년</option>
+                        <option>4학년</option>
+                      </select>
+                    ) : (
+                      <ProfileInfoContent>{data?.grade}</ProfileInfoContent>
+                    )}
+                  </ProfileInfoRow>
 
-                    <ProfileInfoRow className="items-start">
-                      <ProfileInfoBox>
-                        <ProfileInfoIcon className="fa-solid fa-circle-nodes "></ProfileInfoIcon>
+                  <ProfileInfoRow>
+                    <ProfileInfoBox>
+                      <ProfileInfoIcon className="fa-regular fa-id-card"></ProfileInfoIcon>
 
-                        <ProfileInfoTitle>동아리 / 학회</ProfileInfoTitle>
-                      </ProfileInfoBox>
-
-                      {nowModifying ? (
-                        <div className="flex flex-col ">
-                          <input
-                            {...register(`club1`)}
-                            className="border-2 h-[35px] px-2 mb-[10px] rounded-lg w-[200px] lg:w-[300px] xl:w-[400px]"
-                            placeholder="최대 2개"
-                            type="text"
-                            maxLength={20}
-                          />
-
-                          <input
-                            {...register(`club2`)}
-                            className="border-2 h-[35px] px-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px]"
-                            placeholder="최대 2개"
-                            type="text"
-                            maxLength={20}
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col">
-                          {data?.club?.map((elem, index) =>
-                            data?.club?.at(index) === "" ? null : (
-                              <ProfileInfoContent
-                                className="flex relative items-center justify-center bg-gray-200 my-1 py-[3px] px-[10px]"
-                                key={index}
-                              >
-                                <ProfileInfoIcon className="absolute left-2 fa-solid fa-circle-nodes "></ProfileInfoIcon>
-                                <p>{elem}</p>
-                              </ProfileInfoContent>
-                            )
-                          )}
-                        </div>
-                      )}
-                    </ProfileInfoRow>
-
-                    <ProfileInfoRow className=" items-start mb-0 mt-[8px]">
-                      <ProfileInfoBox>
-                        <ProfileInfoIcon className="fa-solid fa-link"></ProfileInfoIcon>
-                        <ProfileInfoTitle className="">
-                          외부링크
-                        </ProfileInfoTitle>
-                      </ProfileInfoBox>
-
+                      <ProfileInfoTitle>연락수단</ProfileInfoTitle>
+                    </ProfileInfoBox>
+                    <ProfileInfoContent>
                       {nowModifying ? (
                         <div>
-                          <div className="flex items-center">
-                            <input
-                              className="border-2 px-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px] h-[35px]"
-                              value={externalLink}
-                              onChange={onChange}
-                              placeholder="ex) github or Linked-In"
-                              maxLength={30}
-                            />
-                            <i
-                              onClick={onClickPlus}
-                              className="fa-solid fa-plus text-[20px] relative right-7"
-                            ></i>
-                          </div>
+                          <input
+                            className="border-2 h-[35px] px-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px]"
+                            type="text"
+                            {...register("contact", {
+                              required: "필수 사항 입니다",
+                              maxLength: {
+                                value: 30,
+                                message: "너무 깁니다.",
+                              },
+                            })}
+                            placeholder="Ex) 전화 번호 , 이메일 , 카톡 아이디 등"
+                          />
+                          <AnimatePresence>
+                            {(formState.errors.contact?.message as string) && (
+                              <motion.span
+                                variants={ValidationVariant}
+                                className="text-xs ml-3"
+                                initial="hidden"
+                                animate="showing"
+                                exit="exit"
+                              >
+                                * {formState.errors.contact?.message as string}
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      ) : (
+                        <ProfileInfoContent>{data?.contact}</ProfileInfoContent>
+                      )}
+                    </ProfileInfoContent>
+                  </ProfileInfoRow>
 
-                          {Links.length !== 0 &&
-                            Links?.map((link) => (
-                              <div className="flex items-center justify-between bg-slate-200 px-[10px] w-[200px] lg:w-[300px] xl:w-[400px]  h-[30px] mt-[10px]">
-                                <i className="fa-solid fa-link"></i>
-                                <p>{link} </p>
-                                <i
-                                  className="fa-regular fa-trash-can"
-                                  onClick={() => onDelete(link)}
-                                ></i>
-                              </div>
-                            ))}
+                  <ProfileInfoRow className="items-start">
+                    <ProfileInfoBox>
+                      <ProfileInfoIcon className="fa-solid fa-circle-nodes "></ProfileInfoIcon>
 
-                          {/* {data?.externalLinks?.map((link, index) => (
+                      <ProfileInfoTitle>동아리 / 학회</ProfileInfoTitle>
+                    </ProfileInfoBox>
+
+                    {nowModifying ? (
+                      <div className="flex flex-col ">
+                        <input
+                          {...register(`club1`)}
+                          className="border-2 h-[35px] px-2 mb-[10px] rounded-lg w-[200px] lg:w-[300px] xl:w-[400px]"
+                          placeholder="최대 2개"
+                          type="text"
+                          maxLength={20}
+                        />
+
+                        <input
+                          {...register(`club2`)}
+                          className="border-2 h-[35px] px-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px]"
+                          placeholder="최대 2개"
+                          type="text"
+                          maxLength={20}
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex flex-col">
+                        {data?.club?.map((elem, index) =>
+                          data?.club?.at(index) === "" ? null : (
+                            <ProfileInfoContent
+                              className="flex relative items-center justify-center bg-gray-200 my-1 py-[3px] px-[10px]"
+                              key={index}
+                            >
+                              <ProfileInfoIcon className="absolute left-2 fa-solid fa-circle-nodes "></ProfileInfoIcon>
+                              <p>{elem}</p>
+                            </ProfileInfoContent>
+                          )
+                        )}
+                      </div>
+                    )}
+                  </ProfileInfoRow>
+
+                  <ProfileInfoRow className=" items-start mb-0 mt-[8px]">
+                    <ProfileInfoBox>
+                      <ProfileInfoIcon className="fa-solid fa-link"></ProfileInfoIcon>
+                      <ProfileInfoTitle className="">외부링크</ProfileInfoTitle>
+                    </ProfileInfoBox>
+
+                    {nowModifying ? (
+                      <div>
+                        <div className="flex items-center">
+                          <input
+                            className="border-2 px-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px] h-[35px]"
+                            value={externalLink}
+                            onChange={onChange}
+                            placeholder="ex) github or Linked-In"
+                            maxLength={30}
+                          />
+                          <i
+                            onClick={onClickPlus}
+                            className="fa-solid fa-plus text-[20px] relative right-7"
+                          ></i>
+                        </div>
+
+                        {Links.length !== 0 &&
+                          Links?.map((link) => (
+                            <div className="flex items-center justify-between bg-slate-200 px-[10px] w-[200px] lg:w-[300px] xl:w-[400px]  h-[30px] mt-[10px]">
+                              <i className="fa-solid fa-link"></i>
+                              <p>{link} </p>
+                              <i
+                                className="fa-regular fa-trash-can"
+                                onClick={() => onDelete(link)}
+                              ></i>
+                            </div>
+                          ))}
+
+                        {/* {data?.externalLinks?.map((link, index) => (
                       <ProfileInfoContent key={index}>
                         {link}
                       </ProfileInfoContent>
                     ))} */}
-                        </div>
-                      ) : (
-                        <div className="flex flex-col ">
-                          {Links?.map((link) => (
-                            <div className="relative flex items-center justify-center w-[230px] md:min-w-[300px] bg-slate-200 h-[30px] mb-[10px]">
-                              <i className="fa-solid fa-link absolute left-2"></i>
-                              <p>{link} </p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </ProfileInfoRow>
-                    <ProfileInfoRow
-                      className={`${nowModifying && "mt-[20px]"} items-start`}
-                    >
-                      <ProfileInfoBox className="">
-                        <ProfileInfoIcon className="fa-solid fa-rocket"></ProfileInfoIcon>
-                        <ProfileInfoTitle>자기소개</ProfileInfoTitle>
-                      </ProfileInfoBox>
-                      <ProfileInfoContent>
-                        {nowModifying ? (
-                          <textarea
-                            {...register("bio")}
-                            className="border-2 p-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px] h-[100px]"
-                            placeholder="자유롭게 작성 해주세요 !"
-                            maxLength={150}
-                          ></textarea>
-                        ) : (
-                          <ProfileInfoContent>{data?.bio}</ProfileInfoContent>
-                        )}
-                      </ProfileInfoContent>
-                    </ProfileInfoRow>
-                    <div className="flex justify-center md:justify-end ">
-                      {!location.state &&
-                        (nowModifying ? (
-                          <>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                refetch();
-                                setNowModifying(false);
-                              }}
-                              className="mb-[40px]  rounded-full border-2 border-red-500 text-red-500 w-[80px] bg-white text-[13px] mt-[20px] md:text-[17px] md:w-[120px] md:h-[30px] h-[25px] "
-                            >
-                              {" "}
-                              취소하기{" "}
-                            </button>
-                            <button
-                              id="modify"
-                              className="bg-[#fff] ml-2 w-[80px] text-[13px] mt-[20px] md:text-[17px] md:w-[120px] md:h-[30px] h-[25px] border-2 shadow  rounded-full text-gray-500 border-gray-400"
-                            >
-                              제출하기
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              id="modify"
-                              onClick={onClick}
-                              className="bg-[#fff] w-[80px] text-[13px] mt-[10px] md:mt-[0px] md:text-[17px] md:w-[120px] md:h-[30px] h-[25px] border-2 shadow rounded-full  text-gray-500 border-gray-400"
-                            >
-                              수정하기
-                            </button>
-                          </>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col ">
+                        {Links?.map((link) => (
+                          <div className="relative flex items-center justify-center w-[230px] md:min-w-[300px] bg-slate-200 h-[30px] mb-[10px]">
+                            <i className="fa-solid fa-link absolute left-2"></i>
+                            <p>{link} </p>
+                          </div>
                         ))}
-                    </div>
-                  </div>
-                </ProfileBanner>
-
-                <span className="mt-[40px] text-[20px] font-medium flex items-center">
-                  <i className="fa-solid fa-pencil mr-2"> </i>
-                  <p className="font-bold font-unique">내가 쓴 모집글</p>
-                </span>
-
-                <PostGrid id="myPost">
-                  <AnimatePresence>
-                    {(data?.posts as IPost[]).map((post, index) => (
-                      <Card post={post} refetch={refetch} key={index} />
-                    ))}
-                  </AnimatePresence>
-                </PostGrid>
-
-                <span className="mt-[40px] text-[20px] font-medium flex items-center">
-                  <i className="fa-solid fa-heart text-red-600 mr-2"></i>
-                  <p className="font-bold font-unique">찜한 모집글</p>
-                </span>
-
-                <PostGrid id="zzim">
-                  <AnimatePresence>
-                    {data?.likes?.map((post, index) => (
-                      <Card
-                        post={post}
-                        refetch={refetch}
-                        variants={PostItemVariant}
-                        initial="initial"
-                        animate="showing"
-                        exit="hidden"
-                        key={index}
-                      />
-                    ))}
-                  </AnimatePresence>
-                </PostGrid>
-
-                {!location.state && (
-                  <button
-                    onClick={onClick}
-                    id="delete"
-                    className="float-right mb-[40px] rounded-full border-2 border-red-500 text-red-500 w-[130px] h-[30px] "
+                      </div>
+                    )}
+                  </ProfileInfoRow>
+                  <ProfileInfoRow
+                    className={`${nowModifying && "mt-[20px]"} items-start`}
                   >
-                    {" "}
-                    탈퇴하기{" "}
-                  </button>
-                )}
-              </Main>
-            </Container>
-          </>
-        )}
-      </Outline>
+                    <ProfileInfoBox className="">
+                      <ProfileInfoIcon className="fa-solid fa-rocket"></ProfileInfoIcon>
+                      <ProfileInfoTitle>자기소개</ProfileInfoTitle>
+                    </ProfileInfoBox>
+                    <ProfileInfoContent>
+                      {nowModifying ? (
+                        <textarea
+                          {...register("bio")}
+                          className="border-2 p-2 rounded-lg w-[200px] lg:w-[300px] xl:w-[400px] h-[100px]"
+                          placeholder="자유롭게 작성 해주세요 !"
+                          maxLength={150}
+                        ></textarea>
+                      ) : (
+                        <ProfileInfoContent>{data?.bio}</ProfileInfoContent>
+                      )}
+                    </ProfileInfoContent>
+                  </ProfileInfoRow>
+                  <div className="flex justify-center md:justify-end ">
+                    {!location.state &&
+                      (nowModifying ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              refetch();
+                              setNowModifying(false);
+                            }}
+                            className="mb-[40px]  rounded-full border-2 border-red-500 text-red-500 w-[80px] bg-white text-[13px] mt-[20px] md:text-[17px] md:w-[120px] md:h-[30px] h-[25px] "
+                          >
+                            {" "}
+                            취소하기{" "}
+                          </button>
+                          <button
+                            id="modify"
+                            className="bg-[#fff] ml-2 w-[80px] text-[13px] mt-[20px] md:text-[17px] md:w-[120px] md:h-[30px] h-[25px] border-2 shadow  rounded-full text-gray-500 border-gray-400"
+                          >
+                            제출하기
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            id="modify"
+                            onClick={onClick}
+                            className="bg-[#fff] w-[80px] text-[13px] mt-[10px] md:mt-[0px] md:text-[17px] md:w-[120px] md:h-[30px] h-[25px] border-2 shadow rounded-full  text-gray-500 border-gray-400"
+                          >
+                            수정하기
+                          </button>
+                        </>
+                      ))}
+                  </div>
+                </div>
+              </ProfileBanner>
+
+              <span className="mt-[40px] text-[20px] font-medium flex items-center">
+                <i className="fa-solid fa-pencil mr-2"> </i>
+                <p className="font-bold font-unique">내가 쓴 모집글</p>
+              </span>
+
+              <PostGrid id="myPost">
+                <AnimatePresence>
+                  {(data?.posts as IPost[]).map((post, index) => (
+                    <Card post={post} refetch={refetch} key={index} />
+                  ))}
+                </AnimatePresence>
+              </PostGrid>
+
+              <span className="mt-[40px] text-[20px] font-medium flex items-center">
+                <i className="fa-solid fa-heart text-red-600 mr-2"></i>
+                <p className="font-bold font-unique">찜한 모집글</p>
+              </span>
+
+              <PostGrid id="zzim">
+                <AnimatePresence>
+                  {data?.likes?.map((post, index) => (
+                    <Card
+                      post={post}
+                      refetch={refetch}
+                      variants={PostItemVariant}
+                      initial="initial"
+                      animate="showing"
+                      exit="hidden"
+                      key={index}
+                    />
+                  ))}
+                </AnimatePresence>
+              </PostGrid>
+
+              {!location.state && (
+                <button
+                  onClick={onClick}
+                  id="delete"
+                  className="float-right mb-[40px] rounded-full border-2 border-red-500 text-red-500 w-[130px] h-[30px] "
+                >
+                  {" "}
+                  탈퇴하기{" "}
+                </button>
+              )}
+            </Main>
+          </Container>
+        </>
+      )}
     </>
   );
 }
