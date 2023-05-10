@@ -1,6 +1,7 @@
 package com.hcu.hot6.controller;
 
 import com.hcu.hot6.domain.Department;
+import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.enums.OrderBy;
 import com.hcu.hot6.domain.enums.Year;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
@@ -34,10 +35,16 @@ public class PostApiController {
             @AuthenticationPrincipal OAuth2User user) {
 
         String email = user.getName();
-        PostCreationResponse response = postService.createPost(request, email);
-        keywordService.addKeywords(request.getKeywords(), request.getTags());
+        Post post = postService.createPost(request, email);
+        keywordService.addKeywords(post, request);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                PostCreationResponse.builder()
+                        .id(post.getId())
+                        .title(post.getThumbnail().getTitle())
+                        .createdDate(post.getCreatedDate())
+                        .build()
+        );
     }
 
     /**
