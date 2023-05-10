@@ -42,6 +42,7 @@ import { Helmet } from "react-helmet";
 import ConfirmModal from "components/ConfirmModal";
 import AlertModal from "components/AlertModal";
 import Outline from "components/Outline";
+import Validation from "./components/Validation";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -165,6 +166,9 @@ function PostAddForm2() {
   }
 
   watch([
+    "title",
+    "contact",
+    "recruitStart",
     "summary",
     "categoryETC",
     "departments",
@@ -526,9 +530,11 @@ function PostAddForm2() {
         <form onSubmit={handleSubmit(onSubmit as any)} className="px-[20px] ">
           <div className="bg-slate-100 p-[50px] rounded-3xl mb-[50px]">
             <div className="flex justify-between w-full relative">
-              <p className="text-[20px] font-main">
-                썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
-              </p>
+              <div className="flex items-center mb-[10px]">
+                <p className="text-[20px] font-main">
+                  썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
+                </p>
+              </div>
 
               {!postExampleToggle && (
                 <button
@@ -582,6 +588,10 @@ function PostAddForm2() {
             썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
           </p> */}
 
+            <p className="absolute right-[120px] top-[270px] mt-[20px] text-[18px] text-red-500 mt-[5px]">
+              * : 필수 사항
+            </p>
+
             <div className="w-full h-[400px] flex items-center justify-between mb-[20px] ">
               <div className="w-[400px] border h-[350px] bg-white p-[30px] rounded-2xl shadow-sm">
                 <div className="mb-[10px]">
@@ -616,15 +626,18 @@ function PostAddForm2() {
                     <i className="fa-regular fa-heart text-[23px] text-gray-400"></i>
                   </span>
                   {/* <div id="input-custom-css"> */}
-                  <input
-                    className="w-[330px] mx-[10px] text-[19px] py-[5px] mb-[10px] border-b-2"
-                    onFocus={() => {
-                      document.getElementById("titleBorder")?.focus();
-                    }}
-                    {...register("title")}
-                    type="text"
-                    placeholder="제목을 입력해주세요"
-                  />
+                  <div className=" flex relative">
+                    <Validation />
+                    <input
+                      className="w-[350px] text-[19px] py-[5px] mb-[10px] border-b-2"
+                      onFocus={() => {
+                        document.getElementById("titleBorder")?.focus();
+                      }}
+                      {...register("title")}
+                      type="text"
+                      placeholder="제목을 입력해주세요"
+                    />
+                  </div>
                   {/* <motion.input
                     whileFocus="animate"
                     variants={inputVariants}
@@ -641,7 +654,7 @@ function PostAddForm2() {
                         id="summary"
                         onKeyPress={textareaResize}
                         onKeyUp={textareaResize}
-                        className=" px-[8px] notes w-[350px] text-[15px] "
+                        className="notes w-[350px] text-[15px] "
                         {...register("summary")}
                         placeholder="(선택) 두줄 이내의 간결한 모임 설명글을 적어주세요"
                       />
@@ -757,6 +770,7 @@ function PostAddForm2() {
                               }
                             }}
                             placeholder="키워드 입력"
+                            maxLength={10}
                           />
 
                           <button
@@ -792,11 +806,12 @@ function PostAddForm2() {
               </div>
 
               <div className="w-[300px] h-[350px] px-[40px] py-[30px]">
-                <span>모집 기간</span>
+                <Validation />
+                <span className="">모집 기간</span>
 
                 <span className="pl-[30px] mb-[200px]">
                   <span className="mt-[20px] flex items-center mb-[10px]">
-                    <p className="mx-[15px] w-[30px]">시작</p>
+                    <p className="mr-[15px] w-[30px]">시작</p>
                     <input
                       className={`w-[140px] bg-slate-100 text-blue-500`}
                       type="date"
@@ -805,7 +820,7 @@ function PostAddForm2() {
                   </span>
 
                   <span className="flex items-center">
-                    <p className="mx-[15px] ">마감</p>
+                    <p className="mr-[15px] ">마감</p>
                     <input
                       type="date"
                       className="w-[140px] bg-slate-100 text-blue-500"
@@ -823,7 +838,8 @@ function PostAddForm2() {
               </div>
 
               <div className="w-[600px] h-[350px] px-[40px] py-[30px]">
-                <span className="flex items-center">
+                <Validation />
+                <span className="relative flex items-center">
                   모임 유형(카테고리){" "}
                   <span className="text-[13px] ml-[20px]">
                     <span className="text-blue-600 font-bold">최대 2개</span>{" "}
@@ -881,8 +897,9 @@ function PostAddForm2() {
                         {...register("categoryETC")}
                         type="text"
                         id="categoryETC"
-                        className="border-b-2 h-[35px] border-gray-400 w-full px-[10px] bg-slate-100"
-                        placeholder="모집 유형을 입력해주세요"
+                        className="border-b-2 h-[35px] border-gray-400 w-full bg-slate-100"
+                        placeholder="8자 이내 자유 입력"
+                        maxLength={8}
                       />
                     )}
                   </div>
@@ -895,23 +912,23 @@ function PostAddForm2() {
               <p className="mt-[10px]">지원에 필요한 정보를 채워주세요!</p>
               <div className="flex items-center w-full justify-between">
                 {/* <div className="w-[600px] mt-[20px] mr-[100px]"> */}
-                <div className="flex items-start w-[45%]">
-                  <div className="w-[130px] mt-[8px]">신청 경로</div>
-                  <div className="w-full">
+                <div className="relative flex items-center w-[45%]">
+                  <Validation />
+                  <div className="w-[130px] flex">신청 경로</div>
+                  <div className="relative flex w-full items-center">
                     <input
                       // onFocus={{
-
                       // }}
-
                       type="text"
-                      className="w-full border-b border-gray-300 h-[40px] px-[10px] bg-slate-100"
+                      className="w-full border-b border-gray-300 px-[10px] py-[5px] bg-slate-100 "
                       placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
                       {...register("contact")}
                     />
                   </div>
                 </div>
+
                 <span className="flex mt-[10px] items-start w-[45%]">
-                  <p className="w-[200px]">신청 방법 (선택)</p>
+                  <p className="w-[200px]">신청 방법</p>
                   <div className="w-full">
                     <textarea
                       wrap="off"

@@ -21,17 +21,15 @@ const ValidationVariant = {
 export default function Validation({ message }: any) {
   return (
     <AnimatePresence>
-      {message && (
-        <motion.div
-          variants={ValidationVariant}
-          className="text-xs my-auto ml-[3px]"
-          initial="hidden"
-          animate="showing"
-          exit="exit"
-        >
-          * {message}
-        </motion.div>
-      )}
+      <motion.div
+        variants={ValidationVariant}
+        className="text-[20px] text-red-500 absolute ml-[-12px] mt-[-5px]"
+        initial="hidden"
+        animate="showing"
+        exit="exit"
+      >
+        *
+      </motion.div>
     </AnimatePresence>
   );
 }

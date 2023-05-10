@@ -1,7 +1,7 @@
 .notes {
   background-attachment: local;
-  background-image: linear-gradient(to right, white 10px, transparent 10px),
-    linear-gradient(to left, white 10px, transparent 10px),
+  background-image: linear-gradient(to right, white 0px, transparent 0px),
+    linear-gradient(to left, white 0px, transparent 0px),
     repeating-linear-gradient(
       white,
       white 28px,
@@ -30,8 +30,8 @@
 
 .notes_gray {
   background-attachment: local;
-  background-image: linear-gradient(to right, #f3f4f6 10px, transparent 10px),
-    linear-gradient(to left, #f3f4f6 10px, transparent 10px),
+  background-image: linear-gradient(to right, #f3f4f6 0px, transparent 0px),
+    linear-gradient(to left, #f3f4f6 0px, transparent 0px),
     repeating-linear-gradient(
       #f3f4f6,
       #f3f4f6 28px,
@@ -45,8 +45,8 @@
 
 .notes:focus {
   outline: none;
-  background-image: linear-gradient(to right, white 10px, transparent 10px),
-    linear-gradient(to left, white 10px, transparent 10px),
+  background-image: linear-gradient(to right, white 0px, transparent 0px),
+    linear-gradient(to left, white 0px, transparent 0px),
     repeating-linear-gradient(
       white,
       white 28px,
@@ -75,8 +75,8 @@
 
 .notes_gray:focus {
   outline: none;
-  background-image: linear-gradient(to right, #f3f4f6 10px, transparent 10px),
-    linear-gradient(to left, #f3f4f6 10px, transparent 10px),
+  background-image: linear-gradient(to right, #f3f4f6 0px, transparent 0px),
+    linear-gradient(to left, #f3f4f6 0px, transparent 0px),
     repeating-linear-gradient(
       #f3f4f6,
       #f3f4f6 28px,
