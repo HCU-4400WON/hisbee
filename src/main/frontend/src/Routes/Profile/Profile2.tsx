@@ -15,6 +15,7 @@ import {
   isLoginState,
 } from "components/atom";
 import { FunctionButton } from "components/FunctionButton";
+import Outline from "components/Outline";
 import ProfileLottie from "components/ProfileLottie";
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
@@ -28,7 +29,7 @@ import DeleteModal from "./DeleteModal";
 import Thumbnail from "./Thumbnail";
 
 const PostGrid = tw.div`
-bg-gray-100
+bg-gray-200
 grid
 grid-cols-1
 sm:grid-cols-1
@@ -109,6 +110,7 @@ text-[20px]
 
 const Banner = tw.form`
 py-[50px] bg-slate-100 flex
+border-b border-gray-200
 `;
 
 const Button = tw.button`
@@ -217,7 +219,7 @@ function Profile2() {
   };
 
   return (
-    <>
+    <Outline>
       {isDeleteModal && <DeleteModal />}
       <Helmet>
         <title>{data?.profile.nickname}</title>
@@ -381,7 +383,7 @@ function Profile2() {
               )}
             </PostGrid>
             {postFiltering(data as IUserRead, mode, filter)?.length === 0 && (
-              <div className="flex justify-center items-center w-full h-[50px] text-[17px] text-black mt-[100px]">
+              <div className="flex justify-center bg-gray-100 items-center w-full h-[50px] text-[17px] text-black mt-[100px]">
                 <i className="fa-solid fa-circle-exclamation text-black mx-[10px]">
                   &nbsp;
                 </i>
@@ -391,7 +393,7 @@ function Profile2() {
           </div>
         </div>
       </div>
-    </>
+    </Outline>
   );
 }
 

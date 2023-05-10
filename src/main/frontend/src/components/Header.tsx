@@ -10,13 +10,10 @@ import Outline from "./Outline";
 
 const Nav = tw.nav`
 flex 
-justify-center
 items-center 
 px-[0px]
-cd:px-[20px]
-sm:justify-between
-pr-[20px]
-md:pr-[60px]
+justify-between
+pr-[60px]
 min-w-[480px]
 `;
 
@@ -35,11 +32,10 @@ hover:text-blue-400
 
 const Logo = tw(motion.img)`
     
-    w-[100px]
-    md:min-w-[120px]
+    w-[120px]
     hover:text-blue-500
-    md:ml-[100px]
-    ml-[50px]
+    ml-[100px]
+    
 `;
 const NavFlexBox = tw.div`
     flex
@@ -333,18 +329,18 @@ function Header() {
           </SearchBox> */}
             {/* <Link to="login"> */}
             {!isLogin ? (
-              <NavButton onClick={onClick} className="md:pl-[60px]">
-                Login
+              <NavButton onClick={onClick} className="pl-[60px]">
+                로그인
               </NavButton>
             ) : (
-              <NavButton id="logout" onClick={onClick} className="md:pl-[60px]">
+              <NavButton id="logout" onClick={onClick} className="pl-[60px]">
                 로그아웃
               </NavButton>
             )}
             {isLogin && (
               <Link to="profile2" className="relative ">
                 <NavButton
-                  className={`${isProfileURL && "text-blue-500"} md:pl-[40px]`}
+                  className={`${isProfileURL && "text-blue-500"} pl-[40px]`}
                 >
                   {/* <i className="fa-solid fa-user text-[22px]"></i> */}
                   마이페이지

@@ -26,7 +26,7 @@ const FooterVariant = {
 function Footer() {
   const [isTeamModal, setIsTeamModal] = useState(false);
   return (
-    <div className="min-w-[480px] h-[150px] pr-[50px] flex justify-between items-center mt-[150px]">
+    <div className="min-w-[480px] h-[150px] pr-[50px] flex justify-between items-center mt-[0px]">
       <div className="flex justify-start items-end">
         <img
           src="/img/logo_hisbee.png"

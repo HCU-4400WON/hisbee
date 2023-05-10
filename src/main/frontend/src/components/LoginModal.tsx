@@ -54,14 +54,14 @@ function Login() {
         </div>
         <hr style={{ border: "dashed 2px lightGray" }}></hr>
 
-        <div className=" flex flex-col items-center py-[50px] text-[16px] text-center">
-          <p className="text-[20px] font-[500] mb-[30px]"> Login </p>
+        <div></div>
+        <div className=" flex flex-col items-center pt-[40px] pb-[30px] text-[16px] text-center">
+          <p className="text-[22px] font-[500] mb-[30px]"> Login </p>
           🗝 로그인을 통해 HISBEE 서비스의 기능들을 이용해보세요! <br></br> 글
           작성 , 좋아요 , 마이페이지 기능이 제공됩니다.
         </div>
 
-        <hr style={{ border: "dashed 2px lightGray" }}></hr>
-        <div className="flex justify-end items-end">
+        <div className="flex justify-center items-start mb-[50px]">
           <button
             id="no"
             onClick={onClick}
@@ -71,11 +71,13 @@ function Login() {
           </button>
           <a
             href={`${process.env.REACT_APP_BACK_BASE_URL}/oauth2/authorization/google`}
-            className="text-[17px] flex justify-end mt-[40px]"
+            className="text-[17px] flex"
           >
             <FunctionButton text="Google 계정으로 로그인" />
           </a>
         </div>
+
+        <hr style={{ border: "dashed 2px lightGray" }}></hr>
 
         {/* <div
             className="border-1-[#eff0f6] w-[310px] h-[34.6px] flex items-center rounded-full text-[14px] px-5 "

@@ -58,6 +58,7 @@ w-[150px]
 
 const Banner = tw.img`
 bg-gradient-to-r from-gray-300 to-gray-500
+min-w-[1470px]
 `;
 
 const SortBox = tw.div`
@@ -445,7 +446,7 @@ function Post() {
         {isLoginModal ? <Login /> : null}
         {isSignupModal ? <SignUp2 /> : null}
 
-        <Container>
+        <Container className="min-w-[1470px]">
           <Banner src="./img/banner_post.png"></Banner>
 
           <Outline bgColor="bg-white">
@@ -472,9 +473,9 @@ function Post() {
 
           <Outline bgColor="bg-gray-100">
             {/* <div className="mt-[20px]"> */}
-            <div className="w-[1470px] mt-[20px]">
-              <div className="flex py-[20px] px-[70px] ">
-                <div className="flex items-start ">
+            <div className="min-w-[1470px] pt-[20px]">
+              <div className="flex py-[20px] px-[70px]  ">
+                <div className="flex items-start  ">
                   {/* <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] border-2 border-black">
                     {Majors.map((major, index) => (
                       <option key={index}>
@@ -490,7 +491,7 @@ function Post() {
                     ))}
                   </select> */}
                   <span className="flex items-center">
-                    <div className=" mr-[20px] py-[0px]">
+                    <div className="mr-[20px] py-[0px]">
                       <p className="text-[16px] font-[500]">필터링 키워드</p>
                     </div>
                     <div className="w-[280px] mr-[30px]">
@@ -662,8 +663,9 @@ function Post() {
             </div>
             {/* </Outline> */}
           </Outline>
+
           {unionData.length === 0 && (
-            <div className="flex justify-center items-center w-full h-[50px] text-[17px] text-black mt-[50px]">
+            <div className="flex justify-center items-center min-w-[1470px] h-[50px] text-[17px] bg-slate-100 text-black pt-[50px]">
               <i className="fa-solid fa-circle-exclamation text-black mx-[10px]">
                 &nbsp;
               </i>
