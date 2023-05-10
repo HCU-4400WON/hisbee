@@ -457,40 +457,42 @@ function Detail2() {
                   />
                 </div>
                 {/* )} */}
-                <div>
-                  {!data?.closed && (
-                    <button
-                      className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-gray-200 "
-                      onClick={() => {
-                        const newClosedPost: IUpdatePost = {
-                          isClosed: true,
-                        };
-                        if (window.confirm("마감하시겠습니까?")) {
-                          console.log("!!");
-                          updatePost(Number(id), newClosedPost);
-                        }
-                      }}
-                    >
-                      모집 마감
-                    </button>
-                  )}
+                {data?.verified && (
+                  <div>
+                    {!data?.closed && (
+                      <button
+                        className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-gray-200 "
+                        onClick={() => {
+                          const newClosedPost: IUpdatePost = {
+                            isClosed: true,
+                          };
+                          if (window.confirm("마감하시겠습니까?")) {
+                            console.log("!!");
+                            updatePost(Number(id), newClosedPost);
+                          }
+                        }}
+                      >
+                        모집 마감
+                      </button>
+                    )}
 
-                  <Link to={`/modify/${id}`} state={data as IReadOnePost}>
-                    <button className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-blue-100 text-blue-500">
-                      수정
+                    <Link to={`/modify/${id}`} state={data as IReadOnePost}>
+                      <button className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-blue-100 text-blue-500">
+                        수정
+                      </button>
+                    </Link>
+                    <button
+                      id="delete"
+                      onClick={onBtnClick}
+                      className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-red-100 text-red-500"
+                    >
+                      삭제
                     </button>
-                  </Link>
-                  <button
-                    id="delete"
-                    onClick={onBtnClick}
-                    className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-red-100 text-red-500"
-                  >
-                    삭제
-                  </button>
-                  {/* <FormDeleteButton  >
-                  <FormDeleteIcon />
-                </FormDeleteButton> */}
-                </div>
+                    {/* <FormDeleteButton  >
+                   <FormDeleteIcon />
+                 </FormDeleteButton> */}
+                  </div>
+                )}
               </FormHeader>
 
               <FormAuthorNButtonRow>
@@ -501,15 +503,24 @@ function Detail2() {
 
                   <WriterSpan>
                     <WriteInfo className="">
-                      <span className="mx-[10px] text-gray-600">
-                        {data?.author}
-                      </span>
+                      <span className=" text-gray-400">작성자</span>
                     </WriteInfo>
                     <WriteInfo className="">
-                      <span className="ml-[10px]">
+                      <span className="text-gray-600">{data?.author}</span>
+                    </WriteInfo>
+                    <WriteInfo className="">
+                      <span className=" text-gray-400">작성일</span>
+                    </WriteInfo>
+                    <WriteInfo className="">
+                      <span className="text-gray-600">
                         {datetimeToString(data?.createdDate as Date)}
                       </span>
                     </WriteInfo>
+                    {/* <WriteInfo className="">
+                      <span className="ml-[10px]">
+                        {datetimeToString(data?.createdDate as Date)}
+                      </span>
+                    </WriteInfo> */}
                     <WriteInfo className="">
                       <i className="fa-regular fa-eye mr-[5px]"></i>
                       {data?.views}
