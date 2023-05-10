@@ -188,7 +188,7 @@ function PostAddForm2() {
     "years",
   ]);
 
-  console.log(getValues("firstKeyword"), getValues("secondKeyword"));
+  // console.log(getValues("firstKeyword"), getValues("secondKeyword"));
 
   // const keywordWatchs = [watch("firstKeyword"), watch("secondKeyword")];
 
@@ -208,7 +208,7 @@ function PostAddForm2() {
 
       {
         onSuccess: (data) => {
-          console.log("모집글이 생성되었습니다.", data);
+          // console.log("모집글이 생성되었습니다.", data);
           // alert("모집글이 생성되었습니다.");
           // navigate("/post");
           setIsPostSubmitAlertModal(true);
@@ -230,12 +230,12 @@ function PostAddForm2() {
   const [imageURLList, setImageURLList] = useState<string[] | []>([]);
 
   const onSubmit = (data: ISubmitDate, e: any) => {
-    console.log(getValues("years"));
-    console.log(getValues("departments"));
-    console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
+    // console.log(getValues("years"));
+    // console.log(getValues("departments"));
+    // console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
     // console.log(imageURL);
 
-    console.log("데이터");
+    // console.log("데이터");
 
     let newIsETC = false;
 
@@ -305,7 +305,7 @@ function PostAddForm2() {
       isETC: newIsETC,
     };
 
-    console.log(newPost);
+    // console.log(newPost);
     // createPostMutate(newPost as any);
 
     const nPost = {
@@ -330,7 +330,7 @@ function PostAddForm2() {
       keywords: ["포트폴리오필수", "2학기필수"],
       posterPaths: ["https://firebasestorage.googleapis.com/v0/b/…"],
     };
-    console.log(nPost);
+    // console.log(nPost);
     createPostMutate(newPost as any);
   };
 
@@ -694,7 +694,7 @@ function PostAddForm2() {
                               className="fa-solid fa-xmark ml-[5px]"
                               onClick={(e) => {
                                 // first , second keywords 구분하여 삭제
-                                console.log(LineIndex);
+                                // console.log(LineIndex);
 
                                 let v: any;
                                 if (LineIndex === 0) v = "first";

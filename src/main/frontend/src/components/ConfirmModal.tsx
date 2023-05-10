@@ -43,13 +43,13 @@ export default function ConfirmModal({ text, onClick }: any) {
           </span>
           <span className="flex justify-center  ">
             <span className="flex flex-col w-[300px] items-center">
-              <p className="text-[18px] mt-[40px] mb-[40px] text-center">
+              <div className="text-[18px] h-[50px] mt-[40px] mb-[40px] text-center">
                 {convertedText?.map((line: string, index: number) => (
                   <p className="" key={index}>
                     {line}
                   </p>
                 ))}
-              </p>
+              </div>
             </span>
           </span>
 

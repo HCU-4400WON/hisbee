@@ -573,7 +573,7 @@ export const readPosts = async (
     }
     if (keywords && keywords.length !== 0) {
       paramKeywords = "&keywords=" + keywords.join(",");
-      console.log(paramKeywords);
+      // // console.log(paramKeywords);
     }
     if (myDeptOnly) {
       paramMyDeptOnly = `&myDeptOnly=${true}`;
@@ -597,7 +597,7 @@ export const readPosts = async (
     );
     return response.data;
   } catch (error) {
-    console.error(error);
+    // // console.error(error);
   }
 };
 
@@ -618,7 +618,7 @@ export const readOnePost = async (id: number) => {
     );
     return response.data;
   } catch (error) {
-    console.error(error);
+    // // console.error(error);
   }
 };
 
@@ -664,7 +664,7 @@ export const deletePost = (id: number) => {
     );
     return response;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 };
 
@@ -693,7 +693,7 @@ export interface IUpdatePost {
 
 export const updatePost = (id: number, data: IUpdatePost) => {
   try {
-    console.log("DD", data);
+    // console.log("DD", data);
     const TOKEN = localStorage.getItem("key");
     // axios.defaults.headers.common["Authorization"] = `Bearer ${TOKEN}`;
     const response = axios.put(
@@ -706,8 +706,8 @@ export const updatePost = (id: number, data: IUpdatePost) => {
     );
     return response;
   } catch (error) {
-    console.error(error);
-    console.log("error!!");
+    // console.error(error);
+    // console.log("error!!");
   }
 };
 
@@ -725,7 +725,7 @@ export interface ImemberSignup {
 
 export const userSignUp = (data: ImemberSignup) => {
   try {
-    console.log("!!!");
+    // console.log("!!!");
     const TOKEN = localStorage.getItem("key");
     const response = axios.post(
       `${process.env.REACT_APP_BACK_BASE_URL}/users`,
@@ -738,7 +738,7 @@ export const userSignUp = (data: ImemberSignup) => {
 
     return response;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 };
 
@@ -755,10 +755,10 @@ export const userUpdate = (data: IUser) => {
         withCredentials: true,
       }
     );
-    console.log(response);
+    // console.log(response);
     return response;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 };
 
@@ -786,7 +786,7 @@ export const userDelete = () => {
     );
     return response;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 };
 
@@ -848,7 +848,7 @@ export const deleteLikePost = async (postId: number) => {
       withCredentials: true,
     }
   );
-  console.log(response);
+  // console.log(response);
   return response;
 };
 
@@ -959,8 +959,8 @@ export const randomNickname = async () => {
     `${process.env.REACT_APP_RANDOM_NICKNAME_URL}`
   );
   // const response = await axios.get("naver/?format=json&max_length=8");
-  console.log("get RandomNickname api 중...");
-  console.log(process.env.REACT_APP_RANDOM_NICKNAME_URL);
+  // console.log("get RandomNickname api 중...");
+  // console.log(process.env.REACT_APP_RANDOM_NICKNAME_URL);
   return response.data;
 };
 
@@ -1005,7 +1005,7 @@ export const memberSignUp = (data: IUserSignup) => {
 
     return response;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 };
 
@@ -1022,10 +1022,10 @@ export const memberUpdate = (data: IUserUpdate) => {
         withCredentials: true,
       }
     );
-    console.log(response);
+    // console.log(response);
     return response;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 };
 
@@ -1053,7 +1053,7 @@ export const memberDelete = () => {
     );
     return response;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
   }
 };
 

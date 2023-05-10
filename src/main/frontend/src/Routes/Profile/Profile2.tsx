@@ -72,8 +72,8 @@ mr-2
 const Sidebar = tw.div`
 sticky
 top-0
-hidden
-lg:flex
+
+flex
 min-w-[240px] 
 pl-[30px]
 
@@ -129,7 +129,7 @@ function Profile2() {
       setValue("nickname", data.profile.nickname);
       setValue("major1", data?.profile.major1);
       setValue("major2", data?.profile?.major2);
-      console.log(data);
+      // console.log(data);
     },
     onError: (error) => {
       // if (((error as AxiosError).response as AxiosResponse).status === 401) {
@@ -175,7 +175,7 @@ function Profile2() {
       major1: submitData?.major1 === "" ? "해당없음" : submitData.major1,
       major2: submitData.major2 === "" ? "해당없음" : submitData.major2,
     };
-    console.log("수정", newMember);
+    // console.log("수정", newMember);
     if (checkSubmit()) {
       await memberUpdate(newMember);
       setModifyToggle(false);
@@ -400,7 +400,7 @@ function Profile2() {
             <PostGrid>
               {postFiltering(data as IUserRead, mode, filter)?.map(
                 (post: IReadOnePost, index: number) => (
-                  <Link key={index} to={`/post2/${post?.id}`}>
+                  <Link key={index} to={`/post/${post?.id}`}>
                     <Thumbnail {...post} refetch={refetch} />
                   </Link>
                 )

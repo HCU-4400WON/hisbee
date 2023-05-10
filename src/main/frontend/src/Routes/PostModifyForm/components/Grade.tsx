@@ -53,7 +53,7 @@ export function Grade({ getValues, setValue }: any) {
               // if(gradeToggle) setValue("years" , ["상관없음"] as any);
               // setValue("years", []);
               setGradeToggle(true);
-              console.log(getValues("years"));
+              // console.log(getValues("years"));
             }}
           >
             학년 설정

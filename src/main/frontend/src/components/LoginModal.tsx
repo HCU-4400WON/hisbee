@@ -37,7 +37,7 @@ function Login() {
         className="fixed z-10 bg-[rgba(0,0,0,0.5)] top-0 left-0 w-full h-screen"
       ></motion.div>
 
-      <div className="modal fixed  z-20 w-[700px] h-[440px] bg-[#fff]  p-[50px]">
+      <div className="modal fixed  z-20 w-[700px] h-[420px] bg-[#fff]  p-[50px]">
         <div className="flex justify-between w-full h-[20px] items-center mb-[20px]">
           {/* <img src="/img/logo_hisbee.png" className="w-[110px] mb-[0px]" /> */}
           <img src="/img/logo_hisbee.png" className="w-[110px] mb-[20px]" />
@@ -45,7 +45,7 @@ function Login() {
           <svg
             onClick={onClick}
             id="no"
-            className="w-[16px] mb-[10px]"
+            className="w-[16px] mb-[15px]"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 320 512"
           >
@@ -55,20 +55,21 @@ function Login() {
         <hr style={{ border: "dashed 2px lightGray" }}></hr>
 
         <div></div>
-        <div className=" flex flex-col items-center pt-[40px] pb-[30px] text-[16px] text-center">
+        <div className=" flex flex-col items-center pt-[40px] pb-[40px] text-[16px] text-center">
           <p className="text-[22px] font-[500] mb-[30px]"> Login </p>
-          🗝 로그인을 통해 HISBEE 서비스의 기능들을 이용해보세요! <br></br> 글
-          작성 , 좋아요 , 마이페이지 기능이 제공됩니다.
+          🗝 로그인을 통해 HISBEE 서비스의 기능들을 이용해보세요! <br></br>
+          {/* 글
+          작성 , 좋아요 , 마이페이지 기능이 제공됩니다. */}
         </div>
 
         <div className="flex justify-center items-start mb-[50px]">
-          <button
+          {/* <button
             id="no"
             onClick={onClick}
             className="hover:bg-gray-300 w-[100px] bg-gray-100 rounded-lg mr-[10px] py-[5px]"
           >
             취소
-          </button>
+          </button> */}
           <a
             href={`${process.env.REACT_APP_BACK_BASE_URL}/oauth2/authorization/google`}
             className="text-[17px] flex"

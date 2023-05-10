@@ -46,6 +46,7 @@ w-full
 min-w-[530px] 
 lg:w-5/6 border-t-2 
 border-b-2 
+border-gray-200
 `;
 
 const Sidebar = tw.div`

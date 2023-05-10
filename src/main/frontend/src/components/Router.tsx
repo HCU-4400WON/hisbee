@@ -31,29 +31,29 @@ function Router() {
         <Route path="/" element={<Post />}></Route>
         <Route path="post" element={<Post />}></Route>
         <Route path="oauth2/redirect" element={<BlankPage />}></Route>
-        <Route path="post/:id" element={<Detail />}></Route>
+        <Route path="post/:id" element={<Detail2 />}></Route>
         <Route
           path="add"
-          element={<PrivateRoute component={<PostAddForm />} />}
+          element={<PrivateRoute component={<PostAddForm2 />} />}
         ></Route>
         {/* <Route
           path="signUp"
           element={<PrivateRoute component={<SignUp />} />}
         ></Route> */}
-        <Route
+        {/* <Route
           path="person"
           element={<PrivateRoute component={<Person />} />}
-        ></Route>
+        ></Route> */}
         <Route
           path="profile"
-          element={<PrivateRoute component={<Profile />} />}
+          element={<PrivateRoute component={<Profile2 />} />}
         ></Route>
         <Route
           path="oauth2/redirect/optional"
           element={<PrivateRoute component={<SignUpOptional />} />}
         ></Route>
 
-        <Route
+        {/* <Route
           path="/loading"
           element={<PrivateRoute component={<LoadingAnimation />} />}
         ></Route>
@@ -64,25 +64,21 @@ function Router() {
         <Route
           path="/footer"
           element={<PrivateRoute component={<Footer />} />}
-        ></Route>
+        ></Route> */}
         {/* <Route
           path="add2"
           element={<PrivateRoute component={<PostAddForm2 />} />}
         ></Route> */}
 
-        <Route path="add2" element={<PostAddForm2 />}></Route>
-        <Route path="post2/:id" element={<Detail2 />}></Route>
-        <Route path="modify/:id" element={<PostModifyForm />}></Route>
+        {/* <Route path="add2" element={<PostAddForm2 />}></Route> */}
+        {/* <Route path="post2/:id" element={<Detail2 />}></Route> */}
+        <Route
+          path="modify/:id"
+          element={<PrivateRoute component={<PostModifyForm />} />}
+        ></Route>
         <Route path="signUp" element={<SignUp2 />}></Route>
-        <Route path="profile2" element={<Profile2 />}></Route>
-        <Route
-          path="aaa"
-          element={<ConfirmModal text="모집글이 생성되었습니다." />}
-        ></Route>
-        <Route
-          path="bbb"
-          element={<AlertModal text="모집글이 생성되었습니다." />}
-        ></Route>
+        {/* <Route path="profile2" element={<Profile2 />}></Route> */}
+
         <Route path="*" element={<Post />}></Route>
 
         {/* <Route path="post/:id" element={<Detail />}></Route>

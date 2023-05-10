@@ -174,19 +174,19 @@ function PostModifyForm() {
       }
       return "";
     } else if (type === "keywords") {
-      console.log("before", data);
+      // console.log("before", data);
       const newKeywords = data?.filter((elem: string) => {
         const list = [
           ...state?.postTypes,
           ...state?.tags?.first,
           ...state?.tags?.second,
         ];
-        console.log("comp", list, elem);
-        console.log(list.includes(elem));
+        // console.log("comp", list, elem);
+        // console.log(list.includes(elem));
         if (list.includes(elem) === true) return false;
         else return true;
       });
-      console.log("after", newKeywords);
+      // console.log("after", newKeywords);
       return newKeywords;
     }
   };
@@ -308,7 +308,7 @@ function PostModifyForm() {
 
       {
         onSuccess: (data) => {
-          console.log("모집글이 수정되었습니다.", data);
+          // console.log("모집글이 수정되었습니다.", data);
         },
         onError: (error) => {
           if (
@@ -329,12 +329,12 @@ function PostModifyForm() {
   );
 
   const onSubmit = async (data: ISubmitDate, e: any) => {
-    console.log(getValues("years"));
-    console.log(getValues("departments"));
-    console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
+    // console.log(getValues("years"));
+    // console.log(getValues("departments"));
+    // console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
     // console.log(imageURL);
 
-    console.log("데이터");
+    // console.log("데이터");
 
     const categoryETCIdx = data?.postTypes.findIndex(
       (elem) => elem === "기타 모임"
@@ -403,7 +403,7 @@ function PostModifyForm() {
       isETC: newISETC,
     };
 
-    console.log(newPost);
+    // console.log(newPost);
 
     // const nPost = {
     //   title: "시각디자인 학회 도트 리쿠르팅 (수정)",
@@ -411,9 +411,7 @@ function PostModifyForm() {
     //   keywords: ["포트폴리오필수", "4학기필수"],
     // };
     try {
-      await updatePost(state?.id, newPost as any)?.then((data) =>
-        console.log(data)
-      );
+      await updatePost(state?.id, newPost as any)?.then();
 
       alert("모집글이 수정되었습니다.");
       navigate(-1);
@@ -645,7 +643,7 @@ function PostModifyForm() {
         </Helmet>
         <div className="flex justify-between pb-[20px]">
           <span className="flex w-[210px] items-center justify-between">
-            <Link to="/post">
+            <Link to="/">
               <div className="">
                 <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
               </div>
@@ -822,7 +820,7 @@ function PostModifyForm() {
                               className="fa-solid fa-xmark ml-[5px]"
                               onClick={(e) => {
                                 // first , second keywords 구분하여 삭제
-                                console.log(LineIndex);
+                                // console.log(LineIndex);
 
                                 let v: any;
                                 if (LineIndex === 0) v = "first";

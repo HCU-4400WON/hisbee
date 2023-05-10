@@ -49,6 +49,7 @@ import Outline from "components/Outline";
 
 const Container = tw.div`
 w-[1470px]
+min-h-[800px]
 flex
 `;
 const GoBackSpan = tw.span`
@@ -251,19 +252,9 @@ function Detail2() {
     () => readOnePost(+(id as any)),
     {
       onSuccess: (data) => {
-        console.log("모집글 하나 읽어오기 성공 : ", data);
-
-        // if (!data?.content) data.content= EditorState.createEmpty();
-        // const contentDraft = htmlToDraft(data?.content);
-        // const { contentBlocks, entityMap } = contentDraft;
-        // const contentState = ContentState.createFromBlockArray(
-        //   contentBlocks,
-        //   entityMap
-        // );
-        // data.content = EditorState.createWithContent(contentState);
+        // console.log("모집글 하나 읽어오기 성공 : ", data);
       },
       onError: () => {
-        console.log("존재하지 않는 게시물입니다.");
         alert("존재하지 않는 게시물입니다.");
         navigate(-1);
       },
@@ -287,7 +278,6 @@ function Detail2() {
     if (id === "delete") {
       setIsPostDeleteModal(true);
     } else if (id === "modify") {
-      console.log("!");
       setIsModifying(true);
     }
   };
@@ -319,23 +309,11 @@ function Detail2() {
     setEditorState(editorState);
   };
 
-  const onClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    console.log("editorState : ", editorState);
-    console.log(
-      "converted to Html : ",
-      draftToHtml(convertToRaw(editorState.getCurrentContent()))
-    );
-    // const getCurrentContent = editorState.getCurrentContent();
-    // const Raw = convertToRaw(getCurrentContent);
-    // const Html = draftToHtml(Raw);
-    // console.log(getCurrentContent, "\n", Raw, "\n", Html);
-  };
-
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [imageURL, setImageURL] = useState<string>("");
   const [progressPercent, setProgressPercent] = useState<number>(0);
   const onImageChange = async (file: any) => {
-    console.log(file);
+    // console.log(file);
     let newImage: any;
 
     if (!file) return null;
@@ -364,7 +342,6 @@ function Detail2() {
       },
       async () => {
         getDownloadURL(storageRef).then((downloadURL) => {
-          console.log("File available at", typeof downloadURL);
           setImageURL(downloadURL);
 
           return new Promise((resolve, reject) => {
@@ -468,7 +445,6 @@ function Detail2() {
                             isClosed: true,
                           };
                           if (window.confirm("마감하시겠습니까?")) {
-                            console.log("!!");
                             updatePost(Number(id), newClosedPost);
                           }
                         }}
