@@ -21,6 +21,34 @@ import { FunctionButton } from "components/FunctionButton";
 import * as wjCore from "@grapecity/wijmo";
 import * as wjcInput from "@grapecity/wijmo.react.input";
 
+const departmentList = [
+  "해당없음",
+  "글로벌리더십학부",
+  "GE",
+  "ICT융합",
+  "ACE",
+  "국제지역학",
+  "영어",
+  "경영학",
+  "경제학",
+  "GM",
+  "한국법",
+  "UIL",
+  "상담심리학",
+  "사회복지학",
+  "공연영상학",
+  "언론정보학",
+  "건설공학",
+  "도시환경공학",
+  "생명과학부",
+  "기계공학",
+  "전자제어공학",
+  "컴퓨터공학",
+  "전자공학",
+  "시각디자인",
+  "제품디자인",
+];
+
 const ValidationVariant = {
   hidden: {
     y: -10,
@@ -94,15 +122,23 @@ export default function UserProfileInputs({
     majorAutoComplete(getValues("major1")).then((data) =>
       setShowList1(data.results)
     );
+    setValue("canMajor1", checkMajor(getValues("major1")));
+    console.log();
   }, [getValues("major1")]);
 
   useEffect(() => {
     majorAutoComplete(getValues("major2")).then((data) =>
       setShowList2(data.results)
     );
+    setValue("canMajor2", checkMajor(getValues("major2")));
     console.log("!!");
   }, [getValues("major2")]);
 
+  const checkMajor = (checkData: string) => {
+    if (checkData === "") return "";
+    else if (departmentList.indexOf(checkData) === -1) return "사용 불가능";
+    else return "사용 가능";
+  };
   return (
     <div className="flex h-[250px] items-start">
       <InfoBox className="relative flex w-[50%] items-center">
@@ -116,12 +152,9 @@ export default function UserProfileInputs({
             onKeyPress={onKeyPress}
             {...register("nickname", {
               required: "필수 항목입니다.",
-              maxLength: {
-                value: 10,
-                message: "10자 이하만 가능합니다",
-              },
             })}
-            placeholder="00자 이내로 작성해주세요"
+            placeholder="8자 이내로 작성해주세요"
+            maxLength={8}
           />
         </div>
         <FunctionButton
@@ -133,7 +166,7 @@ export default function UserProfileInputs({
           }}
         />
         <AnimatePresence>
-          {(formState.errors.nickname?.message as string) && (
+          {/* {(formState.errors.nickname?.message as string) && (
             <motion.div
               variants={ValidationVariant}
               className={`absolute top-[38px] left-[60px] text-[13px] text-red-600 `}
@@ -143,7 +176,7 @@ export default function UserProfileInputs({
             >
               * {formState.errors.nickname?.message as string}
             </motion.div>
-          )}
+          )} */}
 
           {getValues("nickname") !== "" && (
             <motion.div
@@ -168,7 +201,7 @@ export default function UserProfileInputs({
           <Info className="mt-[5px]">1전공</Info>
           <div className={`w-[300px] px-[20px] flex flex-col`}>
             <InfoInput
-              className={` ${inputBgColor} mb-[10px]`}
+              className={` ${inputBgColor} mb-[10px] `}
               type="text"
               onKeyPress={onKeyPress}
               {...register("major1", {
@@ -178,7 +211,7 @@ export default function UserProfileInputs({
                   message: "10자 이하만 가능합니다",
                 },
               })}
-              placeholder="GLS 1전공만 입력"
+              placeholder="GLS는 1전공만 입력"
             />
 
             <select className="bg-gray-100" size={3}>
@@ -195,10 +228,19 @@ export default function UserProfileInputs({
                 ))}
             </select>
           </div>
+          <div
+            className={`text-[13px] w-[100px] mt-[10px] ${
+              getValues("canMajor1") === "사용 가능"
+                ? "text-blue-500"
+                : "text-red-400"
+            }`}
+          >
+            {getValues("canMajor1")}
+          </div>
         </InfoBox>
         <InfoBox className="relative flex w-full items-start">
           <Info className="mt-[5px]">2전공</Info>
-          <div className={`w-full px-[20px] `}>
+          <div className={`w-[300px] px-[20px] `}>
             <div>
               <InfoInput
                 className={` ${inputBgColor}`}
@@ -225,6 +267,15 @@ export default function UserProfileInputs({
                   </option>
                 ))}
             </select>
+          </div>
+          <div
+            className={`text-[13px] w-[100px] mt-[10px] ${
+              getValues("canMajor2") === "사용 가능"
+                ? "text-blue-500"
+                : "text-red-400"
+            }`}
+          >
+            {getValues("canMajor2")}
           </div>
         </InfoBox>
       </InfoBox>
