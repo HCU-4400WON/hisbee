@@ -12,11 +12,7 @@ interface IProps {
   setImageURLList: React.Dispatch<React.SetStateAction<string[] | []>>;
 }
 
-
 export function ImageUpload({ imageURLList, setImageURLList }: IProps) {
-
-  
-
   const [posterUploadList, setPosterUploadList] = useState<number[]>([0, 1, 2]);
   const [imageURL, setImageURL] = useState<string>("");
 
@@ -76,8 +72,8 @@ export function ImageUpload({ imageURLList, setImageURLList }: IProps) {
       />
       <div className="flex">
         {imageURLList?.map((imageUrl: string, index: number) => (
-          <div className="relative mt-[30px] mr-[30px]">
-            <img className="w-[400px]" src={imageUrl} key={index} />
+          <div className="relative flex justify-start gap-x-[30px] mt-[30px] mr-[30px]">
+            <img className="w-[300px]" src={imageUrl} key={index} />
             <button
               type="button"
               className="absolute right-0 top-0"

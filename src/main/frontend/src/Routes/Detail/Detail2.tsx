@@ -625,7 +625,7 @@ function Detail2() {
               </div>
               {/* 키워드들 */}
 
-              <div className="m-[30px] mb-[60px] px-[50px]">
+              <div className="m-[30px] px-[50px]">
                 {data?.postTypes.map((postType, index) => (
                   <button
                     key={index}
@@ -647,7 +647,7 @@ function Detail2() {
                 )}
               </div>
 
-              <div className="flex justify-start mb-[50px]">
+              {/* <div className="flex justify-start mb-[50px]">
                 {data?.posterPaths?.map((posterPath: string, index: number) => (
                   <img
                     className="w-[100px] mr-[30px]"
@@ -661,7 +661,7 @@ function Detail2() {
                     }}
                   />
                 ))}
-              </div>
+              </div> */}
 
               {data?.content !== "" && (
                 <>
@@ -675,10 +675,11 @@ function Detail2() {
               )}
 
               {/* <div dangerouslySetInnerHTML={{ __html: editorString }}></div> */}
-              <div className="flex justify-evenly mt-[50px]">
+
+              <div className="flex justify-start mt-[30px] gap-x-[30px]">
                 {data?.posterPaths?.map((posterPath: string, index: number) => (
                   <img
-                    className="w-[400px]"
+                    className="w-[300px] border-2 border-gray-300"
                     key={index}
                     src={posterPath}
                     alt="poster"
