@@ -149,4 +149,36 @@ public class KeywordSuggestTest {
         assertThat(res.contains("야구")).isFalse();
         assertThat(res.contains("동아리")).isFalse();
     }
+
+    @Test
+    public void 키워드가_주어지지_않은_경우_모두_포함한다() throws Exception {
+        // given
+        var req = PostCreationRequest.builder()
+                .title("최강야구 직관하실분")
+                .content("티켓팅부터 같이해요")
+                .recruitStart(new Date())
+                .postTypes(List.of("취미"))
+                .keywords(List.of("최강", "몬스터즈", "직관", "야구", "최강몬스터즈"))
+                .build();
+        var req2 = PostCreationRequest.builder()
+                .title("23-1 한검 리쿠르팅")
+                .recruitStart(new Date())
+                .postTypes(List.of("동아리"))
+                .keywords(List.of("검도", "대한검도", "리쿠르팅", "체육분과", "20기", "새내기환영"))
+                .build();
+        var post1 = postService.createPost(req, TEST_EMAIL);
+        var post2 = postService.createPost(req2, TEST_EMAIL);
+
+        keywordService.addKeywords(post1, req);
+        keywordService.addKeywords(post2, req2);
+
+        // when
+        List<String> res = keywordService.suggestKeyword(List.of());
+
+        res.forEach(s -> System.out.println("s = " + s));
+
+        // then
+        assertThat(res).isNotEmpty();
+        assertThat(res.size()).isEqualTo(10);
+    }
 }

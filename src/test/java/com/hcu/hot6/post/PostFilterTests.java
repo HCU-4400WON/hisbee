@@ -99,8 +99,8 @@ public class PostFilterTests {
         var response = postService.readFilteredPost(filter);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(1L);
-        assertThat(response.getPosts().get(0).getPostTypes()).isEqualTo(List.of("학회", "학술모임"));
+        assertThat(response.size()).isEqualTo(1L);
+        assertThat(response.get(0).getPostTypes()).isEqualTo("학회,학술모임");
     }
 
     @Test
@@ -128,7 +128,7 @@ public class PostFilterTests {
         var response = postService.readFilteredPost(filter);
 
         // then
-        assertThat(response.getTotal()).isZero();
+        assertThat(response.size()).isZero();
     }
 
     @Test
@@ -169,7 +169,7 @@ public class PostFilterTests {
         var response = postService.readFilteredPost(filter);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(2L);
+        assertThat(response.size()).isEqualTo(2L);
     }
 
     @Test
@@ -210,9 +210,8 @@ public class PostFilterTests {
         var response = postService.readFilteredPost(filter);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(1L);
-        assertThat(response.getPosts().get(0).getTags().getFirst()).isEqualTo(List.of("온유"));
-        assertThat(response.getPosts().get(0).getTags().getSecond()).isEqualTo(List.of("축복"));
+        assertThat(response.size()).isEqualTo(1L);
+        assertThat(response.get(0).getThumbnail().getTags()).isEqualTo("온유;축복");
     }
 
     @Test
@@ -252,7 +251,7 @@ public class PostFilterTests {
         var response = postService.readFilteredPost(filter);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(2L);
+        assertThat(response.size()).isEqualTo(2L);
     }
 
     @Test
@@ -291,9 +290,8 @@ public class PostFilterTests {
         var res = postService.readFilteredPost(filter);
 
         // then
-        assertThat(res.getTotal()).isEqualTo(1L);
-        assertThat(res.getPosts().size()).isEqualTo(1);
-        assertThat(res.getPosts().get(0).getTitle()).isEqualTo("모집글 제목");
+        assertThat(res.size()).isEqualTo(1L);
+        assertThat(res.get(0).getThumbnail().getTitle()).isEqualTo("모집글 제목");
     }
 
     @Test
@@ -348,7 +346,7 @@ public class PostFilterTests {
         var response = postService.readFilteredPost(filter);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(2L);
+        assertThat(response.size()).isEqualTo(2L);
     }
 
     @Test
@@ -403,7 +401,7 @@ public class PostFilterTests {
         var response = postService.readFilteredPost(filter);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(1L);
+        assertThat(response.size()).isEqualTo(1L);
     }
 
     @Test
@@ -436,7 +434,7 @@ public class PostFilterTests {
         var response = postService.readFilteredPost(filter);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(0L);
+        assertThat(response.size()).isEqualTo(0L);
     }
 
     @Test
@@ -477,7 +475,7 @@ public class PostFilterTests {
         var response = postService.readFilteredPost(filter);
 
         // then
-        assertThat(response.getTotal()).isZero();
+        assertThat(response.size()).isZero();
     }
 
     @Test
@@ -517,8 +515,8 @@ public class PostFilterTests {
         var response = postService.readFilteredPost(filter);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(1L);
-        assertThat(response.getPosts().get(0).getTitle()).isEqualTo("최강");
+        assertThat(response.size()).isEqualTo(1L);
+        assertThat(response.get(0).getThumbnail().getTitle()).isEqualTo("최강");
     }
 
     @Test
@@ -558,7 +556,7 @@ public class PostFilterTests {
         var response = postService.readFilteredPost(filter);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(2L);
+        assertThat(response.size()).isEqualTo(2L);
     }
 
     @Test
@@ -588,7 +586,7 @@ public class PostFilterTests {
         var response = postService.readFilteredPost(filter);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(5L);
+        assertThat(response.size()).isEqualTo(5L);
     }
 
     @Test
@@ -619,7 +617,7 @@ public class PostFilterTests {
         var response = postService.readFilteredPost(filter);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(1L);
+        assertThat(response.size()).isEqualTo(1L);
     }
 
     @Test
@@ -652,7 +650,7 @@ public class PostFilterTests {
         var response = postService.readFilteredPost(filter);
 
         // then
-        assertThat(response.getTotal()).isEqualTo(0L);
+        assertThat(response.size()).isEqualTo(0L);
     }
 
     @Test
@@ -713,10 +711,13 @@ public class PostFilterTests {
                 .limit(3)
                 .email(TEST_EMAIL)
                 .build();
-        var response = postService.readFilteredPost(filter);
+        var response = postService.readFilteredPost(filter)
+                .stream()
+                .map(post -> post.getThumbnail().toResponse(TEST_EMAIL))
+                .toList();
 
         // then
-        assertThat(response.getPosts().get(0).isHasLiked()).isEqualTo(true);
+        assertThat(response.get(0).isHasLiked()).isTrue();
     }
 
     @Test
@@ -743,10 +744,13 @@ public class PostFilterTests {
                 .limit(3)
                 .email(TEST_EMAIL)
                 .build();
-        var response = postService.readFilteredPost(filter);
+        var response = postService.readFilteredPost(filter)
+                .stream()
+                .map(post -> post.getThumbnail().toResponse(TEST_EMAIL))
+                .toList();
 
         // then
-        assertThat(response.getPosts().get(0).isHasLiked()).isFalse();
+        assertThat(response.get(0).isHasLiked()).isFalse();
     }
 
     @Test
@@ -851,6 +855,6 @@ public class PostFilterTests {
 
 
         // then
-        assertThat(response.getTotal()).isEqualTo(1);
+        assertThat(response.size()).isEqualTo(1);
     }
 }
