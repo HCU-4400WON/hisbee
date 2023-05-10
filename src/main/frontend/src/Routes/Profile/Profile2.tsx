@@ -148,10 +148,12 @@ function Profile2() {
         nickname: "",
         major1: "",
         major2: "",
+        canMajor1: "",
+        canMajor2: "",
       },
     });
 
-  watch(["major1", "major2", "nickname"]);
+  watch(["major1", "major2", "nickname", "canMajor1", "canMajor2"]);
 
   const [modifyToggle, setModifyToggle] = useState<boolean>(false);
 
@@ -175,10 +177,12 @@ function Profile2() {
       major2: submitData.major2 === "" ? "해당없음" : submitData.major2,
     };
     console.log("수정", newMember);
+    if (checkSubmit()) {
+      await memberUpdate(newMember);
+      setModifyToggle(false);
+    } else return;
     // memberSignUp(newMember);
     // memberSignUp(newMember);
-    await memberUpdate(newMember);
-    setModifyToggle(false);
 
     // setIsExtraSignupModal(true);
     // signupMemberMutate(newMember);
@@ -216,6 +220,17 @@ function Profile2() {
           return data.posts.filter((post) => post.archived);
       }
     }
+  };
+
+  const checkSubmit = () => {
+    if (
+      getValues("nickname") !== "" &&
+      getValues("canMajor1") === "사용 가능" &&
+      getValues("canMajor2") !== "사용 불가능"
+    ) {
+      return true;
+    }
+    return false;
   };
 
   return (
@@ -300,17 +315,27 @@ function Profile2() {
                       >
                         편집 취소
                       </button>
-                      <button
-                        // type="submit"
-                        onClick={() => {
-                          // await memberUpdate(newUser as any);
-                          // setNowModifying(false);
-                          // refetch();
-                        }}
-                        className="bg-blue-500 text-white rounded-lg px-[20px] py-[7px] text-[13px]"
-                      >
-                        편집 완료
-                      </button>
+
+                      {checkSubmit() === true ? (
+                        <button
+                          // type="submit"
+                          onClick={() => {
+                            // await memberUpdate(newUser as any);
+                            // setNowModifying(false);
+                            // refetch();
+                          }}
+                          className="bg-blue-500 text-white rounded-lg px-[20px] py-[7px] text-[13px]"
+                        >
+                          편집 완료
+                        </button>
+                      ) : (
+                        <button
+                          className="bg-gray-200 text-gray-400 rounded-lg px-[20px] py-[7px] text-[13px]"
+                          disabled
+                        >
+                          편집 완료
+                        </button>
+                      )}
                     </div>
                   </>
                 ) : (

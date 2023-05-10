@@ -70,7 +70,7 @@ const ValidationVariant = {
 const Info = tw.span`
 text-[15px]
 text-gray-400
-w-[40px]
+min-w-[40px]
 font-main
 
 `;
