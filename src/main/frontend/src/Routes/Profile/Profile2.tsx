@@ -29,7 +29,6 @@ import DeleteModal from "./DeleteModal";
 import Thumbnail from "./Thumbnail";
 
 const PostGrid = tw.div`
-bg-gray-200
 grid
 grid-cols-1
 sm:grid-cols-1

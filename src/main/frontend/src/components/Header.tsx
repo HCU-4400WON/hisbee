@@ -6,16 +6,14 @@ import { useForm } from "react-hook-form";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoginModalState } from "./atom";
 import { isLoginState } from "./atom";
+import Outline from "./Outline";
 
 const Nav = tw.nav`
 flex 
-justify-center
 items-center 
 px-[0px]
-cd:px-[20px]
-sm:justify-between
-pr-[20px]
-md:pr-[60px]
+justify-between
+pr-[60px]
 min-w-[480px]
 `;
 
@@ -34,11 +32,10 @@ hover:text-blue-400
 
 const Logo = tw(motion.img)`
     
-    w-[100px]
-    md:min-w-[120px]
+    w-[120px]
     hover:text-blue-500
-    md:ml-[100px]
-    ml-[50px]
+    ml-[100px]
+    
 `;
 const NavFlexBox = tw.div`
     flex
@@ -180,20 +177,25 @@ function Header() {
     }
   };
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
+
+  const isReponsive = useMatch("/");
+
+  console.log(isReponsive);
   return (
     <>
-      <Nav className="h-[70px]">
-        <NavLeftBox>
-          <Link to="/">
-            <Logo
-              src="/img/logo_hisbee.png"
-              variants={LogoVairants}
-              initial="initial"
-              whileHover="hover"
-            />
-          </Link>
+      <Outline bgColor="bg-white">
+        <Nav className="h-[70px] min-w-[1470px]">
+          <NavLeftBox>
+            <Link to="/">
+              <Logo
+                src="/img/logo_hisbee.png"
+                variants={LogoVairants}
+                initial="initial"
+                whileHover="hover"
+              />
+            </Link>
 
-          {/* <Link to="post">
+            {/* <Link to="post">
             <NavButton
               className={`${
                 isPostURL && "text-blue-400"
@@ -232,7 +234,7 @@ function Header() {
             </NavButton>
           </Link> */}
 
-          {/* <Link to="person">
+            {/* <Link to="person">
             <NavButton
               className={`${
                 isPersonURL && "text-blue-400"
@@ -269,10 +271,10 @@ function Header() {
               인재풀
             </NavButton>
           </Link> */}
-        </NavLeftBox>
+          </NavLeftBox>
 
-        <NavRightBox className="items-center">
-          {/* <SearchBox
+          <NavRightBox className="items-center">
+            {/* <SearchBox
             className="relative hidden md:flex"
             id="searchForm"
             // onBlur={() => {
@@ -325,33 +327,35 @@ function Header() {
               ></motion.i>
             </button>
           </SearchBox> */}
-          {/* <Link to="login"> */}
-          {!isLogin ? (
-            <NavButton onClick={onClick} className="md:pl-[60px]">
-              Login
-            </NavButton>
-          ) : (
-            <NavButton id="logout" onClick={onClick} className="md:pl-[60px]">
-              Logout
-            </NavButton>
-          )}
-          {!isLogin && (
-            <Link to="profile2" className="relative ">
-              <NavButton
-                className={`${isProfileURL && "text-blue-500"} md:pl-[40px]`}
-              >
-                <i className="fa-solid fa-user text-[22px]"></i>
-                {/* <i className="fa-regular fa-circle-user text-[25px]"></i> */}
+            {/* <Link to="login"> */}
+            {!isLogin ? (
+              <NavButton onClick={onClick} className="pl-[60px]">
+                로그인
               </NavButton>
-            </Link>
-          )}
+            ) : (
+              <NavButton id="logout" onClick={onClick} className="pl-[60px]">
+                로그아웃
+              </NavButton>
+            )}
+            {isLogin && (
+              <Link to="profile2" className="relative ">
+                <NavButton
+                  className={`${isProfileURL && "text-blue-500"} pl-[40px]`}
+                >
+                  {/* <i className="fa-solid fa-user text-[22px]"></i> */}
+                  마이페이지
+                  {/* <i className="fa-regular fa-circle-user text-[25px]"></i> */}
+                </NavButton>
+              </Link>
+            )}
 
-          {/* </Link> */}
-          {/* <Link to="oauth2/redirect">
+            {/* </Link> */}
+            {/* <Link to="oauth2/redirect">
             <NavButton>Sign up</NavButton>
           </Link> */}
-        </NavRightBox>
-      </Nav>
+          </NavRightBox>
+        </Nav>
+      </Outline>
     </>
   );
 }

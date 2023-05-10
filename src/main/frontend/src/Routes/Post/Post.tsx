@@ -39,6 +39,8 @@ import "./css/textfield.css";
 import SignUp2 from "Routes/Main/SignUp2";
 import LoadingLottie from "components/LoadingLottie";
 import Outline from "components/Outline";
+import { AnyTxtRecord } from "dns";
+import { async } from "@firebase/util";
 
 const SelectFilterBox = tw.select`
 mr-[20px] px-[10px] bg-[#F9FAFB] py-[5px] rounded-lg text-center
@@ -116,10 +118,6 @@ function Post() {
   ]);
   const [selectedKeywords, setSelectedKeywords] = useState<string[] | []>([]);
 
-  useEffect(() => {
-    console.log(filterCategory, filterPosition, filterPay);
-  }, [filterCategory, filterPosition, filterPay]);
-
   interface IFiltering {
     [key: string]: string[];
   }
@@ -127,7 +125,7 @@ function Post() {
   const isLoginModal = useRecoilValue(isLoginModalState);
   const isSignupModal = useRecoilValue(isSignupModalState);
 
-  const [getPageNums, setGetPageNums] = useState<number>(12);
+  const [getPageNums, setGetPageNums] = useState<number>(4);
 
   const POSTS_PER_PAGE = 12;
   const [nowPage, setNowPage] = useState(1);
@@ -150,29 +148,21 @@ function Post() {
     }
   };
 
-  useEffect(() => {
-    setNextPage(Math.ceil(nowPage / 10) * 10 + 1);
-    setPrevPage(Math.floor((nowPage - 1) / 10) * 10);
-    console.log(prevPage, nextPage);
-    // refetch();
-  }, [nowPage]);
+  // useEffect(() => {
+  //   setNextPage(Math.ceil(nowPage / 10) * 10 + 1);
+  //   setPrevPage(Math.floor((nowPage - 1) / 10) * 10);
+  //   console.log(prevPage, nextPage);
+  //   // refetch();
+  // }, [nowPage]);
 
-  const [LIMIT, useLIMIT] = useState<number>(12);
+  const [LIMIT, useLIMIT] = useState<number>(4);
   useEffect(() => {
-    const pageOneRefetch = async () => {
+    const fn = async () => {
       await setNowPage(1);
-      // setGetPageNums(1);
       refetch();
+      setHideSentinel(false);
     };
-    pageOneRefetch();
-    console.log(
-      nowPage,
-      search,
-      order,
-      selectedCategory,
-      LIMIT,
-      selectedKeywords
-    );
+    fn();
   }, [
     search,
     order,
@@ -184,6 +174,20 @@ function Post() {
     selectedMajor,
   ]);
 
+  useEffect(() => {
+    const fn = () => {
+      if (getPageNums < 4) {
+        // console.log("!!!!!!!!!!!!!");
+        // window.removeEventListener("scroll", handleScroll);
+        // io.unobserve(document.getElementById("sentinel") as Element);
+        console.log("콩쥐");
+        setHideSentinel(true);
+        return;
+      }
+    };
+    fn();
+  }, [getPageNums]);
+
   // [사이에 필터링을 추가하기]
   const {
     data: posts,
@@ -192,7 +196,7 @@ function Post() {
   } = useQuery<IReadAllPosts>(
     [
       "FilteredPosts",
-      [nowPage, search, order, selectedCategory, LIMIT + "", selectedKeywords],
+      [search, order, selectedCategory, LIMIT + "", selectedKeywords, nowPage],
     ],
     () =>
       readPosts(
@@ -224,28 +228,11 @@ function Post() {
 
         //   // console.log("1");
         // }
-        console.log(
-          nowPage + "",
-          // search:
-          search,
-          // order:
-          order,
-          // type:
-          selectedCategory === "전체" ? null : selectedCategory,
-          // limit:
-          LIMIT + "",
-          // keywords:
-          selectedKeywords,
-          // filterPosition === "" ? null : filterPosition,
-          // filterPay === "" ? null : filterPay,
-          // null
-          selectedMyDeptOnly,
-          selectedGrade,
-          selectedMajor
-        );
+
+        // setNowPage((prev) => prev + 1);
         // setGetPageNums(posts.total);
-        setGetPageNums(posts.total);
-        console.log("debug", posts.total);
+        // setGetPageNums(posts.total);
+        // console.log("debug", posts.total);
 
         if (scrolling) {
           setUnionData((prev) => [...prev, ...posts.posts]);
@@ -254,8 +241,7 @@ function Post() {
         }
         window.scrollTo(0, 0);
         // setUnionDataLoading(true);
-        console.log("Fetched!", posts as any);
-
+        setGetPageNums(posts.total);
         setScrolling(false);
         // setTimeout(() => {
         //   setUnionDataLoading(true);
@@ -263,6 +249,7 @@ function Post() {
       },
     }
   );
+
   const setIsLogin = useSetRecoilState(isLoginState);
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
@@ -285,19 +272,15 @@ function Post() {
     const selectedValue = event.currentTarget.value;
     if (selectedId === "sortSelect") {
       setOrder(selectedValue);
-      console.log(selectedValue);
     } else if (selectedId === "majorSelect") {
       setSelectedMajor(selectedValue);
-      console.log(selectedValue);
     } else if (selectedId === "gradeSelect") {
       setSelectedGrade(selectedValue);
-      console.log(selectedValue);
     }
   };
   const onChange = (e: React.FormEvent<HTMLInputElement>) => {
     const selectedId = e.currentTarget.id;
     const selectedValue = e.currentTarget.value;
-    console.log("onChange inputValue : ", selectedValue);
 
     if (selectedId === "keywordInput") setKeywordInput(selectedValue);
   };
@@ -312,7 +295,6 @@ function Post() {
     if (selectedId === "categoryButton") {
       setSelectedCategory(selectedValue);
       // setSelectedKeywords([]);
-      console.log(selectedValue);
     }
 
     // else i
@@ -323,14 +305,12 @@ function Post() {
           ...prev.slice(0, deleteIdx),
           ...prev.slice(deleteIdx + 1),
         ];
-        console.log("keyWords : ", newKeywords);
         return newKeywords;
       });
     } else if (selectedId === "insertKeywordButton") {
       setSelectedKeywords((prev) => {
         const newKeywords = [...prev, selectedValue];
 
-        console.log("keyWords : ", newKeywords);
         return newKeywords;
       });
     } else if (selectedId === "allFilterDelete") {
@@ -398,41 +378,46 @@ function Post() {
   const sentinel = document.getElementById("sentinel") as Element;
 
   const [scrolling, setScrolling] = useState<boolean>(false);
+  const [hideSentinel, setHideSentinel] = useState(false);
+
+  const io = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      // if (getPageNums < 4) {
+      //   console.log("!!!!!!!!!!!!!");
+      //   // window.removeEventListener("scroll", handleScroll);
+      //   observer.unobserve(document.getElementById("sentinel") as Element);
+
+      //   setHideSentinel(true);
+      //   console.log("debug", getPageNums);
+      //   return;
+      // }
+
+      if (!entry.isIntersecting) return;
+      setNowPage((prev) => prev + 1);
+      //entry가 interscting 중이 아니라면 함수를 실행하지 않습니다.
+
+      // if (isLoading) return;
+      setScrolling(true);
+      //현재 page가 불러오는 중임을 나타내는 flag를 통해 불러오는 중이면 함수를 실행하지 않습니다.
+      observer.observe(document.getElementById("sentinel") as Element);
+      //observer를 등록합니다.
+      // page._page += 1;
+      //불러올 페이지를 추가합니다.
+      // page.list.search();
+
+      refetch();
+      //페이지를 불러오는 함수를 호출합니다.
+    });
+  });
 
   useEffect(() => {
     if (!sentinel) return;
-
-    const io = new IntersectionObserver((entries, observer) => {
-      entries.forEach((entry) => {
-        console.log("a", getPageNums);
-        if (getPageNums < LIMIT) {
-          // window.removeEventListener("scroll", handleScroll);
-          // observer.unobserve(document.getElementById("sentinel") as Element);
-
-          return;
-        }
-
-        console.log("b");
-        if (!entry.isIntersecting) return;
-        //entry가 interscting 중이 아니라면 함수를 실행하지 않습니다.
-        console.log("c");
-        if (isLoading) return;
-        console.log("d");
-        setScrolling(true);
-        //현재 page가 불러오는 중임을 나타내는 flag를 통해 불러오는 중이면 함수를 실행하지 않습니다.
-        observer.observe(document.getElementById("sentinel") as Element);
-        //observer를 등록합니다.
-        // page._page += 1;
-        setNowPage((prev) => prev + 1);
-        //불러올 페이지를 추가합니다.
-        // page.list.search();
-
-        refetch();
-        //페이지를 불러오는 함수를 호출합니다.
-      });
-    });
-    io.observe(sentinel);
+    io.observe(document.getElementById("sentinel") as Element);
   }, [sentinel]);
+
+  // useEffect(() => {
+  //   setHideSentinel(false);
+  // }, [search, order, selectedCategory, LIMIT + "", selectedKeywords]);
 
   const isLogin = useRecoilValue(isLoginState);
 
@@ -602,7 +587,6 @@ function Post() {
                         value={selectedGrade}
                         onChange={(e: any) => {
                           setSelectedGrade(e.currentTarget.value);
-                          console.log(selectedGrade);
                         }}
                         id="gradeSelect"
                         // onInput={onInput}
@@ -674,7 +658,7 @@ function Post() {
           )}
         </Container>
 
-        <p id="sentinel"></p>
+        {!hideSentinel && <p id="sentinel"></p>}
       </>
     </>
   );

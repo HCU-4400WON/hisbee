@@ -45,6 +45,7 @@ import Soon from "components/Soon";
 import { ImageModal } from "./ImageModal";
 import { Helmet } from "react-helmet";
 import LoadingLottie from "components/LoadingLottie";
+import Outline from "components/Outline";
 
 const Container = tw.div`
 w-[1470px]
@@ -420,7 +421,7 @@ function Detail2() {
       {isLoading || isLoginCheckLoading ? (
         <LoadingLottie isPost={false} />
       ) : (
-        <>
+        <Outline>
           <Helmet>
             <title>{data?.title}</title>
           </Helmet>
@@ -695,7 +696,7 @@ function Detail2() {
 
             <div className="min-w-[40px] md:min-w-[100px] "></div>
           </Container>
-        </>
+        </Outline>
       )}
     </>
   );
