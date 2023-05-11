@@ -191,6 +191,10 @@ function Post() {
     fn();
   }, [getPageNums]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [nowPage]);
+
   // [사이에 필터링을 추가하기]
   const {
     data: posts,
@@ -242,7 +246,6 @@ function Post() {
         } else {
           setUnionData(posts.posts);
         }
-        window.scrollTo(0, 0);
         // setUnionDataLoading(true);
         setGetPageNums(posts.total);
         setScrolling(false);
@@ -372,6 +375,7 @@ function Post() {
       setSelectedKeywords((prev) => [...prev, keywordInput]);
       setKeywords((prev) => [...prev, keywordInput]);
       setIsAutoPresent(false);
+      setKeywordInput("");
     }
   };
 
@@ -550,7 +554,7 @@ function Post() {
                       </div>
                     )}
 
-                    <div id="noBlur" className="w-[280px] mr-[30px]">
+                    <div id="noBlur" className="w-[280px] mr-[20px]">
                       <input
                         value={keywordInput}
                         id="keywordInput"
@@ -563,6 +567,17 @@ function Post() {
                       />
                     </div>
                   </span>
+                  <i
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectedKeywords((prev) => [...prev, keywordInput]);
+                      setKeywords((prev) => [...prev, keywordInput]);
+                      setIsAutoPresent(false);
+                      setKeywordInput("");
+                    }}
+                    className="fa-solid fa-magnifying-glass mr-[20px] mt-[2px]"
+                  ></i>
+
                   <div className="">
                     <div className="mb-[0px] grid grid-cols-7 gap-x-[10px] gap-y-[10px]">
                       {/* {selectedCategory !== "전체" && (
