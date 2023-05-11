@@ -644,7 +644,7 @@ function Detail2() {
                     dangerouslySetInnerHTML={{
                       __html: data?.content as string,
                     }}
-                    className="p-[50px] bg-gray-100 rounded-3xl "
+                    className="p-[50px] bg-gray-100 rounded-3xl leading-8"
                   ></div>
                 </>
               )}

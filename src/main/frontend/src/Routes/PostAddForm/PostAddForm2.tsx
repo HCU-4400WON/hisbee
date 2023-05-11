@@ -47,9 +47,9 @@ import Validation from "./components/Validation";
 const MyBlock = styled.div`
   background-color: white;
   .wrapper-class {
-    line-height: 0.5;
+    line-height: 1rem;
     margin: 0 auto;
-    margin-bottom: 4rem;
+    margin-bottom: 1rem;
     border: 2px solid lightGray !important;
   }
   .editor {
@@ -108,7 +108,6 @@ function PostAddForm2() {
       recruitEnd: converter("year", new Date()), // string
       // projectStart: "",
       duration: "미설정",
-
       // positions: [],
       // positionName: "",
       // positionCount: "",
