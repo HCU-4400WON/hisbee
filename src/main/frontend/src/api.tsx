@@ -1101,13 +1101,13 @@ export const majorAutoComplete = async (q: string) => {
 // };
 
 export const keywordAutoComplete = async (q: string) => {
-  const TOKEN = localStorage.getItem("key");
+  // const TOKEN = localStorage.getItem("key");
   const response = await axios.get(
-    `${process.env.REACT_APP_BACK_BASE_URL}/keyword?q=${q}`,
-    {
-      headers: { Authorization: `Bearer ${TOKEN}` },
-      withCredentials: true,
-    }
+    `${process.env.REACT_APP_BACK_BASE_URL}/keyword?q=${q}`
+    // {
+    //   headers: { Authorization: `Bearer ${TOKEN}` },
+    //   withCredentials: true,
+    // }
   );
   return response.data;
 };
