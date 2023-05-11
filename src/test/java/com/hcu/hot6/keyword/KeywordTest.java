@@ -81,12 +81,12 @@ public class KeywordTest {
         keywordService.addKeywords(req.getKeywords(), req.getTags());
 
         // when
-        List<String> res = keywordService.keywordAutoCompletion("a");
+        List<String> res = keywordService.keywordAutoCompletion("한민");
         List<Keyword> keywordList  = keywordService.findAll();
 
         // then
         assertThat(keywordList.size()).isGreaterThan(0);
-        assertThat(res.size()).isEqualTo(4);
+        assertThat(res.size()).isEqualTo(1);
     }
 
 }

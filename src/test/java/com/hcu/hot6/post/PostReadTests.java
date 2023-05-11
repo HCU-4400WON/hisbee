@@ -6,6 +6,7 @@ import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.TagForm;
+import com.hcu.hot6.domain.response.LikesResponse;
 import com.hcu.hot6.domain.response.PostCreationResponse;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
 import com.hcu.hot6.repository.LikesRepository;
@@ -347,6 +348,28 @@ public class PostReadTests {
 
         assertThat(like.size()).isEqualTo(0);
         assertThat(res.isHasLiked()).isEqualTo(false);
+    }
+
+    @Test
+    public void 좋아요_취소() throws Exception{
+        // given
+        final var req = PostCreationRequest.builder()
+                .title("모집글 제목")
+                .summary("한 줄 소개")
+                .postTypes(List.of("학회", "학술모임"))
+                .recruitStart(new Date())
+                .recruitEnd(new Date())
+                .contact("example@test.com")
+                .qualifications("전산 1전공")
+                .duration("봄학기 ~ 여름방학")
+                .build();
+        PostCreationResponse postRes = postService.createPost(req, TEST_EMAIL);
+        postService.addBookmark(postRes.getId(), TEST_EMAIL);
+
+        // when
+        LikesResponse likesResponse = postService.delBookmark(postRes.getId(), TEST_EMAIL);
+        assertThat(likesRepository.findOne(postRepository.findOne(postRes.getId()).get(), memberRepository.findByEmail(TEST_EMAIL).get())).isEmpty();
+        //then
     }
   
     @Test

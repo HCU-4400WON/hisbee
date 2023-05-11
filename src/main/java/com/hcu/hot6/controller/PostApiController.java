@@ -16,6 +16,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -132,5 +135,10 @@ public class PostApiController {
     public ResponseEntity<ArchiveResponse> undoArchive(@PathVariable Long postId,
                                                        @AuthenticationPrincipal OAuth2User user) {
         return ResponseEntity.ok(postService.delArchive(postId, user.getName()));
+    }
+
+    @GetMapping("/posts/keyword")
+    public Map<String, List<String>> keywordAutoCompletion(@RequestParam String q) {
+        return Collections.singletonMap("results", keywordService.keywordAutoCompletion(q));
     }
 }
