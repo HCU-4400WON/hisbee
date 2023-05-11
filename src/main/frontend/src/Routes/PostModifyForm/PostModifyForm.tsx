@@ -275,6 +275,9 @@ function PostModifyForm() {
   }
 
   watch([
+    "title",
+    "postTypes",
+    "contact",
     "categoryETC",
     "departments",
     "postTypes",
@@ -605,6 +608,19 @@ function PostModifyForm() {
   // {
   //   /* 활동 기간 */
   // }
+
+  const checkSubmit = () => {
+    console.log(getValues("recruitStart")?.length);
+    if (
+      getValues("title").length !== 0 &&
+      getValues("recruitStart")?.length === 10 &&
+      getValues("postTypes").length !== 0 &&
+      getValues("contact").length !== 0
+    ) {
+      return true;
+    }
+    return false;
+  };
 
   const duration = [
     "봄학기",
@@ -1393,13 +1409,22 @@ function PostModifyForm() {
             </motion.div>
           )}
           <div className="flex justify-center mt-[50px]">
-            <button
-              type="submit"
-              className="text-white bg-blue-500  text-[18px] px-[20px] py-[8px] rounded-lg"
-            >
-              {" "}
-              제출하기
-            </button>
+            {checkSubmit() ? (
+              <button
+                type="submit"
+                className="text-white bg-blue-500  text-[18px] px-[20px] py-[8px] rounded-lg"
+              >
+                제출하기
+              </button>
+            ) : (
+              <button
+                disabled
+                type="submit"
+                className="text-gray-400 bg-gray-200  text-[18px] px-[20px] py-[8px] rounded-lg"
+              >
+                제출하기
+              </button>
+            )}
           </div>
         </form>
       </div>
