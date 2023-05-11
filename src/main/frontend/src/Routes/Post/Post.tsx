@@ -86,10 +86,10 @@ gap-x-[50px]
 
 const Container = tw.div`
 bg-gray-100
-pb-[100px]
+pb-[200px]
+min-w-[1470px]
 
-
-min-h-[2000px]
+min-h-[1500px]
 
 `;
 
@@ -475,7 +475,7 @@ function Post() {
           />
         ) : null}
 
-        <Container className="z-10" onClick={handleBlur}>
+        <Container onClick={handleBlur}>
           <Banner
             src="./img/banner_post.png"
             className="min-w-[1470px]"
@@ -484,7 +484,7 @@ function Post() {
           <Outline bgColor="bg-white">
             {/* <div className=" mx-auto flex items-center w-full h-[40px] md:h-[60px] bg-white "> */}
             <div className="min-w-[1470px] mx-auto flex justify-center items-center h-[60px] bg-white ">
-              <div className="flex justify-between items-center w-[1200px] px-[70px] ">
+              <div className="flex justify-between items-center min-w-[1200px] px-[70px] ">
                 {Categories.map((category, index) => (
                   <button
                     id="categoryButton"
@@ -505,7 +505,7 @@ function Post() {
 
           <Outline bgColor="bg-gray-100">
             {/* <div className="mt-[20px]"> */}
-            <div id="noBlur" className="min-w-[1470px] pt-[20px]">
+            <div id="noBlur" className="min-w-[1470px] bg-gray-100 pt-[20px]">
               <div id="noBlur" className="flex py-[20px] px-[70px]">
                 <div id="noBlur" className="flex items-start  ">
                   {/* <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] border-2 border-black">
@@ -522,14 +522,14 @@ function Post() {
                       </option>
                     ))}
                   </select> */}
-                  <span id="noBlur" className="flex items-center  z-20 ">
+                  <span id="noBlur" className="flex items-center ">
                     <div id="noBlur" className="mr-[20px] py-[0px]">
                       <p id="noBlur" className="text-[16px] font-[500]">
                         필터링 키워드
                       </p>
                     </div>
                     {isAutoPresent && (
-                      <div id="noBlur" className="relative z-30">
+                      <div id="noBlur" className="relative">
                         <select
                           id="noBlur"
                           className="absolute top-[20px] bg-gray-100 w-[200px]  "
@@ -703,7 +703,7 @@ function Post() {
               </div>
 
               {/* { ( */}
-              <div className="w-full flex justify-center">
+              <div className=" flex justify-center">
                 <PostGrid>
                   {/* {(posts?.posts.length as number) > 0 &&
                 (posts as IPosts).posts.map((post, index) => (
