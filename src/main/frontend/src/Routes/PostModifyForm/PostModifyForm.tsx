@@ -52,6 +52,7 @@ import { Duration } from "./components/Duration";
 import { Keywords } from "./components/Keywords";
 import { Helmet } from "react-helmet";
 import Outline from "components/Outline";
+import Validation from "./components/Validation";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -724,8 +725,8 @@ function PostModifyForm() {
             썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
           </p> */}
 
-            <div className="w-full h-[400px] flex items-center justify-between my-[20px] ">
-              <div className="w-[400px] h-[350px] bg-white p-[30px] rounded-2xl">
+            <div className="w-full h-[400px] flex items-start justify-between my-[20px] ">
+              <div className="w-[400px] border h-[350px] mt-[30px] bg-white p-[30px] rounded-2xl shadow-sm">
                 <div className="mb-[10px]">
                   <span className="flex items-center justify-between mb-[20px]">
                     <span className="flex items-center">
@@ -757,25 +758,47 @@ function PostModifyForm() {
                     </span>
                     <i className="fa-regular fa-heart text-[23px] text-gray-400"></i>
                   </span>
-
-                  <input
-                    className="w-[340px] text-[19px] py-[5px] px-[15px] mb-[10px] border-b-2"
-                    {...register("title")}
-                    type="text"
-                    placeholder="제목을 입력해주세요"
-                  />
-                  <div className="h-[70px] w-[350px]">
-                    <textarea
-                      wrap="off"
-                      id="summary"
-                      onKeyPress={textareaResize}
-                      onKeyUp={textareaResize}
-                      className="notes w-full text-[15px] px-[15px]"
-                      {...register("summary")}
-                      placeholder="두줄 이내의 간결한 모임 설명글을 적어주세요"
+                  {/* <div id="input-custom-css"> */}
+                  <div className=" flex relative">
+                    <Validation />
+                    <input
+                      className="w-[350px] text-[19px] py-[5px] mb-[10px] border-b-2"
+                      onFocus={() => {
+                        document.getElementById("titleBorder")?.focus();
+                      }}
+                      {...register("title")}
+                      type="text"
+                      placeholder="제목을 입력해주세요"
                     />
                   </div>
+                  {/* <motion.input
+                    whileFocus="animate"
+                    variants={inputVariants}
+                    initial="initial"
+                    animate="animate"
+                    id="titleBorder"
+                    className="w-[340px] border"
+                  ></motion.input>
+                </div> */}
+                  <div className="h-[70px]">
+                    <div className="w-full">
+                      <textarea
+                        wrap="off"
+                        id="summary"
+                        onKeyPress={textareaResize}
+                        onKeyUp={textareaResize}
+                        className="notes w-[350px] text-[15px] "
+                        {...register("summary")}
+                        placeholder="(선택) 두줄 이내의 간결한 모임 설명글을 적어주세요"
+                      />
+                    </div>
+                    {/* <p className="text-gray-500 text-[13px] float-right">
+                    {" "}
+                    {getValues("summary").length} / 40
+                  </p> */}
+                  </div>
                 </div>
+
                 <div className="flex items-center">
                   <AnimatePresence>
                     {getValues("postTypes").length !== 0 &&
@@ -800,10 +823,7 @@ function PostModifyForm() {
                   { array: "first", str: "firstKeyword" },
                   { array: "second", str: "secondKeyword" },
                 ].map((lineObj, LineIndex) => (
-                  <div
-                    key={LineIndex}
-                    className="flex mb-[10px] items-center h-[25px]"
-                  >
+                  <div key={LineIndex} className="flex mb-[10px] items-center">
                     {/* firstLine Keyword */}
                     <AnimatePresence>
                       {getValues(lineObj.array as any)?.map(
@@ -883,6 +903,7 @@ function PostModifyForm() {
                               }
                             }}
                             placeholder="키워드 입력"
+                            maxLength={10}
                           />
 
                           <button
@@ -917,12 +938,13 @@ function PostModifyForm() {
                         </div> */}
               </div>
 
-              <div className="w-[300px] h-[350px] px-[40px] py-[30px]">
-                <p>모집 기간</p>
+              <div className="w-[400px] h-[350px] px-[60px] py-[30px]">
+                <Validation />
+                <span className="">모집 기간</span>
 
                 <span className="pl-[30px] mb-[200px]">
-                  <span className="flex items-center mb-[10px]">
-                    <p className="mx-[15px] w-[30px]">시작</p>
+                  <span className="mt-[20px] flex items-center mb-[10px]">
+                    <p className="mr-[15px] w-[30px]">시작</p>
                     <input
                       className={`w-[140px] bg-slate-100 text-blue-500`}
                       type="date"
@@ -931,7 +953,7 @@ function PostModifyForm() {
                   </span>
 
                   <span className="flex items-center">
-                    <p className="mx-[15px] ">마감</p>
+                    <p className="mr-[15px] ">마감</p>
                     <input
                       type="date"
                       className="w-[140px] bg-slate-100 text-blue-500"
@@ -940,7 +962,7 @@ function PostModifyForm() {
                   </span>
                   <button
                     type="button"
-                    className={` ${FunctionBUTTON} ml-[80px] mt-[20px] `}
+                    className={` ${FunctionBUTTON} float-right mt-[20px] `}
                     onClick={() => setValue("recruitEnd", "")}
                   >
                     상시 모집
@@ -948,8 +970,9 @@ function PostModifyForm() {
                 </span>
               </div>
 
-              <div className="w-[600px] h-[350px] px-[40px] py-[30px]">
-                <span className="flex items-center">
+              <div className=" w-[400px]  h-[350px] pl-[0px] py-[30px]">
+                <Validation />
+                <span className="relative flex items-center">
                   모임 유형(카테고리){" "}
                   <span className="text-[13px] ml-[20px]">
                     <span className="text-blue-600 font-bold">최대 2개</span>{" "}
@@ -958,7 +981,7 @@ function PostModifyForm() {
                 </span>
 
                 <div className="flex">
-                  <div className="grid grid-cols-2 w-[330px]">
+                  <div className="grid grid-cols-2 gap-x-[20px] w-[330px]">
                     {Categories.map((category, index) => (
                       <span key={index} className="flex items-center mt-[20px]">
                         {/* <input {...register("postTypes")} value={category} type="checkBox" className="mx-[10px]" /> */}
@@ -1001,17 +1024,23 @@ function PostModifyForm() {
                       </span>
                     ))}
                   </div>
-                  <div className="flex flex-col justify-end">
-                    {getValues("postTypes").includes("기타 모임" as never) && (
-                      <input
-                        {...register("categoryETC")}
-                        type="text"
-                        id="categoryETC"
-                        className="border-b-2 h-[35px] border-gray-400 w-full px-[10px] bg-slate-100"
-                        placeholder="모집 유형을 입력해주세요"
-                      />
-                    )}
-                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col justify-between items-end w-[350px] h-[300px]">
+                <p className="float-right mt-[20px] text-[17px] text-red-500 mt-[5px] min-w-[100px]">
+                  * : 필수 사항
+                </p>
+                <div className="flex flex-col justify-end">
+                  {getValues("postTypes").includes("기타 모임" as never) && (
+                    <input
+                      {...register("categoryETC")}
+                      type="text"
+                      id="categoryETC"
+                      className="border-b-2 h-[35px]  border-gray-400 w-full bg-slate-100"
+                      placeholder="8자 이내 자유 입력"
+                      maxLength={8}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -1021,15 +1050,15 @@ function PostModifyForm() {
               <p className="mt-[10px]">지원에 필요한 정보를 채워주세요!</p>
               <div className="flex items-center w-full justify-between">
                 {/* <div className="w-[600px] mt-[20px] mr-[100px]"> */}
-                <div className="flex items-start w-[45%]">
-                  <div className="w-[130px] mt-[8px]">신청 경로</div>
-                  <div className="w-full">
+                <div className="relative flex items-center w-[45%]">
+                  <Validation />
+                  <div className="w-[130px] flex">신청 경로</div>
+                  <div className="relative flex w-full items-center">
                     <input
                       // onFocus={{
-
                       // }}
                       type="text"
-                      className="w-full border-b border-gray-300 h-[40px] px-[10px] bg-slate-100"
+                      className="w-full border-b border-gray-300 px-[10px] py-[5px] bg-slate-100 "
                       placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
                       {...register("contact")}
                     />

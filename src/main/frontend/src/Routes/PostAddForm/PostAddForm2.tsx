@@ -134,6 +134,18 @@ function PostAddForm2() {
     },
   });
 
+  const checkSubmit = () => {
+    console.log(getValues("recruitStart")?.length);
+    if (
+      getValues("title").length !== 0 &&
+      getValues("recruitStart")?.length === 10 &&
+      getValues("postTypes").length !== 0 &&
+      getValues("contact").length !== 0
+    ) {
+      return true;
+    }
+    return false;
+  };
   interface ISubmitDate {
     title: string;
     summary?: string;
@@ -588,12 +600,8 @@ function PostAddForm2() {
             썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
           </p> */}
 
-            <p className="absolute right-[120px] top-[270px] mt-[20px] text-[18px] text-red-500 mt-[5px]">
-              * : 필수 사항
-            </p>
-
-            <div className="w-full h-[400px] flex items-center justify-between mb-[20px] ">
-              <div className="w-[400px] border h-[350px] bg-white p-[30px] rounded-2xl shadow-sm">
+            <div className="w-full h-[400px] flex items-start justify-between my-[20px] ">
+              <div className="w-[400px] border h-[350px] mt-[30px] bg-white p-[30px] rounded-2xl shadow-sm">
                 <div className="mb-[10px]">
                   <span className="flex items-center justify-between mb-[20px]">
                     <span className="flex items-center">
@@ -805,7 +813,7 @@ function PostAddForm2() {
                         </div> */}
               </div>
 
-              <div className="w-[300px] h-[350px] px-[40px] py-[30px]">
+              <div className="w-[400px] h-[350px] px-[60px] py-[30px]">
                 <Validation />
                 <span className="">모집 기간</span>
 
@@ -829,7 +837,7 @@ function PostAddForm2() {
                   </span>
                   <button
                     type="button"
-                    className={` ${FunctionBUTTON} ml-[100px] mt-[20px] `}
+                    className={` ${FunctionBUTTON} float-right mt-[20px] `}
                     onClick={() => setValue("recruitEnd", "")}
                   >
                     상시 모집
@@ -837,7 +845,7 @@ function PostAddForm2() {
                 </span>
               </div>
 
-              <div className="w-[600px] h-[350px] px-[40px] py-[30px]">
+              <div className=" w-[400px]  h-[350px] pl-[0px] py-[30px]">
                 <Validation />
                 <span className="relative flex items-center">
                   모임 유형(카테고리){" "}
@@ -848,7 +856,7 @@ function PostAddForm2() {
                 </span>
 
                 <div className="flex">
-                  <div className="grid grid-cols-2 w-[330px]">
+                  <div className="grid grid-cols-2 gap-x-[20px] w-[330px]">
                     {Categories.map((category, index) => (
                       <span key={index} className="flex items-center mt-[20px]">
                         {/* <input {...register("postTypes")} value={category} type="checkBox" className="mx-[10px]" /> */}
@@ -891,18 +899,23 @@ function PostAddForm2() {
                       </span>
                     ))}
                   </div>
-                  <div className="flex flex-col justify-end">
-                    {getValues("postTypes").includes("기타 모임" as never) && (
-                      <input
-                        {...register("categoryETC")}
-                        type="text"
-                        id="categoryETC"
-                        className="border-b-2 h-[35px] border-gray-400 w-full bg-slate-100"
-                        placeholder="8자 이내 자유 입력"
-                        maxLength={8}
-                      />
-                    )}
-                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col justify-between items-end w-[350px] h-[300px]">
+                <p className="float-right mt-[20px] text-[17px] text-red-500 mt-[5px] min-w-[100px]">
+                  * : 필수 사항
+                </p>
+                <div className="flex flex-col justify-end">
+                  {getValues("postTypes").includes("기타 모임" as never) && (
+                    <input
+                      {...register("categoryETC")}
+                      type="text"
+                      id="categoryETC"
+                      className="border-b-2 h-[35px]  border-gray-400 w-full bg-slate-100"
+                      placeholder="8자 이내 자유 입력"
+                      maxLength={8}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -1261,13 +1274,24 @@ function PostAddForm2() {
             </motion.div>
           )}
           <div className="flex justify-center mt-[50px]">
-            <button
-              type="submit"
-              className="text-white bg-blue-500  text-[18px] px-[20px] py-[8px] rounded-lg"
-            >
-              {" "}
-              모집글 등록하기
-            </button>
+            {checkSubmit() ? (
+              <button
+                type="submit"
+                className="text-white bg-blue-500  text-[18px] px-[20px] py-[8px] rounded-lg"
+              >
+                {" "}
+                모집글 등록하기
+              </button>
+            ) : (
+              <button
+                disabled
+                type="submit"
+                className="text-gray-400 bg-gray-200  text-[18px] px-[20px] py-[8px] rounded-lg"
+              >
+                {" "}
+                모집글 등록하기
+              </button>
+            )}
           </div>
         </form>
       </div>
