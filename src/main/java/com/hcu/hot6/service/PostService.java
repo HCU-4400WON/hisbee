@@ -94,7 +94,7 @@ public class PostService {
 
         List<Likes> like = likesRepository.findOne(post, member);
         post.delBookmark(like.get(0), member);
-
+        likesRepository.delete(like.get(0));
         return new LikesResponse(like.get(0));
     }
 
