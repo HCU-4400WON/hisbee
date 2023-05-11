@@ -40,7 +40,7 @@ public class Post {
     private String targetCount;
     private String keywords;
 
-    @Column(length = 4095)
+    @Column(length = 8192)
     private String content;
     private Long views;
     private boolean isAutoClose;
