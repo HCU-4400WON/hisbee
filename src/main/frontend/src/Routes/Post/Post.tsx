@@ -47,12 +47,12 @@ import ConfirmModal from "components/ConfirmModal";
 import AlertModal from "components/AlertModal";
 
 const SelectFilterBox = tw.select`
-mr-[20px] px-[10px] bg-[#F9FAFB] py-[5px] rounded-lg text-center
+mr-[20px] px-[10px] bg-[#F9FAFB] py-[5px] rounded-lg text-center border
 text-gray-500 text-[16px] w-auto
 `;
 
 const MyMajorBox = tw.div`
-flex items-center bg-[#F9FAFB] py-[5px] mr-[20px] rounded-lg px-[10px] text-gray-500
+flex items-center bg-[#F9FAFB] py-[5px] mr-[20px] rounded-lg px-[10px] text-gray-500 border
 text-[16px] w-auto
 `;
 const MyMajorInput = tw.input`
@@ -542,12 +542,12 @@ function Post() {
                       필터 전체 삭제 버튼
                 </button> */}
               </div>
-              <div className=" flex items-start px-[70px]  mb-[30px] ">
+              <div className=" flex items-start px-[70px] mb-[30px]">
                 <div className="flex mr-[20px] mt-[4px]">
                   <p className="text-[14px] mb-[0px]">추천 키워드 </p>
                 </div>
                 <div className="grid grid-cols-8 gap-x-[10px] gap-y-[10px]">
-                  {keywords.map(
+                  {posts?.relatedKeywords.map(
                     (keyword, index) =>
                       !selectedKeywords.includes(keyword as never) && (
                         <button
