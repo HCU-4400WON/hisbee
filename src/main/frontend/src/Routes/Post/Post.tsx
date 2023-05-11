@@ -8,6 +8,7 @@ import {
   departments,
   IReadAllPosts,
   IReadOnePost,
+  keywordAutoComplete,
   loginCheckApi,
   posts,
   readPosts,
@@ -63,8 +64,6 @@ w-[150px]
 `;
 
 const Banner = tw.img`
-bg-gradient-to-r from-gray-300 to-gray-500
-min-w-[1470px]
 `;
 
 const SortBox = tw.div`
@@ -87,10 +86,10 @@ gap-x-[50px]
 
 const Container = tw.div`
 bg-gray-100
-pb-[100px]
+pb-[200px]
+min-w-[1470px]
 
-
-min-h-[2000px]
+min-h-[1500px]
 
 `;
 
@@ -268,7 +267,7 @@ function Post() {
     });
 
   useEffect(() => {
-    loginCheckMutate();
+    // loginCheckMutate();
   }, []);
 
   const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
@@ -372,6 +371,7 @@ function Post() {
     if (e.key === "Enter") {
       setSelectedKeywords((prev) => [...prev, keywordInput]);
       setKeywords((prev) => [...prev, keywordInput]);
+      setIsAutoPresent(false);
     }
   };
 
@@ -420,8 +420,31 @@ function Post() {
   }, []);
 
   // useEffect(() => {
+  //   majorAutoComplete(getValues("major1")).then((data) =>
+  //     setShowList1(data.results)
+  //   );
+  //   setValue("canMajor1", checkMajor(getValues("major1")));
+  //   console.log();
+  // }, [getValues("major1")]);
+
+  function handleBlur(e: any) {
+    if (e.target.id !== "noBlur" && e.target.id !== "keywordInput")
+      setIsAutoPresent(false);
+    console.log(e.target.id);
+  }
+
+  const [keywordAutoList, setKeywordAutoList] = useState<string[] | []>([]);
+
+  useEffect(() => {
+    keywordAutoComplete(keywordInput).then((keywords) =>
+      setKeywordAutoList(keywords.results)
+    );
+  }, [keywordInput]);
+  // useEffect(() => {
   //   setHideSentinel(false);
   // }, [search, order, selectedCategory, LIMIT + "", selectedKeywords]);
+
+  const [isAutoPresent, setIsAutoPresent] = useState<boolean>(false);
 
   const isLogin = useRecoilValue(isLoginState);
 
@@ -429,6 +452,7 @@ function Post() {
     useRecoilState(isLogoutConfirmState);
   const [isPreventAlertModal, setIsPreventAlertModal] =
     useRecoilState(isPreventAlertState);
+
   return (
     <>
       {(isLoading || isLoginCheckLoading) && <LoadingLottie isPost={true} />}
@@ -451,13 +475,16 @@ function Post() {
           />
         ) : null}
 
-        <Container className="min-w-[1470px]">
-          <Banner src="./img/banner_post.png"></Banner>
+        <Container onClick={handleBlur}>
+          <Banner
+            src="./img/banner_post.png"
+            className="min-w-[1470px]"
+          ></Banner>
 
           <Outline bgColor="bg-white">
             {/* <div className=" mx-auto flex items-center w-full h-[40px] md:h-[60px] bg-white "> */}
-            <div className="w-[1470px] mx-auto flex justify-center items-center w-full h-[60px] bg-white ">
-              <div className="flex justify-between items-center w-[1200px] px-[70px] ">
+            <div className="min-w-[1470px] mx-auto flex justify-center items-center h-[60px] bg-white ">
+              <div className="flex justify-between items-center min-w-[1200px] px-[70px] ">
                 {Categories.map((category, index) => (
                   <button
                     id="categoryButton"
@@ -478,9 +505,9 @@ function Post() {
 
           <Outline bgColor="bg-gray-100">
             {/* <div className="mt-[20px]"> */}
-            <div className="min-w-[1470px] pt-[20px]">
-              <div className="flex py-[20px] px-[70px]  ">
-                <div className="flex items-start  ">
+            <div id="noBlur" className="min-w-[1470px] bg-gray-100 pt-[20px]">
+              <div id="noBlur" className="flex py-[20px] px-[70px]">
+                <div id="noBlur" className="flex items-start  ">
                   {/* <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] border-2 border-black">
                     {Majors.map((major, index) => (
                       <option key={index}>
@@ -495,11 +522,35 @@ function Post() {
                       </option>
                     ))}
                   </select> */}
-                  <span className="flex items-center">
-                    <div className="mr-[20px] py-[0px]">
-                      <p className="text-[16px] font-[500]">필터링 키워드</p>
+                  <span id="noBlur" className="flex items-center ">
+                    <div id="noBlur" className="mr-[20px] py-[0px]">
+                      <p id="noBlur" className="text-[16px] font-[500]">
+                        필터링 키워드
+                      </p>
                     </div>
-                    <div className="w-[280px] mr-[30px]">
+                    {isAutoPresent && (
+                      <div id="noBlur" className="relative">
+                        <select
+                          id="noBlur"
+                          className="absolute top-[20px] bg-gray-100 w-[200px]  "
+                          size={3}
+                        >
+                          {keywordAutoList.length !== 0 &&
+                            keywordAutoList.map((keyword, index) => (
+                              <option
+                                className="bg-gray-100 px-[5px] py-[2px]"
+                                value={keyword}
+                                key={index}
+                                onClick={() => setKeywordInput(keyword)}
+                              >
+                                {keyword}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                    )}
+
+                    <div id="noBlur" className="w-[280px] mr-[30px]">
                       <input
                         value={keywordInput}
                         id="keywordInput"
@@ -507,6 +558,7 @@ function Post() {
                         onChange={onChange}
                         type="text"
                         className="w-full text-[15px] border-b border-gray-400 bg-gray-100 "
+                        onFocus={() => setIsAutoPresent(true)}
                         placeholder="키워드로 원하는 모집글만 볼 수 있어요."
                       />
                     </div>
@@ -651,7 +703,7 @@ function Post() {
               </div>
 
               {/* { ( */}
-              <div className="w-full flex justify-center">
+              <div className=" flex justify-center">
                 <PostGrid>
                   {/* {(posts?.posts.length as number) > 0 &&
                 (posts as IPosts).posts.map((post, index) => (

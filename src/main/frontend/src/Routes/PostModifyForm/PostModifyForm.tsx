@@ -57,7 +57,7 @@ import Validation from "./components/Validation";
 const MyBlock = styled.div`
   background-color: white;
   .wrapper-class {
-    line-height: 0.5rem;
+    line-height: 1rem;
     margin: 0 auto;
     margin-bottom: 4rem;
     border: 2px solid lightGray !important;

@@ -1088,3 +1088,26 @@ export const majorAutoComplete = async (q: string) => {
   );
   return response.data;
 };
+
+// const checkHasIncode = (keyword: string) => {
+//   const check_kor = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/; // 한글인지 식별해주기 위한 정규표현식
+
+//   if (keyword.match(check_kor)) {
+//     const encodeKeyword = decodeURI(keyword); // 한글 인코딩
+//     return encodeKeyword;
+//   } else {
+//     return keyword;
+//   }
+// };
+
+export const keywordAutoComplete = async (q: string) => {
+  // const TOKEN = localStorage.getItem("key");
+  const response = await axios.get(
+    `${process.env.REACT_APP_BACK_BASE_URL}/keyword?q=${q}`
+    // {
+    //   headers: { Authorization: `Bearer ${TOKEN}` },
+    //   withCredentials: true,
+    // }
+  );
+  return response.data;
+};

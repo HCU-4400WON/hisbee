@@ -128,21 +128,19 @@ mb-[20px]
 items-start
 
 
+
 `;
 
 const ItemTitle = tw.span`
 text-[#757575] 
-min-w-[130px]
 
-text-[14px] 
-md:text-[18px]
-md:min-w-[140px]
+text-[18px]
+min-w-[140px]
 font-unique
 `;
 
 const ItemText = tw.span`
-text-[13px] 
-md:text-[16px]
+text-[16px]
 font-medium
 
 `;
@@ -567,9 +565,9 @@ function Detail2() {
                       <ItemTitle>신청 경로</ItemTitle>
                       <a
                         href={`${data?.contact}`}
-                        className="md:w-full w-[200px] text-[13px] md:text-[17px] font-bold underline"
+                        className=" text-[15px] font-bold underline"
                       >
-                        {data?.contact}
+                        {data?.contact.slice(0, 45)} ...
                       </a>
                     </GridItem>
                   )}
@@ -646,7 +644,7 @@ function Detail2() {
                     dangerouslySetInnerHTML={{
                       __html: data?.content as string,
                     }}
-                    className="p-[50px] bg-gray-100 rounded-3xl "
+                    className="p-[50px] bg-gray-100 rounded-3xl leading-8"
                   ></div>
                 </>
               )}

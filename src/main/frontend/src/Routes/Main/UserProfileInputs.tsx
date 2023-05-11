@@ -111,19 +111,20 @@ export default function UserProfileInputs({
     validationNickFn();
   }, [getValues("nickname")]);
   // console.log(getValues("nickname"));
-  console.log(inputBgColor);
 
   const [isPresent, setIsPresent] = useState<boolean>(false);
 
   const [showList1, setShowList1] = useState<string[] | []>([]);
   const [showList2, setShowList2] = useState<string[] | []>([]);
 
+  const [isShowList1, setIsShowList1] = useState<boolean>(false);
+  const [isShowList2, setIsShowList2] = useState<boolean>(false);
+
   useEffect(() => {
-    majorAutoComplete(getValues("major1")).then((data) =>
-      setShowList1(data.results)
-    );
+    majorAutoComplete(getValues("major1")).then((data) => {
+      setShowList1(data.results);
+    });
     setValue("canMajor1", checkMajor(getValues("major1")));
-    console.log();
   }, [getValues("major1")]);
 
   useEffect(() => {
@@ -131,7 +132,6 @@ export default function UserProfileInputs({
       setShowList2(data.results)
     );
     setValue("canMajor2", checkMajor(getValues("major2")));
-    console.log("!!");
   }, [getValues("major2")]);
 
   const checkMajor = (checkData: string) => {
@@ -197,12 +197,13 @@ export default function UserProfileInputs({
       </InfoBox>
 
       <InfoBox className="flex flex-col w-[50%] pl-[50px]">
-        <InfoBox className=" relative flex w-full items-start mb-[10px] ">
+        <InfoBox className="z-20 relative flex w-full items-start mb-[10px] h-[100px]">
           <Info className="mt-[5px]">1전공</Info>
           <div className={`w-[300px] px-[20px] flex flex-col`}>
             <InfoInput
               className={` ${inputBgColor} mb-[10px] `}
               type="text"
+              onFocus={() => setIsShowList1(true)}
               onKeyPress={onKeyPress}
               {...register("major1", {
                 required: "필수 항목입니다.",
@@ -213,20 +214,21 @@ export default function UserProfileInputs({
               })}
               placeholder="GLS는 1전공만 입력"
             />
-
-            <select className="bg-gray-100" size={3}>
-              {showList1.length !== 0 &&
-                showList1.map((elem, index) => (
-                  <option
-                    className="bg-slate-100"
-                    value={elem}
-                    key={index}
-                    onClick={() => setValue("major1", elem)}
-                  >
-                    {elem}
-                  </option>
-                ))}
-            </select>
+            {isShowList1 && (
+              <select className="bg-gray-100" size={3}>
+                {showList1.length !== 0 &&
+                  showList1.map((elem, index) => (
+                    <option
+                      className="bg-slate-100"
+                      value={elem}
+                      key={index}
+                      onClick={() => setValue("major1", elem)}
+                    >
+                      {elem}
+                    </option>
+                  ))}
+              </select>
+            )}
           </div>
           <div
             className={`text-[13px] w-[100px] mt-[10px] ${
@@ -238,7 +240,7 @@ export default function UserProfileInputs({
             {getValues("canMajor1")}
           </div>
         </InfoBox>
-        <InfoBox className="relative flex w-full items-start">
+        <InfoBox className="relative flex w-full items-start h-[100px]">
           <Info className="mt-[5px]">2전공</Info>
           <div className={`w-[300px] px-[20px] `}>
             <div>
@@ -246,6 +248,7 @@ export default function UserProfileInputs({
                 className={` ${inputBgColor}`}
                 type="text"
                 onKeyPress={onKeyPress}
+                onFocus={() => setIsShowList2(true)}
                 {...register("major2", {
                   maxLength: {
                     value: 10,
@@ -254,19 +257,22 @@ export default function UserProfileInputs({
                 })}
               />
             </div>
-            <select className="bg-gray-100 mt-[10px]" size={3}>
-              {showList2.length !== 0 &&
-                showList2.map((elem, index) => (
-                  <option
-                    className="bg-slate-100"
-                    value={elem}
-                    key={index}
-                    onClick={() => setValue("major2", elem)}
-                  >
-                    {elem}
-                  </option>
-                ))}
-            </select>
+
+            {isShowList2 && (
+              <select className="bg-gray-100 mt-[10px]" size={3}>
+                {showList2.length !== 0 &&
+                  showList2.map((elem, index) => (
+                    <option
+                      className="bg-slate-100"
+                      value={elem}
+                      key={index}
+                      onClick={() => setValue("major2", elem)}
+                    >
+                      {elem}
+                    </option>
+                  ))}
+              </select>
+            )}
           </div>
           <div
             className={`text-[13px] w-[100px] mt-[10px] ${
