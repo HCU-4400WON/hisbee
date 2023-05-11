@@ -1,16 +1,17 @@
-import Lottie from "react-lottie";
+// import Lottie from "react-lottie";
 import animationData from "loading.json";
-
-const defaultOptions = {
-  loop: true,
-  autoplay: true,
-  animationData: animationData,
-  rendererSettings: {
-    preserveAspectRatio: "xMidYMid slice",
-  },
-};
+import Lottie, { useLottie } from "lottie-react";
 
 export default function LoadingLottie({ isPost }: any) {
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
+
   return (
     <div
       className={`${
@@ -18,12 +19,9 @@ export default function LoadingLottie({ isPost }: any) {
       } modal z-[30] w-full justify-center py-[200px] h-full flex bg-white `}
     >
       <div className="z-[100] opacity-100">
-        <Lottie
-          options={defaultOptions}
-          height={300}
-          width={300}
-          isClickToPauseDisabled={true}
-        ></Lottie>
+        <div className="w-[500px]">
+          <Lottie animationData={animationData} />
+        </div>
       </div>
     </div>
   );

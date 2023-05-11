@@ -29,7 +29,6 @@ import DeleteModal from "./DeleteModal";
 import Thumbnail from "./Thumbnail";
 
 const PostGrid = tw.div`
-bg-gray-200
 grid
 grid-cols-1
 sm:grid-cols-1
@@ -37,7 +36,7 @@ md:grid-cols-2
 xl:grid-cols-3
 2xl:grid-cols-4
 gap-x-[20px]
-mt-[50px]
+mt-[30px]
 
 w-[300px]
 md:w-[660px]
@@ -73,8 +72,8 @@ mr-2
 const Sidebar = tw.div`
 sticky
 top-0
-hidden
-lg:flex
+
+flex
 min-w-[240px] 
 pl-[30px]
 
@@ -130,7 +129,7 @@ function Profile2() {
       setValue("nickname", data.profile.nickname);
       setValue("major1", data?.profile.major1);
       setValue("major2", data?.profile?.major2);
-      console.log(data);
+      // console.log(data);
     },
     onError: (error) => {
       // if (((error as AxiosError).response as AxiosResponse).status === 401) {
@@ -148,10 +147,12 @@ function Profile2() {
         nickname: "",
         major1: "",
         major2: "",
+        canMajor1: "",
+        canMajor2: "",
       },
     });
 
-  watch(["major1", "major2", "nickname"]);
+  watch(["major1", "major2", "nickname", "canMajor1", "canMajor2"]);
 
   const [modifyToggle, setModifyToggle] = useState<boolean>(false);
 
@@ -174,11 +175,13 @@ function Profile2() {
       major1: submitData?.major1 === "" ? "해당없음" : submitData.major1,
       major2: submitData.major2 === "" ? "해당없음" : submitData.major2,
     };
-    console.log("수정", newMember);
+    // console.log("수정", newMember);
+    if (checkSubmit()) {
+      await memberUpdate(newMember);
+      setModifyToggle(false);
+    } else return;
     // memberSignUp(newMember);
     // memberSignUp(newMember);
-    await memberUpdate(newMember);
-    setModifyToggle(false);
 
     // setIsExtraSignupModal(true);
     // signupMemberMutate(newMember);
@@ -216,6 +219,17 @@ function Profile2() {
           return data.posts.filter((post) => post.archived);
       }
     }
+  };
+
+  const checkSubmit = () => {
+    if (
+      getValues("nickname") !== "" &&
+      getValues("canMajor1") === "사용 가능" &&
+      getValues("canMajor2") !== "사용 불가능"
+    ) {
+      return true;
+    }
+    return false;
   };
 
   return (
@@ -300,17 +314,27 @@ function Profile2() {
                       >
                         편집 취소
                       </button>
-                      <button
-                        // type="submit"
-                        onClick={() => {
-                          // await memberUpdate(newUser as any);
-                          // setNowModifying(false);
-                          // refetch();
-                        }}
-                        className="bg-blue-500 text-white rounded-lg px-[20px] py-[7px] text-[13px]"
-                      >
-                        편집 완료
-                      </button>
+
+                      {checkSubmit() === true ? (
+                        <button
+                          // type="submit"
+                          onClick={() => {
+                            // await memberUpdate(newUser as any);
+                            // setNowModifying(false);
+                            // refetch();
+                          }}
+                          className="bg-blue-500 text-white rounded-lg px-[20px] py-[7px] text-[13px]"
+                        >
+                          편집 완료
+                        </button>
+                      ) : (
+                        <button
+                          className="bg-gray-200 text-gray-400 rounded-lg px-[20px] py-[7px] text-[13px]"
+                          disabled
+                        >
+                          편집 완료
+                        </button>
+                      )}
                     </div>
                   </>
                 ) : (
@@ -376,7 +400,7 @@ function Profile2() {
             <PostGrid>
               {postFiltering(data as IUserRead, mode, filter)?.map(
                 (post: IReadOnePost, index: number) => (
-                  <Link key={index} to={`/post2/${post?.id}`}>
+                  <Link key={index} to={`/post/${post?.id}`}>
                     <Thumbnail {...post} refetch={refetch} />
                   </Link>
                 )

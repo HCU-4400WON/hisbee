@@ -43,3 +43,13 @@ export const isAlertModalState = atom({
   key: "isAlertState",
   default: false,
 });
+
+export const isLogoutConfirmState = atom({
+  key: "isLogoutConfirmState",
+  default: false,
+});
+
+export const isPreventAlertState = atom({
+  key: "isPreventAlertState",
+  default: false,
+});

@@ -16,6 +16,8 @@ import { AxiosError, AxiosResponse } from "axios";
 import {
   isLoginModalState,
   isLoginState,
+  isLogoutConfirmState,
+  isPreventAlertState,
   isSignupModalState,
 } from "components/atom";
 import Login from "components/LoginModal";
@@ -29,7 +31,7 @@ import React, {
 } from "react";
 import { useLocation, useMatch, useNavigate } from "react-router";
 import { Link, useFetcher } from "react-router-dom";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import Card from "Routes/Post/Card";
 import Thumbnail from "./Thumbnail";
@@ -39,6 +41,10 @@ import "./css/textfield.css";
 import SignUp2 from "Routes/Main/SignUp2";
 import LoadingLottie from "components/LoadingLottie";
 import Outline from "components/Outline";
+import { AnyTxtRecord } from "dns";
+import { async } from "@firebase/util";
+import ConfirmModal from "components/ConfirmModal";
+import AlertModal from "components/AlertModal";
 
 const SelectFilterBox = tw.select`
 mr-[20px] px-[10px] bg-[#F9FAFB] py-[5px] rounded-lg text-center
@@ -75,7 +81,7 @@ grid-cols-4
 
 place-content-center
 
-gap-x-[20px]
+gap-x-[50px]
 
 `;
 
@@ -116,10 +122,6 @@ function Post() {
   ]);
   const [selectedKeywords, setSelectedKeywords] = useState<string[] | []>([]);
 
-  useEffect(() => {
-    console.log(filterCategory, filterPosition, filterPay);
-  }, [filterCategory, filterPosition, filterPay]);
-
   interface IFiltering {
     [key: string]: string[];
   }
@@ -127,7 +129,7 @@ function Post() {
   const isLoginModal = useRecoilValue(isLoginModalState);
   const isSignupModal = useRecoilValue(isSignupModalState);
 
-  const [getPageNums, setGetPageNums] = useState<number>(12);
+  const [getPageNums, setGetPageNums] = useState<number>(4);
 
   const POSTS_PER_PAGE = 12;
   const [nowPage, setNowPage] = useState(1);
@@ -150,29 +152,21 @@ function Post() {
     }
   };
 
-  useEffect(() => {
-    setNextPage(Math.ceil(nowPage / 10) * 10 + 1);
-    setPrevPage(Math.floor((nowPage - 1) / 10) * 10);
-    console.log(prevPage, nextPage);
-    // refetch();
-  }, [nowPage]);
+  // useEffect(() => {
+  //   setNextPage(Math.ceil(nowPage / 10) * 10 + 1);
+  //   setPrevPage(Math.floor((nowPage - 1) / 10) * 10);
+  //   console.log(prevPage, nextPage);
+  //   // refetch();
+  // }, [nowPage]);
 
   const [LIMIT, useLIMIT] = useState<number>(12);
   useEffect(() => {
-    const pageOneRefetch = async () => {
+    const fn = async () => {
       await setNowPage(1);
-      // setGetPageNums(1);
       refetch();
+      setHideSentinel(false);
     };
-    pageOneRefetch();
-    console.log(
-      nowPage,
-      search,
-      order,
-      selectedCategory,
-      LIMIT,
-      selectedKeywords
-    );
+    fn();
   }, [
     search,
     order,
@@ -184,6 +178,20 @@ function Post() {
     selectedMajor,
   ]);
 
+  useEffect(() => {
+    const fn = () => {
+      if (getPageNums < LIMIT) {
+        // console.log("!!!!!!!!!!!!!");
+        // window.removeEventListener("scroll", handleScroll);
+        // io.unobserve(document.getElementById("sentinel") as Element);
+        // console.log("콩쥐");
+        setHideSentinel(true);
+        return;
+      }
+    };
+    fn();
+  }, [getPageNums]);
+
   // [사이에 필터링을 추가하기]
   const {
     data: posts,
@@ -192,7 +200,7 @@ function Post() {
   } = useQuery<IReadAllPosts>(
     [
       "FilteredPosts",
-      [nowPage, search, order, selectedCategory, LIMIT + "", selectedKeywords],
+      [search, order, selectedCategory, LIMIT + "", selectedKeywords, nowPage],
     ],
     () =>
       readPosts(
@@ -224,28 +232,11 @@ function Post() {
 
         //   // console.log("1");
         // }
-        console.log(
-          nowPage + "",
-          // search:
-          search,
-          // order:
-          order,
-          // type:
-          selectedCategory === "전체" ? null : selectedCategory,
-          // limit:
-          LIMIT + "",
-          // keywords:
-          selectedKeywords,
-          // filterPosition === "" ? null : filterPosition,
-          // filterPay === "" ? null : filterPay,
-          // null
-          selectedMyDeptOnly,
-          selectedGrade,
-          selectedMajor
-        );
+
+        // setNowPage((prev) => prev + 1);
         // setGetPageNums(posts.total);
-        setGetPageNums(posts.total);
-        console.log("debug", posts.total);
+        // setGetPageNums(posts.total);
+        // console.log("debug", posts.total);
 
         if (scrolling) {
           setUnionData((prev) => [...prev, ...posts.posts]);
@@ -254,8 +245,7 @@ function Post() {
         }
         window.scrollTo(0, 0);
         // setUnionDataLoading(true);
-        console.log("Fetched!", posts as any);
-
+        setGetPageNums(posts.total);
         setScrolling(false);
         // setTimeout(() => {
         //   setUnionDataLoading(true);
@@ -263,6 +253,7 @@ function Post() {
       },
     }
   );
+
   const setIsLogin = useSetRecoilState(isLoginState);
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
@@ -285,19 +276,15 @@ function Post() {
     const selectedValue = event.currentTarget.value;
     if (selectedId === "sortSelect") {
       setOrder(selectedValue);
-      console.log(selectedValue);
     } else if (selectedId === "majorSelect") {
       setSelectedMajor(selectedValue);
-      console.log(selectedValue);
     } else if (selectedId === "gradeSelect") {
       setSelectedGrade(selectedValue);
-      console.log(selectedValue);
     }
   };
   const onChange = (e: React.FormEvent<HTMLInputElement>) => {
     const selectedId = e.currentTarget.id;
     const selectedValue = e.currentTarget.value;
-    console.log("onChange inputValue : ", selectedValue);
 
     if (selectedId === "keywordInput") setKeywordInput(selectedValue);
   };
@@ -312,7 +299,6 @@ function Post() {
     if (selectedId === "categoryButton") {
       setSelectedCategory(selectedValue);
       // setSelectedKeywords([]);
-      console.log(selectedValue);
     }
 
     // else i
@@ -323,14 +309,12 @@ function Post() {
           ...prev.slice(0, deleteIdx),
           ...prev.slice(deleteIdx + 1),
         ];
-        console.log("keyWords : ", newKeywords);
         return newKeywords;
       });
     } else if (selectedId === "insertKeywordButton") {
       setSelectedKeywords((prev) => {
         const newKeywords = [...prev, selectedValue];
 
-        console.log("keyWords : ", newKeywords);
         return newKeywords;
       });
     } else if (selectedId === "allFilterDelete") {
@@ -398,44 +382,53 @@ function Post() {
   const sentinel = document.getElementById("sentinel") as Element;
 
   const [scrolling, setScrolling] = useState<boolean>(false);
+  const [hideSentinel, setHideSentinel] = useState(false);
+
+  const io = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      // if (getPageNums < 4) {
+      //   console.log("!!!!!!!!!!!!!");
+      //   // window.removeEventListener("scroll", handleScroll);
+      //   observer.unobserve(document.getElementById("sentinel") as Element);
+
+      //   setHideSentinel(true);
+      //   console.log("debug", getPageNums);
+      //   return;
+      // }
+
+      if (!entry.isIntersecting) return;
+      setNowPage((prev) => prev + 1);
+      //entry가 interscting 중이 아니라면 함수를 실행하지 않습니다.
+
+      // if (isLoading) return;
+      setScrolling(true);
+      //현재 page가 불러오는 중임을 나타내는 flag를 통해 불러오는 중이면 함수를 실행하지 않습니다.
+      observer.observe(document.getElementById("sentinel") as Element);
+      //observer를 등록합니다.
+      // page._page += 1;
+      //불러올 페이지를 추가합니다.
+      // page.list.search();
+
+      refetch();
+      //페이지를 불러오는 함수를 호출합니다.
+    });
+  });
 
   useEffect(() => {
     if (!sentinel) return;
+    io.observe(document.getElementById("sentinel") as Element);
+  }, []);
 
-    const io = new IntersectionObserver((entries, observer) => {
-      entries.forEach((entry) => {
-        console.log("a", getPageNums);
-        if (getPageNums < LIMIT) {
-          // window.removeEventListener("scroll", handleScroll);
-          // observer.unobserve(document.getElementById("sentinel") as Element);
-
-          return;
-        }
-
-        console.log("b");
-        if (!entry.isIntersecting) return;
-        //entry가 interscting 중이 아니라면 함수를 실행하지 않습니다.
-        console.log("c");
-        if (isLoading) return;
-        console.log("d");
-        setScrolling(true);
-        //현재 page가 불러오는 중임을 나타내는 flag를 통해 불러오는 중이면 함수를 실행하지 않습니다.
-        observer.observe(document.getElementById("sentinel") as Element);
-        //observer를 등록합니다.
-        // page._page += 1;
-        setNowPage((prev) => prev + 1);
-        //불러올 페이지를 추가합니다.
-        // page.list.search();
-
-        refetch();
-        //페이지를 불러오는 함수를 호출합니다.
-      });
-    });
-    io.observe(sentinel);
-  }, [sentinel]);
+  // useEffect(() => {
+  //   setHideSentinel(false);
+  // }, [search, order, selectedCategory, LIMIT + "", selectedKeywords]);
 
   const isLogin = useRecoilValue(isLoginState);
 
+  const [isLogoutConfirmModal, setIsLogoutConfirmModal] =
+    useRecoilState(isLogoutConfirmState);
+  const [isPreventAlertModal, setIsPreventAlertModal] =
+    useRecoilState(isPreventAlertState);
   return (
     <>
       {(isLoading || isLoginCheckLoading) && <LoadingLottie isPost={true} />}
@@ -445,14 +438,26 @@ function Post() {
         </Helmet>
         {isLoginModal ? <Login /> : null}
         {isSignupModal ? <SignUp2 /> : null}
+        {isLogoutConfirmModal ? (
+          <AlertModal
+            text="로그아웃 되었습니다."
+            onClick={() => setIsLogoutConfirmModal(false)}
+          />
+        ) : null}
+        {isPreventAlertModal ? (
+          <AlertModal
+            text="로그인이 필요합니다."
+            onClick={() => setIsPreventAlertModal(false)}
+          />
+        ) : null}
 
         <Container className="min-w-[1470px]">
           <Banner src="./img/banner_post.png"></Banner>
 
           <Outline bgColor="bg-white">
             {/* <div className=" mx-auto flex items-center w-full h-[40px] md:h-[60px] bg-white "> */}
-            <div className="w-[1470px] mx-auto flex items-center w-full h-[60px] bg-white ">
-              <div className="flex justify-between items-center w-full px-[70px] ">
+            <div className="w-[1470px] mx-auto flex justify-center items-center w-full h-[60px] bg-white ">
+              <div className="flex justify-between items-center w-[1200px] px-[70px] ">
                 {Categories.map((category, index) => (
                   <button
                     id="categoryButton"
@@ -561,7 +566,7 @@ function Post() {
                 </div>
               </div>
 
-              <div className="px-[65px] mx-auto">
+              <div className="px-[70px] mx-auto">
                 <SortBox className="">
                   <div className=" flex items-center justify-between">
                     {isLogin && (
@@ -602,7 +607,6 @@ function Post() {
                         value={selectedGrade}
                         onChange={(e: any) => {
                           setSelectedGrade(e.currentTarget.value);
-                          console.log(selectedGrade);
                         }}
                         id="gradeSelect"
                         // onInput={onInput}
@@ -638,7 +642,7 @@ function Post() {
                       </div>
                     </div>
                   </div>
-                  <Link to="/add2">
+                  <Link to="/add">
                     <button className="min-w-[130px] text-[15px] text-white py-[5px] bg-blue-600 px-[15px] rounded-lg py-[8px]">
                       모집글 작성하기
                     </button>
@@ -654,7 +658,7 @@ function Post() {
                   <Card key={index} post={post} refetch={refetch} index={index}  />
                 ))} */}
                   {unionData.map((post: IReadOnePost, index: number) => (
-                    <Link key={index} to={`/post2/${post?.id}`}>
+                    <Link key={index} to={`/post/${post?.id}`}>
                       <Thumbnail {...post} refetch={refetch} />
                     </Link>
                   ))}
@@ -674,7 +678,7 @@ function Post() {
           )}
         </Container>
 
-        <p id="sentinel"></p>
+        {!hideSentinel && <p id="sentinel"></p>}
       </>
     </>
   );

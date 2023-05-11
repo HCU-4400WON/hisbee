@@ -27,6 +27,8 @@ function Thumbnail({
   nlike,
   closed,
   hasLiked,
+  views,
+
   refetch,
 }: any) {
   // closed일 때는 모집마감 처리를 해주기 흐리게
@@ -83,13 +85,16 @@ function Thumbnail({
           />
         </div>
         <span className="flex items-center">
-          <p className="mr-[7px] text-[11px]">{nlike}</p>
+          <i className="fa-regular fa-eye text-[15px] text-gray-400 mr-[7px]"></i>
+          <p className="mr-[10px] text-[13px]">{views}</p>
+
           <Heart
             id={id}
             hasLiked={hasLiked}
             refetch={refetch}
             closed={closed}
           />
+          <p className="ml-[7px] text-[13px]">{nlike}</p>
         </span>
       </div>
 
