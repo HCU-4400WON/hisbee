@@ -493,7 +493,7 @@ function PostAddForm2() {
     useRecoilState(isConfirmModalState);
   return (
     <Outline>
-      <div className="p-[50px] min-w-[1470px]">
+      <div className="p-[50px] w-[1470px]">
         {isGoBackConfirmModal && (
           <ConfirmModal
             text="정말 글 작성을 취소하시겠습니까?; 작성한 내용이 사라집니다."

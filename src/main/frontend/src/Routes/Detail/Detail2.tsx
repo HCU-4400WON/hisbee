@@ -396,7 +396,7 @@ function Detail2() {
       {isLoading || isLoginCheckLoading ? (
         <LoadingLottie isPost={false} />
       ) : (
-        <Outline>
+        <>
           <Helmet>
             <title>{data?.title}</title>
           </Helmet>
@@ -408,221 +408,222 @@ function Detail2() {
           )}
 
           {isPostDeleteModal && <PostDeleteModal postId={data?.id} />}
-          <Container>
-            <GoBackSpan>
-              <GoBackButton onClick={() => navigate(-1)}>
-                <GoBackIcon></GoBackIcon>
-              </GoBackButton>
-            </GoBackSpan>
+          <Outline>
+            <Container>
+              <GoBackSpan>
+                <GoBackButton onClick={() => navigate(-1)}>
+                  <GoBackIcon></GoBackIcon>
+                </GoBackButton>
+              </GoBackSpan>
 
-            <Form>
-              <FormHeader>
-                <div className="flex items-center">
-                  <div>
-                    {data?.closed && (
-                      <div className="px-[20px] py-[4px] rounded-lg text-[18px] mr-[10px] bg-gray-200 ">
-                        ✂️ 마감 된 글
-                      </div>
-                    )}
+              <Form>
+                <FormHeader>
+                  <div className="flex items-center">
+                    <div>
+                      {data?.closed && (
+                        <div className="px-[20px] py-[4px] rounded-lg text-[18px] mr-[10px] bg-gray-200 ">
+                          ✂️ 마감 된 글
+                        </div>
+                      )}
+                    </div>
+                    <FormTitle className="mr-[10px]">{data?.title}</FormTitle>
+                    <Heart
+                      id={data?.id}
+                      hasLiked={data?.hasLiked}
+                      refetch={refetch}
+                    />
                   </div>
-                  <FormTitle className="mr-[10px]">{data?.title}</FormTitle>
-                  <Heart
-                    id={data?.id}
-                    hasLiked={data?.hasLiked}
-                    refetch={refetch}
-                  />
-                </div>
-                {/* )} */}
-                {data?.verified && (
-                  <div>
-                    {!data?.closed && (
-                      <button
-                        className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-gray-200 "
-                        onClick={() => {
-                          const newClosedPost: IUpdatePost = {
-                            isClosed: true,
-                          };
-                          if (window.confirm("마감하시겠습니까?")) {
-                            updatePost(Number(id), newClosedPost);
-                          }
-                        }}
-                      >
-                        모집 마감
-                      </button>
-                    )}
+                  {/* )} */}
+                  {data?.verified && (
+                    <div>
+                      {!data?.closed && (
+                        <button
+                          className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-gray-200 "
+                          onClick={() => {
+                            const newClosedPost: IUpdatePost = {
+                              isClosed: true,
+                            };
+                            if (window.confirm("마감하시겠습니까?")) {
+                              updatePost(Number(id), newClosedPost);
+                            }
+                          }}
+                        >
+                          모집 마감
+                        </button>
+                      )}
 
-                    <Link to={`/modify/${id}`} state={data as IReadOnePost}>
-                      <button className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-blue-100 text-blue-500">
-                        수정
+                      <Link to={`/modify/${id}`} state={data as IReadOnePost}>
+                        <button className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-blue-100 text-blue-500">
+                          수정
+                        </button>
+                      </Link>
+                      <button
+                        id="delete"
+                        onClick={onBtnClick}
+                        className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-red-100 text-red-500"
+                      >
+                        삭제
                       </button>
-                    </Link>
-                    <button
-                      id="delete"
-                      onClick={onBtnClick}
-                      className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-red-100 text-red-500"
-                    >
-                      삭제
-                    </button>
-                    {/* <FormDeleteButton  >
+                      {/* <FormDeleteButton  >
                    <FormDeleteIcon />
                  </FormDeleteButton> */}
-                  </div>
-                )}
-              </FormHeader>
+                    </div>
+                  )}
+                </FormHeader>
 
-              <FormAuthorNButtonRow>
-                <FormAuthorSpan className="flex justify-between w-full">
-                  <WriterSpan>
-                    <WriteInfo>{data?.summary}</WriteInfo>
-                  </WriterSpan>
+                <FormAuthorNButtonRow>
+                  <FormAuthorSpan className="flex justify-between w-full">
+                    <WriterSpan>
+                      <WriteInfo>{data?.summary}</WriteInfo>
+                    </WriterSpan>
 
-                  <WriterSpan>
-                    <WriteInfo className="">
-                      <span className=" text-gray-400">작성자</span>
-                    </WriteInfo>
-                    <WriteInfo className="">
-                      <span className="text-gray-600">{data?.author}</span>
-                    </WriteInfo>
-                    <WriteInfo className="">
-                      <span className=" text-gray-400">작성일</span>
-                    </WriteInfo>
-                    <WriteInfo className="">
-                      <span className="text-gray-600">
-                        {datetimeToString(data?.createdDate as Date)}
-                      </span>
-                    </WriteInfo>
-                    {/* <WriteInfo className="">
+                    <WriterSpan>
+                      <WriteInfo className="">
+                        <span className=" text-gray-400">작성자</span>
+                      </WriteInfo>
+                      <WriteInfo className="">
+                        <span className="text-gray-600">{data?.author}</span>
+                      </WriteInfo>
+                      <WriteInfo className="">
+                        <span className=" text-gray-400">작성일</span>
+                      </WriteInfo>
+                      <WriteInfo className="">
+                        <span className="text-gray-600">
+                          {datetimeToString(data?.createdDate as Date)}
+                        </span>
+                      </WriteInfo>
+                      {/* <WriteInfo className="">
                       <span className="ml-[10px]">
                         {datetimeToString(data?.createdDate as Date)}
                       </span>
                     </WriteInfo> */}
-                    <WriteInfo className="">
-                      <i className="fa-regular fa-eye mr-[5px]"></i>
-                      {data?.views}
-                    </WriteInfo>
-                    <WriteInfo className="">
-                      <i className="fa-regular fa-heart mr-[5px]"></i>
-                      {data?.nlike}
-                    </WriteInfo>
-                  </WriterSpan>
-                </FormAuthorSpan>
-              </FormAuthorNButtonRow>
+                      <WriteInfo className="">
+                        <i className="fa-regular fa-eye mr-[5px]"></i>
+                        {data?.views}
+                      </WriteInfo>
+                      <WriteInfo className="">
+                        <i className="fa-regular fa-heart mr-[5px]"></i>
+                        {data?.nlike}
+                      </WriteInfo>
+                    </WriterSpan>
+                  </FormAuthorSpan>
+                </FormAuthorNButtonRow>
 
-              {/* 요약정보 */}
-              <div className="p-[50px] bg-slate-100 rounded-3xl">
-                <Grid>
-                  <GridItem>
-                    <ItemTitle>모집 기간</ItemTitle>
-                    <ItemText>
-                      <>{datetimeToString(data?.recruitStart as Date)}</>
-                    </ItemText>
-                    <ItemText className="mx-[10px]">~</ItemText>
-                    <ItemText>
+                {/* 요약정보 */}
+                <div className="p-[50px] bg-slate-100 rounded-3xl">
+                  <Grid>
+                    <GridItem>
+                      <ItemTitle>모집 기간</ItemTitle>
+                      <ItemText>
+                        <>{datetimeToString(data?.recruitStart as Date)}</>
+                      </ItemText>
+                      <ItemText className="mx-[10px]">~</ItemText>
+                      <ItemText>
+                        <ItemText className="text-blue-500">
+                          {/* 수정과 벨리데이션 */}
+
+                          {datetimeToString(data?.recruitEnd as Date)}
+
+                          {/* )} */}
+                          <Soon
+                            recruitStart={data?.recruitStart}
+                            recruitEnd={data?.recruitEnd}
+                            closed={data?.closed}
+                          />
+                        </ItemText>
+                      </ItemText>
+                    </GridItem>
+                    <GridItem>
+                      <ItemTitle>학년</ItemTitle>
+
                       <ItemText className="text-blue-500">
-                        {/* 수정과 벨리데이션 */}
-
-                        {datetimeToString(data?.recruitEnd as Date)}
-
-                        {/* )} */}
-                        <Soon
-                          recruitStart={data?.recruitStart}
-                          recruitEnd={data?.recruitEnd}
-                          closed={data?.closed}
-                        />
+                        {data?.years.length === 0
+                          ? "학년 무관"
+                          : data?.years.map((year) => year + " ")}
                       </ItemText>
-                    </ItemText>
-                  </GridItem>
-                  <GridItem>
-                    <ItemTitle>학년</ItemTitle>
+                    </GridItem>
+                    <GridItem>
+                      <ItemTitle>모집 인원</ItemTitle>
+                      {data?.targetCount ? (
+                        <ItemText>{data?.targetCount}</ItemText>
+                      ) : (
+                        <ItemText>인원 제한 없음</ItemText>
+                      )}
+                    </GridItem>
+                    <GridItem>
+                      <ItemTitle>전공</ItemTitle>
+                      <ItemText className="text-blue-500">
+                        {data?.departments.length === 0
+                          ? "전공 무관"
+                          : data?.departments.map(
+                              (department) => department + " "
+                            )}
+                      </ItemText>
+                    </GridItem>
 
-                    <ItemText className="text-blue-500">
-                      {data?.years.length === 0
-                        ? "학년 무관"
-                        : data?.years.map((year) => year + " ")}
-                    </ItemText>
-                  </GridItem>
-                  <GridItem>
-                    <ItemTitle>모집 인원</ItemTitle>
-                    {data?.targetCount ? (
-                      <ItemText>{data?.targetCount}</ItemText>
-                    ) : (
-                      <ItemText>인원 제한 없음</ItemText>
+                    {data?.contact && (
+                      <GridItem>
+                        <ItemTitle>신청 경로</ItemTitle>
+                        <a
+                          href={`${data?.contact}`}
+                          className=" text-[15px] font-bold underline"
+                        >
+                          {data?.contact.slice(0, 45)} ...
+                        </a>
+                      </GridItem>
                     )}
-                  </GridItem>
-                  <GridItem>
-                    <ItemTitle>전공</ItemTitle>
-                    <ItemText className="text-blue-500">
-                      {data?.departments.length === 0
-                        ? "전공 무관"
-                        : data?.departments.map(
-                            (department) => department + " "
-                          )}
-                    </ItemText>
-                  </GridItem>
 
-                  {data?.contact && (
-                    <GridItem>
-                      <ItemTitle>신청 경로</ItemTitle>
-                      <a
-                        href={`${data?.contact}`}
-                        className=" text-[15px] font-bold underline"
-                      >
-                        {data?.contact.slice(0, 45)} ...
-                      </a>
-                    </GridItem>
+                    {data?.duration && (
+                      <GridItem>
+                        <ItemTitle>활동 기간</ItemTitle>
+
+                        <ItemText>{data?.duration}</ItemText>
+                      </GridItem>
+                    )}
+
+                    {data?.contactDetails && (
+                      <GridItem>
+                        <ItemTitle>신청 방법</ItemTitle>
+                        <ItemText className="pr-[40px]">
+                          {data?.contactDetails}
+                        </ItemText>
+                      </GridItem>
+                    )}
+
+                    {data?.qualifications && (
+                      <GridItem>
+                        <ItemTitle>지원 자격</ItemTitle>
+
+                        <ItemText>{data?.qualifications}</ItemText>
+                      </GridItem>
+                    )}
+                  </Grid>
+                </div>
+                {/* 키워드들 */}
+
+                <div className="m-[30px] px-[50px]">
+                  {data?.postTypes.map((postType, index) => (
+                    <button
+                      key={index}
+                      className="bg-blue-200 py-[5px] px-[15px] rounded-lg mx-[5px]"
+                    >
+                      {postType}
+                    </button>
+                  ))}
+                  {data?.keywords.map(
+                    (keyword: string, index: number) =>
+                      data?.postTypes.indexOf(keyword) === -1 && (
+                        <button
+                          className="bg-blue-100 py-[5px] px-[15px] rounded-lg mx-[5px] mb-[10px]"
+                          key={index}
+                        >
+                          {keyword}
+                        </button>
+                      )
                   )}
+                </div>
 
-                  {data?.duration && (
-                    <GridItem>
-                      <ItemTitle>활동 기간</ItemTitle>
-
-                      <ItemText>{data?.duration}</ItemText>
-                    </GridItem>
-                  )}
-
-                  {data?.contactDetails && (
-                    <GridItem>
-                      <ItemTitle>신청 방법</ItemTitle>
-                      <ItemText className="pr-[40px]">
-                        {data?.contactDetails}
-                      </ItemText>
-                    </GridItem>
-                  )}
-
-                  {data?.qualifications && (
-                    <GridItem>
-                      <ItemTitle>지원 자격</ItemTitle>
-
-                      <ItemText>{data?.qualifications}</ItemText>
-                    </GridItem>
-                  )}
-                </Grid>
-              </div>
-              {/* 키워드들 */}
-
-              <div className="m-[30px] px-[50px]">
-                {data?.postTypes.map((postType, index) => (
-                  <button
-                    key={index}
-                    className="bg-blue-200 py-[5px] px-[15px] rounded-lg mx-[5px]"
-                  >
-                    {postType}
-                  </button>
-                ))}
-                {data?.keywords.map(
-                  (keyword: string, index: number) =>
-                    data?.postTypes.indexOf(keyword) === -1 && (
-                      <button
-                        className="bg-blue-100 py-[5px] px-[15px] rounded-lg mx-[5px] mb-[10px]"
-                        key={index}
-                      >
-                        {keyword}
-                      </button>
-                    )
-                )}
-              </div>
-
-              {/* <div className="flex justify-start mb-[50px]">
+                {/* <div className="flex justify-start mb-[50px]">
                 {data?.posterPaths?.map((posterPath: string, index: number) => (
                   <img
                     className="w-[100px] mr-[30px]"
@@ -638,39 +639,42 @@ function Detail2() {
                 ))}
               </div> */}
 
-              {data?.content !== "" && (
-                <>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: data?.content as string,
-                    }}
-                    className="p-[50px] bg-gray-100 rounded-3xl leading-8"
-                  ></div>
-                </>
-              )}
+                {data?.content !== "" && (
+                  <>
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: data?.content as string,
+                      }}
+                      className="p-[50px] bg-gray-100 rounded-3xl leading-8"
+                    ></div>
+                  </>
+                )}
 
-              {/* <div dangerouslySetInnerHTML={{ __html: editorString }}></div> */}
+                {/* <div dangerouslySetInnerHTML={{ __html: editorString }}></div> */}
 
-              <div className="flex justify-start mt-[30px] gap-x-[30px]">
-                {data?.posterPaths?.map((posterPath: string, index: number) => (
-                  <img
-                    className="w-[300px] border-2 border-gray-300"
-                    key={index}
-                    src={posterPath}
-                    alt="poster"
-                    onClick={async () => {
-                      await setClickedPosterSrc(posterPath);
-                      setIsImageModal(true);
-                      window.scrollTo(0, 200);
-                    }}
-                  />
-                ))}
-              </div>
-            </Form>
+                <div className="flex justify-start mt-[30px] gap-x-[30px]">
+                  {data?.posterPaths?.map(
+                    (posterPath: string, index: number) => (
+                      <img
+                        className="w-[300px] border-2 border-gray-300"
+                        key={index}
+                        src={posterPath}
+                        alt="poster"
+                        onClick={async () => {
+                          await setClickedPosterSrc(posterPath);
+                          setIsImageModal(true);
+                          window.scrollTo(0, 200);
+                        }}
+                      />
+                    )
+                  )}
+                </div>
+              </Form>
 
-            <div className="min-w-[40px] md:min-w-[100px] "></div>
-          </Container>
-        </Outline>
+              <div className="min-w-[40px] md:min-w-[100px] "></div>
+            </Container>
+          </Outline>
+        </>
       )}
     </>
   );
