@@ -152,6 +152,8 @@ function SignUp2() {
         nickname: "",
         major1: "",
         major2: "",
+        canMajor1: "",
+        canMajor2: "",
       },
     });
 
@@ -175,16 +177,27 @@ function SignUp2() {
       }
     );
 
-  const onValid = (submitData: IUserSignup) => {
+  const checkSubmit = () => {
+    if (
+      getValues("nickname") !== "" &&
+      getValues("canMajor1") === "사용 가능" &&
+      getValues("canMajor2") !== "사용 불가능"
+    ) {
+      return true;
+    }
+    return false;
+  };
+  const onValid = (submitData: any) => {
     const newMember: IUserSignup = {
       nickname: submitData.nickname,
       major1: submitData?.major1,
       major2: submitData.major2 === "" ? "해당없음" : submitData.major2,
     };
     console.log(newMember);
+    if (checkSubmit()) signupMemberMutate(newMember);
+    else return;
     // memberSignUp(newMember);
     // memberSignUp(newMember);
-    signupMemberMutate(newMember);
 
     // setIsExtraSignupModal(true);
     // signupMemberMutate(newMember);
@@ -216,7 +229,7 @@ function SignUp2() {
     },
   };
 
-  watch(["nickname", "major1", "major2"]);
+  watch(["nickname", "major1", "major2", "canMajor1", "canMajor2"]);
   useEffect(() => {
     const validationNickFn = async () => {
       const result = await validationNickname(getValues("nickname"));
@@ -257,7 +270,16 @@ function SignUp2() {
                 inputBgColor="bg-white"
               />
               <div className="flex justify-center">
-                <SubmitButton type="submit">가입 하기</SubmitButton>
+                {checkSubmit() === true ? (
+                  <SubmitButton type="submit">가입 하기</SubmitButton>
+                ) : (
+                  <button
+                    className="text-gray-400 bg-gray-200 text-[17px] px-[40px] py-[6px] rounded-lg"
+                    disabled
+                  >
+                    가입 하기
+                  </button>
+                )}
               </div>
             </SignUpCard>
           </div>

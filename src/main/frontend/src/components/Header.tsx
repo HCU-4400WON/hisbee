@@ -4,7 +4,7 @@ import tw from "tailwind-styled-components";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoginModalState } from "./atom";
+import { isLoginModalState, isLogoutConfirmState } from "./atom";
 import { isLoginState } from "./atom";
 import Outline from "./Outline";
 
@@ -150,7 +150,6 @@ function Header() {
     data: string;
   }
   const onValid = (data: IValid) => {
-    console.log(data);
     setValue("search", "");
     navigate("/post", { state: data });
   };
@@ -166,11 +165,13 @@ function Header() {
 
   const onClick = (event: any) => {
     if (event.currentTarget.id === "logout") {
-      console.log(isLogin);
+      // console.log(isLogin);
       setIsLogin(false);
       localStorage.removeItem("key");
-      alert("로그아웃 되었습니다.");
+      // alert("로그아웃 되었습니다.");
       navigate("/");
+
+      setIsLogoutConfirmModal(true);
     } else {
       setIsLoginModal(true);
       navigate("/");
@@ -178,9 +179,10 @@ function Header() {
   };
   const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
+  const setIsLogoutConfirmModal = useSetRecoilState(isLogoutConfirmState);
   const isReponsive = useMatch("/");
 
-  console.log(isReponsive);
+  // console.log(isReponsive);
   return (
     <>
       <Outline bgColor="bg-white">
@@ -338,7 +340,7 @@ function Header() {
               </NavButton>
             )}
             {isLogin && (
-              <Link to="profile2" className="relative ">
+              <Link to="profile" className="relative ">
                 <NavButton
                   className={`${isProfileURL && "text-blue-500"} pl-[40px]`}
                 >

@@ -20,7 +20,7 @@ export function Grade({ getValues, setValue }: any) {
   const [gradeToggle, setGradeToggle] = useState<boolean>(false);
 
   return (
-    <div className="w-[55%]">
+    <div className="w-[56%]">
       <span className="flex items-center text-[20px] mb-[10px]">
         학년{" "}
         <p className="ml-[10px] text-[15px] text-gray-400">중복 선택 가능</p>
@@ -53,7 +53,7 @@ export function Grade({ getValues, setValue }: any) {
               // if(gradeToggle) setValue("years" , ["상관없음"] as any);
               // setValue("years", []);
               setGradeToggle(true);
-              console.log(getValues("years"));
+              // console.log(getValues("years"));
             }}
           >
             학년 설정

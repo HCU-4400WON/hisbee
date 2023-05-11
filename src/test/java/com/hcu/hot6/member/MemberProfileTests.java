@@ -129,7 +129,7 @@ public class MemberProfileTests {
         var req = PostCreationRequest.builder()
                 .title("lorem ipsum")
                 .build();
-        PostCreationResponse post = postService.createPost(req, TEST_EMAIL);
+        var post = postService.createPost(req, TEST_EMAIL);
         postService.addBookmark(post.getId(), TEST_EMAIL);
 
         // when
@@ -154,7 +154,7 @@ public class MemberProfileTests {
         var req = PostCreationRequest.builder()
                 .title("lorem ipsum")
                 .build();
-        PostCreationResponse post = postService.createPost(req, TEST_EMAIL);
+        var post = postService.createPost(req, TEST_EMAIL);
         postService.addArchive(post.getId(), TEST_EMAIL);
 
         // when

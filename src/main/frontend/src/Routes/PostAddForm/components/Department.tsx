@@ -96,7 +96,7 @@ export function Department({ getValues, setValue }: any) {
                           visible[index]
                             ? MajorSeletedBUTTON
                             : MajorUnSelectedBUTTON
-                        } flex items-center w-[200px] justify-center px-[15px] py-[5px] rounded-lg ml-[10px]`}
+                        } flex items-center w-[210px] justify-center px-[10px] py-[5px] rounded-lg ml-[10px]`}
                       >
                         <p>{Object.keys(major)}</p>
                         <i className="fa-solid fa-chevron-right ml-[10px]"></i>

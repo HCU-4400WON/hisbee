@@ -8,6 +8,7 @@ import com.hcu.hot6.domain.filter.PostSearchFilter;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.*;
+import com.hcu.hot6.repository.KeywordRepository;
 import com.hcu.hot6.repository.LikesRepository;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.repository.PostRepository;
@@ -27,23 +28,26 @@ public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final LikesRepository likesRepository;
+    private final KeywordRepository keywordRepository;
 
-    public PostCreationResponse createPost(PostCreationRequest request, String email) {
+    public Post createPost(PostCreationRequest request, String email) {
         Member author = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Author is not registered"));
         Post post = new Post(request, author);
         postRepository.save(post);
 
-        return PostCreationResponse.builder()
-                .id(post.getId())
-                .title(post.getThumbnail().getTitle())
-                .createdDate(post.getCreatedDate())
-                .build();
+        return post;
     }
 
     public Long deletePost(Long postId) {
         Post post = postRepository.findOne(postId)
                 .orElseThrow(() -> new EntityNotFoundException("Post is not found."));
+        post.getPostKeywords()
+                .stream()
+                .map(postKeyword -> postKeyword.getKeyword().countDown())
+                .filter(keyword -> keyword.getCount() == 0L)
+                .forEach(keywordRepository::delete);
+
         return postRepository.delete(post);
     }
 
@@ -63,32 +67,15 @@ public class PostService {
         return new PostModifiedResponse(post.getId(), post.getLastModifiedDate());
     }
 
-    public PostFilterResponse readFilteredPost(PostSearchFilter filter) {
+    public List<Post> readFilteredPost(PostSearchFilter filter) {
         Member member = memberRepository.findByEmail(filter.getEmail())
                 .orElse(null);
 
         if (Objects.isNull(filter.getPage())) {
-            var thumbnailResponses = postRepository.findAll(filter, member).stream()
-                    .map(post -> post.getThumbnail().toResponse(filter.getEmail()))
-                    .toList();
-
-            return new PostFilterResponse(
-                    thumbnailResponses.size(),
-                    List.of(),
-                    thumbnailResponses
-            );
+            return postRepository.findAll(filter, member);
         }
         var pagination = new Pagination(filter.getPage(), postRepository.count(filter, member), filter.getLimit());
-        var postResponseList = postRepository.findAll(filter, member, pagination.getOffset(), pagination.getLimit())
-                .stream()
-                .map(post -> post.getThumbnail().toResponse(filter.getEmail()))
-                .toList();
-
-        return new PostFilterResponse(
-                postResponseList.size(),
-                List.of(),
-                postResponseList
-        );
+        return postRepository.findAll(filter, member, pagination.getOffset(), pagination.getLimit());
     }
 
     public LikesResponse addBookmark(Long postId, String email) {

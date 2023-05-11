@@ -78,7 +78,7 @@ public class KeywordTest {
                 .keywords(List.of("car", "cat", "doctor", "degree", "대한민국"))
                 .build();
         var post = postService.createPost(req, TEST_EMAIL);
-        keywordService.addKeywords(req.getKeywords(), req.getTags());
+        keywordService.addKeywords(post, req);
 
         // when
         List<String> res = keywordService.keywordAutoCompletion("한민");

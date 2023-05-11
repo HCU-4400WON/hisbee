@@ -126,7 +126,7 @@ export function Keywords({ getValues, setValue, register }: any) {
                   // setVibrate(true);
 
                   // setTimeout(() => setVibrate(false), 1000);
-                  console.log(document.querySelectorAll("#vibrate"));
+                  // console.log(document.querySelectorAll("#vibrate"));
 
                   const allKeywordNodes = document.querySelectorAll("#vibrate");
                   for (let i = 0; i < allKeywordNodes.length; ++i) {

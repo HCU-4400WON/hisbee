@@ -45,9 +45,11 @@ import Soon from "components/Soon";
 import { ImageModal } from "./ImageModal";
 import { Helmet } from "react-helmet";
 import LoadingLottie from "components/LoadingLottie";
+import Outline from "components/Outline";
 
 const Container = tw.div`
 w-[1470px]
+min-h-[800px]
 flex
 `;
 const GoBackSpan = tw.span`
@@ -250,19 +252,9 @@ function Detail2() {
     () => readOnePost(+(id as any)),
     {
       onSuccess: (data) => {
-        console.log("모집글 하나 읽어오기 성공 : ", data);
-
-        // if (!data?.content) data.content= EditorState.createEmpty();
-        // const contentDraft = htmlToDraft(data?.content);
-        // const { contentBlocks, entityMap } = contentDraft;
-        // const contentState = ContentState.createFromBlockArray(
-        //   contentBlocks,
-        //   entityMap
-        // );
-        // data.content = EditorState.createWithContent(contentState);
+        // console.log("모집글 하나 읽어오기 성공 : ", data);
       },
       onError: () => {
-        console.log("존재하지 않는 게시물입니다.");
         alert("존재하지 않는 게시물입니다.");
         navigate(-1);
       },
@@ -286,7 +278,6 @@ function Detail2() {
     if (id === "delete") {
       setIsPostDeleteModal(true);
     } else if (id === "modify") {
-      console.log("!");
       setIsModifying(true);
     }
   };
@@ -318,23 +309,11 @@ function Detail2() {
     setEditorState(editorState);
   };
 
-  const onClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    console.log("editorState : ", editorState);
-    console.log(
-      "converted to Html : ",
-      draftToHtml(convertToRaw(editorState.getCurrentContent()))
-    );
-    // const getCurrentContent = editorState.getCurrentContent();
-    // const Raw = convertToRaw(getCurrentContent);
-    // const Html = draftToHtml(Raw);
-    // console.log(getCurrentContent, "\n", Raw, "\n", Html);
-  };
-
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [imageURL, setImageURL] = useState<string>("");
   const [progressPercent, setProgressPercent] = useState<number>(0);
   const onImageChange = async (file: any) => {
-    console.log(file);
+    // console.log(file);
     let newImage: any;
 
     if (!file) return null;
@@ -363,7 +342,6 @@ function Detail2() {
       },
       async () => {
         getDownloadURL(storageRef).then((downloadURL) => {
-          console.log("File available at", typeof downloadURL);
           setImageURL(downloadURL);
 
           return new Promise((resolve, reject) => {
@@ -420,7 +398,7 @@ function Detail2() {
       {isLoading || isLoginCheckLoading ? (
         <LoadingLottie isPost={false} />
       ) : (
-        <>
+        <Outline>
           <Helmet>
             <title>{data?.title}</title>
           </Helmet>
@@ -457,40 +435,41 @@ function Detail2() {
                   />
                 </div>
                 {/* )} */}
-                <div>
-                  {!data?.closed && (
-                    <button
-                      className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-gray-200 "
-                      onClick={() => {
-                        const newClosedPost: IUpdatePost = {
-                          isClosed: true,
-                        };
-                        if (window.confirm("마감하시겠습니까?")) {
-                          console.log("!!");
-                          updatePost(Number(id), newClosedPost);
-                        }
-                      }}
-                    >
-                      모집 마감
-                    </button>
-                  )}
+                {data?.verified && (
+                  <div>
+                    {!data?.closed && (
+                      <button
+                        className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-gray-200 "
+                        onClick={() => {
+                          const newClosedPost: IUpdatePost = {
+                            isClosed: true,
+                          };
+                          if (window.confirm("마감하시겠습니까?")) {
+                            updatePost(Number(id), newClosedPost);
+                          }
+                        }}
+                      >
+                        모집 마감
+                      </button>
+                    )}
 
-                  <Link to={`/modify/${id}`} state={data as IReadOnePost}>
-                    <button className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-blue-100 text-blue-500">
-                      수정
+                    <Link to={`/modify/${id}`} state={data as IReadOnePost}>
+                      <button className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-blue-100 text-blue-500">
+                        수정
+                      </button>
+                    </Link>
+                    <button
+                      id="delete"
+                      onClick={onBtnClick}
+                      className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-red-100 text-red-500"
+                    >
+                      삭제
                     </button>
-                  </Link>
-                  <button
-                    id="delete"
-                    onClick={onBtnClick}
-                    className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-red-100 text-red-500"
-                  >
-                    삭제
-                  </button>
-                  {/* <FormDeleteButton  >
-                  <FormDeleteIcon />
-                </FormDeleteButton> */}
-                </div>
+                    {/* <FormDeleteButton  >
+                   <FormDeleteIcon />
+                 </FormDeleteButton> */}
+                  </div>
+                )}
               </FormHeader>
 
               <FormAuthorNButtonRow>
@@ -501,15 +480,24 @@ function Detail2() {
 
                   <WriterSpan>
                     <WriteInfo className="">
-                      <span className="mx-[10px] text-gray-600">
-                        {data?.author}
-                      </span>
+                      <span className=" text-gray-400">작성자</span>
                     </WriteInfo>
                     <WriteInfo className="">
-                      <span className="ml-[10px]">
+                      <span className="text-gray-600">{data?.author}</span>
+                    </WriteInfo>
+                    <WriteInfo className="">
+                      <span className=" text-gray-400">작성일</span>
+                    </WriteInfo>
+                    <WriteInfo className="">
+                      <span className="text-gray-600">
                         {datetimeToString(data?.createdDate as Date)}
                       </span>
                     </WriteInfo>
+                    {/* <WriteInfo className="">
+                      <span className="ml-[10px]">
+                        {datetimeToString(data?.createdDate as Date)}
+                      </span>
+                    </WriteInfo> */}
                     <WriteInfo className="">
                       <i className="fa-regular fa-eye mr-[5px]"></i>
                       {data?.views}
@@ -614,7 +602,7 @@ function Detail2() {
               </div>
               {/* 키워드들 */}
 
-              <div className="m-[30px] mb-[60px] px-[50px]">
+              <div className="m-[30px] px-[50px]">
                 {data?.postTypes.map((postType, index) => (
                   <button
                     key={index}
@@ -636,7 +624,7 @@ function Detail2() {
                 )}
               </div>
 
-              <div className="flex justify-start mb-[50px]">
+              {/* <div className="flex justify-start mb-[50px]">
                 {data?.posterPaths?.map((posterPath: string, index: number) => (
                   <img
                     className="w-[100px] mr-[30px]"
@@ -650,7 +638,7 @@ function Detail2() {
                     }}
                   />
                 ))}
-              </div>
+              </div> */}
 
               {data?.content !== "" && (
                 <>
@@ -664,10 +652,11 @@ function Detail2() {
               )}
 
               {/* <div dangerouslySetInnerHTML={{ __html: editorString }}></div> */}
-              <div className="flex justify-evenly mt-[50px]">
+
+              <div className="flex justify-start mt-[30px] gap-x-[30px]">
                 {data?.posterPaths?.map((posterPath: string, index: number) => (
                   <img
-                    className="w-[400px]"
+                    className="w-[300px] border-2 border-gray-300"
                     key={index}
                     src={posterPath}
                     alt="poster"
@@ -683,7 +672,7 @@ function Detail2() {
 
             <div className="min-w-[40px] md:min-w-[100px] "></div>
           </Container>
-        </>
+        </Outline>
       )}
     </>
   );

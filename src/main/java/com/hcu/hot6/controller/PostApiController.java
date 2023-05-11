@@ -1,6 +1,7 @@
 package com.hcu.hot6.controller;
 
 import com.hcu.hot6.domain.Department;
+import com.hcu.hot6.domain.Post;
 import com.hcu.hot6.domain.enums.OrderBy;
 import com.hcu.hot6.domain.enums.Year;
 import com.hcu.hot6.domain.filter.PostSearchFilter;
@@ -16,6 +17,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -37,10 +39,16 @@ public class PostApiController {
             @AuthenticationPrincipal OAuth2User user) {
 
         String email = user.getName();
-        PostCreationResponse response = postService.createPost(request, email);
-        keywordService.addKeywords(request.getKeywords(), request.getTags());
+        Post post = postService.createPost(request, email);
+        keywordService.addKeywords(post, request);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                PostCreationResponse.builder()
+                        .id(post.getId())
+                        .title(post.getThumbnail().getTitle())
+                        .createdDate(post.getCreatedDate())
+                        .build()
+        );
     }
 
     /**
@@ -101,7 +109,17 @@ public class PostApiController {
                 .email(email)
                 .build();
 
-        return ResponseEntity.ok(postService.readFilteredPost(filter));
+        List<String> suggestions = keywordService.suggestKeyword(filter.getKeywords());
+        List<Post> posts = postService.readFilteredPost(filter);
+
+        return ResponseEntity.ok(
+                new PostFilterResponse(
+                        posts.size(),
+                        suggestions,
+                        posts.stream()
+                                .map(post -> post.getThumbnail().toResponse(email))
+                                .toList())
+        );
     }
 
     /**

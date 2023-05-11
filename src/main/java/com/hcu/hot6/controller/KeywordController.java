@@ -2,6 +2,7 @@ package com.hcu.hot6.controller;
 
 import com.hcu.hot6.domain.enums.Major;
 import com.hcu.hot6.service.KeywordService;
+import com.hcu.hot6.util.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,5 +22,13 @@ public class KeywordController {
     @GetMapping("/keyword")
     public Map<String, List<String>> keywordAutoCompletion(@RequestParam String q) {
         return Collections.singletonMap("results", keywordService.keywordAutoCompletion(q));
+    }
+  
+    @GetMapping("/keyword-suggestions")
+    public Map<String, List<String>> relatedKeywords(@RequestParam String q) {
+        List<String> keywords = Utils.toArray(q, ",");
+        List<String> results = keywordService.suggestKeyword(keywords);
+
+        return Collections.singletonMap("results", results);
     }
 }

@@ -309,7 +309,7 @@ public class PostReadTests {
                 .build();
 
         // when
-        PostCreationResponse postRes = postService.createPost(req, TEST_EMAIL);
+        var postRes = postService.createPost(req, TEST_EMAIL);
 
         postService.addBookmark(postRes.getId(), TEST_EMAIL);
         Optional<Member> member = memberRepository.findByEmail(TEST_EMAIL);
@@ -337,7 +337,7 @@ public class PostReadTests {
                 .build();
 
         // when
-        PostCreationResponse postRes = postService.createPost(req, TEST_EMAIL);
+        var postRes = postService.createPost(req, TEST_EMAIL);
 
         postService.addBookmark(postRes.getId(), TEST_EMAIL);
         postService.delBookmark(postRes.getId(), TEST_EMAIL);
@@ -405,7 +405,7 @@ public class PostReadTests {
                 .build();
 
         // when
-        PostCreationResponse postRes = postService.createPost(req, TEST_EMAIL);
+        var postRes = postService.createPost(req, TEST_EMAIL);
         var res = postService.readOnePost(postRes.getId(), "22000630@handong.ac.kr");
 
         // then

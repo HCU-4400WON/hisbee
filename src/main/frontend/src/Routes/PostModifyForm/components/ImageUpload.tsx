@@ -62,7 +62,7 @@ export function ImageUpload({ imageURLList, setImageURLList }: IProps) {
       () => {
         e.target.value = "";
         getDownloadURL(storageRef).then((downloadURL) => {
-          console.log("File available at", downloadURL);
+          // console.log("File available at", downloadURL);
           setImageURL(downloadURL);
           setImageURLList((prev) => [...prev, downloadURL]);
           setPosterUploadList((prev) => [...prev.slice(0, prev.length - 1)]);
@@ -82,8 +82,8 @@ export function ImageUpload({ imageURLList, setImageURLList }: IProps) {
       />
       <div className="flex">
         {imageURLList?.map((imageUrl: string, index: number) => (
-          <div key={index} className="relative mt-[30px] mr-[30px]">
-            <img className="w-[400px]" src={imageUrl} key={index} />
+          <div className="relative flex justify-start gap-x-[30px] mt-[30px] mr-[30px]">
+            <img className="w-[300px]" src={imageUrl} key={index} />
             <button
               type="button"
               className="absolute right-0 top-0"
