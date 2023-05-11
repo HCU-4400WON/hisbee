@@ -130,19 +130,6 @@ public class Post {
         return this;
     }
 
-    public Post addBookmark(Member member) {
-        Likes like = new Likes(this, member);
-        member.getLikes().add(like);
-        return this;
-    }
-
-    public Post delBookmark(Likes like, Member member) {
-        this.getLikes().remove(like);
-        member.getLikes().remove(like);
-
-        return this;
-    }
-
     public void update(PostUpdateRequest req) {
         this.postTypes = (req.getPostTypes() != null)
                 ? Utils.toString(req.getPostTypes(), ",")

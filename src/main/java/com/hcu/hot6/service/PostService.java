@@ -82,20 +82,20 @@ public class PostService {
         Member member = memberRepository.findByEmail(email).orElseThrow();
         Post post = postRepository.findOne(postId).orElseThrow();
 
-        post.addBookmark(member);
-        List<Likes> like = likesRepository.findOne(post, member);
+        Likes likes = new Likes(post, member);
+        member.addBookmark(likes);
 
-        return new LikesResponse(like.get(0));
+        return new LikesResponse(likesRepository.save(likes));
     }
 
     public LikesResponse delBookmark(Long postId, String email) {
         Member member = memberRepository.findByEmail(email).orElseThrow();
         Post post = postRepository.findOne(postId).orElseThrow();
 
-        List<Likes> like = likesRepository.findOne(post, member);
-        post.delBookmark(like.get(0), member);
-        likesRepository.delete(like.get(0));
-        return new LikesResponse(like.get(0));
+        Likes like = likesRepository.findOne(post, member);
+        member.delBookmark(like);
+
+        return new LikesResponse(like);
     }
 
     public ArchiveResponse addArchive(Long postId, String email) {

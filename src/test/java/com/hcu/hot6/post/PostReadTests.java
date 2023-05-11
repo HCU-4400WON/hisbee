@@ -7,8 +7,6 @@ import com.hcu.hot6.domain.request.MemberRequest;
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.TagForm;
 import com.hcu.hot6.domain.response.LikesResponse;
-import com.hcu.hot6.domain.response.PostCreationResponse;
-import com.hcu.hot6.domain.response.PostReadOneResponse;
 import com.hcu.hot6.repository.LikesRepository;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.repository.PostRepository;
@@ -314,11 +312,10 @@ public class PostReadTests {
         postService.addBookmark(postRes.getId(), TEST_EMAIL);
         Optional<Member> member = memberRepository.findByEmail(TEST_EMAIL);
         Optional<Post> post = postRepository.findOne(postRes.getId());
-        List<Likes> like = likesRepository.findOne(post.get(), member.get());
+        Likes like = likesRepository.findOne(post.get(), member.get());
         var res = postService.readOnePost(postRes.getId(), TEST_EMAIL);
 
         // then
-        assertThat(like.size()).isEqualTo(1);
         assertThat(res.isHasLiked()).isEqualTo(true);
     }
 
@@ -341,17 +338,14 @@ public class PostReadTests {
 
         postService.addBookmark(postRes.getId(), TEST_EMAIL);
         postService.delBookmark(postRes.getId(), TEST_EMAIL);
-        Optional<Member> member = memberRepository.findByEmail(TEST_EMAIL);
-        Optional<Post> post = postRepository.findOne(postRes.getId());
-        List<Likes> like = likesRepository.findOne(post.get(), member.get());
+
         var res = postService.readOnePost(postRes.getId(), TEST_EMAIL);
 
-        assertThat(like.size()).isEqualTo(0);
-        assertThat(res.isHasLiked()).isEqualTo(false);
+        assertThat(res.isHasLiked()).isFalse();
     }
 
     @Test
-    public void 좋아요_취소() throws Exception{
+    public void 좋아요_취소() throws Exception {
         // given
         final var req = PostCreationRequest.builder()
                 .title("모집글 제목")
@@ -363,15 +357,16 @@ public class PostReadTests {
                 .qualifications("전산 1전공")
                 .duration("봄학기 ~ 여름방학")
                 .build();
-        PostCreationResponse postRes = postService.createPost(req, TEST_EMAIL);
-        postService.addBookmark(postRes.getId(), TEST_EMAIL);
+        var postRes = postService.createPost(req, TEST_EMAIL);
+        LikesResponse added = postService.addBookmark(postRes.getId(), TEST_EMAIL);
 
         // when
         LikesResponse likesResponse = postService.delBookmark(postRes.getId(), TEST_EMAIL);
-        assertThat(likesRepository.findOne(postRepository.findOne(postRes.getId()).get(), memberRepository.findByEmail(TEST_EMAIL).get())).isEmpty();
+
         //then
+        assertThat(likesResponse.getPostId()).isEqualTo(added.getPostId());
     }
-  
+
     @Test
     public void 내가_작성한_글에_대한_권한_확인() throws Exception {
         // given

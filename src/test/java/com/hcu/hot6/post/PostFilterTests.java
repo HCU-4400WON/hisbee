@@ -803,7 +803,6 @@ public class PostFilterTests {
         // when
         PostReadOneResponse postReadOneResponse = postService.readOnePost(res.getId(), TEST_EMAIL);
 
-
         // then
         assertThat(postReadOneResponse.isHasLiked()).isFalse();
     }

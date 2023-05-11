@@ -34,12 +34,5 @@ public class Likes {
     public Likes(Post post, Member member) {
         this.post = post;
         this.member = member;
-        post.getLikes().add(this);
-        member.getLikes().add(this);
-    }
-
-    public void detach() {
-        this.post = null;
-        this.member = null;
     }
 }

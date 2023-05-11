@@ -7,16 +7,15 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 @RequiredArgsConstructor
 public class LikesRepository {
 
     private final EntityManager em;
 
-    public void save(Likes like) {
+    public Likes save(Likes like) {
         em.persist(like);
+        return like;
     }
 
     public Long delete(Likes like) {
@@ -24,9 +23,11 @@ public class LikesRepository {
         return like.getId();
     }
 
-    public List<Likes> findOne(Post post, Member member){
-        return em.createQuery("SELECT l FROM Likes l WHERE l.member.id = member.id AND l.post.id = post.id")
-                .getResultList();
+    public Likes findOne(Post post, Member member) {
+        return em.createQuery("select l from Likes l where l.member=:member and l.post=:post", Likes.class)
+                .setParameter("post", post)
+                .setParameter("member", member)
+                .getSingleResult();
     }
 
 }

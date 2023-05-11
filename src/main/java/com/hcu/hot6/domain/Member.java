@@ -44,13 +44,13 @@ public class Member {
 
     private boolean isRegistered;
 
-    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Likes> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "author", orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Archive> archives = new ArrayList<>();
 
     @Builder
@@ -72,5 +72,15 @@ public class Member {
         this.major1 = requireNonNullElse(form.getMajor1(), major1);
         this.major2 = requireNonNullElse(form.getMajor2(), major2);
         if (!this.isRegistered) this.isRegistered = true;
+    }
+
+    public void addBookmark(Likes likes) {
+        this.likes.add(likes);
+        likes.getPost().getLikes().add(likes);
+    }
+
+    public void delBookmark(Likes likes) {
+        this.likes.remove(likes);
+        likes.getPost().getLikes().remove(likes);
     }
 }
