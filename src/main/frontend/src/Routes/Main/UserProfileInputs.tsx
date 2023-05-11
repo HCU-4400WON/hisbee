@@ -111,7 +111,6 @@ export default function UserProfileInputs({
     validationNickFn();
   }, [getValues("nickname")]);
   // console.log(getValues("nickname"));
-  console.log(inputBgColor);
 
   const [isPresent, setIsPresent] = useState<boolean>(false);
 
@@ -119,11 +118,10 @@ export default function UserProfileInputs({
   const [showList2, setShowList2] = useState<string[] | []>([]);
 
   useEffect(() => {
-    majorAutoComplete(getValues("major1")).then((data) =>
-      setShowList1(data.results)
-    );
+    majorAutoComplete(getValues("major1")).then((data) => {
+      setShowList1(data.results);
+    });
     setValue("canMajor1", checkMajor(getValues("major1")));
-    console.log();
   }, [getValues("major1")]);
 
   useEffect(() => {
@@ -131,7 +129,6 @@ export default function UserProfileInputs({
       setShowList2(data.results)
     );
     setValue("canMajor2", checkMajor(getValues("major2")));
-    console.log("!!");
   }, [getValues("major2")]);
 
   const checkMajor = (checkData: string) => {
