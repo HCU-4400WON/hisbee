@@ -22,6 +22,7 @@ public class Archive {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "archive")
     private Post post;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @CreatedDate

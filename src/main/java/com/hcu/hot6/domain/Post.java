@@ -40,14 +40,18 @@ public class Post {
     private String targetCount;
     private String keywords;
 
-    @Column(length = 4095)
+    @Column(length = 8192)
     private String content;
     private Long views;
     private boolean isAutoClose;
     private boolean isETC;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member author;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<PostKeyword> postKeywords = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Likes> likes = new ArrayList<>();
@@ -60,6 +64,7 @@ public class Post {
     private Thumbnail thumbnail;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "archive_id")
     private Archive archive;
 
     @CreatedDate
@@ -125,13 +130,13 @@ public class Post {
         return this;
     }
 
-    public Post addBookmark(Member member){
+    public Post addBookmark(Member member) {
         Likes like = new Likes(this, member);
         member.getLikes().add(like);
         return this;
     }
 
-    public Post delBookmark(Likes like, Member member){
+    public Post delBookmark(Likes like, Member member) {
         this.getLikes().remove(like);
         member.getLikes().remove(like);
 
