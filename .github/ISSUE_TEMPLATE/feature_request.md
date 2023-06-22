@@ -2,19 +2,20 @@
 name: Feature request
 about: Suggest an idea for this project
 title: ''
-labels: ''
+labels: ":sparkles: Feature"
 assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+# Description
+[기능에 대한 설명]
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+# Expected Behaviour
+[기능에 대한 예상 결과 또는 테스트 케이스]
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+- Case 1:
+- Case 2:
+- Case 3:
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+# Story Points:
+[기능 구현에 요구되는 노력의 정도, 0 ~ 3 사이 선택]
