@@ -567,8 +567,11 @@ function Detail2() {
                         <a
                           href={`${data?.contact}`}
                           className=" text-[15px] font-bold underline"
+                          target="_blank"
                         >
-                          {data?.contact.slice(0, 45)} ...
+                          {data.contact.length > 45
+                            ? data?.contact.slice(0, 45) + "..."
+                            : data?.contact}
                         </a>
                       </GridItem>
                     )}
@@ -601,7 +604,7 @@ function Detail2() {
                 </div>
                 {/* 키워드들 */}
 
-                <div className="m-[30px] px-[50px]">
+                <div className="m-[30px]">
                   {data?.postTypes.map((postType, index) => (
                     <button
                       key={index}

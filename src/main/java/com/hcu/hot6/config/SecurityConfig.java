@@ -61,6 +61,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/posts/**", "/users/validation").permitAll()
                         .requestMatchers(HttpMethod.GET, "/major", "/keyword").permitAll()
                         .requestMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/nickname").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
