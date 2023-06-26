@@ -1084,8 +1084,8 @@ export interface IUserRead {
 
 export const majorAutoComplete = async (q: string) => {
   const response = await axios.get(
-    // `${process.env.REACT_APP_BACK_BASE_URL}/major?q=${q}`
-    `/?format=json&max_length=8`
+        `${process.env.REACT_APP_BACK_BASE_URL}/major?q=${q}`
+    // `/?format=json&max_length=8`
   );
   return response.data;
 };
