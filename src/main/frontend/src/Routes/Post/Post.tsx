@@ -28,7 +28,10 @@ import SignUp2 from "Routes/Main/SignUp2";
 import LoadingLottie from "components/LoadingLottie";
 import Outline from "components/Outline";
 import AlertModal from "components/AlertModal";
-
+import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
+import { Autocomplete, TextField } from "@mui/material";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 const SelectFilterBox = tw.select`
 mr-[20px] px-[10px] bg-[#F9FAFB] py-[5px] rounded-lg text-center border
 text-gray-500 text-[16px] w-auto
@@ -215,11 +218,11 @@ function Post() {
       setSelectedGrade(selectedValue);
     }
   };
-  const onChange = (e: React.FormEvent<HTMLInputElement>) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedId = e.currentTarget.id;
     const selectedValue = e.currentTarget.value;
 
-    if (selectedId === "keywordInput") setKeywordInput(selectedValue);
+    setKeywordInput(selectedValue);
   };
   const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const selectedId = e.currentTarget.id;
@@ -298,7 +301,7 @@ function Post() {
     if (e.key === "Enter") {
       setSelectedKeywords((prev) => [...prev, keywordInput]);
       setKeywords((prev) => [...prev, keywordInput]);
-      setIsAutoPresent(false);
+
       setKeywordInput("");
     }
   };
@@ -345,20 +348,6 @@ function Post() {
     io.observe(document.getElementById("sentinel") as Element);
   }, []);
 
-  // useEffect(() => {
-  //   majorAutoComplete(getValues("major1")).then((data) =>
-  //     setShowList1(data.results)
-  //   );
-  //   setValue("canMajor1", checkMajor(getValues("major1")));
-  //   console.log();
-  // }, [getValues("major1")]);
-
-  function handleBlur(e: any) {
-    if (e.target.id !== "noBlur" && e.target.id !== "keywordInput")
-      setIsAutoPresent(false);
-    console.log(e.target.id);
-  }
-
   const [keywordAutoList, setKeywordAutoList] = useState<string[] | []>([]);
 
   useEffect(() => {
@@ -366,8 +355,6 @@ function Post() {
       setKeywordAutoList(keywords.results)
     );
   }, [keywordInput]);
-
-  const [isAutoPresent, setIsAutoPresent] = useState<boolean>(false);
 
   const isLogin = useRecoilValue(isLoginState);
 
@@ -398,7 +385,7 @@ function Post() {
           />
         ) : null}
 
-        <Container onClick={handleBlur}>
+        <Container>
           <Banner
             src="./img/banner_post.png"
             className="min-w-[1470px]"
@@ -428,63 +415,45 @@ function Post() {
 
           <Outline bgColor="bg-gray-100">
             {/* <div className="mt-[20px]"> */}
-            <div id="noBlur" className="min-w-[1470px] bg-gray-100 pt-[20px]">
-              <div id="noBlur" className="flex py-[20px] px-[70px]">
-                <div id="noBlur" className="flex items-start  ">
-                  <span id="noBlur" className="flex items-center ">
-                    <div id="noBlur" className="mr-[20px] py-[0px]">
-                      <p id="noBlur" className="text-[16px] font-[500]">
-                        필터링 키워드
-                      </p>
+            <div className="min-w-[1470px] bg-gray-100 pt-[20px]">
+              <div className="flex py-[20px] px-[70px]">
+                <div className="flex items-start  ">
+                  <span className="flex items-center ">
+                    <div className="mr-[20px] py-[0px]">
+                      <p className="text-[16px] font-[500]">필터링 키워드</p>
                     </div>
-                    {isAutoPresent && (
-                      <div id="noBlur" className="relative">
-                        <select
-                          id="noBlur"
-                          className="absolute top-[20px] bg-gray-100 w-[200px]  "
-                          size={3}
-                        >
-                          {keywordAutoList.length !== 0 &&
-                            keywordAutoList.map((keyword, index) => (
-                              <option
-                                className="bg-gray-100 px-[5px] py-[2px]"
-                                value={keyword}
-                                key={index}
-                                onClick={() => setKeywordInput(keyword)}
-                              >
-                                {keyword}
-                              </option>
-                            ))}
-                        </select>
-                      </div>
-                    )}
 
-                    <div id="noBlur" className="w-[280px] mr-[20px]">
-                      <input
-                        value={keywordInput}
-                        id="keywordInput"
-                        onKeyPress={onKeyPress}
-                        onChange={onChange}
-                        type="text"
-                        className="w-full text-[15px] border-b border-gray-400 bg-gray-100 "
-                        onFocus={() => setIsAutoPresent(true)}
-                        placeholder="키워드로 원하는 모집글만 볼 수 있어요."
+                    <div className=" w-[300px] mr-[20px]">
+                      <Autocomplete
+                        id="size-small-standard"
+                        size="small"
+                        options={keywordAutoList}
+                        defaultValue={keywordAutoList[13]}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            value={keywordInput}
+                            onChange={onChange}
+                            variant="standard"
+                            placeholder="키워드로 원하는 모집글만 볼 수 있어요"
+                          />
+                        )}
                       />
                     </div>
                   </span>
-                  <i
+
+                  <SearchOutlinedIcon
+                    sx={{ width: "22px", mr: "10px" }}
                     onClick={(e) => {
                       e.preventDefault();
                       setSelectedKeywords((prev) => [...prev, keywordInput]);
                       setKeywords((prev) => [...prev, keywordInput]);
-                      setIsAutoPresent(false);
                       setKeywordInput("");
                     }}
-                    className="fa-solid fa-magnifying-glass mr-[20px] mt-[2px]"
-                  ></i>
+                  />
 
                   <div className="">
-                    <div className="mb-[0px] grid grid-cols-7 gap-x-[10px] gap-y-[10px]">
+                    <div className="mb-[0px] flex flex-wrap gap-x-[10px] gap-y-[10px]">
                       {selectedKeywords.map((keyword, index) => (
                         <button
                           id="deleteKeywordButton"
@@ -492,10 +461,8 @@ function Post() {
                           key={index}
                           className=" flex justify-center text-[14px] bg-white flex items-center py-[5px] border-0 rounded-lg text-center px-[13px] h-[30px]"
                         >
-                          {keyword}
-                          <div className="text-[15px] font-[100] text-black ml-[5px] ">
-                            X
-                          </div>
+                          <p>{keyword}</p>
+                          <CloseIcon sx={{ width: "17px", ml: "4px" }} />
                         </button>
                       ))}
                     </div>
@@ -516,10 +483,8 @@ function Post() {
                           key={index}
                           className="flex justify-center text-[14px] bg-gray-200 flex items-center py-[5px] border-0 rounded-lg text-center px-[13px] h-[30px]"
                         >
-                          <p>{keyword}</p>
-                          <div className="text-[25px] font-[100] ml-[5px]">
-                            +
-                          </div>
+                          <p>{keyword}</p>{" "}
+                          <AddIcon sx={{ width: "17px", ml: "4px" }} />
                         </button>
                       )
                   )}
