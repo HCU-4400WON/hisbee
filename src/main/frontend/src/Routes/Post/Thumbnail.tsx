@@ -99,8 +99,8 @@ function Thumbnail({
         </span>
       </div>
 
-      <div className="px-[15px] pb-[15px] ">
-        <div className=" ">
+      <div className="px-[15px] pb-[15px] h-[100%] flex flex-col justify-between">
+        <div>
           <div className=" px-[3px] mb-[13px]">
             <p className="text-[15px] font-[500] ">{title}</p>
           </div>
@@ -111,7 +111,8 @@ function Thumbnail({
               </div>
             ))}
           </div>
-
+        </div>
+        <div>
           <div className="flex mt-[20px] gap-[6px] mb-[7px]">
             {postTypes.map((postType: string, index: number) => (
               <span

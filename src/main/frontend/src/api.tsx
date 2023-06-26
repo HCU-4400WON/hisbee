@@ -848,7 +848,6 @@ export const deleteLikePost = async (postId: number) => {
       withCredentials: true,
     }
   );
-  // console.log(response);
   return response;
 };
 

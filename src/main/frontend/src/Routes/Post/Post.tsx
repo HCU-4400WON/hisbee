@@ -1,16 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import LoadingAnimation from "components/LoadingAnimation";
 import { Helmet } from "react-helmet";
 import {
-  addLikePost,
-  createMentoring,
-  deleteLikePost,
-  departments,
   IReadAllPosts,
   IReadOnePost,
   keywordAutoComplete,
   loginCheckApi,
-  posts,
   readPosts,
 } from "api";
 import { AxiosError, AxiosResponse } from "axios";
@@ -22,29 +16,17 @@ import {
   isSignupModalState,
 } from "components/atom";
 import Login from "components/LoginModal";
-import { motion } from "framer-motion";
-import React, {
-  ChangeEvent,
-  ComponentRef,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { useLocation, useMatch, useNavigate } from "react-router";
-import { Link, useFetcher } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router";
+import { Link } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
-import Card from "Routes/Post/Card";
 import Thumbnail from "./Thumbnail";
-import { PostExamples } from "Routes/PostAddForm/components/PostExamples";
 import "./css/button.css";
 import "./css/textfield.css";
 import SignUp2 from "Routes/Main/SignUp2";
 import LoadingLottie from "components/LoadingLottie";
 import Outline from "components/Outline";
-import { AnyTxtRecord } from "dns";
-import { async } from "@firebase/util";
-import ConfirmModal from "components/ConfirmModal";
 import AlertModal from "components/AlertModal";
 
 const SelectFilterBox = tw.select`
@@ -99,11 +81,6 @@ function Post() {
 
   const [order, setOrder] = useState<string>("recent");
 
-  // Filtering
-  const [filterCategory, setFilterCategory] = useState<string>("");
-  const [filterPosition, setFilterPosition] = useState<string>("");
-  const [filterPay, setFilterPay] = useState<string>("");
-
   const [selectedMyDeptOnly, setSelectedMyDeptOnly] = useState<boolean>(false);
   const [selectedMajor, setSelectedMajor] = useState<string | "">("");
   const [selectedGrade, setSelectedGrade] = useState<string | "">("");
@@ -130,33 +107,7 @@ function Post() {
 
   const [getPageNums, setGetPageNums] = useState<number>(4);
 
-  const POSTS_PER_PAGE = 12;
   const [nowPage, setNowPage] = useState(1);
-  const [prevPage, setPrevPage] = useState(Math.floor((nowPage - 1) / 10) * 10);
-  const [nextPage, setNextPage] = useState(Math.ceil(nowPage / 10) * 10 + 1);
-
-  const onPageClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const {
-      currentTarget: { id },
-    } = event;
-    if (id === "next") {
-      if (nextPage <= Math.ceil((posts?.total as number) / POSTS_PER_PAGE))
-        setNowPage(nextPage);
-      else setNowPage(Math.ceil((posts?.total as number) / POSTS_PER_PAGE));
-    } else if (id === "prev") {
-      if (prevPage > 0) setNowPage(prevPage);
-      else setNowPage(1);
-    } else {
-      setNowPage(+id);
-    }
-  };
-
-  // useEffect(() => {
-  //   setNextPage(Math.ceil(nowPage / 10) * 10 + 1);
-  //   setPrevPage(Math.floor((nowPage - 1) / 10) * 10);
-  //   console.log(prevPage, nextPage);
-  //   // refetch();
-  // }, [nowPage]);
 
   const [LIMIT, useLIMIT] = useState<number>(12);
   useEffect(() => {
@@ -180,10 +131,6 @@ function Post() {
   useEffect(() => {
     const fn = () => {
       if (getPageNums < LIMIT) {
-        // console.log("!!!!!!!!!!!!!");
-        // window.removeEventListener("scroll", handleScroll);
-        // io.unobserve(document.getElementById("sentinel") as Element);
-        // console.log("콩쥐");
         setHideSentinel(true);
         return;
       }
@@ -230,34 +177,18 @@ function Post() {
       ),
     {
       onSuccess: (posts) => {
-        // keywords 변경
-        // setKeywords(posts.relatedKeywords);
-
-        //   // console.log("1");
-        // }
-
-        // setNowPage((prev) => prev + 1);
-        // setGetPageNums(posts.total);
-        // setGetPageNums(posts.total);
-        // console.log("debug", posts.total);
-
         if (scrolling) {
           setUnionData((prev) => [...prev, ...posts.posts]);
         } else {
           setUnionData(posts.posts);
         }
-        // setUnionDataLoading(true);
         setGetPageNums(posts.total);
         setScrolling(false);
-        // setTimeout(() => {
-        //   setUnionDataLoading(true);
-        // }, 1000);
       },
     }
   );
 
   const setIsLogin = useSetRecoilState(isLoginState);
-  const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
   const { mutate: loginCheckMutate, isLoading: isLoginCheckLoading } =
     useMutation(["loginCheckApiPost" as string], loginCheckApi, {
@@ -293,14 +224,9 @@ function Post() {
   const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const selectedId = e.currentTarget.id;
     const selectedValue = e.currentTarget.childNodes[0].textContent!;
-    // if(Categories.includes(buttonName)){
-    //   const targetIndex = Categories.findIndex( elem => elem === buttonName);
-    //   setSelectedCategory(targetIndex);
-    // }
 
     if (selectedId === "categoryButton") {
       setSelectedCategory(selectedValue);
-      // setSelectedKeywords([]);
     }
 
     // else i
@@ -326,7 +252,6 @@ function Post() {
       if (gradeRef.current) gradeRef.current.selectedIndex = 0;
       setSelectedKeywords([]);
       setSelectedMajor("전공 무관");
-      //다시 전체 모집글 refetch
     }
   };
 
@@ -359,7 +284,6 @@ function Post() {
 
   const Grades = [
     "학년 무관",
-
     "1학년",
     "2학년",
     "3학년",
@@ -380,8 +304,6 @@ function Post() {
   };
 
   const [unionData, setUnionData] = useState<IReadOnePost[] | []>([]);
-
-  const [stopFetching, setStopFetching] = useState<boolean>(false);
 
   const sentinel = document.getElementById("sentinel") as Element;
 
@@ -444,9 +366,6 @@ function Post() {
       setKeywordAutoList(keywords.results)
     );
   }, [keywordInput]);
-  // useEffect(() => {
-  //   setHideSentinel(false);
-  // }, [search, order, selectedCategory, LIMIT + "", selectedKeywords]);
 
   const [isAutoPresent, setIsAutoPresent] = useState<boolean>(false);
 
@@ -512,20 +431,6 @@ function Post() {
             <div id="noBlur" className="min-w-[1470px] bg-gray-100 pt-[20px]">
               <div id="noBlur" className="flex py-[20px] px-[70px]">
                 <div id="noBlur" className="flex items-start  ">
-                  {/* <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] border-2 border-black">
-                    {Majors.map((major, index) => (
-                      <option key={index}>
-                        {major}
-                      </option>
-                    ))}
-                  </select>
-                  <select ref={gradeRef} id="gradeSelect" onInput={onInput} className="ml-[50px] px-[10px] border-2 border-black">
-                    {Grades.map((grade,index)=> (
-                      <option key={index}>
-                        {grade}
-                      </option>
-                    ))}
-                  </select> */}
                   <span id="noBlur" className="flex items-center ">
                     <div id="noBlur" className="mr-[20px] py-[0px]">
                       <p id="noBlur" className="text-[16px] font-[500]">
@@ -580,14 +485,6 @@ function Post() {
 
                   <div className="">
                     <div className="mb-[0px] grid grid-cols-7 gap-x-[10px] gap-y-[10px]">
-                      {/* {selectedCategory !== "전체" && (
-                        <button
-                          id="deleteKeywordButton"
-                          className="text-[16px] bg-white flex items-center h-[30px] border-0 rounded-lg text-center px-[10px] mr-[30px]"
-                        >
-                          {selectedCategory}
-                        </button>
-                      )} */}
                       {selectedKeywords.map((keyword, index) => (
                         <button
                           id="deleteKeywordButton"
@@ -604,16 +501,12 @@ function Post() {
                     </div>
                   </div>
                 </div>
-
-                {/* <button id="allFilterDelete" onClick={onClick}>
-                      필터 전체 삭제 버튼
-                </button> */}
               </div>
               <div className=" flex items-start px-[70px] mb-[30px]">
                 <div className="flex mr-[20px] mt-[4px]">
                   <p className="text-[14px] mb-[0px]">추천 키워드 </p>
                 </div>
-                <div className="grid grid-cols-8 gap-x-[10px] gap-y-[10px]">
+                <div className="flex flex-wrap gap-x-[10px] gap-y-[10px]">
                   {posts?.relatedKeywords.map(
                     (keyword, index) =>
                       !selectedKeywords.includes(keyword as never) && (
