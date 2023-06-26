@@ -1,6 +1,5 @@
 import tw from "tailwind-styled-components";
-import { async } from "@firebase/util";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -13,14 +12,6 @@ import { EditorState, convertToRaw, ContentState } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import styled from "styled-components";
 
-import {
-  ref,
-  getDownloadURL,
-  uploadBytes,
-  uploadBytesResumable,
-} from "firebase/storage";
-import { storage } from "../../firebase";
-import { get } from "http";
 import Thumbnail from "./components/Thumbnail";
 
 import {
@@ -29,14 +20,7 @@ import {
   IPostExample,
   PostExamples,
 } from "./PostExamples";
-import {
-  createPost,
-  departments,
-  ICreatePost,
-  IReadOnePost,
-  IUpdatePost,
-  updatePost,
-} from "api";
+import { IUpdatePost, updatePost } from "api";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
 import { useSetRecoilState } from "recoil";
@@ -52,7 +36,6 @@ import { Duration } from "./components/Duration";
 import { Keywords } from "./components/Keywords";
 import { Helmet } from "react-helmet";
 import Outline from "components/Outline";
-import Validation from "./components/Validation";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -83,7 +66,7 @@ const DetailUnSelectedBUTTON = `${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
 
 const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8px] rounded-lg`;
 const MajorUnSelectedBUTTON = `${MainBLUE} px-[15px] py-[8px] rounded-lg`;
-const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg`;
+const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg border-2 border-gray-200`;
 
 const ThumbnailKeywordsButton = tw(motion.div)`
   text-[15px] px-[15px] py-[2px] rounded-full mr-[10px] bg-blue-100
@@ -749,18 +732,7 @@ function PostModifyForm() {
                     <span className="flex items-center">
                       {/* <input className="w-[70px] px-[10px] rounded-full mr-[20px]" placeholder="일정 입력"/> */}
                       {/* <input className="w-[70px] px-[5px] rounded-full " placeholder="모집유형1"/> */}
-                      <span className="px-[10px] rounded-full bg-gray-200 font-light">
-                        {/* {getValues("durationIndex") === "0" ? 
-                                        "상시 모집"
-                                 : new Date(getValues("recruitStart")!) > new Date() ?
-                                 "모집 예정" :
-                                 getValues("recruitEnd")==="" ?
-                                 "상시 모집"
-                                 :dateDifference(getValues("recruitEnd")!) === 0 ?
-                                 "오늘 마감"
-
-                                  : "D-"+ dateDifference(getValues("recruitEnd")! )} */}
-
+                      <span className="px-[10px] py-[3px] rounded-full bg-gray-200 font-light">
                         {convertDateToString(
                           getValues("recruitStart"),
                           getValues("recruitEnd")
@@ -777,7 +749,7 @@ function PostModifyForm() {
                   </span>
                   {/* <div id="input-custom-css"> */}
                   <div className=" flex relative">
-                    <Validation />
+                    <span className="text-[#ff0000]">*</span>
                     <input
                       className="w-[350px] text-[19px] py-[5px] mb-[10px] border-b-2"
                       onFocus={() => {
@@ -875,10 +847,9 @@ function PostModifyForm() {
                         )
                       )}
                     </AnimatePresence>
-
-                    {getValues(lineObj.array as any).length < 3 && (
-                      <>
-                        <div className="relative flex items-center">
+                    <div className="relative">
+                      {getValues(lineObj.array as any).length < 3 && (
+                        <div className="flex items-center absolute">
                           <input
                             type="text"
                             className={`KeywordInput py-[2px] text-[15px] px-[15px] rounded-full ${LightMainBLUE}`}
@@ -942,8 +913,8 @@ function PostModifyForm() {
                             +{" "}
                           </button>
                         </div>
-                      </>
-                    )}
+                      )}
+                    </div>
                   </div>
                 ))}
 
@@ -956,7 +927,7 @@ function PostModifyForm() {
               </div>
 
               <div className="w-[400px] h-[350px] px-[60px] py-[30px]">
-                <Validation />
+                <span className="text-[#ff0000]">*</span>
                 <span className="">모집 기간</span>
 
                 <span className="pl-[30px] mb-[200px]">
@@ -988,8 +959,8 @@ function PostModifyForm() {
               </div>
 
               <div className=" w-[400px]  h-[350px] pl-[0px] py-[30px]">
-                <Validation />
-                <span className="relative flex items-center">
+                <span className="flex items-center">
+                  <span className="text-[#ff0000]">*</span>
                   모임 유형(카테고리){" "}
                   <span className="text-[13px] ml-[20px]">
                     <span className="text-blue-600 font-bold">최대 2개</span>{" "}
@@ -1064,11 +1035,11 @@ function PostModifyForm() {
 
             <div>
               {/* <p className="text-[20px] font-main">모집글 필수 내용</p> */}
-              <p className="mt-[10px]">지원에 필요한 정보를 채워주세요!</p>
-              <div className="flex items-center w-full justify-between">
+              <p className="my-[20px]">지원에 필요한 정보를 채워주세요!</p>
+              <div className="flex items-start w-full justify-between">
                 {/* <div className="w-[600px] mt-[20px] mr-[100px]"> */}
                 <div className="relative flex items-center w-[45%]">
-                  <Validation />
+                  <span className="text-[#ff0000]">*</span>
                   <div className="w-[130px] flex">신청 경로</div>
                   <div className="relative flex w-full items-center">
                     <input

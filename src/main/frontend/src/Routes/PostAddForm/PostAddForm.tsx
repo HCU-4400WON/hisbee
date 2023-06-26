@@ -23,12 +23,7 @@ import { EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import styled from "styled-components";
 
-import {
-  ref,
-  getDownloadURL,
-  uploadBytes,
-  uploadBytesResumable,
-} from "firebase/storage";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../../firebase";
 import Validation from "./components/Validation";
 

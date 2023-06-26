@@ -1,10 +1,10 @@
 import tw from "tailwind-styled-components";
-import React, { useEffect, useState } from "react";
-import { useForm, UseFormReturn } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 import "./css/heading.css";
-import "./css/textarea.css";
+// import "./css/textarea.css";
 import "./css/date.css";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -42,7 +42,7 @@ import { Helmet } from "react-helmet";
 import ConfirmModal from "components/ConfirmModal";
 import AlertModal from "components/AlertModal";
 import Outline from "components/Outline";
-import Validation from "./components/Validation";
+import { TextField } from "@mui/material";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -60,78 +60,54 @@ const MyBlock = styled.div`
   }
 `;
 
-const ExplainText = tw.p`
-text-blue-600 text-[18px] mb-[30px]
-`;
-
 const MainBLUE = "bg-blue-200";
 const LightMainBLUE = "bg-blue-100";
 
 const FunctionBUTTON = `${LightMainBLUE} text-blue-600 rounded-lg px-[15px] py-[8px]`;
-const DetailSelectedBUTTON = `border-2 border-blue-300 ${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
-const DetailUnSelectedBUTTON = `${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
 
 const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8px] rounded-lg`;
-const MajorUnSelectedBUTTON = `${MainBLUE} px-[15px] py-[8px] rounded-lg`;
-const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg`;
+const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg border-2 border-gray-200`;
 
 const ThumbnailKeywordsButton = tw(motion.div)`
   text-[15px] px-[15px] py-[2px] rounded-full mr-[10px] bg-blue-100
   
 `;
-//LightMainBlue
+
 const ThumbnailCategoryButton = tw(motion.div)`
   min-h-[28px] py-[2px] mb-[10px] px-[15px] rounded-full mr-[10px] bg-blue-200
 `;
 
-//MainBlue
-
 function PostAddForm2() {
-  const {
-    register,
-    watch,
-    formState,
-    handleSubmit,
-    getValues,
-    setValue,
-    trigger,
-  } = useForm({
-    mode: "onSubmit",
-    defaultValues: {
-      title: "",
-      summary: "",
-      first: [],
-      second: [],
-      postTypes: [],
+  const { register, watch, handleSubmit, getValues, setValue, control } =
+    useForm({
+      mode: "onSubmit",
+      defaultValues: {
+        title: "",
+        summary: "",
+        first: [],
+        second: [],
+        postTypes: [],
 
-      recruitStart: converter("year", new Date()), // string
-      recruitEnd: converter("year", new Date()), // string
-      // projectStart: "",
-      duration: "미설정",
-      // positions: [],
-      // positionName: "",
-      // positionCount: "",
-      contact: "",
-      targetCount: "",
-      contactDetails: "",
-      content: "",
-      years: [],
-      departments: [],
-      keyword: "",
-      keywords: [],
-      firstKeyword: "",
-      secondKeyword: "",
-      qualifications: "",
-      positionToggle: false,
-      total: "",
-      durationText: "",
-      categoryETC: "",
-      // first: [],
-      // second: [],
-
-      // poster : "",
-    },
-  });
+        recruitStart: converter("year", new Date()), // string
+        recruitEnd: converter("year", new Date()), // string
+        duration: "미설정",
+        contact: "",
+        targetCount: "",
+        contactDetails: "",
+        content: "",
+        years: [],
+        departments: [],
+        keyword: "",
+        keywords: [],
+        firstKeyword: "",
+        secondKeyword: "",
+        qualifications: "",
+        positionToggle: false,
+        total: "",
+        durationText: "",
+        categoryETC: "",
+      },
+    });
 
   const checkSubmit = () => {
     console.log(getValues("recruitStart")?.length);
@@ -153,14 +129,10 @@ function PostAddForm2() {
     postTypes: string[];
     recruitStart: string; // string
     recruitEnd?: string; // string
-    // projectStart?: string;
 
     duration?: string;
     durationText?: string;
     targetCount?: string;
-    // positions?: IPositionList[];
-    // positionName?: string;
-    // positionCount?: string;
     contact: string;
     contactDetails?: string;
     content?: string;
@@ -210,9 +182,6 @@ function PostAddForm2() {
   const [isPostSubmitAlertModal, setIsPostSubmitAlertModal] =
     useRecoilState(isAlertModalState);
 
-  const setIsLogin = useSetRecoilState(isLoginState);
-  const setIsLoginModal = useSetRecoilState(isLoginModalState);
-
   const navigate = useNavigate();
 
   const { mutate: createPostMutate, isLoading: createPostLoading } =
@@ -223,9 +192,6 @@ function PostAddForm2() {
 
       {
         onSuccess: (data) => {
-          // console.log("모집글이 생성되었습니다.", data);
-          // alert("모집글이 생성되었습니다.");
-          // navigate("/post");
           setIsPostSubmitAlertModal(true);
         },
         onError: (error) => {
@@ -245,13 +211,6 @@ function PostAddForm2() {
   const [imageURLList, setImageURLList] = useState<string[] | []>([]);
 
   const onSubmit = (data: ISubmitDate, e: any) => {
-    // console.log(getValues("years"));
-    // console.log(getValues("departments"));
-    // console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())));
-    // console.log(imageURL);
-
-    // console.log("데이터");
-
     let newIsETC = false;
 
     const categoryETCIdx = data?.postTypes.findIndex(
@@ -320,57 +279,8 @@ function PostAddForm2() {
       isETC: newIsETC,
     };
 
-    // console.log(newPost);
-    // createPostMutate(newPost as any);
-
-    const nPost = {
-      title: "시각디자인 학회 도트 리쿠르팅",
-      summary:
-        "도트는 그래픽, 편집, 타이포 등 다양한 분야의 디자인을 실험적으로 연구하는 학회입니다.",
-      tags: {
-        first: ["콘디,콘디2전공가능"],
-        second: ["재학생"],
-      },
-      postTypes: ["학회", "학술모임"],
-      recruitStart: "2023-04-02",
-      recruitEnd: "2023-04-16",
-      projectStart: "2023-05-01",
-      duration: "d",
-      targetCount: "전체00명",
-      contact: "ccdot@gmail.com",
-      contactDetails: "포트폴리오 제출 필수",
-      content: "시각디자인 학회 도트에서 신입 학회원을 모집합니다! ...",
-      years: ["1학년", "2학년"],
-      departments: ["콘텐츠디자인융합학부"],
-      keywords: ["포트폴리오필수", "2학기필수"],
-      posterPaths: ["https://firebasestorage.googleapis.com/v0/b/…"],
-    };
-    // console.log(nPost);
     createPostMutate(newPost as any);
   };
-
-  // const Grades = [
-  //   "23학번 새내기",
-  //   "1학년",
-  //   "2학년",
-  //   "3학년",
-  //   "4학년",
-  //   "9학기 이상",
-  // ];
-  const Majors = [
-    // {"상관없음":[]},
-    { 경영경제학부: ["경영학", "경제학", "GM"] },
-    { 상당심리사회복지학부: ["상담심리학", "사회복지학"] },
-    { 생명과학부: ["생명과학부"] },
-    { 전산전자공학부: ["AI", "컴퓨터공학", "전자공학"] },
-    { ICT창업학부: ["GE", "ICT융합", "ACE"] },
-    { 커뮤니케이션학부: ["언론정보학", "공연영상학"] },
-    { 기계제어공학부: ["기계공학", "전자제어공학"] },
-    { 국제어문학부: ["국제지역학", "영어"] },
-    { 법학부: ["한국법", "UIL"] },
-    { 공간환경시스템공학부: ["건설공학", "도시환경공학"] },
-    { 콘텐츠융합디자인학부: ["시각디자인", "제품디자인"] },
-  ];
 
   const Categories = [
     "동아리",
@@ -383,10 +293,6 @@ function PostAddForm2() {
     "기타 모임",
   ];
 
-  // const [visible, setVisible] = useState<Boolean[]>(
-  //   Array.from({ length: Majors.length }, () => false)
-  // );
-
   // useState로 상태관리하기 초기값은 EditorState.createEmpty()
   // EditorState의 비어있는 ContentState 기본 구성으로 새 개체를 반환 => 이렇게 안하면 상태 값을 나중에 변경할 수 없음.
 
@@ -397,10 +303,7 @@ function PostAddForm2() {
     setEditorState(editorState);
   };
 
-  // const [gradeToggle, setGradeToggle] = useState<boolean>(false);
-  // const [majorToggle, setMajorToggle] = useState<boolean>(false);
   const [postExampleToggle, setPostExampleToggle] = useState<boolean>(false);
-  const [registerToggle, setRegisterToggle] = useState<boolean>(false);
 
   const textareaResize = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const targetId = e.currentTarget.id;
@@ -443,27 +346,6 @@ function PostAddForm2() {
     },
     { first: "", accent: "포스터", last: "가 있다면 업로드 해주세요!" },
   ];
-
-  const duration = [
-    "미설정",
-    "봄학기",
-    "가을학기",
-    "여름방학",
-    "겨울방학",
-    "1년",
-    "1학기",
-    "2학기",
-    "3학기",
-    "4학기",
-    "직접 입력",
-  ];
-
-  const inputTextVariants = {
-    focused: {},
-    unfocused: {
-      borderBottom: "1px solid lightgray",
-    },
-  };
 
   const presenseVariant = {
     initial: {
@@ -523,19 +405,6 @@ function PostAddForm2() {
 
             <p className="text-[25px] font-unique">모집글 작성하기</p>
           </span>
-          {/* <div className="flex justify-between items-center">
-                    
-                    <div className="flex h-[40px] items-end">
-                    {[ "radial-gradient(closest-side, #7b87e7, rgba(235, 235, 235, 0.13) 100%)" ,"radial-gradient(closest-side, #e3a3ff, rgba(235, 235, 235, 0.13) 100%)" , "radial-gradient(closest-side, #9c9c9c, rgba(235, 235, 235, 0.13) 100%)"].map((color,index) => (
-                        <div key={index}
-                        className="w-[15px] h-[15px]"
-                        style={{
-                        backgroundImage: color,
-                        }}
-                    />
-                    ))}
-                    </div>
-                    </div> */}
         </div>
 
         <form onSubmit={handleSubmit(onSubmit as any)} className="px-[20px] ">
@@ -575,7 +444,7 @@ function PostAddForm2() {
                         닫기
                       </button>
                     </div>
-                    <motion.div className="w-600px h-[300px] bg-gray-200 flex items-center overflow-scroll">
+                    <motion.div className="w-600px h-[300px] bg-gray-200 flex items-center overflow-scroll ">
                       {postExampleToggle &&
                         (
                           PostExamples[
@@ -604,20 +473,7 @@ function PostAddForm2() {
                 <div className="mb-[10px]">
                   <span className="flex items-center justify-between mb-[20px]">
                     <span className="flex items-center">
-                      {/* <input className="w-[70px] px-[10px] rounded-full mr-[20px]" placeholder="일정 입력"/> */}
-                      {/* <input className="w-[70px] px-[5px] rounded-full " placeholder="모집유형1"/> */}
-                      <span className="px-[10px] rounded-full bg-gray-200 font-light">
-                        {/* {getValues("durationIndex") === "0" ? 
-                                        "상시 모집"
-                                 : new Date(getValues("recruitStart")!) > new Date() ?
-                                 "모집 예정" :
-                                 getValues("recruitEnd")==="" ?
-                                 "상시 모집"
-                                 :dateDifference(getValues("recruitEnd")!) === 0 ?
-                                 "오늘 마감"
-
-                                  : "D-"+ dateDifference(getValues("recruitEnd")! )} */}
-
+                      <span className="px-[10px] py-[3px] rounded-full bg-gray-200 font-light">
                         {convertDateToString(
                           getValues("recruitStart"),
                           getValues("recruitEnd")
@@ -634,15 +490,18 @@ function PostAddForm2() {
                   </span>
                   {/* <div id="input-custom-css"> */}
                   <div className=" flex relative">
-                    <Validation />
-                    <input
-                      className="w-[350px] text-[19px] py-[5px] mb-[10px] border-b-2"
-                      onFocus={() => {
-                        document.getElementById("titleBorder")?.focus();
-                      }}
-                      {...register("title")}
-                      type="text"
-                      placeholder="제목을 입력해주세요"
+                    <span className="text-[#ff0000]">*</span>
+                    <Controller
+                      name="title"
+                      control={control}
+                      defaultValue=""
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          variant="standard"
+                          placeholder="제목을 입력해주세요"
+                        />
+                      )}
                     />
                   </div>
                   {/* <motion.input
@@ -697,7 +556,7 @@ function PostAddForm2() {
                   { array: "first", str: "firstKeyword" },
                   { array: "second", str: "secondKeyword" },
                 ].map((lineObj, LineIndex) => (
-                  <div key={LineIndex} className="flex mb-[10px] items-center">
+                  <div key={LineIndex} className="flex mb-[10px] h-[30px]">
                     {/* firstLine Keyword */}
                     <AnimatePresence>
                       {getValues(lineObj.array as any)?.map(
@@ -732,10 +591,9 @@ function PostAddForm2() {
                         )
                       )}
                     </AnimatePresence>
-
-                    {getValues(lineObj.array as any).length < 3 && (
-                      <>
-                        <div className="relative flex items-center">
+                    <div className="relative">
+                      {getValues(lineObj.array as any).length < 3 && (
+                        <div className="flex items-center absolute ">
                           <input
                             type="text"
                             className={`KeywordInput py-[2px] text-[15px] px-[15px] rounded-full ${LightMainBLUE}`}
@@ -799,22 +657,15 @@ function PostAddForm2() {
                             +{" "}
                           </button>
                         </div>
-                      </>
-                    )}
+                      )}
+                    </div>
                   </div>
                 ))}
-
-                {/* <div className=" mb-[10px]">
-                        <input type="text" className="px-[5px] w-[100px]" placeholder="키워드 입력"/>
-                        </div>
-                        <div className=" mb-[10px]">
-                        <input type="text" className="px-[5px] w-[100px]" placeholder="키워드 입력"/>
-                        </div> */}
               </div>
 
               <div className="w-[400px] h-[350px] px-[60px] py-[30px]">
-                <Validation />
-                <span className="">모집 기간</span>
+                <span className="text-[#ff0000]">*</span>
+                <span className=""> 모집 기간</span>
 
                 <span className="pl-[30px] mb-[200px]">
                   <span className="mt-[20px] flex items-center mb-[10px]">
@@ -844,9 +695,9 @@ function PostAddForm2() {
                 </span>
               </div>
 
-              <div className=" w-[400px]  h-[350px] pl-[0px] py-[30px]">
-                <Validation />
-                <span className="relative flex items-center">
+              <div className=" w-[400px] h-[350px] pl-[0px] py-[30px]">
+                <span className="flex items-center">
+                  <span className="text-[#ff0000]">*</span>
                   모임 유형(카테고리){" "}
                   <span className="text-[13px] ml-[20px]">
                     <span className="text-blue-600 font-bold">최대 2개</span>{" "}
@@ -921,13 +772,13 @@ function PostAddForm2() {
 
             <div>
               {/* <p className="text-[20px] font-main">모집글 필수 내용</p> */}
-              <p className="mt-[10px]">지원에 필요한 정보를 채워주세요!</p>
-              <div className="flex items-center w-full justify-between">
+              <p className="my-[20px]">지원에 필요한 정보를 채워주세요!</p>
+              <div className="flex items-start w-full justify-between ">
                 {/* <div className="w-[600px] mt-[20px] mr-[100px]"> */}
                 <div className="relative flex items-center w-[45%]">
-                  <Validation />
+                  <span className="text-[#ff0000]">*</span>
                   <div className="w-[130px] flex">신청 경로</div>
-                  <div className="relative flex w-full items-center">
+                  <div className="relative flex w-full ">
                     <input
                       // onFocus={{
                       // }}
@@ -939,7 +790,7 @@ function PostAddForm2() {
                   </div>
                 </div>
 
-                <span className="flex mt-[10px] items-start w-[45%]">
+                <span className="flex items-start w-[45%]">
                   <p className="w-[200px]">신청 방법</p>
                   <div className="w-full">
                     <textarea
