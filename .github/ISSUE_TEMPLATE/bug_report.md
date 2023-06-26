@@ -18,7 +18,7 @@ assignees: ''
 3. Scroll down to '....'
 4. See error
 
-## Expected behaviour
+# Expected Behaviour
 [버그를 해결했을 때 예상 결과 또는 테스트 케이스]
 
 - Case 1:

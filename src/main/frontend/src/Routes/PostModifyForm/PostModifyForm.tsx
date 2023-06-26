@@ -408,6 +408,7 @@ function PostModifyForm() {
     };
 
     // console.log(newPost);
+    console.log(newPost);
 
     // const nPost = {
     //   title: "시각디자인 학회 도트 리쿠르팅 (수정)",

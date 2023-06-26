@@ -956,7 +956,8 @@ export interface IRandomNickname {
 
 export const randomNickname = async () => {
   const response = await axios.get(
-    `${process.env.REACT_APP_RANDOM_NICKNAME_URL}`
+    // `${process.env.REACT_APP_RANDOM_NICKNAME_URL}`
+    `${process.env.REACT_APP_BACK_BASE_URL}/nickname`
   );
   // const response = await axios.get("naver/?format=json&max_length=8");
   // console.log("get RandomNickname api 중...");
@@ -1084,8 +1085,9 @@ export interface IUserRead {
 
 export const majorAutoComplete = async (q: string) => {
   const response = await axios.get(
-        `${process.env.REACT_APP_BACK_BASE_URL}/major?q=${q}`
-    // `/?format=json&max_length=8`
+    // `${process.env.REACT_APP_BACK_BASE_URL}/api/nickname`
+    `${process.env.REACT_APP_BACK_BASE_URL}/major?q=${q}`
+    // `https://nickname.hwanmoo.kr`
   );
   return response.data;
 };
