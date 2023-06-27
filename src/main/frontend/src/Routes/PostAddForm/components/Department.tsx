@@ -25,8 +25,8 @@ export function Department({ getValues, setValue }: any) {
   const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8px] rounded-lg`;
 
   const DetailSelectedBUTTON = `border-2 border-blue-300 ${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
-  const DetailUnSelectedBUTTON = `${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
-  const MajorUnSelectedBUTTON = `${MainBLUE} px-[15px] py-[8px] rounded-lg`;
+  const DetailUnSelectedBUTTON = `border-2 border-blue-100 ${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
+  const MajorUnSelectedBUTTON = `border-2 border-blue-200 ${MainBLUE} px-[15px] py-[8px] rounded-lg`;
   const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg`;
   return (
     <div>
@@ -57,10 +57,8 @@ export function Department({ getValues, setValue }: any) {
           {!majorToggle && (
             <button
               type="button"
-              className={`border-2 ${UnSelectedBUTTON}  w-[100px] px-[15px] py-[5px] rounded-lg ml-[10px]`}
+              className={`border-2 ${UnSelectedBUTTON} w-[100px] px-[15px] py-[5px] rounded-lg ml-[10px]`}
               onClick={() => {
-                // if(majorToggle) setValue("departments" , ["상관없음"] as any);
-                // setValue("departments", []);
                 setMajorToggle(true);
               }}
             >
@@ -96,7 +94,7 @@ export function Department({ getValues, setValue }: any) {
                           visible[index]
                             ? MajorSeletedBUTTON
                             : MajorUnSelectedBUTTON
-                        } flex items-center w-[210px] justify-center px-[10px] py-[5px] rounded-lg ml-[10px]`}
+                        } flex items-center w-[210px] justify-center px-[10px] rounded-lg ml-[10px]`}
                       >
                         <p>{Object.keys(major)}</p>
                         <i className="fa-solid fa-chevron-right ml-[10px]"></i>

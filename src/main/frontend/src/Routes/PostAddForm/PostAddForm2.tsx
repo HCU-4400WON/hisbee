@@ -392,6 +392,7 @@ function PostAddForm2() {
         <Helmet>
           <title>모집 글 작성하기</title>
         </Helmet>
+
         <div className="flex justify-between pb-[20px]">
           <span className="flex w-[210px] items-center justify-between">
             <button
@@ -403,7 +404,7 @@ function PostAddForm2() {
               <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
             </button>
 
-            <p className="text-[25px] font-unique">모집글 작성하기</p>
+            <p className="text-[25px] font-[400]">모집글 작성하기</p>
           </span>
         </div>
 
@@ -411,7 +412,7 @@ function PostAddForm2() {
           <div className="bg-slate-100 p-[50px] rounded-3xl mb-[50px]">
             <div className="flex justify-between w-full relative">
               <div className="flex items-center mb-[10px]">
-                <p className="text-[20px] font-main">
+                <p className="text-[20px] font-[400]">
                   썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
                 </p>
               </div>
@@ -419,7 +420,7 @@ function PostAddForm2() {
               {!postExampleToggle && (
                 <button
                   type="button"
-                  className={`bg-white py-[5px] text-[16px] px-[15px] border-2 border-blue-500 text-blue-500 rounded-lg`}
+                  className={`bg-white py-[5px] text-[16px] px-[15px] border-2 border-blue-500 text-blue-500 rounded-lg font-[400]`}
                   onClick={(e) => setPostExampleToggle(true)}
                 >
                   다른 모집글은 어떻게 작성되었는지 살펴보세요!
@@ -468,7 +469,7 @@ function PostAddForm2() {
             썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
           </p> */}
 
-            <div className="w-full h-[400px] flex items-start justify-between my-[20px] ">
+            <div className="w-full h-[400px] flex items-start justify-between mb-[20px] ">
               <div className="w-[400px] border h-[350px] mt-[30px] bg-white p-[30px] rounded-2xl shadow-sm">
                 <div className="mb-[10px]">
                   <span className="flex items-center justify-between mb-[20px]">
@@ -772,7 +773,9 @@ function PostAddForm2() {
 
             <div>
               {/* <p className="text-[20px] font-main">모집글 필수 내용</p> */}
-              <p className="my-[20px]">지원에 필요한 정보를 채워주세요!</p>
+              <p className="my-[20px] font-[400]">
+                지원에 필요한 정보를 채워주세요!
+              </p>
               <div className="flex items-start w-full justify-between ">
                 {/* <div className="w-[600px] mt-[20px] mr-[100px]"> */}
                 <div className="relative flex items-center w-[45%]">
@@ -783,7 +786,7 @@ function PostAddForm2() {
                       // onFocus={{
                       // }}
                       type="text"
-                      className="w-full border-b border-gray-300 px-[10px] py-[5px] bg-slate-100 "
+                      className="w-full border-b border-gray-300 py-[5px] bg-slate-100 "
                       placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
                       {...register("contact")}
                     />
@@ -798,7 +801,7 @@ function PostAddForm2() {
                       id="registerMethod"
                       onKeyPress={textareaResize}
                       onKeyUp={textareaResize}
-                      className="notes_slate px-[10px] vertical-center w-full "
+                      className="notes_slate px-[0px] vertical-center w-full "
                       placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
                       {...register("contactDetails")}
                     />
@@ -870,7 +873,7 @@ function PostAddForm2() {
                   setOptionalFoldToggle((prev) => [false, ...prev.slice(1)])
                 }
               ></i>
-              <p className="text-[20px] font-[500]">모집 대상 조건 설정하기</p>
+              <p className="text-[20px] font-[400]">모집 대상 조건 설정하기</p>
               <p className="mt-[10px] text-[18px]">
                 모집글들을 필터링할 때 쓰이는 정보이니 채워주시면 좋습니다.
               </p>
@@ -1023,7 +1026,7 @@ function PostAddForm2() {
                   ])
                 }
               ></i>
-              <p className="text-[20px] font-[500]">자유 내용 입력</p>
+              <p className="text-[20px] font-[400]">자유 내용 입력</p>
               <p className="mt-[10px] mb-[20px] text-[18px]">
                 모임의 목적,활동 내용 등에 대한 자세한 내용을 자유롭게
                 작성해주세요!
@@ -1110,7 +1113,7 @@ function PostAddForm2() {
                 }
               ></i>
               {/* <div> */}
-              <p className="text-[20px] font-main">포스터 등록</p>
+              <p className="text-[20px] font-[400]">포스터 등록</p>
               <p className="mt-[10px]">
                 포스터가 있다면 업로드해주세요! 모집글 페이지 및 포스터 모아보기
                 페이지에서 보여집니다.
