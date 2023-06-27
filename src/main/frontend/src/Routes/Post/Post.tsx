@@ -16,7 +16,7 @@ import {
   isSignupModalState,
 } from "components/atom";
 import Login from "components/LoginModal";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -32,6 +32,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import { Autocomplete, TextField } from "@mui/material";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import { AnyTxtRecord } from "dns";
 const SelectFilterBox = tw.select`
 mr-[20px] px-[10px] bg-[#F9FAFB] py-[5px] rounded-lg text-center border
 text-gray-500 text-[16px] w-auto
@@ -363,6 +364,24 @@ function Post() {
   const [isPreventAlertModal, setIsPreventAlertModal] =
     useRecoilState(isPreventAlertState);
 
+  const searchKeyword = (e: any) => {
+    e.preventDefault();
+    setSelectedKeywords((prev) => [...prev, keywordInput]);
+    setKeywords((prev) => [...prev, keywordInput]);
+    setKeywordInput("");
+  };
+
+  const onEnterPress = useCallback(
+    (e: any) => {
+      if (e.key === "Enter" && !autocompleteOpenRef.current) {
+        console.log("enter");
+        searchKeyword(e);
+      }
+    },
+    [keywordInput]
+  );
+
+  const autocompleteOpenRef = useRef(false);
   return (
     <>
       {(isLoading || isLoginCheckLoading) && <LoadingLottie isPost={true} />}
@@ -428,10 +447,19 @@ function Post() {
                         id="size-small-standard"
                         size="small"
                         options={keywordAutoList}
-                        defaultValue={keywordAutoList[13]}
+                        onChange={(event, newValue) => {
+                          setKeywordInput(newValue as string);
+                        }}
+                        onOpen={() => {
+                          autocompleteOpenRef.current = true;
+                        }}
+                        onClose={() => {
+                          autocompleteOpenRef.current = false;
+                        }}
                         renderInput={(params) => (
                           <TextField
                             {...params}
+                            onKeyDown={onEnterPress}
                             value={keywordInput}
                             onChange={onChange}
                             variant="standard"
@@ -443,13 +471,9 @@ function Post() {
                   </span>
 
                   <SearchOutlinedIcon
+                    className="search"
                     sx={{ width: "22px", mr: "10px" }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSelectedKeywords((prev) => [...prev, keywordInput]);
-                      setKeywords((prev) => [...prev, keywordInput]);
-                      setKeywordInput("");
-                    }}
+                    onClick={searchKeyword}
                   />
 
                   <div className="">
