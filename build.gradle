@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.0.2'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'com.diffplug.spotless' version '6.11.0'
 }
 
 group = 'com.hcu'
@@ -48,4 +49,15 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+        removeUnusedImports()
+        endWithNewline()
+        trimTrailingWhitespace()
+        indentWithTabs(2)
+        indentWithSpaces(4)
+    }
 }
