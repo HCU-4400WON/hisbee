@@ -1,19 +1,18 @@
 package com.hcu.hot6.domain;
 
+import static com.hcu.hot6.util.Utils.nonNullOrElse;
+import static com.hcu.hot6.util.Utils.toLocalDateTime;
+
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostThumbnailResponse;
 import com.hcu.hot6.util.Utils;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Date;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.util.Date;
-
-import static com.hcu.hot6.util.Utils.nonNullOrElse;
-import static com.hcu.hot6.util.Utils.toLocalDateTime;
 
 @Getter
 @Entity
@@ -27,16 +26,17 @@ public class Thumbnail {
 
     private String title;
     private String summary;
-    private LocalDateTime recruitStart;     // 미래인 경우 썸네일에 "모집 예정" , 아닌 경우 "D-00" 표시
+    private LocalDateTime recruitStart; // 미래인 경우 썸네일에 "모집 예정" , 아닌 경우 "D-00" 표시
     private LocalDateTime recruitEnd;
 
     private String duration;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "thumbnail")
     private Post post;
-    private String tags;    // 썸네일 내 키워드 - 줄 구분은 ";" 세미콜론, 키워드 구분은 "," 콤마
 
-    private boolean isClosed;   // 지원자가 상세보기 불가능한 상태 - 썸네일은 확인 가
+    private String tags; // 썸네일 내 키워드 - 줄 구분은 ";" 세미콜론, 키워드 구분은 "," 콤마
+
+    private boolean isClosed; // 지원자가 상세보기 불가능한 상태 - 썸네일은 확인 가
 
     public void setPost(Post post) {
         this.post = post;
@@ -50,7 +50,8 @@ public class Thumbnail {
 
         // optional
         this.summary = (request.getSummary() != null) ? request.getSummary() : null;
-        this.recruitEnd = (request.getRecruitEnd() != null) ? Utils.toLocalDateTime(request.getRecruitEnd()) : null;
+        this.recruitEnd =
+                (request.getRecruitEnd() != null) ? Utils.toLocalDateTime(request.getRecruitEnd()) : null;
         this.duration = (request.getDuration() != null) ? request.getDuration() : Duration.TBD.toKor();
     }
 

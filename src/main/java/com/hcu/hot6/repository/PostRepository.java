@@ -15,12 +15,11 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
@@ -43,11 +42,9 @@ public class PostRepository {
         return Optional.ofNullable(em.find(Post.class, postId));
     }
 
-    public List<Post> findAll(PostSearchFilter filter,
-                              Member member,
-                              long offset,
-                              int limit) {
-        return query.selectFrom(post)
+    public List<Post> findAll(PostSearchFilter filter, Member member, long offset, int limit) {
+        return query
+                .selectFrom(post)
                 .where(
                         eqType(filter.getType()),
                         eqKeywords(filter.getKeywords()),
@@ -56,8 +53,7 @@ public class PostRepository {
                         isMyDepartment(filter.getMyDeptOnly(), member),
                         isClosed(filter.getIsClosed()),
                         isOpen(filter.getOpenOnly()),
-                        post.archive.isNull()
-                )
+                        post.archive.isNull())
                 .offset(offset)
                 .limit(limit)
                 .orderBy(orderCond(filter.getOrderBy()))
@@ -65,7 +61,8 @@ public class PostRepository {
     }
 
     public List<Post> findAll(PostSearchFilter filter, Member member) {
-        return query.selectFrom(post)
+        return query
+                .selectFrom(post)
                 .where(
                         eqType(filter.getType()),
                         eqKeywords(filter.getKeywords()),
@@ -74,22 +71,18 @@ public class PostRepository {
                         isMyDepartment(filter.getMyDeptOnly(), member),
                         isClosed(filter.getIsClosed()),
                         isOpen(filter.getOpenOnly()),
-                        post.archive.isNull()
-                )
+                        post.archive.isNull())
                 .orderBy(orderCond(filter.getOrderBy()))
                 .fetch();
     }
 
     public List<Post> findAllArchived() {
-        return query.selectFrom(post)
-                .where(
-                        post.archive.isNotNull()
-                )
-                .fetch();
+        return query.selectFrom(post).where(post.archive.isNotNull()).fetch();
     }
 
     public Long count(PostSearchFilter filter, Member member) {
-        return query.select(post.count())
+        return query
+                .select(post.count())
                 .from(post)
                 .where(
                         eqType(filter.getType()),
@@ -98,8 +91,7 @@ public class PostRepository {
                         eqYear(filter.getYear()),
                         isMyDepartment(filter.getMyDeptOnly(), member),
                         isClosed(filter.getIsClosed()),
-                        post.archive.isNull()
-                )
+                        post.archive.isNull())
                 .fetchOne();
     }
 
@@ -125,20 +117,17 @@ public class PostRepository {
                         keywords.stream()
                                 .map(post.thumbnail.tags::contains)
                                 .reduce(BooleanExpression::or)
-                                .orElse(null)
-                )
+                                .orElse(null))
                 .or(
                         keywords.stream()
                                 .map(post.thumbnail.title::contains)
                                 .reduce(BooleanExpression::or)
-                                .orElse(null)
-                )
+                                .orElse(null))
                 .or(
                         keywords.stream()
                                 .map(post.thumbnail.summary::contains)
                                 .reduce(BooleanExpression::or)
-                                .orElse(null)
-                );
+                                .orElse(null));
     }
 
     private BooleanExpression eqDepartment(Department department) {
@@ -151,20 +140,18 @@ public class PostRepository {
 
     private BooleanExpression isMyDepartment(Boolean myDeptOnly, Member member) {
         return (myDeptOnly != null)
-                ? post.targetDepartment.contains(member.getMajor1().toKor())
-                .or(post.targetDepartment.contains(member.getMajor2().toKor()))
+                ? post.targetDepartment
+                        .contains(member.getMajor1().toKor())
+                        .or(post.targetDepartment.contains(member.getMajor2().toKor()))
                 : null;
     }
 
-    private BooleanExpression isOpen(Boolean openOnly){
-        return (openOnly != null)
-                ? post.thumbnail.isClosed.isFalse()
-                : null;
+    private BooleanExpression isOpen(Boolean openOnly) {
+        return (openOnly != null) ? post.thumbnail.isClosed.isFalse() : null;
     }
 
     private BooleanExpression isClosed(Boolean isClosed) {
-        return (isClosed != null) ? post.thumbnail.isClosed.eq(isClosed)
-                : null;
+        return (isClosed != null) ? post.thumbnail.isClosed.eq(isClosed) : null;
     }
 
     private OrderSpecifier<?> orderCond(OrderBy orderBy) {
@@ -179,8 +166,6 @@ public class PostRepository {
                 return post.thumbnail.recruitEnd.asc();
             }
         }
-        return new OrderSpecifier<>(
-                Order.ASC,
-                new NullExpression<>(OrderBy.class));
+        return new OrderSpecifier<>(Order.ASC, new NullExpression<>(OrderBy.class));
     }
 }

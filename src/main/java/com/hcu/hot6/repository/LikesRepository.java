@@ -24,10 +24,10 @@ public class LikesRepository {
     }
 
     public Likes findOne(Post post, Member member) {
-        return em.createQuery("select l from Likes l where l.member=:member and l.post=:post", Likes.class)
+        return em.createQuery(
+                        "select l from Likes l where l.member=:member and l.post=:post", Likes.class)
                 .setParameter("post", post)
                 .setParameter("member", member)
                 .getSingleResult();
     }
-
 }

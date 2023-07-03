@@ -6,8 +6,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum PostTypeDetails {
-    PLANNER(PostType.PROJECT), DESIGNER(PostType.PROJECT), DEVELOPER(PostType.PROJECT),
-    MENTOR(PostType.MENTORING), MENTEE(PostType.MENTORING),
+    PLANNER(PostType.PROJECT),
+    DESIGNER(PostType.PROJECT),
+    DEVELOPER(PostType.PROJECT),
+    MENTOR(PostType.MENTORING),
+    MENTEE(PostType.MENTORING),
     MEMBER(PostType.STUDY);
 
     private final PostType type;

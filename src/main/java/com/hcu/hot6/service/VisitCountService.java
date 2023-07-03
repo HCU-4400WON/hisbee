@@ -13,7 +13,7 @@ public class VisitCountService {
 
     private final VisitRepository visitRepository;
 
-    public void saveSessionInfo(VisitCount visitCount){
+    public void saveSessionInfo(VisitCount visitCount) {
         visitRepository.save(visitCount);
     }
 }

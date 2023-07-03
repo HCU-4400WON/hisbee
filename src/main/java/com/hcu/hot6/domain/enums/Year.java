@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Year {
-
     FRESHMAN("1학년"),
     SOPHOMORE("2학년"),
     JUNIOR("3학년"),
