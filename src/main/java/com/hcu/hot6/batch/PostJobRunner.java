@@ -1,5 +1,6 @@
 package com.hcu.hot6.batch;
 
+import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -8,14 +9,12 @@ import org.quartz.Trigger;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-
-
 @RequiredArgsConstructor
 @Component
-public class PostJobRunner extends JobRunner{
+public class PostJobRunner extends JobRunner {
 
     private final Scheduler scheduler;
+
     @Override
     protected void doRun(ApplicationArguments args) {
         String[] sourceArgs = args.getSourceArgs();
@@ -24,7 +23,7 @@ public class PostJobRunner extends JobRunner{
         Trigger trigger = buildJobTrigger("0/30 * * * * ?"); // 30초마다 실행
         jobDetail.getJobDataMap().put("requestDate", sourceArgs[0]);
 
-        try{
+        try {
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (SchedulerException e) {
             e.printStackTrace();

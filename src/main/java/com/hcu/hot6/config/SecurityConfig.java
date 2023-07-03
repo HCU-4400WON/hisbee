@@ -5,6 +5,9 @@ import com.hcu.hot6.filter.JwtAuthorizationFilter;
 import com.hcu.hot6.repository.MemberRepository;
 import com.hcu.hot6.service.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,10 +36,6 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 @Slf4j
 @Configuration
 @EnableWebSecurity
@@ -51,27 +50,37 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .cors(Customizer.withDefaults())
-                .csrf().disable()
-                .formLogin().disable()
-                .httpBasic().disable()
-                .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/posts/**", "/users/validation").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/major", "/keyword").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/favicon.ico").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/nickname").permitAll()
-                        .anyRequest().authenticated())
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(this.oAuth2UserService()))
-                        .successHandler(this.oAuth2SuccessHandler()))
+        http.cors(Customizer.withDefaults())
+                .csrf()
+                .disable()
+                .formLogin()
+                .disable()
+                .httpBasic()
+                .disable()
+                .authorizeHttpRequests(
+                        authz ->
+                                authz
+                                        .requestMatchers(CorsUtils::isPreFlightRequest)
+                                        .permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/posts/**", "/users/validation")
+                                        .permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/major", "/keyword")
+                                        .permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/favicon.ico")
+                                        .permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/nickname")
+                                        .permitAll()
+                                        .anyRequest()
+                                        .authenticated())
+                .oauth2Login(
+                        oauth2 ->
+                                oauth2
+                                        .userInfoEndpoint(userInfo -> userInfo.userService(this.oAuth2UserService()))
+                                        .successHandler(this.oAuth2SuccessHandler()))
                 .addFilterBefore(this.jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement(config -> config
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(handler -> handler
-                        .authenticationEntryPoint(this.oAuth2AuthenticationEntryPoint()));
+                .sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(
+                        handler -> handler.authenticationEntryPoint(this.oAuth2AuthenticationEntryPoint()));
         return http.build();
     }
 
@@ -109,11 +118,13 @@ public class SecurityConfig {
             String accessToken = jwtService.generateToken(email);
             Member member = memberRepository.findByEmail(email).orElseThrow();
 
-            String targetUrl = UriComponentsBuilder.fromUriString(client)
-                    .path("oauth2/redirect")
-                    .queryParam("token", accessToken)
-                    .queryParam("hasRegistered", member.isRegistered())
-                    .build().toUriString();
+            String targetUrl =
+                    UriComponentsBuilder.fromUriString(client)
+                            .path("oauth2/redirect")
+                            .queryParam("token", accessToken)
+                            .queryParam("hasRegistered", member.isRegistered())
+                            .build()
+                            .toUriString();
 
             redirectStrategy.sendRedirect(request, response, targetUrl);
         };
@@ -127,12 +138,13 @@ public class SecurityConfig {
             Optional<Member> registered = memberRepository.findMemberById(oAuth2User.getName());
 
             if (registered.isEmpty()) {
-                Member member = Member.builder()
-                        .uid(oAuth2User.getAttribute("sub"))
-                        .email(oAuth2User.getAttribute("email"))
-                        .pictureUrl(oAuth2User.getAttribute("picture"))
-                        .isRegistered(false)
-                        .build();
+                Member member =
+                        Member.builder()
+                                .uid(oAuth2User.getAttribute("sub"))
+                                .email(oAuth2User.getAttribute("email"))
+                                .pictureUrl(oAuth2User.getAttribute("picture"))
+                                .isRegistered(false)
+                                .build();
                 memberRepository.save(member);
             }
             return oAuth2User;

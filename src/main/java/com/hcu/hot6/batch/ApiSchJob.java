@@ -1,5 +1,6 @@
 package com.hcu.hot6.batch;
 
+import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -14,19 +15,17 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-
 @RequiredArgsConstructor
 @Component
 public class ApiSchJob extends QuartzJobBean {
 
     private final Job apiJob;
     private final JobLauncher jobLauncher;
+
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-        JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("id", new Date().getTime())
-                .toJobParameters();
+        JobParameters jobParameters =
+                new JobParametersBuilder().addLong("id", new Date().getTime()).toJobParameters();
 
         try {
             jobLauncher.run(apiJob, jobParameters);

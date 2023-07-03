@@ -1,15 +1,14 @@
 package com.hcu.hot6.domain;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -29,8 +28,7 @@ public class Keyword {
     @OneToMany(mappedBy = "keyword")
     private List<PostKeyword> postKeywords = new ArrayList<>();
 
-    @CreatedDate
-    private LocalDateTime createdDate;
+    @CreatedDate private LocalDateTime createdDate;
 
     public Keyword(String name) {
         this.name = name;

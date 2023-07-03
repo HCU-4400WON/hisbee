@@ -20,13 +20,11 @@ public class PostSchJob extends QuartzJobBean {
 
     /**
      * 배치를 실행시키는 구문 : 스케줄링된 이벤트가 발생할때마다 한번씩 호출된다.
+     *
      * @param context
      * @throws JobExecutionException
      */
-
     @SneakyThrows
     @Override
-    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-
-    }
+    protected void executeInternal(JobExecutionContext context) throws JobExecutionException {}
 }

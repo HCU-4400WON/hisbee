@@ -1,21 +1,19 @@
 package com.hcu.hot6.domain.request;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import lombok.Builder;
+import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Data
 @Builder
 public class PostCreationRequest {
 
     // #1
-    @NotNull
-    private String title;
+    @NotNull private String title;
     private String summary;
     private TagForm tags;
 
@@ -26,11 +24,9 @@ public class PostCreationRequest {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date recruitEnd;
 
-    @NotNull
-    private List<String> postTypes;
+    @NotNull private List<String> postTypes;
 
-    @NotNull
-    private String contact;
+    @NotNull private String contact;
     private String contactDetails;
 
     // #2
@@ -39,8 +35,7 @@ public class PostCreationRequest {
     private String qualifications;
     private String targetCount;
 
-    @NotNull
-    private String duration;
+    @NotNull private String duration;
 
     // #3
     private List<String> keywords;

@@ -1,13 +1,12 @@
 package com.hcu.hot6.domain;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -28,8 +27,7 @@ public class Likes {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @CreatedDate
-    private LocalDateTime createdDate;
+    @CreatedDate private LocalDateTime createdDate;
 
     public Likes(Post post, Member member) {
         this.post = post;

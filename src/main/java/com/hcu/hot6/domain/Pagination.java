@@ -1,20 +1,21 @@
 package com.hcu.hot6.domain;
 
-import lombok.Getter;
-
 import static java.lang.Math.min;
+
+import lombok.Getter;
 
 @Getter
 public class Pagination {
-    public final static long LIMIT = 12;
-    private final static int PAGE_OFFSET = 5;
+    public static final long LIMIT = 12;
+    private static final int PAGE_OFFSET = 5;
+
     public Pagination(int page, long total, int limit) {
         this.curr = page;
         this.total = total;
-        this.pageEnd = min(
-                (int) (Math.ceil((double) curr / PAGE_OFFSET) * PAGE_OFFSET),
-                (int) Math.ceil((double) total / LIMIT)
-        );
+        this.pageEnd =
+                min(
+                        (int) (Math.ceil((double) curr / PAGE_OFFSET) * PAGE_OFFSET),
+                        (int) Math.ceil((double) total / LIMIT));
         this.pageBegin = Math.max(1, pageEnd - (PAGE_OFFSET - 1));
         this.offset = (page - 1) * limit;
         this.limit = limit;
@@ -28,5 +29,4 @@ public class Pagination {
 
     private final long offset;
     private final int limit;
-
 }

@@ -9,11 +9,9 @@ import lombok.Getter;
 @Getter
 public class MemberRequest {
 
-    @NotNull
-    private String nickname;
+    @NotNull private String nickname;
 
-    @NotNull
-    private Major major1;
+    @NotNull private Major major1;
 
     // optional
     private Major major2;

@@ -1,12 +1,10 @@
 package com.hcu.hot6.domain.request;
 
-import com.hcu.hot6.domain.Duration;
+import java.util.Date;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import java.util.Date;
-import java.util.List;
 
 @Builder
 @Getter
@@ -41,8 +39,8 @@ public class PostUpdateRequest {
     private String content;
 
     // #5
-//    private List<String> addPosterPaths;
-//    private List<String> delPosterPaths;
+    //    private List<String> addPosterPaths;
+    //    private List<String> delPosterPaths;
     private List<String> posterPaths;
 
     //
