@@ -43,6 +43,7 @@ import ConfirmModal from "components/ConfirmModal";
 import AlertModal from "components/AlertModal";
 import Outline from "components/Outline";
 import { TextField } from "@mui/material";
+import "./css/textarea.css";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -87,7 +88,6 @@ function PostAddForm2() {
         first: [],
         second: [],
         postTypes: [],
-
         recruitStart: converter("year", new Date()), // string
         recruitEnd: converter("year", new Date()), // string
         duration: "미설정",
@@ -470,7 +470,7 @@ function PostAddForm2() {
           </p> */}
 
             <div className="w-full h-[400px] flex items-start justify-between mb-[20px] ">
-              <div className="w-[400px] border h-[350px] mt-[30px] bg-white p-[30px] rounded-2xl shadow-sm">
+              <div className="min-w-[400px] border h-[350px] mt-[30px] bg-white p-[30px] rounded-2xl shadow-sm">
                 <div className="mb-[10px]">
                   <span className="flex items-center justify-between mb-[20px]">
                     <span className="flex items-center">
@@ -500,6 +500,7 @@ function PostAddForm2() {
                         <TextField
                           {...field}
                           variant="standard"
+                          sx={{ width: "100%", mb: 1 }}
                           placeholder="제목을 입력해주세요"
                         />
                       )}

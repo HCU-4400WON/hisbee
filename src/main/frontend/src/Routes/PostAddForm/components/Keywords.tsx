@@ -80,6 +80,7 @@ export function Keywords({ getValues, setValue, register }: any) {
               // whileHover={{
               // x: [10, -10, -10, -10, 10, -10, 10, -10, 10, -10],
               // }}
+              type="button"
               whileFocus="vibrate"
               variants={presenseVariant}
               initial="initial"
