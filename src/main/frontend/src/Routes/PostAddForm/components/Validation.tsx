@@ -23,7 +23,7 @@ export default function Validation({ message }: any) {
     <AnimatePresence>
       <motion.div
         variants={ValidationVariant}
-        className="text-[20px] text-red-500 absolute ml-[-12px] mt-[-5px]"
+        className="text-[20px] text-red-500 ml-[-12px] mt-[-5px]"
         initial="hidden"
         animate="showing"
         exit="exit"

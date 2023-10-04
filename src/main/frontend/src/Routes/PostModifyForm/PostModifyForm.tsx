@@ -1,6 +1,5 @@
 import tw from "tailwind-styled-components";
-import { async } from "@firebase/util";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -13,14 +12,6 @@ import { EditorState, convertToRaw, ContentState } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import styled from "styled-components";
 
-import {
-  ref,
-  getDownloadURL,
-  uploadBytes,
-  uploadBytesResumable,
-} from "firebase/storage";
-import { storage } from "../../firebase";
-import { get } from "http";
 import Thumbnail from "./components/Thumbnail";
 
 import {
@@ -29,14 +20,7 @@ import {
   IPostExample,
   PostExamples,
 } from "./PostExamples";
-import {
-  createPost,
-  departments,
-  ICreatePost,
-  IReadOnePost,
-  IUpdatePost,
-  updatePost,
-} from "api";
+import { IUpdatePost, updatePost } from "api";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
 import { useSetRecoilState } from "recoil";
@@ -52,7 +36,6 @@ import { Duration } from "./components/Duration";
 import { Keywords } from "./components/Keywords";
 import { Helmet } from "react-helmet";
 import Outline from "components/Outline";
-import Validation from "./components/Validation";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -83,7 +66,7 @@ const DetailUnSelectedBUTTON = `${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
 
 const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8px] rounded-lg`;
 const MajorUnSelectedBUTTON = `${MainBLUE} px-[15px] py-[8px] rounded-lg`;
-const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg`;
+const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg border-2 border-gray-200`;
 
 const ThumbnailKeywordsButton = tw(motion.div)`
   text-[15px] px-[15px] py-[2px] rounded-full mr-[10px] bg-blue-100
@@ -666,7 +649,7 @@ function PostModifyForm() {
                 <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
               </div>
             </Link>
-            <p className="text-[25px] font-unique">모집글 수정하기</p>
+            <p className="text-[25px] font-[400]">모집글 수정하기</p>
           </span>
           {/* <div className="flex justify-between items-center">
                     
@@ -686,14 +669,14 @@ function PostModifyForm() {
         <form onSubmit={handleSubmit(onSubmit as any)} className="px-[20px]">
           <div className="bg-slate-100 p-[50px] rounded-3xl mb-[50px]">
             <div className="flex justify-between w-full relative">
-              <p className="text-[20px] font-main">
+              <p className="text-[20px] font-[400]">
                 썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
               </p>
 
               {!postExampleToggle && (
                 <button
                   type="button"
-                  className={`bg-white py-[5px] text-[16px] px-[15px] border-2 border-blue-500 text-blue-500 rounded-lg`}
+                  className={`bg-white py-[5px] font-[400] text-[16px] px-[15px] border-2 border-blue-500 text-blue-500 rounded-lg`}
                   onClick={(e) => setPostExampleToggle(true)}
                 >
                   다른 모집글은 어떻게 작성되었는지 살펴보세요!
@@ -742,25 +725,14 @@ function PostModifyForm() {
             썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
           </p> */}
 
-            <div className="w-full h-[400px] flex items-start justify-between my-[20px] ">
+            <div className="w-full h-[400px] flex items-start justify-between mb-[20px] ">
               <div className="w-[400px] border h-[350px] mt-[30px] bg-white p-[30px] rounded-2xl shadow-sm">
                 <div className="mb-[10px]">
                   <span className="flex items-center justify-between mb-[20px]">
                     <span className="flex items-center">
                       {/* <input className="w-[70px] px-[10px] rounded-full mr-[20px]" placeholder="일정 입력"/> */}
                       {/* <input className="w-[70px] px-[5px] rounded-full " placeholder="모집유형1"/> */}
-                      <span className="px-[10px] rounded-full bg-gray-200 font-light">
-                        {/* {getValues("durationIndex") === "0" ? 
-                                        "상시 모집"
-                                 : new Date(getValues("recruitStart")!) > new Date() ?
-                                 "모집 예정" :
-                                 getValues("recruitEnd")==="" ?
-                                 "상시 모집"
-                                 :dateDifference(getValues("recruitEnd")!) === 0 ?
-                                 "오늘 마감"
-
-                                  : "D-"+ dateDifference(getValues("recruitEnd")! )} */}
-
+                      <span className="px-[10px] py-[3px] rounded-full bg-gray-200 font-light">
                         {convertDateToString(
                           getValues("recruitStart"),
                           getValues("recruitEnd")
@@ -777,7 +749,7 @@ function PostModifyForm() {
                   </span>
                   {/* <div id="input-custom-css"> */}
                   <div className=" flex relative">
-                    <Validation />
+                    <span className="text-[#ff0000]">*</span>
                     <input
                       className="w-[350px] text-[19px] py-[5px] mb-[10px] border-b-2"
                       onFocus={() => {
@@ -875,10 +847,9 @@ function PostModifyForm() {
                         )
                       )}
                     </AnimatePresence>
-
-                    {getValues(lineObj.array as any).length < 3 && (
-                      <>
-                        <div className="relative flex items-center">
+                    <div className="relative">
+                      {getValues(lineObj.array as any).length < 3 && (
+                        <div className="flex items-center absolute">
                           <input
                             type="text"
                             className={`KeywordInput py-[2px] text-[15px] px-[15px] rounded-full ${LightMainBLUE}`}
@@ -942,8 +913,8 @@ function PostModifyForm() {
                             +{" "}
                           </button>
                         </div>
-                      </>
-                    )}
+                      )}
+                    </div>
                   </div>
                 ))}
 
@@ -956,7 +927,7 @@ function PostModifyForm() {
               </div>
 
               <div className="w-[400px] h-[350px] px-[60px] py-[30px]">
-                <Validation />
+                <span className="text-[#ff0000]">*</span>
                 <span className="">모집 기간</span>
 
                 <span className="pl-[30px] mb-[200px]">
@@ -988,8 +959,8 @@ function PostModifyForm() {
               </div>
 
               <div className=" w-[400px]  h-[350px] pl-[0px] py-[30px]">
-                <Validation />
-                <span className="relative flex items-center">
+                <span className="flex items-center">
+                  <span className="text-[#ff0000]">*</span>
                   모임 유형(카테고리){" "}
                   <span className="text-[13px] ml-[20px]">
                     <span className="text-blue-600 font-bold">최대 2개</span>{" "}
@@ -1064,18 +1035,20 @@ function PostModifyForm() {
 
             <div>
               {/* <p className="text-[20px] font-main">모집글 필수 내용</p> */}
-              <p className="mt-[10px]">지원에 필요한 정보를 채워주세요!</p>
-              <div className="flex items-center w-full justify-between">
+              <p className="my-[20px] font-[400]">
+                지원에 필요한 정보를 채워주세요!
+              </p>
+              <div className="flex items-start w-full justify-between">
                 {/* <div className="w-[600px] mt-[20px] mr-[100px]"> */}
                 <div className="relative flex items-center w-[45%]">
-                  <Validation />
+                  <span className="text-[#ff0000]">*</span>
                   <div className="w-[130px] flex">신청 경로</div>
                   <div className="relative flex w-full items-center">
                     <input
                       // onFocus={{
                       // }}
                       type="text"
-                      className="w-full border-b border-gray-300 px-[10px] py-[5px] bg-slate-100 "
+                      className="w-full border-b border-gray-300 px-[0px] py-[5px] bg-slate-100 "
                       placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
                       {...register("contact")}
                     />
@@ -1161,7 +1134,7 @@ function PostModifyForm() {
                   setOptionalFoldToggle((prev) => [false, ...prev.slice(1)])
                 }
               ></i>
-              <p className="text-[20px] font-main">모집 대상 조건 설정하기</p>
+              <p className="text-[20px] font-[400]">모집 대상 조건 설정하기</p>
               <p className="mt-[10px]">
                 모집글들을 필터링할 때 쓰이는 정보이니 채워주시면 좋습니다.
               </p>
@@ -1314,7 +1287,7 @@ function PostModifyForm() {
                   ])
                 }
               ></i>
-              <p className="text-[20px] font-main">자유 내용 입력</p>
+              <p className="text-[20px] font-[400]">자유 내용 입력</p>
               <p className="mt-[10px] mb-[20px]">
                 모임의 목적,활동 내용 등에 대한 자세한 내용을 자유롭게
                 작성해주세요!
@@ -1396,7 +1369,7 @@ function PostModifyForm() {
                 }
               ></i>
               {/* <div> */}
-              <p className="text-[20px] font-main">포스터 등록</p>
+              <p className="text-[20px] font-[400]">포스터 등록</p>
               <p className="mt-[10px]">
                 포스터가 있다면 업로드해주세요! 모집글 페이지 및 포스터 모아보기
                 페이지에서 보여집니다.

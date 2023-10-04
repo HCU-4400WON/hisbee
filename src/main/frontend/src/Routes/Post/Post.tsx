@@ -1,16 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import LoadingAnimation from "components/LoadingAnimation";
 import { Helmet } from "react-helmet";
 import {
-  addLikePost,
-  createMentoring,
-  deleteLikePost,
-  departments,
   IReadAllPosts,
   IReadOnePost,
   keywordAutoComplete,
   loginCheckApi,
-  posts,
   readPosts,
 } from "api";
 import { AxiosError, AxiosResponse } from "axios";
@@ -22,31 +16,23 @@ import {
   isSignupModalState,
 } from "components/atom";
 import Login from "components/LoginModal";
-import { motion } from "framer-motion";
-import React, {
-  ChangeEvent,
-  ComponentRef,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { useLocation, useMatch, useNavigate } from "react-router";
-import { Link, useFetcher } from "react-router-dom";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router";
+import { Link } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
-import Card from "Routes/Post/Card";
 import Thumbnail from "./Thumbnail";
-import { PostExamples } from "Routes/PostAddForm/components/PostExamples";
 import "./css/button.css";
 import "./css/textfield.css";
 import SignUp2 from "Routes/Main/SignUp2";
 import LoadingLottie from "components/LoadingLottie";
 import Outline from "components/Outline";
-import { AnyTxtRecord } from "dns";
-import { async } from "@firebase/util";
-import ConfirmModal from "components/ConfirmModal";
 import AlertModal from "components/AlertModal";
-
+import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
+import { Autocomplete, TextField } from "@mui/material";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import { AnyTxtRecord } from "dns";
 const SelectFilterBox = tw.select`
 mr-[20px] px-[10px] bg-[#F9FAFB] py-[5px] rounded-lg text-center border
 text-gray-500 text-[16px] w-auto
@@ -99,11 +85,6 @@ function Post() {
 
   const [order, setOrder] = useState<string>("recent");
 
-  // Filtering
-  const [filterCategory, setFilterCategory] = useState<string>("");
-  const [filterPosition, setFilterPosition] = useState<string>("");
-  const [filterPay, setFilterPay] = useState<string>("");
-
   const [selectedMyDeptOnly, setSelectedMyDeptOnly] = useState<boolean>(false);
   const [selectedMajor, setSelectedMajor] = useState<string | "">("");
   const [selectedGrade, setSelectedGrade] = useState<string | "">("");
@@ -130,33 +111,7 @@ function Post() {
 
   const [getPageNums, setGetPageNums] = useState<number>(4);
 
-  const POSTS_PER_PAGE = 12;
   const [nowPage, setNowPage] = useState(1);
-  const [prevPage, setPrevPage] = useState(Math.floor((nowPage - 1) / 10) * 10);
-  const [nextPage, setNextPage] = useState(Math.ceil(nowPage / 10) * 10 + 1);
-
-  const onPageClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const {
-      currentTarget: { id },
-    } = event;
-    if (id === "next") {
-      if (nextPage <= Math.ceil((posts?.total as number) / POSTS_PER_PAGE))
-        setNowPage(nextPage);
-      else setNowPage(Math.ceil((posts?.total as number) / POSTS_PER_PAGE));
-    } else if (id === "prev") {
-      if (prevPage > 0) setNowPage(prevPage);
-      else setNowPage(1);
-    } else {
-      setNowPage(+id);
-    }
-  };
-
-  // useEffect(() => {
-  //   setNextPage(Math.ceil(nowPage / 10) * 10 + 1);
-  //   setPrevPage(Math.floor((nowPage - 1) / 10) * 10);
-  //   console.log(prevPage, nextPage);
-  //   // refetch();
-  // }, [nowPage]);
 
   const [LIMIT, useLIMIT] = useState<number>(12);
   useEffect(() => {
@@ -180,10 +135,6 @@ function Post() {
   useEffect(() => {
     const fn = () => {
       if (getPageNums < LIMIT) {
-        // console.log("!!!!!!!!!!!!!");
-        // window.removeEventListener("scroll", handleScroll);
-        // io.unobserve(document.getElementById("sentinel") as Element);
-        // console.log("콩쥐");
         setHideSentinel(true);
         return;
       }
@@ -230,34 +181,18 @@ function Post() {
       ),
     {
       onSuccess: (posts) => {
-        // keywords 변경
-        // setKeywords(posts.relatedKeywords);
-
-        //   // console.log("1");
-        // }
-
-        // setNowPage((prev) => prev + 1);
-        // setGetPageNums(posts.total);
-        // setGetPageNums(posts.total);
-        // console.log("debug", posts.total);
-
         if (scrolling) {
           setUnionData((prev) => [...prev, ...posts.posts]);
         } else {
           setUnionData(posts.posts);
         }
-        // setUnionDataLoading(true);
         setGetPageNums(posts.total);
         setScrolling(false);
-        // setTimeout(() => {
-        //   setUnionDataLoading(true);
-        // }, 1000);
       },
     }
   );
 
   const setIsLogin = useSetRecoilState(isLoginState);
-  const setIsLoginModal = useSetRecoilState(isLoginModalState);
 
   const { mutate: loginCheckMutate, isLoading: isLoginCheckLoading } =
     useMutation(["loginCheckApiPost" as string], loginCheckApi, {
@@ -284,23 +219,18 @@ function Post() {
       setSelectedGrade(selectedValue);
     }
   };
-  const onChange = (e: React.FormEvent<HTMLInputElement>) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedId = e.currentTarget.id;
     const selectedValue = e.currentTarget.value;
 
-    if (selectedId === "keywordInput") setKeywordInput(selectedValue);
+    setKeywordInput(selectedValue);
   };
   const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const selectedId = e.currentTarget.id;
     const selectedValue = e.currentTarget.childNodes[0].textContent!;
-    // if(Categories.includes(buttonName)){
-    //   const targetIndex = Categories.findIndex( elem => elem === buttonName);
-    //   setSelectedCategory(targetIndex);
-    // }
 
     if (selectedId === "categoryButton") {
       setSelectedCategory(selectedValue);
-      // setSelectedKeywords([]);
     }
 
     // else i
@@ -326,7 +256,6 @@ function Post() {
       if (gradeRef.current) gradeRef.current.selectedIndex = 0;
       setSelectedKeywords([]);
       setSelectedMajor("전공 무관");
-      //다시 전체 모집글 refetch
     }
   };
 
@@ -359,7 +288,6 @@ function Post() {
 
   const Grades = [
     "학년 무관",
-
     "1학년",
     "2학년",
     "3학년",
@@ -374,14 +302,12 @@ function Post() {
     if (e.key === "Enter") {
       setSelectedKeywords((prev) => [...prev, keywordInput]);
       setKeywords((prev) => [...prev, keywordInput]);
-      setIsAutoPresent(false);
+
       setKeywordInput("");
     }
   };
 
   const [unionData, setUnionData] = useState<IReadOnePost[] | []>([]);
-
-  const [stopFetching, setStopFetching] = useState<boolean>(false);
 
   const sentinel = document.getElementById("sentinel") as Element;
 
@@ -423,20 +349,6 @@ function Post() {
     io.observe(document.getElementById("sentinel") as Element);
   }, []);
 
-  // useEffect(() => {
-  //   majorAutoComplete(getValues("major1")).then((data) =>
-  //     setShowList1(data.results)
-  //   );
-  //   setValue("canMajor1", checkMajor(getValues("major1")));
-  //   console.log();
-  // }, [getValues("major1")]);
-
-  function handleBlur(e: any) {
-    if (e.target.id !== "noBlur" && e.target.id !== "keywordInput")
-      setIsAutoPresent(false);
-    console.log(e.target.id);
-  }
-
   const [keywordAutoList, setKeywordAutoList] = useState<string[] | []>([]);
 
   useEffect(() => {
@@ -444,11 +356,6 @@ function Post() {
       setKeywordAutoList(keywords.results)
     );
   }, [keywordInput]);
-  // useEffect(() => {
-  //   setHideSentinel(false);
-  // }, [search, order, selectedCategory, LIMIT + "", selectedKeywords]);
-
-  const [isAutoPresent, setIsAutoPresent] = useState<boolean>(false);
 
   const isLogin = useRecoilValue(isLoginState);
 
@@ -457,6 +364,24 @@ function Post() {
   const [isPreventAlertModal, setIsPreventAlertModal] =
     useRecoilState(isPreventAlertState);
 
+  const searchKeyword = (e: any) => {
+    e.preventDefault();
+    setSelectedKeywords((prev) => [...prev, keywordInput]);
+    setKeywords((prev) => [...prev, keywordInput]);
+    setKeywordInput("");
+  };
+
+  const onEnterPress = useCallback(
+    (e: any) => {
+      if (e.key === "Enter" && !autocompleteOpenRef.current) {
+        console.log("enter");
+        searchKeyword(e);
+      }
+    },
+    [keywordInput]
+  );
+
+  const autocompleteOpenRef = useRef(false);
   return (
     <>
       {(isLoading || isLoginCheckLoading) && <LoadingLottie isPost={true} />}
@@ -479,7 +404,7 @@ function Post() {
           />
         ) : null}
 
-        <Container onClick={handleBlur}>
+        <Container>
           <Banner
             src="./img/banner_post.png"
             className="min-w-[1470px]"
@@ -509,85 +434,50 @@ function Post() {
 
           <Outline bgColor="bg-gray-100">
             {/* <div className="mt-[20px]"> */}
-            <div id="noBlur" className="min-w-[1470px] bg-gray-100 pt-[20px]">
-              <div id="noBlur" className="flex py-[20px] px-[70px]">
-                <div id="noBlur" className="flex items-start  ">
-                  {/* <select ref={majorRef} id="majorSelect" onInput={onInput} className="px-[10px] border-2 border-black">
-                    {Majors.map((major, index) => (
-                      <option key={index}>
-                        {major}
-                      </option>
-                    ))}
-                  </select>
-                  <select ref={gradeRef} id="gradeSelect" onInput={onInput} className="ml-[50px] px-[10px] border-2 border-black">
-                    {Grades.map((grade,index)=> (
-                      <option key={index}>
-                        {grade}
-                      </option>
-                    ))}
-                  </select> */}
-                  <span id="noBlur" className="flex items-center ">
-                    <div id="noBlur" className="mr-[20px] py-[0px]">
-                      <p id="noBlur" className="text-[16px] font-[500]">
-                        필터링 키워드
-                      </p>
+            <div className="min-w-[1470px] bg-gray-100 pt-[20px]">
+              <div className="flex py-[20px] px-[70px]">
+                <div className="flex items-start  ">
+                  <span className="flex items-center ">
+                    <div className="mr-[20px] py-[0px]">
+                      <p className="text-[16px] font-[500]">필터링 키워드</p>
                     </div>
-                    {isAutoPresent && (
-                      <div id="noBlur" className="relative">
-                        <select
-                          id="noBlur"
-                          className="absolute top-[20px] bg-gray-100 w-[200px]  "
-                          size={3}
-                        >
-                          {keywordAutoList.length !== 0 &&
-                            keywordAutoList.map((keyword, index) => (
-                              <option
-                                className="bg-gray-100 px-[5px] py-[2px]"
-                                value={keyword}
-                                key={index}
-                                onClick={() => setKeywordInput(keyword)}
-                              >
-                                {keyword}
-                              </option>
-                            ))}
-                        </select>
-                      </div>
-                    )}
 
-                    <div id="noBlur" className="w-[280px] mr-[20px]">
-                      <input
-                        value={keywordInput}
-                        id="keywordInput"
-                        onKeyPress={onKeyPress}
-                        onChange={onChange}
-                        type="text"
-                        className="w-full text-[15px] border-b border-gray-400 bg-gray-100 "
-                        onFocus={() => setIsAutoPresent(true)}
-                        placeholder="키워드로 원하는 모집글만 볼 수 있어요."
+                    <div className=" w-[300px] mr-[20px]">
+                      <Autocomplete
+                        id="size-small-standard"
+                        size="small"
+                        options={keywordAutoList}
+                        onChange={(event, newValue) => {
+                          setKeywordInput(newValue as string);
+                        }}
+                        onOpen={() => {
+                          autocompleteOpenRef.current = true;
+                        }}
+                        onClose={() => {
+                          autocompleteOpenRef.current = false;
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            onKeyDown={onEnterPress}
+                            value={keywordInput}
+                            onChange={onChange}
+                            variant="standard"
+                            placeholder="키워드로 원하는 모집글만 볼 수 있어요"
+                          />
+                        )}
                       />
                     </div>
                   </span>
-                  <i
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSelectedKeywords((prev) => [...prev, keywordInput]);
-                      setKeywords((prev) => [...prev, keywordInput]);
-                      setIsAutoPresent(false);
-                      setKeywordInput("");
-                    }}
-                    className="fa-solid fa-magnifying-glass mr-[20px] mt-[2px]"
-                  ></i>
+
+                  <SearchOutlinedIcon
+                    className="search"
+                    sx={{ width: "22px", mr: "10px" }}
+                    onClick={searchKeyword}
+                  />
 
                   <div className="">
-                    <div className="mb-[0px] grid grid-cols-7 gap-x-[10px] gap-y-[10px]">
-                      {/* {selectedCategory !== "전체" && (
-                        <button
-                          id="deleteKeywordButton"
-                          className="text-[16px] bg-white flex items-center h-[30px] border-0 rounded-lg text-center px-[10px] mr-[30px]"
-                        >
-                          {selectedCategory}
-                        </button>
-                      )} */}
+                    <div className="mb-[0px] flex flex-wrap gap-x-[10px] gap-y-[10px]">
                       {selectedKeywords.map((keyword, index) => (
                         <button
                           id="deleteKeywordButton"
@@ -595,25 +485,19 @@ function Post() {
                           key={index}
                           className=" flex justify-center text-[14px] bg-white flex items-center py-[5px] border-0 rounded-lg text-center px-[13px] h-[30px]"
                         >
-                          {keyword}
-                          <div className="text-[15px] font-[100] text-black ml-[5px] ">
-                            X
-                          </div>
+                          <p>{keyword}</p>
+                          <CloseIcon sx={{ width: "17px", ml: "4px" }} />
                         </button>
                       ))}
                     </div>
                   </div>
                 </div>
-
-                {/* <button id="allFilterDelete" onClick={onClick}>
-                      필터 전체 삭제 버튼
-                </button> */}
               </div>
               <div className=" flex items-start px-[70px] mb-[30px]">
                 <div className="flex mr-[20px] mt-[4px]">
                   <p className="text-[14px] mb-[0px]">추천 키워드 </p>
                 </div>
-                <div className="grid grid-cols-8 gap-x-[10px] gap-y-[10px]">
+                <div className="flex flex-wrap gap-x-[10px] gap-y-[10px]">
                   {posts?.relatedKeywords.map(
                     (keyword, index) =>
                       !selectedKeywords.includes(keyword as never) && (
@@ -623,10 +507,8 @@ function Post() {
                           key={index}
                           className="flex justify-center text-[14px] bg-gray-200 flex items-center py-[5px] border-0 rounded-lg text-center px-[13px] h-[30px]"
                         >
-                          <p>{keyword}</p>
-                          <div className="text-[25px] font-[100] ml-[5px]">
-                            +
-                          </div>
+                          <p>{keyword}</p>{" "}
+                          <AddIcon sx={{ width: "17px", ml: "4px" }} />
                         </button>
                       )
                   )}

@@ -37,7 +37,7 @@ export function Keywords({ getValues, setValue, register }: any) {
   const LightMainBLUE = "bg-blue-100";
   return (
     <div id="kk">
-      <p className="text-[20px] font-[500]">
+      <p className="text-[20px] font-[400]">
         모임과 관련된 키워드를 입력하여 검색 결과에 노출될 수 있게 해보세요!
       </p>
       <p className="mt-[30px] mb-[15px] text-[18px]">키워드</p>
@@ -80,6 +80,7 @@ export function Keywords({ getValues, setValue, register }: any) {
               // whileHover={{
               // x: [10, -10, -10, -10, 10, -10, 10, -10, 10, -10],
               // }}
+              type="button"
               whileFocus="vibrate"
               variants={presenseVariant}
               initial="initial"
@@ -109,7 +110,7 @@ export function Keywords({ getValues, setValue, register }: any) {
         <div className="w-[300px]">
           <input
             type="text"
-            className="w-[300px] border-b-2 h-[40px] px-[10px] bg-gray-100 border-gray-400"
+            className="w-[300px] border-b-2 h-[40px] px-[0px] bg-gray-100 border-gray-400"
             placeholder="엔터키로 키워드를 등록하세요"
             onKeyPress={async (e) => {
               if (e.key === "Enter") {

@@ -25,8 +25,8 @@ export function Department({ getValues, setValue }: any) {
   const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8px] rounded-lg`;
 
   const DetailSelectedBUTTON = `border-2 border-blue-300 ${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
-  const DetailUnSelectedBUTTON = `${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
-  const MajorUnSelectedBUTTON = `${MainBLUE} px-[15px] py-[8px] rounded-lg`;
+  const DetailUnSelectedBUTTON = `border-2 border-blue-100 ${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
+  const MajorUnSelectedBUTTON = `border-2 border-blue-200 ${MainBLUE} px-[15px] py-[8px] rounded-lg`;
   const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg`;
   return (
     <div>
