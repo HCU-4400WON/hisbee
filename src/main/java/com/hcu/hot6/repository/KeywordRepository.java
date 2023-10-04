@@ -2,11 +2,10 @@ package com.hcu.hot6.repository;
 
 import com.hcu.hot6.domain.Keyword;
 import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
@@ -33,11 +32,9 @@ public class KeywordRepository {
         return em.createQuery("select k from Keyword as k where k.name like :q", Keyword.class)
                 .setParameter("q", "%" + q + "%")
                 .getResultList();
-
     }
 
-    public List<Keyword> findAll(){
-        return em.createQuery("select k from Keyword k", Keyword.class)
-                .getResultList();
+    public List<Keyword> findAll() {
+        return em.createQuery("select k from Keyword k", Keyword.class).getResultList();
     }
 }

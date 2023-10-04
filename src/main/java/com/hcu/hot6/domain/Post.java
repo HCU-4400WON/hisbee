@@ -1,22 +1,21 @@
 package com.hcu.hot6.domain;
 
+import static com.hcu.hot6.util.Utils.nonNullOrElse;
+
 import com.hcu.hot6.domain.request.PostCreationRequest;
 import com.hcu.hot6.domain.request.PostUpdateRequest;
 import com.hcu.hot6.domain.response.PostReadOneResponse;
 import com.hcu.hot6.util.Utils;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.hcu.hot6.util.Utils.nonNullOrElse;
 
 @Entity
 @Getter
@@ -35,13 +34,14 @@ public class Post {
     // 필수 아닌 필드
     private String contactDetails;
     private String qualifications;
-    private String targetYears;         // 다중선택 가능. "," 콤마로 구분
-    private String targetDepartment;    // 다중선택 가능. "," 콤마로 구분
+    private String targetYears; // 다중선택 가능. "," 콤마로 구분
+    private String targetDepartment; // 다중선택 가능. "," 콤마로 구분
     private String targetCount;
     private String keywords;
 
     @Column(length = 8192)
     private String content;
+
     private Long views;
     private boolean isAutoClose;
     private boolean isETC;
@@ -67,11 +67,9 @@ public class Post {
     @JoinColumn(name = "archive_id")
     private Archive archive;
 
-    @CreatedDate
-    private LocalDateTime createdDate;
+    @CreatedDate private LocalDateTime createdDate;
 
-    @LastModifiedDate
-    private LocalDateTime lastModifiedDate;
+    @LastModifiedDate private LocalDateTime lastModifiedDate;
 
     public Post(PostCreationRequest request, Member author) {
         // required
@@ -80,11 +78,16 @@ public class Post {
 
         // optional
         this.content = (request.getContent() != null) ? request.getContent() : null;
-        this.keywords = (request.getKeywords() != null) ? Utils.toString(request.getKeywords(), ",") : null;
-        this.contactDetails = (request.getContactDetails() != null) ? request.getContactDetails() : null;
-        this.qualifications = (request.getQualifications() != null) ? request.getQualifications() : null;
-        this.targetYears = (request.getYears() != null) ? Utils.toString(request.getYears(), ",") : null;
-        this.targetDepartment = (request.getDepartments() != null) ? Utils.toString(request.getDepartments(), ",") : null;
+        this.keywords =
+                (request.getKeywords() != null) ? Utils.toString(request.getKeywords(), ",") : null;
+        this.contactDetails =
+                (request.getContactDetails() != null) ? request.getContactDetails() : null;
+        this.qualifications =
+                (request.getQualifications() != null) ? request.getQualifications() : null;
+        this.targetYears =
+                (request.getYears() != null) ? Utils.toString(request.getYears(), ",") : null;
+        this.targetDepartment =
+                (request.getDepartments() != null) ? Utils.toString(request.getDepartments(), ",") : null;
         this.targetCount = (request.getTargetCount() != null) ? request.getTargetCount() : null;
         this.views = 0L;
         this.isAutoClose = false;
@@ -94,7 +97,7 @@ public class Post {
         savePosters(request.getPosterPaths());
     }
 
-    //=== 연관관계 메서드 ===//
+    // === 연관관계 메서드 ===//
 
     private void createThumbnail(Thumbnail thumbnail) {
         this.thumbnail = thumbnail;
@@ -105,9 +108,7 @@ public class Post {
         if (paths == null) return;
         if (!posters.isEmpty()) posters.clear();
 
-        List<Poster> posters = paths.stream()
-                .map(path -> new Poster(path, this))
-                .toList();
+        List<Poster> posters = paths.stream().map(path -> new Poster(path, this)).toList();
         this.posters.addAll(posters);
     }
 
@@ -131,22 +132,18 @@ public class Post {
     }
 
     public void update(PostUpdateRequest req) {
-        this.postTypes = (req.getPostTypes() != null)
-                ? Utils.toString(req.getPostTypes(), ",")
-                : postTypes;
+        this.postTypes =
+                (req.getPostTypes() != null) ? Utils.toString(req.getPostTypes(), ",") : postTypes;
         this.contact = nonNullOrElse(req.getContact(), contact);
         this.contactDetails = nonNullOrElse(req.getContactDetails(), contactDetails);
         this.qualifications = nonNullOrElse(req.getQualifications(), qualifications);
-        this.targetYears = (req.getYears() != null)
-                ? Utils.toString(req.getYears(), ",")
-                : targetYears;
-        this.targetDepartment = (req.getDepartments() != null)
-                ? Utils.toString(req.getDepartments(), ",")
-                : targetDepartment;
+        this.targetYears = (req.getYears() != null) ? Utils.toString(req.getYears(), ",") : targetYears;
+        this.targetDepartment =
+                (req.getDepartments() != null)
+                        ? Utils.toString(req.getDepartments(), ",")
+                        : targetDepartment;
         this.targetCount = nonNullOrElse(req.getTargetCount(), targetCount);
-        this.keywords = (req.getKeywords() != null)
-                ? Utils.toString(req.getKeywords(), ",")
-                : keywords;
+        this.keywords = (req.getKeywords() != null) ? Utils.toString(req.getKeywords(), ",") : keywords;
         this.content = nonNullOrElse(req.getContent(), content);
         this.isETC = nonNullOrElse(req.getIsETC(), isETC);
 

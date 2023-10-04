@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 public class VisitRepository {
     private final EntityManager em;
 
-    public void save(VisitCount visitCount){
+    public void save(VisitCount visitCount) {
         em.persist(visitCount);
     }
 }

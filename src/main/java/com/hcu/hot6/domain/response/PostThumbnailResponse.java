@@ -1,15 +1,14 @@
 package com.hcu.hot6.domain.response;
 
-import com.hcu.hot6.domain.Thumbnail;
-import com.hcu.hot6.domain.request.TagForm;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.util.Date;
-import java.util.List;
-
 import static com.hcu.hot6.util.Utils.toArray;
 import static com.hcu.hot6.util.Utils.toDate;
+
+import com.hcu.hot6.domain.Thumbnail;
+import com.hcu.hot6.domain.request.TagForm;
+import java.util.Date;
+import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
@@ -38,8 +37,10 @@ public class PostThumbnailResponse {
         this.createdDate = toDate(thumbnail.getPost().getCreatedDate());
         this.recruitStart = toDate(thumbnail.getRecruitStart());
         this.recruitEnd = toDate(thumbnail.getRecruitEnd());
-        this.hasLiked = email != null && thumbnail.getPost().getLikes().stream()
-                .anyMatch(bookmark -> email.equals(bookmark.getMember().getEmail()));
+        this.hasLiked =
+                email != null
+                        && thumbnail.getPost().getLikes().stream()
+                                .anyMatch(bookmark -> email.equals(bookmark.getMember().getEmail()));
         this.nLike = thumbnail.getPost().getLikes().size();
         this.isClosed = thumbnail.isClosed();
     }

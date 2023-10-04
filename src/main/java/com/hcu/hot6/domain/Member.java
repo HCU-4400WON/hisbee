@@ -1,19 +1,18 @@
 package com.hcu.hot6.domain;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.requireNonNullElse;
+
 import com.hcu.hot6.domain.enums.Major;
 import com.hcu.hot6.domain.request.MemberRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Objects.isNull;
-import static java.util.Objects.requireNonNullElse;
 
 @Entity
 @Getter
@@ -25,14 +24,11 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    @NotNull
-    private String uid;
+    @NotNull private String uid;
 
-    @NotNull
-    private String email;
+    @NotNull private String email;
 
-    @NotNull
-    private String pictureUrl;
+    @NotNull private String pictureUrl;
 
     private String nickname;
 
@@ -54,11 +50,8 @@ public class Member {
     private List<Archive> archives = new ArrayList<>();
 
     @Builder
-    public Member(String uid,
-                  String email,
-                  String pictureUrl,
-                  Boolean isRegistered,
-                  String nickname) {
+    public Member(
+            String uid, String email, String pictureUrl, Boolean isRegistered, String nickname) {
         this.uid = uid;
         this.email = email;
         this.pictureUrl = pictureUrl;

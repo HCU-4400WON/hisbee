@@ -3,15 +3,13 @@ package com.hcu.hot6.domain.enums;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.hcu.hot6.domain.Department;
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Arrays;
 
 @RequiredArgsConstructor
 @Getter
 public enum Major {
-
     NONE(Department.NONE, "해당없음"),
 
     GLS(Department.GLS, "글로벌리더십학부"),

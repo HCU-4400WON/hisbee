@@ -17,8 +17,11 @@ public class OAuth2UserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Cannot find match username=" + username));
+        Member member =
+                memberRepository
+                        .findByEmail(username)
+                        .orElseThrow(
+                                () -> new UsernameNotFoundException("Cannot find match username=" + username));
         return new OAuth2UserDetails(member);
     }
 }

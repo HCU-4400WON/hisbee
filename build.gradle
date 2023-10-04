@@ -2,10 +2,12 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.0.2'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'com.diffplug.spotless' version '6.11.0'
 }
 
 group = 'com.hcu'
-version = '0.0.1-SNAPSHOT'
+//version = '0.0.1-SNAPSHOT'
+archivesBaseName = 'app'
 sourceCompatibility = '17'
 
 configurations {
@@ -24,6 +26,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    implementation 'org.springframework.boot:spring-boot-starter-quartz:2.7.3'
     implementation 'org.jetbrains:annotations:23.0.0'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
@@ -45,4 +49,15 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+spotless {
+    java {
+        googleJavaFormat()
+        removeUnusedImports()
+        endWithNewline()
+        trimTrailingWhitespace()
+        indentWithTabs(2)
+        indentWithSpaces(4)
+    }
 }

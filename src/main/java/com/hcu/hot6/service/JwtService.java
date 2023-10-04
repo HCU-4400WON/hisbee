@@ -5,26 +5,24 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class JwtService {
 
-    private final static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final static long ACCESS_TOKEN_EXPIRY = 3600L; // 1 hour
+    private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private static final long ACCESS_TOKEN_EXPIRY = 3600L; // 1 hour
 
     public String generateToken(String email) {
         Instant now = Instant.now();
 
-        return Jwts
-                .builder()
+        return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
                 .setSubject(email)
                 .setIssuedAt(new Date(now.toEpochMilli()))
@@ -37,11 +35,13 @@ public class JwtService {
         try {
             return Optional.of(token)
                     .filter(Optional::isPresent)
-                    .map(jwt -> Jwts.parserBuilder()
-                            .setSigningKey(key)
-                            .build()
-                            .parseClaimsJws(jwt.get())
-                            .getBody());
+                    .map(
+                            jwt ->
+                                    Jwts.parserBuilder()
+                                            .setSigningKey(key)
+                                            .build()
+                                            .parseClaimsJws(jwt.get())
+                                            .getBody());
         } catch (JwtException e) {
             log.info(e.getMessage());
         }

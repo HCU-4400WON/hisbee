@@ -2,9 +2,8 @@ package com.hcu.hot6.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.RequiredArgsConstructor;
-
 import java.util.Arrays;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Department {

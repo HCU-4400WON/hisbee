@@ -1,12 +1,11 @@
 package com.hcu.hot6.oauth;
 
 import com.hcu.hot6.domain.Member;
+import java.util.Collection;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
 
 @RequiredArgsConstructor
 @Getter

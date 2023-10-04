@@ -9,6 +9,6 @@ import lombok.Getter;
 public class PoolSearchFilter {
     private int page;
     private Department department;
-    //private Position position;
+    // private Position position;
     private String grade;
 }
