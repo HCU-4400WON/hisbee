@@ -260,15 +260,18 @@ function Post() {
   };
 
   const Categories = [
+    // "전체",
+    // "동아리",
+    // "학회",
+    // "공모전/대회",
+    // "스터디",
+    // "프로젝트",
+    // "학술모임",
+    // "운동/게임/취미",
+    // "기타",
     "전체",
-    "동아리",
-    "학회",
-    "공모전/대회",
-    "스터디",
-    "프로젝트",
-    "학술모임",
-    "운동/게임/취미",
-    "기타",
+    "수업 내 프로젝트",
+    "자율 프로젝트",
   ];
   const Majors = [
     "학부 무관",
@@ -413,7 +416,7 @@ function Post() {
           <Outline bgColor="bg-white">
             {/* <div className=" mx-auto flex items-center w-full h-[40px] md:h-[60px] bg-white "> */}
             <div className="min-w-[1470px] mx-auto flex justify-center items-center h-[60px] bg-white ">
-              <div className="flex justify-between items-center min-w-[1200px] px-[70px] ">
+              <div className="flex justify-between items-center min-w-[500px] px-[70px] ">
                 {Categories.map((category, index) => (
                   <button
                     id="categoryButton"
