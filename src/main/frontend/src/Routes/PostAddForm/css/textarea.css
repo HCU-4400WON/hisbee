@@ -60,7 +60,7 @@
 
 .notes_slate:focus {
   outline: none;
-  background-image: linear-gradient(to right, #f1f5f9 10px, transparent 10px),
+  background-image: linear-gradient(to right, #f1f5f9 0px, transparent 0px),
     linear-gradient(to left, #f1f5f9 10px, transparent 10px),
     repeating-linear-gradient(
       #f1f5f9,
@@ -76,7 +76,7 @@
 .notes_gray:focus {
   outline: none;
   background-image: linear-gradient(to right, #f3f4f6 0px, transparent 0px),
-    linear-gradient(to left, #f3f4f6 0px, transparent 0px),
+    linear-gradient(to left, #f3f4f6 20px, transparent 0px),
     repeating-linear-gradient(
       #f3f4f6,
       #f3f4f6 28px,

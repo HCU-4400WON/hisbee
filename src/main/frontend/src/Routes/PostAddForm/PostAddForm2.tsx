@@ -4,7 +4,6 @@ import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import "./css/heading.css";
-// import "./css/textarea.css";
 import "./css/date.css";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -23,13 +22,8 @@ import {
 import { createPost, ICreatePost } from "api";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import {
-  isAlertModalState,
-  isConfirmModalState,
-  isLoginModalState,
-  isLoginState,
-} from "components/atom";
+import { useRecoilState } from "recoil";
+import { isAlertModalState, isConfirmModalState } from "components/atom";
 import Soon from "components/Soon";
 import { AnimatePresence, motion } from "framer-motion";
 import { ImageUpload } from "./components/ImageUpload";
@@ -75,7 +69,7 @@ const ThumbnailKeywordsButton = tw(motion.div)`
 `;
 
 const ThumbnailCategoryButton = tw(motion.div)`
-  min-h-[28px] py-[2px] mb-[10px] px-[15px] rounded-full mr-[10px] bg-blue-200
+  min-h-[28px] py-[2px] mb-[15px] px-[15px] rounded-full mr-[10px] bg-blue-200 
 `;
 
 function PostAddForm2() {
@@ -87,7 +81,7 @@ function PostAddForm2() {
         summary: "",
         first: [],
         second: [],
-        postTypes: [],
+        postTypes: ["수업 내 프로젝트"],
         recruitStart: converter("year", new Date()), // string
         recruitEnd: converter("year", new Date()), // string
         duration: "미설정",
@@ -283,14 +277,16 @@ function PostAddForm2() {
   };
 
   const Categories = [
-    "동아리",
-    "프로젝트",
-    "학회",
-    "학술모임",
-    "공모전/대회",
-    "운동/게임/취미",
-    "전공 스터디",
-    "기타 모임",
+    // "동아리",
+    // "프로젝트",
+    // "학회",
+    // "학술모임",
+    // "공모전/대회",
+    // "운동/게임/취미",
+    // "전공 스터디",
+    // "기타 모임",
+    "수업 내 프로젝트",
+    "자율 프로젝트",
   ];
 
   // useState로 상태관리하기 초기값은 EditorState.createEmpty()
@@ -449,9 +445,9 @@ function PostAddForm2() {
                       {postExampleToggle &&
                         (
                           PostExamples[
-                            getValues("postTypes").length === 0
+                            (getValues("postTypes").length === 0
                               ? "선택안됨"
-                              : getValues("postTypes")[0]
+                              : getValues("postTypes")[0]) as never
                           ] as IPostExample[]
                         )?.map((postExample: IPostExample, index: number) => (
                           <Thumbnail {...postExample} key={index} />
@@ -490,8 +486,10 @@ function PostAddForm2() {
                     <i className="fa-regular fa-heart text-[23px] text-gray-400"></i>
                   </span>
                   {/* <div id="input-custom-css"> */}
-                  <div className=" flex relative">
-                    <span className="text-[#ff0000]">*</span>
+                  <div className="flex relative">
+                    <span className="text-[#ff0000] absolute left-[-10px]">
+                      *
+                    </span>
                     <Controller
                       name="title"
                       control={control}
@@ -500,37 +498,36 @@ function PostAddForm2() {
                         <TextField
                           {...field}
                           variant="standard"
-                          sx={{ width: "100%", mb: 1 }}
+                          color="primary"
+                          sx={{
+                            width: "100%",
+                            mb: 1,
+                            "& input": {
+                              fontSize: "1.1rem",
+                              fontWeight: "bold",
+                            },
+                          }}
                           placeholder="제목을 입력해주세요"
                         />
                       )}
                     />
                   </div>
-                  {/* <motion.input
-                    whileFocus="animate"
-                    variants={inputVariants}
-                    initial="initial"
-                    animate="animate"
-                    id="titleBorder"
-                    className="w-[340px] border"
-                  ></motion.input>
-                </div> */}
+
                   <div className="h-[70px]">
-                    <div className="w-full">
-                      <textarea
-                        wrap="off"
-                        id="summary"
-                        onKeyPress={textareaResize}
-                        onKeyUp={textareaResize}
-                        className="notes w-[350px] text-[15px] "
-                        {...register("summary")}
-                        placeholder="(선택) 두줄 이내의 간결한 모임 설명글을 적어주세요"
-                      />
-                    </div>
-                    {/* <p className="text-gray-500 text-[13px] float-right">
-                    {" "}
-                    {getValues("summary").length} / 40
-                  </p> */}
+                    <Controller
+                      name="summary"
+                      control={control}
+                      defaultValue=""
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          variant="standard"
+                          color="primary"
+                          sx={{ width: "100%", mb: 1 }}
+                          placeholder="(선택) 간결한 설명글을 적어주세요"
+                        />
+                      )}
+                    />
                   </div>
                 </div>
 
@@ -701,14 +698,14 @@ function PostAddForm2() {
                 <span className="flex items-center">
                   <span className="text-[#ff0000]">*</span>
                   모임 유형(카테고리){" "}
-                  <span className="text-[13px] ml-[20px]">
-                    <span className="text-blue-600 font-bold">최대 2개</span>{" "}
+                  {/* <span className="text-[13px] ml-[20px]">
+                    <span className="text-blue-600 font-bold">최대 1개</span>{" "}
                     선택 가능
-                  </span>
+                  </span> */}
                 </span>
 
                 <div className="flex">
-                  <div className="grid grid-cols-2 gap-x-[20px] w-[330px]">
+                  <div className="grid grid-cols-2 gap-x-[20px] w-[350px]">
                     {Categories.map((category, index) => (
                       <span key={index} className="flex items-center mt-[20px]">
                         {/* <input {...register("postTypes")} value={category} type="checkBox" className="mx-[10px]" /> */}
@@ -719,32 +716,41 @@ function PostAddForm2() {
                             getValues("postTypes")?.includes(category as never)
                               ? MajorSeletedBUTTON
                               : UnSelectedBUTTON
-                          } px-[15px] py-[8px] rounded-lg w-[135px]`}
-                          onClick={async () => {
-                            const gv = getValues("postTypes");
-                            const gvIdx = gv.indexOf(category as never);
-                            if (
-                              !gv.includes(category as never) &&
-                              gv.length < 2
-                            ) {
-                              await setValue("postTypes", [
-                                ...gv,
-                                category as never,
-                              ]);
-                              if (category === "기타 모임") {
-                                document.getElementById("categoryETC")?.focus();
+                          } px-[15px] py-[8px] rounded-lg w-[150px]`}
+                          onClick={
+                            (e) => {
+                              const gv = getValues("postTypes");
+                              if (gv.length === 0) {
+                                setValue("postTypes", [category]);
+                              } else if (category !== gv[0]) {
+                                setValue("postTypes", [category]);
                               }
-                            } else if (
-                              gv.includes(category as never) &&
-                              gv.length <= 2
-                            ) {
-                              setValue("postTypes", [
-                                ...gv.slice(0, gvIdx),
-                                ...gv.slice(gvIdx + 1),
-                              ]);
-                              // 기타모임 포함 x
                             }
-                          }}
+                            //   async () => {
+                            //   const gv = getValues("postTypes");
+                            //   const gvIdx = gv.indexOf(category as never);
+                            //   if (
+                            //     !gv.includes(category as never) &&
+                            //     gv.length < 2
+                            //   ) {
+                            //     await setValue("postTypes", [
+                            //       ...gv,
+                            //       category as never,
+                            //     ]);
+                            //     if (category === "기타 모임") {
+                            //       document.getElementById("categoryETC")?.focus();
+                            //     }
+                            //   } else if (
+                            //     gv.includes(category as never) &&
+                            //     gv.length <= 2
+                            //   ) {
+                            //     setValue("postTypes", [
+                            //       ...gv.slice(0, gvIdx),
+                            //       ...gv.slice(gvIdx + 1),
+                            //     ]);
+                            //   }
+                            // }
+                          }
                         >
                           {category}
                         </button>
