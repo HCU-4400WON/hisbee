@@ -36,7 +36,7 @@ import { Helmet } from "react-helmet";
 import ConfirmModal from "components/ConfirmModal";
 import AlertModal from "components/AlertModal";
 import Outline from "components/Outline";
-import { TextField } from "@mui/material";
+import { TextField, TextareaAutosize } from "@mui/material";
 import "./css/textarea.css";
 
 const MyBlock = styled.div`
@@ -789,21 +789,45 @@ function PostAddForm2() {
                   <span className="text-[#ff0000]">*</span>
                   <div className="w-[130px] flex">신청 경로</div>
                   <div className="relative flex w-full ">
-                    <input
-                      // onFocus={{
-                      // }}
-                      type="text"
-                      className="w-full border-b border-gray-300 py-[5px] bg-slate-100 "
-                      placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
-                      {...register("contact")}
+                    <Controller
+                      name="contact"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          variant="standard"
+                          color="primary"
+                          sx={{
+                            width: "100%",
+                          }}
+                          placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
+                        />
+                      )}
                     />
                   </div>
                 </div>
 
                 <span className="flex items-start w-[45%]">
-                  <p className="w-[200px]">신청 방법</p>
+                  <p className="w-[130px]">신청 방법</p>
                   <div className="w-full">
-                    <textarea
+                    <Controller
+                      name="contactDetails"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          multiline
+                          aria-label="minimum height"
+                          maxRows={5}
+                          placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
+                          sx={{
+                            width: "100%",
+                          }}
+                          variant="standard"
+                        />
+                      )}
+                    />
+                    {/* <textarea
                       wrap="off"
                       id="registerMethod"
                       onKeyPress={textareaResize}
@@ -811,7 +835,7 @@ function PostAddForm2() {
                       className="notes_slate px-[0px] vertical-center w-full "
                       placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
                       {...register("contactDetails")}
-                    />
+                    /> */}
                   </div>
                 </span>
                 {/* </div> */}
@@ -896,7 +920,7 @@ function PostAddForm2() {
                     <div className="mt-[20px] w-[40%]">
                       <p className="mb-[10px] text-[18px] ">지원 자격</p>
                       <div className="flex">
-                        <textarea
+                        {/* <textarea
                           wrap="off"
                           id="registerMethod"
                           onKeyPress={textareaResize}
@@ -904,6 +928,23 @@ function PostAddForm2() {
                           className="notes_gray w-full px-[10px]"
                           placeholder="지원자가 갖춰야 할 역량에 대해 자유롭게 작성해주세요."
                           {...register("qualifications")}
+                        /> */}
+                        <Controller
+                          name="qualifications"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              multiline
+                              aria-label="minimum height"
+                              maxRows={5}
+                              placeholder="지원자가 갖춰야 할 역량에 대해 자유롭게 작성해주세요."
+                              sx={{
+                                width: "100%",
+                              }}
+                              variant="standard"
+                            />
+                          )}
                         />
                       </div>
                     </div>
@@ -915,11 +956,13 @@ function PostAddForm2() {
 
               <div className="my-[20px] flex w-[full] items-center justify-between mt-[40px]">
                 <People
+                  control={control}
                   getValues={getValues}
                   setValue={setValue}
                   register={register}
                 />
                 <Duration
+                  control={control}
                   getValues={getValues}
                   setValue={setValue}
                   register={register}
@@ -978,6 +1021,7 @@ function PostAddForm2() {
               ></i>
 
               <Keywords
+                control={control}
                 getValues={getValues}
                 setValue={setValue}
                 register={register}
