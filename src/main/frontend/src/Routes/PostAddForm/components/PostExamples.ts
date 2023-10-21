@@ -37,7 +37,7 @@ export const convertDateToString = (postStart: any, postEnd: any) => {
   } else {
     if (dateDifference(postEnd!) === 0) {
       return "D-Day";
-    } else if (postEnd === null) {
+    } else if (postEnd === "") {
       return "상시 모집";
     } else if (dateDifference(postEnd!) > 0) {
       return "D-" + dateDifference(postEnd!);
