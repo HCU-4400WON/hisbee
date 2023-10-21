@@ -410,10 +410,12 @@ function PostAddForm2() {
     // console.log("Debug", newPost);
 
     if (state) {
+      if (!window.confirm("모집글을 수정 하시겠습니까?")) return;
       updatePost(state?.id, newPost as any);
       alert("모집글이 수정되었습니다.");
       navigate(-1);
     } else {
+      if (!window.confirm("모집글을 등록 하시겠습니까?")) return;
       createPostMutate(newPost as any);
     }
   };
