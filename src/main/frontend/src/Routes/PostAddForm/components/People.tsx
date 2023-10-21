@@ -1,5 +1,6 @@
-import { UseFormReturn } from "react-hook-form";
-export function People({ getValues, setValue, register }: any) {
+import { TextField } from "@mui/material";
+import { Controller } from "react-hook-form";
+export function People({ getValues, setValue, register, control }: any) {
   const MainBLUE = "bg-blue-200";
 
   const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8px] rounded-lg`;
@@ -29,13 +30,28 @@ export function People({ getValues, setValue, register }: any) {
           인원 설정
         </button>
         {getValues("positionToggle") && (
-          <div className="w-[300px]">
-            <input
+          <div className="w-[300px] ml-5">
+            {/* <input
               className="ml-[20px] px-[0px] h-[40px] w-full border-b border-gray-300 bg-gray-100"
               type="text"
               placeholder="ex) 1학년 9명 , 콘디생 3학년 이상 5명"
               {...register("targetCount")}
-            ></input>
+            ></input> */}
+
+            <Controller
+              name="targetCount"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  placeholder="ex) 1학년 9명 , 콘디생 3학년 이상 5명"
+                  sx={{
+                    width: "100%",
+                  }}
+                  variant="standard"
+                />
+              )}
+            />
           </div>
         )}
       </div>

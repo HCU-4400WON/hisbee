@@ -1,4 +1,3 @@
-import { UseFormReturn } from "react-hook-form";
 export function People({ getValues, setValue, register }: any) {
   const MainBLUE = "bg-blue-200";
 

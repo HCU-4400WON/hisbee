@@ -2,12 +2,17 @@ package com.hcu.hot6.domain.request;
 
 import java.util.Date;
 import java.util.List;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Builder
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostUpdateRequest {
 
     // #1

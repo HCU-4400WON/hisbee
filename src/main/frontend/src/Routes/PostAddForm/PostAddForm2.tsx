@@ -4,11 +4,10 @@ import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import "./css/heading.css";
-// import "./css/textarea.css";
 import "./css/date.css";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { EditorState, convertToRaw } from "draft-js";
+import { ContentState, EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import styled from "styled-components";
 
@@ -20,16 +19,11 @@ import {
   IPostExample,
   PostExamples,
 } from "./components/PostExamples";
-import { createPost, ICreatePost } from "api";
+import { createPost, ICreatePost, updatePost } from "api";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import {
-  isAlertModalState,
-  isConfirmModalState,
-  isLoginModalState,
-  isLoginState,
-} from "components/atom";
+import { useRecoilState } from "recoil";
+import { isAlertModalState, isConfirmModalState } from "components/atom";
 import Soon from "components/Soon";
 import { AnimatePresence, motion } from "framer-motion";
 import { ImageUpload } from "./components/ImageUpload";
@@ -43,7 +37,9 @@ import ConfirmModal from "components/ConfirmModal";
 import AlertModal from "components/AlertModal";
 import Outline from "components/Outline";
 import { TextField } from "@mui/material";
-import "./css/textarea.css";
+import { useLocation } from "react-router";
+import htmlToDraft from "html-to-draftjs";
+// import "./css/textarea.css";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -75,42 +71,173 @@ const ThumbnailKeywordsButton = tw(motion.div)`
 `;
 
 const ThumbnailCategoryButton = tw(motion.div)`
-  min-h-[28px] py-[2px] mb-[10px] px-[15px] rounded-full mr-[10px] bg-blue-200
+  min-h-[28px] py-[2px] mb-[15px] px-[15px] rounded-full mr-[10px] bg-blue-200 
 `;
 
 function PostAddForm2() {
+  const { state } = useLocation();
+
+  const stateConverter = (type: string, data: any) => {
+    if (type === "duration") {
+      if (
+        [
+          "미설정",
+          "봄학기",
+          "가을학기",
+          "여름방학",
+          "겨울방학",
+          "1년",
+          "1학기",
+          "2학기",
+          "3학기",
+          "4학기",
+        ].includes(data)
+      ) {
+        return data;
+      }
+      return "직접 입력";
+    } else if (type === "durationText") {
+      if (
+        [
+          "미설정",
+          "봄학기",
+          "가을학기",
+          "여름방학",
+          "겨울방학",
+          "1년",
+          "1학기",
+          "2학기",
+          "3학기",
+          "4학기",
+        ].includes(data)
+      ) {
+        return "";
+      }
+      return data;
+    } else if (type === "postTypes") {
+      let newDate = [...data];
+      const judge = (object: any) =>
+        [
+          "동아리",
+          "학회",
+          "프로젝트",
+          "학술모임",
+          "공모전/대회",
+          "운동/게임/취미",
+          "전공 스터디",
+        ].includes(object);
+
+      for (let i = 0; i < newDate.length; ++i) {
+        if (judge(newDate[i]) === false) {
+          newDate.splice(i, 1);
+          newDate.push("기타 모임");
+          return newDate;
+        }
+      }
+
+      return newDate;
+    } else if (type === "categoryETC") {
+      const judge = (object: any) =>
+        [
+          "동아리",
+          "학회",
+          "프로젝트",
+          "학술모임",
+          "공모전/대회",
+          "운동/게임/취미",
+          "전공 스터디",
+        ].includes(object);
+
+      for (let i = 0; i < data.length; ++i) {
+        if (judge(data[i]) === false) {
+          return data[i];
+        }
+      }
+      return "";
+    } else if (type === "keywords") {
+      // console.log("before", data);
+      const newKeywords = data?.filter((elem: string) => {
+        const list = [
+          ...state?.postTypes,
+          ...state?.tags?.first,
+          ...state?.tags?.second,
+        ];
+        // console.log("comp", list, elem);
+        // console.log(list.includes(elem));
+        if (list.includes(elem) === true) return false;
+        else return true;
+      });
+      // console.log("after", newKeywords);
+      return newKeywords;
+    }
+  };
+
   const { register, watch, handleSubmit, getValues, setValue, control } =
     useForm({
       mode: "onSubmit",
       defaultValues: {
-        title: "",
-        summary: "",
-        first: [],
-        second: [],
-        postTypes: [],
-        recruitStart: converter("year", new Date()), // string
-        recruitEnd: converter("year", new Date()), // string
-        duration: "미설정",
-        contact: "",
-        targetCount: "",
-        contactDetails: "",
-        content: "",
-        years: [],
-        departments: [],
+        title: state ? state?.title : "",
+        summary: state ? state?.summary : "",
+        first: state ? state?.tags?.first : [],
+        second: state ? state?.tags?.second : [],
+        postTypes: state ? state?.postTypes : ["수업 내 프로젝트"],
+        recruitStart: state
+          ? converter("dateTime", state?.recruitStart)
+          : converter("year", new Date()), // string
+        recruitEnd: state
+          ? converter("dateTime", state?.recruitEnd)
+          : converter("year", new Date()), // string
+        duration: state
+          ? stateConverter("duration", state?.duration)
+          : "미설정",
+        contact: state ? state?.contact : "",
+        targetCount: state ? state?.targetCount : "",
+        contactDetails: state ? state?.contactDetails : "",
+        years: state ? state?.years : [],
+        departments: state ? state?.departments : [],
         keyword: "",
-        keywords: [],
+        keywords: state ? stateConverter("keywords", state?.keywords) : [],
         firstKeyword: "",
         secondKeyword: "",
-        qualifications: "",
+        qualifications: state ? state?.qualifications : "",
         positionToggle: false,
-        total: "",
-        durationText: "",
-        categoryETC: "",
+        total: state ? state?.total : "",
+        categoryETC: state
+          ? stateConverter("categoryETC", state?.postTypes)
+          : "",
+        durationText: state
+          ? stateConverter("durationText", state?.duration)
+          : "",
+        // etc: state?.etc,
+
+        // title: "",
+        // summary: "",
+        // first: [],
+        // second: [],
+        // postTypes: ["수업 내 프로젝트"],
+        // recruitStart: converter("year", new Date()), // string
+        // recruitEnd: converter("year", new Date()), // string
+        // duration: "미설정",
+        // contact: "",
+        // targetCount: "",
+        // contactDetails: "",
+        // content: "",
+        // years: [],
+        // departments: [],
+        // keyword: "",
+        // keywords: [],
+        // firstKeyword: "",
+        // secondKeyword: "",
+        // qualifications: "",
+        // positionToggle: false,
+        // total: "",
+        // durationText: "",
+        // categoryETC: "",
       },
     });
 
   const checkSubmit = () => {
-    console.log(getValues("recruitStart")?.length);
+    // console.log(getValues("recruitStart")?.length);
     if (
       getValues("title").length !== 0 &&
       getValues("recruitStart")?.length === 10 &&
@@ -184,31 +311,30 @@ function PostAddForm2() {
 
   const navigate = useNavigate();
 
-  const { mutate: createPostMutate, isLoading: createPostLoading } =
-    useMutation(
-      ["createPostMutate" as string],
+  const { mutate: createPostMutate } = useMutation(
+    ["createPostMutate" as string],
 
-      (newPost: ICreatePost) => createPost(newPost),
+    (newPost: ICreatePost) => createPost(newPost),
 
-      {
-        onSuccess: (data) => {
-          setIsPostSubmitAlertModal(true);
-        },
-        onError: (error) => {
-          if (
-            ((error as AxiosError).response as AxiosResponse).status === 401
-          ) {
-            alert("로그인이 필요합니다.");
-            // setIsLoginModal(true);
-            // setIsLogin(false);
-            // if (localStorage.getItem("key")) localStorage.removeItem("key");
-            // navigate("/");
-          }
-        },
-      }
-    );
+    {
+      onSuccess: (data) => {
+        setIsPostSubmitAlertModal(true);
+      },
+      onError: (error) => {
+        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+          alert("로그인이 필요합니다.");
+          // setIsLoginModal(true);
+          // setIsLogin(false);
+          // if (localStorage.getItem("key")) localStorage.removeItem("key");
+          // navigate("/");
+        }
+      },
+    }
+  );
 
-  const [imageURLList, setImageURLList] = useState<string[] | []>([]);
+  const [imageURLList, setImageURLList] = useState<string[] | []>(
+    state?.posterPaths
+  );
 
   const onSubmit = (data: ISubmitDate, e: any) => {
     let newIsETC = false;
@@ -277,26 +403,47 @@ function PostAddForm2() {
       keywords: newKeywords,
       posterPaths: imageURLList?.length !== 0 ? imageURLList : null,
       isETC: newIsETC,
+      qualifications:
+        data?.qualifications?.length !== 0 ? data?.qualifications : null,
     };
 
-    createPostMutate(newPost as any);
+    // console.log("Debug", newPost);
+
+    if (state) {
+      updatePost(state?.id, newPost as any);
+      alert("모집글이 수정되었습니다.");
+      navigate(-1);
+    } else {
+      createPostMutate(newPost as any);
+    }
   };
 
   const Categories = [
-    "동아리",
-    "프로젝트",
-    "학회",
-    "학술모임",
-    "공모전/대회",
-    "운동/게임/취미",
-    "전공 스터디",
-    "기타 모임",
+    // "동아리",
+    // "프로젝트",
+    // "학회",
+    // "학술모임",
+    // "공모전/대회",
+    // "운동/게임/취미",
+    // "전공 스터디",
+    // "기타 모임",
+    "수업 내 프로젝트",
+    "자율 프로젝트",
   ];
 
   // useState로 상태관리하기 초기값은 EditorState.createEmpty()
   // EditorState의 비어있는 ContentState 기본 구성으로 새 개체를 반환 => 이렇게 안하면 상태 값을 나중에 변경할 수 없음.
 
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [editorState, setEditorState] = useState(() => {
+    if (!state?.content) return EditorState.createEmpty();
+    const contentDraft = htmlToDraft(state?.content);
+    const { contentBlocks, entityMap } = contentDraft;
+    const contentState = ContentState.createFromBlockArray(
+      contentBlocks,
+      entityMap
+    );
+    return EditorState.createWithContent(contentState);
+  });
 
   const onEditorStateChange = (editorState: any) => {
     // editorState에 값 설정
@@ -305,26 +452,26 @@ function PostAddForm2() {
 
   const [postExampleToggle, setPostExampleToggle] = useState<boolean>(false);
 
-  const textareaResize = (e: React.FormEvent<HTMLTextAreaElement>) => {
-    const targetId = e.currentTarget.id;
-    const targetValue = e.currentTarget.value;
+  // const textareaResize = (e: React.FormEvent<HTMLTextAreaElement>) => {
+  //   const targetId = e.currentTarget.id;
+  //   const targetValue = e.currentTarget.value;
 
-    if (targetId === "summary" && targetValue.split("\n").length > 2) {
-      let modifiedText = targetValue.split("\n").slice(0, 2);
-      e.currentTarget.value = modifiedText.join("\n");
-      return;
-    } else if (
-      targetId === "registerMethod" &&
-      targetValue.split("\n").length > 5
-    ) {
-      let modifiedText = targetValue.split("\n").slice(0, 5);
-      e.currentTarget.value = modifiedText.join("\n");
-      return;
-    }
+  //   if (targetId === "summary" && targetValue.split("\n").length > 2) {
+  //     let modifiedText = targetValue.split("\n").slice(0, 2);
+  //     e.currentTarget.value = modifiedText.join("\n");
+  //     return;
+  //   } else if (
+  //     targetId === "registerMethod" &&
+  //     targetValue.split("\n").length > 5
+  //   ) {
+  //     let modifiedText = targetValue.split("\n").slice(0, 5);
+  //     e.currentTarget.value = modifiedText.join("\n");
+  //     return;
+  //   }
 
-    e.currentTarget.style.height = "10px";
-    e.currentTarget.style.height = 12 + e.currentTarget.scrollHeight + "px";
-  };
+  //   e.currentTarget.style.height = "10px";
+  //   e.currentTarget.style.height = 12 + e.currentTarget.scrollHeight + "px";
+  // };
   const [optionalFoldToggle, setOptionalFoldToggle] = useState<boolean[]>([
     false,
     false,
@@ -404,7 +551,9 @@ function PostAddForm2() {
               <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
             </button>
 
-            <p className="text-[25px] font-[400]">모집글 작성하기</p>
+            <p className="text-[25px] font-[400]">
+              {state ? "모집글 수정하기" : "모집글 작성하기"}
+            </p>
           </span>
         </div>
 
@@ -449,9 +598,9 @@ function PostAddForm2() {
                       {postExampleToggle &&
                         (
                           PostExamples[
-                            getValues("postTypes").length === 0
+                            (getValues("postTypes").length === 0
                               ? "선택안됨"
-                              : getValues("postTypes")[0]
+                              : getValues("postTypes")[0]) as never
                           ] as IPostExample[]
                         )?.map((postExample: IPostExample, index: number) => (
                           <Thumbnail {...postExample} key={index} />
@@ -490,8 +639,10 @@ function PostAddForm2() {
                     <i className="fa-regular fa-heart text-[23px] text-gray-400"></i>
                   </span>
                   {/* <div id="input-custom-css"> */}
-                  <div className=" flex relative">
-                    <span className="text-[#ff0000]">*</span>
+                  <div className="flex relative">
+                    <span className="text-[#ff0000] absolute left-[-10px]">
+                      *
+                    </span>
                     <Controller
                       name="title"
                       control={control}
@@ -500,37 +651,36 @@ function PostAddForm2() {
                         <TextField
                           {...field}
                           variant="standard"
-                          sx={{ width: "100%", mb: 1 }}
+                          color="primary"
+                          sx={{
+                            width: "100%",
+                            mb: 1,
+                            "& input": {
+                              fontSize: "1.1rem",
+                              fontWeight: "bold",
+                            },
+                          }}
                           placeholder="제목을 입력해주세요"
                         />
                       )}
                     />
                   </div>
-                  {/* <motion.input
-                    whileFocus="animate"
-                    variants={inputVariants}
-                    initial="initial"
-                    animate="animate"
-                    id="titleBorder"
-                    className="w-[340px] border"
-                  ></motion.input>
-                </div> */}
+
                   <div className="h-[70px]">
-                    <div className="w-full">
-                      <textarea
-                        wrap="off"
-                        id="summary"
-                        onKeyPress={textareaResize}
-                        onKeyUp={textareaResize}
-                        className="notes w-[350px] text-[15px] "
-                        {...register("summary")}
-                        placeholder="(선택) 두줄 이내의 간결한 모임 설명글을 적어주세요"
-                      />
-                    </div>
-                    {/* <p className="text-gray-500 text-[13px] float-right">
-                    {" "}
-                    {getValues("summary").length} / 40
-                  </p> */}
+                    <Controller
+                      name="summary"
+                      control={control}
+                      defaultValue=""
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          variant="standard"
+                          color="primary"
+                          sx={{ width: "100%", mb: 1 }}
+                          placeholder="(선택) 간결한 설명글을 적어주세요"
+                        />
+                      )}
+                    />
                   </div>
                 </div>
 
@@ -701,14 +851,14 @@ function PostAddForm2() {
                 <span className="flex items-center">
                   <span className="text-[#ff0000]">*</span>
                   모임 유형(카테고리){" "}
-                  <span className="text-[13px] ml-[20px]">
-                    <span className="text-blue-600 font-bold">최대 2개</span>{" "}
+                  {/* <span className="text-[13px] ml-[20px]">
+                    <span className="text-blue-600 font-bold">최대 1개</span>{" "}
                     선택 가능
-                  </span>
+                  </span> */}
                 </span>
 
                 <div className="flex">
-                  <div className="grid grid-cols-2 gap-x-[20px] w-[330px]">
+                  <div className="grid grid-cols-2 gap-x-[20px] w-[350px]">
                     {Categories.map((category, index) => (
                       <span key={index} className="flex items-center mt-[20px]">
                         {/* <input {...register("postTypes")} value={category} type="checkBox" className="mx-[10px]" /> */}
@@ -719,32 +869,41 @@ function PostAddForm2() {
                             getValues("postTypes")?.includes(category as never)
                               ? MajorSeletedBUTTON
                               : UnSelectedBUTTON
-                          } px-[15px] py-[8px] rounded-lg w-[135px]`}
-                          onClick={async () => {
-                            const gv = getValues("postTypes");
-                            const gvIdx = gv.indexOf(category as never);
-                            if (
-                              !gv.includes(category as never) &&
-                              gv.length < 2
-                            ) {
-                              await setValue("postTypes", [
-                                ...gv,
-                                category as never,
-                              ]);
-                              if (category === "기타 모임") {
-                                document.getElementById("categoryETC")?.focus();
+                          } px-[15px] py-[8px] rounded-lg w-[150px]`}
+                          onClick={
+                            (e) => {
+                              const gv = getValues("postTypes");
+                              if (gv.length === 0) {
+                                setValue("postTypes", [category]);
+                              } else if (category !== gv[0]) {
+                                setValue("postTypes", [category]);
                               }
-                            } else if (
-                              gv.includes(category as never) &&
-                              gv.length <= 2
-                            ) {
-                              setValue("postTypes", [
-                                ...gv.slice(0, gvIdx),
-                                ...gv.slice(gvIdx + 1),
-                              ]);
-                              // 기타모임 포함 x
                             }
-                          }}
+                            //   async () => {
+                            //   const gv = getValues("postTypes");
+                            //   const gvIdx = gv.indexOf(category as never);
+                            //   if (
+                            //     !gv.includes(category as never) &&
+                            //     gv.length < 2
+                            //   ) {
+                            //     await setValue("postTypes", [
+                            //       ...gv,
+                            //       category as never,
+                            //     ]);
+                            //     if (category === "기타 모임") {
+                            //       document.getElementById("categoryETC")?.focus();
+                            //     }
+                            //   } else if (
+                            //     gv.includes(category as never) &&
+                            //     gv.length <= 2
+                            //   ) {
+                            //     setValue("postTypes", [
+                            //       ...gv.slice(0, gvIdx),
+                            //       ...gv.slice(gvIdx + 1),
+                            //     ]);
+                            //   }
+                            // }
+                          }
                         >
                           {category}
                         </button>
@@ -783,21 +942,45 @@ function PostAddForm2() {
                   <span className="text-[#ff0000]">*</span>
                   <div className="w-[130px] flex">신청 경로</div>
                   <div className="relative flex w-full ">
-                    <input
-                      // onFocus={{
-                      // }}
-                      type="text"
-                      className="w-full border-b border-gray-300 py-[5px] bg-slate-100 "
-                      placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
-                      {...register("contact")}
+                    <Controller
+                      name="contact"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          variant="standard"
+                          color="primary"
+                          sx={{
+                            width: "100%",
+                          }}
+                          placeholder="신청 받을 연락처/사이트/구글폼/각종 링크를 적어주세요."
+                        />
+                      )}
                     />
                   </div>
                 </div>
 
                 <span className="flex items-start w-[45%]">
-                  <p className="w-[200px]">신청 방법</p>
+                  <p className="w-[130px]">신청 방법</p>
                   <div className="w-full">
-                    <textarea
+                    <Controller
+                      name="contactDetails"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          multiline
+                          aria-label="minimum height"
+                          maxRows={5}
+                          placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
+                          sx={{
+                            width: "100%",
+                          }}
+                          variant="standard"
+                        />
+                      )}
+                    />
+                    {/* <textarea
                       wrap="off"
                       id="registerMethod"
                       onKeyPress={textareaResize}
@@ -805,7 +988,7 @@ function PostAddForm2() {
                       className="notes_slate px-[0px] vertical-center w-full "
                       placeholder="(선택) 신청 방법이 따로 있다면 설명해주세요."
                       {...register("contactDetails")}
-                    />
+                    /> */}
                   </div>
                 </span>
                 {/* </div> */}
@@ -844,7 +1027,7 @@ function PostAddForm2() {
               {getValues("departments").length === 0 ? (
                 <div className={`ml-[30px] ${FunctionBUTTON}`}>전공 무관</div>
               ) : (
-                getValues("departments").map((department) => (
+                getValues("departments").map((department: string) => (
                   <div className={`ml-[30px] ${FunctionBUTTON}`}>
                     {department}
                   </div>
@@ -853,7 +1036,7 @@ function PostAddForm2() {
               {getValues("years").length === 0 ? (
                 <div className={`ml-[30px] ${FunctionBUTTON}`}>학년 무관</div>
               ) : (
-                getValues("years").map((year) => (
+                getValues("years").map((year: string) => (
                   <div className={`ml-[30px] ${FunctionBUTTON}`}>{year}</div>
                 ))
               )}
@@ -890,7 +1073,7 @@ function PostAddForm2() {
                     <div className="mt-[20px] w-[40%]">
                       <p className="mb-[10px] text-[18px] ">지원 자격</p>
                       <div className="flex">
-                        <textarea
+                        {/* <textarea
                           wrap="off"
                           id="registerMethod"
                           onKeyPress={textareaResize}
@@ -898,6 +1081,23 @@ function PostAddForm2() {
                           className="notes_gray w-full px-[10px]"
                           placeholder="지원자가 갖춰야 할 역량에 대해 자유롭게 작성해주세요."
                           {...register("qualifications")}
+                        /> */}
+                        <Controller
+                          name="qualifications"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              multiline
+                              aria-label="minimum height"
+                              maxRows={5}
+                              placeholder="지원자가 갖춰야 할 역량에 대해 자유롭게 작성해주세요."
+                              sx={{
+                                width: "100%",
+                              }}
+                              variant="standard"
+                            />
+                          )}
                         />
                       </div>
                     </div>
@@ -909,11 +1109,13 @@ function PostAddForm2() {
 
               <div className="my-[20px] flex w-[full] items-center justify-between mt-[40px]">
                 <People
+                  control={control}
                   getValues={getValues}
                   setValue={setValue}
                   register={register}
                 />
                 <Duration
+                  control={control}
                   getValues={getValues}
                   setValue={setValue}
                   register={register}
@@ -972,6 +1174,7 @@ function PostAddForm2() {
               ></i>
 
               <Keywords
+                control={control}
                 getValues={getValues}
                 setValue={setValue}
                 register={register}
@@ -1133,8 +1336,7 @@ function PostAddForm2() {
                 type="submit"
                 className="text-white bg-blue-500  text-[18px] px-[20px] py-[8px] rounded-lg"
               >
-                {" "}
-                모집글 등록하기
+                {state ? "모집글 수정하기" : "모집글 등록하기"}
               </button>
             ) : (
               <button

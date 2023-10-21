@@ -2,7 +2,6 @@ import tw from "tailwind-styled-components";
 import "./css/heading.css";
 import React, { useEffect, useState } from "react";
 import {
-  IPost,
   IReadOnePost,
   IUpdatePost,
   loginCheckApi,
@@ -15,30 +14,11 @@ import { useNavigate, useParams } from "react-router";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoginState, isPostDeleteModalState } from "components/atom";
 import PostDeleteModal from "Routes/Detail/PostDeleteModal";
-import { useForm } from "react-hook-form";
 
-import LoadingAnimation from "components/LoadingAnimation";
 import { AxiosError, AxiosResponse } from "axios";
 
-import draftToHtml from "draftjs-to-html";
-import htmlToDraft from "html-to-draftjs";
-import { ContentState, convertToRaw, EditorState } from "draft-js";
-
-import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import { useRef } from "react";
-import { storage } from "../../firebase";
-import styled from "styled-components";
-import Validation from "./Validation";
-import MyEditor from "./MyEditor";
-import {
-  converter,
-  PostDetailExample,
-  PostExamples,
-} from "Routes/PostAddForm/components/PostExamples";
-import { AnimatePresence, DragControls } from "framer-motion";
 import { Link } from "react-router-dom";
 import Heart from "components/Heart";
 import Soon from "components/Soon";
@@ -69,14 +49,6 @@ w-full
 const FormHeader = tw.header`
 pt-[62px] md:pt-[55px] flex items-center justify-between `;
 
-const FormTitleInput = tw.input`
-w-[400px] 
-md:h-[40px] 
-h-[35px] 
-px-[15px] 
-bg-[#eeeeee]
-`;
-
 const FormTitle = tw.div`
 text-[20px] md:text-[25px] font-semibold 
 font-main
@@ -84,31 +56,6 @@ font-main
 
 const FormAuthorNButtonRow = tw.div`
 flex justify-between
-`;
-
-const StyledUl = tw.ul`
-flex
-
-
-`;
-
-const Styledli = tw.li`
-  flex
-  items-center
-`;
-
-const StyledInputNumber = tw.input`
-  w-[30px]
-  border-b-2
-  border-gray-300
-  mx-[20px]
-  text-center
-
-
-`;
-const StyledInputLabel = tw.label`
-text-[13px]
-md:text-[18px]
 `;
 
 const Grid = tw.div`
@@ -155,8 +102,6 @@ py-[20px]
 const WriterSpan = tw.span`
 flex w-[200px] md:w-[auto]
 `;
-const WriteDateSpan = tw.span`
-`;
 const WriteInfo = tw.span`
 text-[13px]
 md:text-[17px]
@@ -168,70 +113,7 @@ h-[20px]
 md:h-auto
 `;
 
-const FormButtonDiv = tw.div`
-flex items-center w-[70px] md:w-[100px] justify-between
-`;
-
-const FormModifyOKButton = tw.button`
-w-[70px] text-gray-500 rounded-full
-`;
-
-const FormModifyOKIcon = tw.i`
-fa-solid fa-check text-[30px] text-green-600
-`;
-
-const FormModifyButton = tw.button`
-w-[70px] text-gray-500 rounded-full
-`;
-const FormModifyIcon = tw.i`
-fa-regular fa-pen-to-square text-[25px] md:text-[30px]
-
-`;
-
-const FormDeleteButton = tw.button`
-w-[70px]  text-red-400  rounded-full
-`;
-
-const FormDeleteIcon = tw.i`
-fa-regular fa-trash-can text-[25px] md:text-[30px]
-`;
-
-const ValidationVariant = {
-  hidden: {
-    y: -10,
-    color: "red",
-    opacity: 0,
-  },
-
-  showing: {
-    y: 0,
-    opacity: 1,
-  },
-
-  exit: {
-    y: 10,
-    opacity: 0,
-  },
-};
-
-const MyBlock = styled.div`
-  .wrapper-class {
-    width: 100%;
-    margin: 0 auto;
-    margin-bottom: 4rem;
-    border: 2px solid lightGray !important;
-  }
-  .editor {
-    min-height: 500px !important;
-    border-top: 3px solid lightGray !important;
-    padding: 10px !important;
-    border-radius: 2px !important;
-  }
-`;
 function Detail2() {
-  const [editorString, setEditorString] = useState("");
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
-
   const { id } = useParams();
   const datetimeToString = (datetime: Date) => {
     if (!datetime) return "상시 모집";
@@ -245,7 +127,7 @@ function Detail2() {
     )}`;
   };
 
-  const { isLoading, data, refetch, isSuccess } = useQuery<IReadOnePost>(
+  const { isLoading, data, refetch } = useQuery<IReadOnePost>(
     ["readOnePost", id],
     () => readOnePost(+(id as any)),
     {
@@ -258,10 +140,6 @@ function Detail2() {
       },
     }
   );
-
-  const { register, handleSubmit, setError, formState, setValue } = useForm({
-    mode: "onSubmit",
-  });
 
   const [isPostDeleteModal, setIsPostDeleteModal] = useRecoilState(
     isPostDeleteModalState
@@ -295,6 +173,7 @@ function Detail2() {
         }
       },
     });
+
   useEffect(() => {
     loginCheckMutate();
   }, []);
@@ -302,95 +181,11 @@ function Detail2() {
   // useState로 상태관리하기 초기값은 EditorState.createEmpty()
   // EditorState의 비어있는 ContentState 기본 구성으로 새 개체를 반환 => 이렇게 안하면 상태 값을 나중에 변경할 수 없음.
 
-  const onEditorStateChange = (editorState: any) => {
-    // editorState에 값 설정
-    setEditorState(editorState);
-  };
-
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const [imageURL, setImageURL] = useState<string>("");
-  const [progressPercent, setProgressPercent] = useState<number>(0);
-  const onImageChange = async (file: any) => {
-    // console.log(file);
-    let newImage: any;
-
-    if (!file) return null;
-
-    const storageRef = ref(storage, `files/${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-    console.log(
-      storageRef,
-      uploadTask.then((snapshot) => snapshot)
-    );
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setProgressPercent(progress);
-      },
-      (error) => {
-        switch (error.code) {
-          case "storage/canceld":
-            alert("Upload has been canceled");
-            break;
-        }
-      },
-      async () => {
-        getDownloadURL(storageRef).then((downloadURL) => {
-          setImageURL(downloadURL);
-
-          return new Promise((resolve, reject) => {
-            resolve({
-              data: {
-                link: downloadURL,
-              },
-            });
-          });
-        });
-      }
-    );
-  };
-
-  // interface Iconverter {
-  //   [maxDeveloper: string]: string;
-  //   maxPlanner: string;
-  //   maxDesigner: string;
-  //   maxMentor: string;
-  //   maxMentee: string;
-  // }
-  // const converter: Iconverter = {
-  //   maxDeveloper: "개발자",
-  //   maxPlanner: "기획자",
-  //   maxDesigner: "디자이너",
-  //   maxMentor: "멘토",
-  //   maxMentee: "멘티",
-  //   currDeveloper: "개발자",
-  //   currPlanner: "기획자",
-  //   currDesigner: "디자이너",
-  //   currMentor: "멘토",
-  //   currMentee: "멘티",
-  // };
-  const dateConverter = (date: Date) => {
-    const str = "";
-    return str.concat(
-      new Date(date).getFullYear() + "",
-      " / ",
-      (new Date(date).getMonth() + 1 + "").padStart(2, "0"),
-      " / ",
-      (new Date(date).getDate() + "").padStart(2, "0")
-    );
-  };
-
   const [isImageModal, setIsImageModal] = useState<boolean>(false);
   const [clickedPosterSrc, setClickedPosterSrc] = useState("");
   const onImageModalClick = () => {
     setIsImageModal(false);
   };
-  const dataExample = PostDetailExample;
-
   return (
     <>
       {isLoading || isLoginCheckLoading ? (
@@ -604,7 +399,7 @@ function Detail2() {
                 </div>
                 {/* 키워드들 */}
 
-                <div className="m-[30px]">
+                <div className="my-[30px]">
                   {data?.postTypes.map((postType, index) => (
                     <button
                       key={index}

@@ -193,19 +193,10 @@ function PostModifyForm() {
       postTypes: stateConverter("postTypes", state?.postTypes),
       recruitStart: converter("dateTime", state?.recruitStart), // string
       recruitEnd: converter("dateTime", state?.recruitEnd), // string
-      projectStart: "",
-
-      //duration의 경우 register에 select외의 값이 들어갈 수 있기에.. 그부분을 처리해 줘야 한다.
       duration: stateConverter("duration", state?.duration),
-      // positions: [],
-      // positionName: "",
-      // positionCount: "",
       contact: state?.contact,
       targetCount: state?.targetCount,
       contactDetails: state?.contactDetails,
-      //   content: state?.content,
-      // content 부분 변환
-      //
       years: state?.years,
       departments: state?.departments,
       keyword: "",
@@ -216,13 +207,8 @@ function PostModifyForm() {
       positionToggle: false,
       total: "",
       categoryETC: stateConverter("categoryETC", state?.postTypes),
-
       durationText: stateConverter("durationText", state?.duration),
       etc: state?.etc,
-      // first: [],
-      // second: [],
-
-      // poster : "",
     },
   });
 

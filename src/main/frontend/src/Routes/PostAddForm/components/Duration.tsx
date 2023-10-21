@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { TextField } from "@mui/material";
+import { Controller } from "react-hook-form";
 
-export function Duration({ getValues, setValue, register }: any) {
+export function Duration({ getValues, setValue, register, control }: any) {
   const duration = [
     "미설정",
     "봄학기",
@@ -29,11 +29,25 @@ export function Duration({ getValues, setValue, register }: any) {
         </select>
         {getValues("duration") === "직접 입력" && (
           <div className="w-[250px] mr-[20px]">
-            <input
+            {/* <input
               {...register("durationText")}
               type="text"
               className="h-[30px] w-full bg-gray-100 border-b-2 border-gray-400 px-[0px]"
               placeholder="ex) 가을학기 ~ 겨울방학"
+            /> */}
+            <Controller
+              name="durationText"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  placeholder="ex) 가을학기 ~ 겨울방학"
+                  sx={{
+                    width: "100%",
+                  }}
+                  variant="standard"
+                />
+              )}
             />
           </div>
         )}

@@ -32,7 +32,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import { Autocomplete, TextField } from "@mui/material";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { AnyTxtRecord } from "dns";
 const SelectFilterBox = tw.select`
 mr-[20px] px-[10px] bg-[#F9FAFB] py-[5px] rounded-lg text-center border
 text-gray-500 text-[16px] w-auto
@@ -102,9 +101,9 @@ function Post() {
   ]);
   const [selectedKeywords, setSelectedKeywords] = useState<string[] | []>([]);
 
-  interface IFiltering {
-    [key: string]: string[];
-  }
+  // interface IFiltering {
+  //   [key: string]: string[];
+  // }
 
   const isLoginModal = useRecoilValue(isLoginModalState);
   const isSignupModal = useRecoilValue(isSignupModalState);
@@ -113,7 +112,7 @@ function Post() {
 
   const [nowPage, setNowPage] = useState(1);
 
-  const [LIMIT, useLIMIT] = useState<number>(12);
+  const [LIMIT] = useState<number>(12);
   useEffect(() => {
     const fn = async () => {
       await setNowPage(1);
@@ -260,15 +259,18 @@ function Post() {
   };
 
   const Categories = [
+    // "전체",
+    // "동아리",
+    // "학회",
+    // "공모전/대회",
+    // "스터디",
+    // "프로젝트",
+    // "학술모임",
+    // "운동/게임/취미",
+    // "기타",
     "전체",
-    "동아리",
-    "학회",
-    "공모전/대회",
-    "스터디",
-    "프로젝트",
-    "학술모임",
-    "운동/게임/취미",
-    "기타",
+    "수업 내 프로젝트",
+    "자율 프로젝트",
   ];
   const Majors = [
     "학부 무관",
@@ -413,7 +415,7 @@ function Post() {
           <Outline bgColor="bg-white">
             {/* <div className=" mx-auto flex items-center w-full h-[40px] md:h-[60px] bg-white "> */}
             <div className="min-w-[1470px] mx-auto flex justify-center items-center h-[60px] bg-white ">
-              <div className="flex justify-between items-center min-w-[1200px] px-[70px] ">
+              <div className="flex justify-between items-center min-w-[500px] px-[70px] ">
                 {Categories.map((category, index) => (
                   <button
                     id="categoryButton"
@@ -617,7 +619,7 @@ function Post() {
             {/* </Outline> */}
           </Outline>
 
-          {unionData.length === 0 && (
+          {!isLoading && unionData.length === 0 && (
             <div className="flex justify-center items-center min-w-[1470px] h-[50px] text-[17px] bg-slate-100 text-black pt-[50px]">
               <i className="fa-solid fa-circle-exclamation text-black mx-[10px]">
                 &nbsp;
