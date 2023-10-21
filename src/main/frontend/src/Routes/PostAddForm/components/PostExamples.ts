@@ -1,26 +1,10 @@
 // converter
-export const converter = (what: string, info?: string | Date) => {
-  if (what === "year") {
-    let year = ((info as Date).getFullYear() + "").padStart(2, "0");
-    let month = ((info as Date).getMonth() + 1 + "").padStart(2, "0");
-    let date = ((info as Date).getDate() + "").padStart(2, "0");
-    let convertedDate = year + "-" + month + "-" + date;
-    // console.log("이거? " ,convertedDate);
-    return convertedDate;
-  } else if (what === "dateTime") {
-    if (!info) return null;
-    let year = (new Date(info as string).getFullYear() + "").padStart(2, "0");
-    let month = (new Date(info as string).getMonth() + 1 + "").padStart(2, "0");
-    let date = (new Date(info as string).getDate() + "").padStart(2, "0");
-    let convertedDate = year + "-" + month + "-" + date;
-    // console.log("이거? " ,convertedDate);
-    return convertedDate;
-  }
-};
+
+import { dataConverter } from "./Converter";
 
 // 현재 부터 end날짜까지의 디데이를 세줌
 export const dateDifference = (end: string) => {
-  const date1 = new Date(converter("year", new Date())!);
+  const date1 = new Date(dataConverter("year", new Date())!);
   const date2 = new Date(end);
 
   const diffDate = date2.getTime() - date1.getTime();
@@ -31,13 +15,14 @@ export const dateDifference = (end: string) => {
 // D-Day 를 상시모집 과 같은 스트링으로 바꿔줌
 
 export const convertDateToString = (postStart: any, postEnd: any) => {
+  console.log(postStart, postEnd);
   if (dateDifference(postStart) > 0) {
     if (dateDifference(postEnd!) < 0) return "모집 마감";
     else return "모집 예정";
   } else {
     if (dateDifference(postEnd!) === 0) {
       return "D-Day";
-    } else if (postEnd === "") {
+    } else if (postEnd === null) {
       return "상시 모집";
     } else if (dateDifference(postEnd!) > 0) {
       return "D-" + dateDifference(postEnd!);
