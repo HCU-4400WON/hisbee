@@ -1,27 +1,14 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Main from "Routes/Main/Main";
 import Post from "Routes/Post/Post";
 import Header from "components/Header";
-import Login from "components/LoginModal";
-import SignUp from "Routes/Main/SignUp";
 import SignUp2 from "Routes/Main/SignUp2";
-import Person from "Routes/Person/Person";
-import PostAddForm from "Routes/PostAddForm/PostAddForm";
-import Detail from "Routes/Detail/Detail";
-import Profile from "Routes/Profile/Profile";
 import SignUpOptional from "Routes/Main/SignUpOptional";
-import LoadingAnimation from "./LoadingAnimation";
-import Slider from "./Slider";
 import Footer from "./Footer";
 import BlankPage from "Routes/BlankPage/BlankPage";
 import PrivateRoute from "./PrivateRoute";
 import PostAddForm2 from "Routes/PostAddForm/PostAddForm2";
 import Detail2 from "Routes/Detail/Detail2";
-import PostModifyForm from "Routes/PostModifyForm/PostModifyForm";
 import Profile2 from "Routes/Profile/Profile2";
-import ConfirmModal from "./ConfirmModal";
-import AlertModal from "./AlertModal";
-
 function Router() {
   return (
     <BrowserRouter>

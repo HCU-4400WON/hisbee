@@ -1,5 +1,5 @@
 import { TextField } from "@mui/material";
-import { Controller, UseFormReturn } from "react-hook-form";
+import { Controller } from "react-hook-form";
 export function People({ getValues, setValue, register, control }: any) {
   const MainBLUE = "bg-blue-200";
 

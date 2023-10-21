@@ -1,6 +1,5 @@
 import { TextField } from "@mui/material";
-import { useState } from "react";
-import { Controller, UseFormReturn } from "react-hook-form";
+import { Controller } from "react-hook-form";
 
 export function Duration({ getValues, setValue, register, control }: any) {
   const duration = [

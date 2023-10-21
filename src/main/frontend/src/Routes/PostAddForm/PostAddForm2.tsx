@@ -36,7 +36,7 @@ import { Helmet } from "react-helmet";
 import ConfirmModal from "components/ConfirmModal";
 import AlertModal from "components/AlertModal";
 import Outline from "components/Outline";
-import { TextField, TextareaAutosize } from "@mui/material";
+import { TextField } from "@mui/material";
 import { useLocation } from "react-router";
 import htmlToDraft from "html-to-draftjs";
 // import "./css/textarea.css";
@@ -311,29 +311,26 @@ function PostAddForm2() {
 
   const navigate = useNavigate();
 
-  const { mutate: createPostMutate, isLoading: createPostLoading } =
-    useMutation(
-      ["createPostMutate" as string],
+  const { mutate: createPostMutate } = useMutation(
+    ["createPostMutate" as string],
 
-      (newPost: ICreatePost) => createPost(newPost),
+    (newPost: ICreatePost) => createPost(newPost),
 
-      {
-        onSuccess: (data) => {
-          setIsPostSubmitAlertModal(true);
-        },
-        onError: (error) => {
-          if (
-            ((error as AxiosError).response as AxiosResponse).status === 401
-          ) {
-            alert("로그인이 필요합니다.");
-            // setIsLoginModal(true);
-            // setIsLogin(false);
-            // if (localStorage.getItem("key")) localStorage.removeItem("key");
-            // navigate("/");
-          }
-        },
-      }
-    );
+    {
+      onSuccess: (data) => {
+        setIsPostSubmitAlertModal(true);
+      },
+      onError: (error) => {
+        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+          alert("로그인이 필요합니다.");
+          // setIsLoginModal(true);
+          // setIsLogin(false);
+          // if (localStorage.getItem("key")) localStorage.removeItem("key");
+          // navigate("/");
+        }
+      },
+    }
+  );
 
   const [imageURLList, setImageURLList] = useState<string[] | []>(
     state?.posterPaths
@@ -438,7 +435,7 @@ function PostAddForm2() {
   // EditorState의 비어있는 ContentState 기본 구성으로 새 개체를 반환 => 이렇게 안하면 상태 값을 나중에 변경할 수 없음.
 
   const [editorState, setEditorState] = useState(() => {
-    if (!state.content) return EditorState.createEmpty();
+    if (!state?.content) return EditorState.createEmpty();
     const contentDraft = htmlToDraft(state?.content);
     const { contentBlocks, entityMap } = contentDraft;
     const contentState = ContentState.createFromBlockArray(
@@ -455,26 +452,26 @@ function PostAddForm2() {
 
   const [postExampleToggle, setPostExampleToggle] = useState<boolean>(false);
 
-  const textareaResize = (e: React.FormEvent<HTMLTextAreaElement>) => {
-    const targetId = e.currentTarget.id;
-    const targetValue = e.currentTarget.value;
+  // const textareaResize = (e: React.FormEvent<HTMLTextAreaElement>) => {
+  //   const targetId = e.currentTarget.id;
+  //   const targetValue = e.currentTarget.value;
 
-    if (targetId === "summary" && targetValue.split("\n").length > 2) {
-      let modifiedText = targetValue.split("\n").slice(0, 2);
-      e.currentTarget.value = modifiedText.join("\n");
-      return;
-    } else if (
-      targetId === "registerMethod" &&
-      targetValue.split("\n").length > 5
-    ) {
-      let modifiedText = targetValue.split("\n").slice(0, 5);
-      e.currentTarget.value = modifiedText.join("\n");
-      return;
-    }
+  //   if (targetId === "summary" && targetValue.split("\n").length > 2) {
+  //     let modifiedText = targetValue.split("\n").slice(0, 2);
+  //     e.currentTarget.value = modifiedText.join("\n");
+  //     return;
+  //   } else if (
+  //     targetId === "registerMethod" &&
+  //     targetValue.split("\n").length > 5
+  //   ) {
+  //     let modifiedText = targetValue.split("\n").slice(0, 5);
+  //     e.currentTarget.value = modifiedText.join("\n");
+  //     return;
+  //   }
 
-    e.currentTarget.style.height = "10px";
-    e.currentTarget.style.height = 12 + e.currentTarget.scrollHeight + "px";
-  };
+  //   e.currentTarget.style.height = "10px";
+  //   e.currentTarget.style.height = 12 + e.currentTarget.scrollHeight + "px";
+  // };
   const [optionalFoldToggle, setOptionalFoldToggle] = useState<boolean[]>([
     false,
     false,

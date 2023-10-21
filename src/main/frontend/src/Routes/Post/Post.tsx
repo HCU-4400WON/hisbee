@@ -32,7 +32,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import { Autocomplete, TextField } from "@mui/material";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { AnyTxtRecord } from "dns";
 const SelectFilterBox = tw.select`
 mr-[20px] px-[10px] bg-[#F9FAFB] py-[5px] rounded-lg text-center border
 text-gray-500 text-[16px] w-auto
@@ -102,9 +101,9 @@ function Post() {
   ]);
   const [selectedKeywords, setSelectedKeywords] = useState<string[] | []>([]);
 
-  interface IFiltering {
-    [key: string]: string[];
-  }
+  // interface IFiltering {
+  //   [key: string]: string[];
+  // }
 
   const isLoginModal = useRecoilValue(isLoginModalState);
   const isSignupModal = useRecoilValue(isSignupModalState);
@@ -113,7 +112,7 @@ function Post() {
 
   const [nowPage, setNowPage] = useState(1);
 
-  const [LIMIT, useLIMIT] = useState<number>(12);
+  const [LIMIT] = useState<number>(12);
   useEffect(() => {
     const fn = async () => {
       await setNowPage(1);

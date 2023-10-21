@@ -1,7 +1,5 @@
-import { useState } from "react";
-import { Controller, UseFormReturn } from "react-hook-form";
-import { AnimatePresence, motion } from "framer-motion";
-import { NONAME } from "dns";
+import { Controller } from "react-hook-form";
+import { motion } from "framer-motion";
 import { TextField } from "@mui/material";
 
 const presenseVariant = {
@@ -34,7 +32,6 @@ const presenseVariant = {
 
 export function Keywords({ getValues, setValue, register, control }: any) {
   // const [vibrate, setVibrate] = useState<boolean>(false);
-  const MainBLUE = "bg-blue-200";
   const LightMainBLUE = "bg-blue-100";
   return (
     <div id="kk">
