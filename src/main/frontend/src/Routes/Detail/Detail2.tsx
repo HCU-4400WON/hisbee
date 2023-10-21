@@ -2,6 +2,7 @@ import tw from "tailwind-styled-components";
 import "./css/heading.css";
 import React, { useEffect, useState } from "react";
 import {
+  IClosePost,
   IReadOnePost,
   IUpdatePost,
   loginCheckApi,
@@ -235,11 +236,14 @@ function Detail2() {
                         <button
                           className="px-[25px] py-[4px] rounded-lg mr-[10px] bg-gray-200 "
                           onClick={() => {
-                            const newClosedPost: IUpdatePost = {
+                            const newClosedPost: IClosePost = {
                               isClosed: true,
                             };
                             if (window.confirm("마감하시겠습니까?")) {
-                              updatePost(Number(id), newClosedPost);
+                              updatePost(
+                                Number(id),
+                                newClosedPost as IClosePost
+                              );
                             }
                           }}
                         >

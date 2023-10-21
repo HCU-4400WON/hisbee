@@ -18,7 +18,7 @@ import {
   IPostExample,
   PostExamples,
 } from "./components/PostExamples";
-import { createPost, ICreatePost, updatePost } from "api";
+import { createPost, ICreatePost, IUpdatePost, updatePost } from "api";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
 import { useRecoilState } from "recoil";
@@ -40,6 +40,7 @@ import { useLocation } from "react-router";
 import htmlToDraft from "html-to-draftjs";
 import { LightMainBLUE, MainBLUE } from "./components/color";
 import { dataConverter, stateConverter } from "./components/Converter";
+import { INewPost, IOnSubmitData } from "./interface/Interface";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -108,36 +109,10 @@ function PostAddForm2() {
         durationText: state
           ? stateConverter("durationText", state?.duration)
           : "",
-        // etc: state?.etc,
-
-        // title: "",
-        // summary: "",
-        // first: [],
-        // second: [],
-        // postTypes: ["수업 내 프로젝트"],
-        // recruitStart: dataConverter("year", new Date()), // string
-        // recruitEnd: dataConverter("year", new Date()), // string
-        // duration: "미설정",
-        // contact: "",
-        // targetCount: "",
-        // contactDetails: "",
-        // content: "",
-        // years: [],
-        // departments: [],
-        // keyword: "",
-        // keywords: [],
-        // firstKeyword: "",
-        // secondKeyword: "",
-        // qualifications: "",
-        // positionToggle: false,
-        // total: "",
-        // durationText: "",
-        // categoryETC: "",
       },
     });
 
   const checkSubmit = () => {
-    // console.log(getValues("recruitStart")?.length);
     if (
       getValues("title").length !== 0 &&
       getValues("recruitStart")?.length === 10 &&
@@ -148,32 +123,6 @@ function PostAddForm2() {
     }
     return false;
   };
-  interface ISubmitDate {
-    title: string;
-    summary?: string;
-    first?: string[];
-    second?: string[];
-    postTypes: string[];
-    recruitStart: string; // string
-    recruitEnd?: string; // string
-
-    duration?: string;
-    durationText?: string;
-    targetCount?: string;
-    contact: string;
-    contactDetails?: string;
-    content?: string;
-    years?: string[];
-    departments?: string[];
-    keyword?: "";
-    keywords?: string[];
-    firstKeyword?: string;
-    secondKeyword?: string;
-    qualifications?: string;
-    positionToggle?: boolean;
-    total?: string;
-    categoryETC?: string;
-  }
 
   watch([
     "title",
@@ -236,7 +185,7 @@ function PostAddForm2() {
     state?.posterPaths
   );
 
-  const onSubmit = (data: ISubmitDate, e: any) => {
+  const onSubmit = (data: IOnSubmitData) => {
     let newIsETC = false;
 
     const categoryETCIdx = data?.postTypes.findIndex(
@@ -276,7 +225,7 @@ function PostAddForm2() {
         ? ""
         : data?.duration;
 
-    const newPost = {
+    const newPost: ICreatePost = {
       title: data?.title,
       summary: data?.summary !== "" ? data?.summary : null,
       tags: {
@@ -311,12 +260,12 @@ function PostAddForm2() {
 
     if (state) {
       if (!window.confirm("모집글을 수정 하시겠습니까?")) return;
-      updatePost(state?.id, newPost as any);
+      updatePost(state?.id, newPost as IUpdatePost);
       alert("모집글이 수정되었습니다.");
       navigate(-1);
     } else {
       if (!window.confirm("모집글을 등록 하시겠습니까?")) return;
-      createPostMutate(newPost as any);
+      createPostMutate(newPost as ICreatePost);
     }
   };
 
