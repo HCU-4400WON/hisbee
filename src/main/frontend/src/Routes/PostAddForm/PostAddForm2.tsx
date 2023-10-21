@@ -237,7 +237,7 @@ function PostAddForm2() {
     });
 
   const checkSubmit = () => {
-    console.log(getValues("recruitStart")?.length);
+    // console.log(getValues("recruitStart")?.length);
     if (
       getValues("title").length !== 0 &&
       getValues("recruitStart")?.length === 10 &&
@@ -407,7 +407,7 @@ function PostAddForm2() {
         data?.qualifications?.length !== 0 ? data?.qualifications : null,
     };
 
-    console.log("Debug", newPost);
+    // console.log("Debug", newPost);
 
     if (state) {
       updatePost(state?.id, newPost as any);
