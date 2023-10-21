@@ -11,8 +11,6 @@ import { ContentState, EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import styled from "styled-components";
 
-import Thumbnail from "./components/Thumbnail";
-
 import {
   convertDateToString,
   IPostExample,
@@ -40,7 +38,18 @@ import { useLocation } from "react-router";
 import htmlToDraft from "html-to-draftjs";
 import { LightMainBLUE, MainBLUE } from "./components/color";
 import { dataConverter, stateConverter } from "./components/Converter";
-import { INewPost, IOnSubmitData } from "./interface/Interface";
+import { IOnSubmitData } from "./interface/Interface";
+import GoBackButton from "./components/GoBackButton";
+import PostExamplesButton from "./components/PostExamplesButton";
+import RequiredThumbnail from "./components/RequiredThumbnail";
+
+const PageTitleRow = tw.div`
+  flex gap-[50px] pb-[20px]
+`;
+
+const PageTitle = tw.p`
+  text-[25px] font-[400]
+`;
 
 const MyBlock = styled.div`
   background-color: white;
@@ -58,19 +67,70 @@ const MyBlock = styled.div`
   }
 `;
 
+const Form = tw.form`
+  px-[20px]
+`;
+
+const RequiredBox = tw.div`
+bg-slate-100 p-[50px] rounded-3xl mb-[50px]
+`;
+
+const RequiredTitleExampleRow = tw.div`
+flex justify-between w-full relative h-[40px] mb-[10px]
+`;
+
+const RequiredTitle = tw.p`
+text-[20px] font-[400]
+`;
+
+const RequiredThumbnailDurationCategoryRow = tw.div`
+w-full h-[400px] flex items-start justify-between mb-[20px]
+`;
+
 const FunctionBUTTON = `${LightMainBLUE} text-blue-600 rounded-lg px-[15px] py-[8px]`;
 const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8px] rounded-lg`;
 const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg border-2 border-gray-200`;
 
-const ThumbnailKeywordsButton = tw(motion.div)`
-  text-[15px] px-[15px] py-[2px] rounded-full mr-[10px] bg-blue-100
-`;
+const Categories = [
+  // "동아리",
+  // "프로젝트",
+  // "학회",
+  // "학술모임",
+  // "공모전/대회",
+  // "운동/게임/취미",
+  // "전공 스터디",
+  // "기타 모임",
+  "수업 내 프로젝트",
+  "자율 프로젝트",
+];
 
-const ThumbnailCategoryButton = tw(motion.div)`
-  min-h-[28px] py-[2px] mb-[15px] px-[15px] rounded-full mr-[10px] bg-blue-200 
-`;
+const optionalFoldText = [
+  {
+    first: "",
+    accent: "지원 자격, 인원, 활동 기간",
+    last: "등 모임에 관한 추가적인 정보도 알려주세요!",
+  },
+  { first: "검색에 잘 걸리도록 ", accent: "검색 키워드 추가", last: "하기!" },
+  {
+    first: "모임 목적, 활동 내용 등 자세한 ",
+    accent: "내용 작성",
+    last: "을 해보세요",
+  },
+  { first: "", accent: "포스터", last: "가 있다면 업로드 해주세요!" },
+];
 
 function PostAddForm2() {
+  const [isGoBackConfirmModal, setIsGoBackConfirmModal] =
+    useRecoilState(isConfirmModalState);
+
+  const [optionalFoldToggle, setOptionalFoldToggle] = useState<boolean[]>([
+    false,
+    false,
+    false,
+    false,
+  ]);
+
+  const navigate = useNavigate();
   const { state } = useLocation();
 
   const { register, watch, handleSubmit, getValues, setValue, control } =
@@ -133,14 +193,11 @@ function PostAddForm2() {
     "departments",
     "postTypes",
     "duration",
-    // "durationIndex",
     "targetCount",
     "firstKeyword",
     "secondKeyword",
     "recruitStart",
     "recruitEnd",
-    // "positionName",
-    // "positionCount",
     "keyword",
     "first",
     "second",
@@ -151,14 +208,8 @@ function PostAddForm2() {
     "years",
   ]);
 
-  // console.log(getValues("firstKeyword"), getValues("secondKeyword"));
-
-  // const keywordWatchs = [watch("firstKeyword"), watch("secondKeyword")];
-
   const [isPostSubmitAlertModal, setIsPostSubmitAlertModal] =
     useRecoilState(isAlertModalState);
-
-  const navigate = useNavigate();
 
   const { mutate: createPostMutate } = useMutation(
     ["createPostMutate" as string],
@@ -256,8 +307,6 @@ function PostAddForm2() {
         data?.qualifications?.length !== 0 ? data?.qualifications : null,
     };
 
-    // console.log("Debug", newPost);
-
     if (state) {
       if (!window.confirm("모집글을 수정 하시겠습니까?")) return;
       updatePost(state?.id, newPost as IUpdatePost);
@@ -268,19 +317,6 @@ function PostAddForm2() {
       createPostMutate(newPost as ICreatePost);
     }
   };
-
-  const Categories = [
-    // "동아리",
-    // "프로젝트",
-    // "학회",
-    // "학술모임",
-    // "공모전/대회",
-    // "운동/게임/취미",
-    // "전공 스터디",
-    // "기타 모임",
-    "수업 내 프로젝트",
-    "자율 프로젝트",
-  ];
 
   // useState로 상태관리하기 초기값은 EditorState.createEmpty()
   // EditorState의 비어있는 ContentState 기본 구성으로 새 개체를 반환 => 이렇게 안하면 상태 값을 나중에 변경할 수 없음.
@@ -301,62 +337,6 @@ function PostAddForm2() {
     setEditorState(editorState);
   };
 
-  const [postExampleToggle, setPostExampleToggle] = useState<boolean>(false);
-
-  // const textareaResize = (e: React.FormEvent<HTMLTextAreaElement>) => {
-  //   const targetId = e.currentTarget.id;
-  //   const targetValue = e.currentTarget.value;
-
-  //   if (targetId === "summary" && targetValue.split("\n").length > 2) {
-  //     let modifiedText = targetValue.split("\n").slice(0, 2);
-  //     e.currentTarget.value = modifiedText.join("\n");
-  //     return;
-  //   } else if (
-  //     targetId === "registerMethod" &&
-  //     targetValue.split("\n").length > 5
-  //   ) {
-  //     let modifiedText = targetValue.split("\n").slice(0, 5);
-  //     e.currentTarget.value = modifiedText.join("\n");
-  //     return;
-  //   }
-
-  //   e.currentTarget.style.height = "10px";
-  //   e.currentTarget.style.height = 12 + e.currentTarget.scrollHeight + "px";
-  // };
-  const [optionalFoldToggle, setOptionalFoldToggle] = useState<boolean[]>([
-    false,
-    false,
-    false,
-    false,
-  ]);
-
-  const optionalFoldText = [
-    {
-      first: "",
-      accent: "지원 자격, 인원, 활동 기간",
-      last: "등 모임에 관한 추가적인 정보도 알려주세요!",
-    },
-    { first: "검색에 잘 걸리도록 ", accent: "검색 키워드 추가", last: "하기!" },
-    {
-      first: "모임 목적, 활동 내용 등 자세한 ",
-      accent: "내용 작성",
-      last: "을 해보세요",
-    },
-    { first: "", accent: "포스터", last: "가 있다면 업로드 해주세요!" },
-  ];
-
-  const presenseVariant = {
-    initial: {
-      scale: 0.5,
-    },
-    showing: {
-      scale: 1,
-    },
-    exit: {
-      scale: 0,
-    },
-  };
-
   const handleConfirmModal = async (event: any) => {
     setIsGoBackConfirmModal(false);
     if (event.currentTarget.id === "yes") {
@@ -369,8 +349,6 @@ function PostAddForm2() {
     navigate("/");
   };
 
-  const [isGoBackConfirmModal, setIsGoBackConfirmModal] =
-    useRecoilState(isConfirmModalState);
   return (
     <Outline>
       <div className="p-[50px] w-[1470px]">
@@ -391,281 +369,28 @@ function PostAddForm2() {
           <title>모집 글 작성하기</title>
         </Helmet>
 
-        <div className="flex justify-between pb-[20px]">
-          <span className="flex w-[210px] items-center justify-between">
-            <button
-              className=""
-              onClick={() => {
-                setIsGoBackConfirmModal(true);
-              }}
-            >
-              <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
-            </button>
+        <PageTitleRow>
+          <GoBackButton />
+          <PageTitle>{state ? "모집글 수정하기" : "모집글 작성하기"}</PageTitle>
+        </PageTitleRow>
 
-            <p className="text-[25px] font-[400]">
-              {state ? "모집글 수정하기" : "모집글 작성하기"}
-            </p>
-          </span>
-        </div>
+        <Form>
+          <RequiredBox>
+            <RequiredTitleExampleRow>
+              <RequiredTitle>
+                썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
+              </RequiredTitle>
 
-        <form className="px-[20px] ">
-          <div className="bg-slate-100 p-[50px] rounded-3xl mb-[50px]">
-            <div className="flex justify-between w-full relative">
-              <div className="flex items-center mb-[10px]">
-                <p className="text-[20px] font-[400]">
-                  썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
-                </p>
-              </div>
+              <PostExamplesButton getValues={getValues} />
+            </RequiredTitleExampleRow>
 
-              {!postExampleToggle && (
-                <button
-                  type="button"
-                  className={`bg-white py-[5px] text-[16px] px-[15px] border-2 border-blue-500 text-blue-500 rounded-lg font-[400]`}
-                  onClick={(e) => setPostExampleToggle(true)}
-                >
-                  다른 모집글은 어떻게 작성되었는지 살펴보세요!
-                </button>
-              )}
-
-              <AnimatePresence>
-                {postExampleToggle && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1.1 }}
-                    exit={{ scale: 0 }}
-                    transition={{ type: "linear" }}
-                    className="origin-top-right w-[600px] rounded-xl overflow-hidden absolute right-0"
-                  >
-                    <div className="w-[600px] h-[50px] flex px-[20px] justify-between items-center bg-white">
-                      <p>다른 모집글은 어떻게 작성되었는지 살펴보세요!</p>
-                      <button
-                        type="button"
-                        onClick={() => setPostExampleToggle(false)}
-                      >
-                        닫기
-                      </button>
-                    </div>
-                    <motion.div className="w-600px h-[300px] bg-gray-200 flex items-center overflow-scroll ">
-                      {postExampleToggle &&
-                        (
-                          PostExamples[
-                            (getValues("postTypes").length === 0
-                              ? "선택안됨"
-                              : getValues("postTypes")[0]) as never
-                          ] as IPostExample[]
-                        )?.map((postExample: IPostExample, index: number) => (
-                          <Thumbnail {...postExample} key={index} />
-                        ))}
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* <p className="flex justify-end text-[#0000ff] ">
-                        필수 작성란입니다.
-                    </p> */}
-            </div>
-            {/* <p className="mt-[10px]">
-            썸네일을 보고 무슨 모집글인지 알기 쉽도록 만들어주세요!
-          </p> */}
-
-            <div className="w-full h-[400px] flex items-start justify-between mb-[20px] ">
-              <div className="min-w-[400px] border h-[350px] mt-[30px] bg-white p-[30px] rounded-2xl shadow-sm">
-                <div className="mb-[10px]">
-                  <span className="flex items-center justify-between mb-[20px]">
-                    <span className="flex items-center">
-                      <span className="px-[10px] py-[3px] rounded-full bg-gray-200 font-light">
-                        {convertDateToString(
-                          getValues("recruitStart"),
-                          getValues("recruitEnd")
-                        )}
-                      </span>
-                      <Soon
-                        bgColor="bg-gray-200"
-                        recruitStart={new Date()}
-                        recruitEnd={getValues("recruitEnd")}
-                        closed={false}
-                      />
-                    </span>
-                    <i className="fa-regular fa-heart text-[23px] text-gray-400"></i>
-                  </span>
-                  {/* <div id="input-custom-css"> */}
-                  <div className="flex relative">
-                    <span className="text-[#ff0000] absolute left-[-10px]">
-                      *
-                    </span>
-                    <Controller
-                      name="title"
-                      control={control}
-                      defaultValue=""
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          variant="standard"
-                          color="primary"
-                          sx={{
-                            width: "100%",
-                            mb: 1,
-                            "& input": {
-                              fontSize: "1.1rem",
-                              fontWeight: "bold",
-                            },
-                          }}
-                          placeholder="제목을 입력해주세요"
-                        />
-                      )}
-                    />
-                  </div>
-
-                  <div className="h-[70px]">
-                    <Controller
-                      name="summary"
-                      control={control}
-                      defaultValue=""
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          variant="standard"
-                          color="primary"
-                          sx={{ width: "100%", mb: 1 }}
-                          placeholder="(선택) 간결한 설명글을 적어주세요"
-                        />
-                      )}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center">
-                  <AnimatePresence>
-                    {getValues("postTypes").length !== 0 &&
-                      getValues("postTypes").map(
-                        (category: string, index: number) => (
-                          <ThumbnailCategoryButton
-                            key={index}
-                            variants={presenseVariant}
-                            initial="initial"
-                            animate="showing"
-                            exit="exit"
-                          >
-                            {category === "기타 모임"
-                              ? getValues("categoryETC")
-                              : category}
-                          </ThumbnailCategoryButton>
-                        )
-                      )}
-                  </AnimatePresence>
-                </div>
-                {[
-                  { array: "first", str: "firstKeyword" },
-                  { array: "second", str: "secondKeyword" },
-                ].map((lineObj, LineIndex) => (
-                  <div key={LineIndex} className="flex mb-[10px] h-[30px]">
-                    {/* firstLine Keyword */}
-                    <AnimatePresence>
-                      {getValues(lineObj.array as any)?.map(
-                        (keyword: string, keywordIndex: number) => (
-                          <ThumbnailKeywordsButton
-                            key={keywordIndex}
-                            variants={presenseVariant}
-                            initial="initial"
-                            animate="showing"
-                            exit="exit"
-                          >
-                            {keyword}
-                            <i
-                              className="fa-solid fa-xmark ml-[5px]"
-                              onClick={(e) => {
-                                // first , second keywords 구분하여 삭제
-                                // console.log(LineIndex);
-
-                                let v: any;
-                                if (LineIndex === 0) v = "first";
-                                else v = "second";
-
-                                const gv = getValues(v) as any;
-
-                                setValue(v, [
-                                  ...gv.slice(0, keywordIndex),
-                                  ...gv.slice(keywordIndex + 1),
-                                ]);
-                              }}
-                            ></i>
-                          </ThumbnailKeywordsButton>
-                        )
-                      )}
-                    </AnimatePresence>
-                    <div className="relative">
-                      {getValues(lineObj.array as any).length < 3 && (
-                        <div className="flex items-center absolute ">
-                          <input
-                            type="text"
-                            className={`KeywordInput py-[2px] text-[15px] px-[15px] rounded-full ${LightMainBLUE}`}
-                            style={{
-                              width:
-                                getValues(lineObj.str as any).length > 5
-                                  ? (getValues(lineObj.str as any).length + 5) *
-                                    12
-                                  : "110px",
-                            }}
-                            {...register(lineObj.str as any)}
-                            onKeyPress={async (
-                              e: React.KeyboardEvent<HTMLInputElement>
-                            ) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                if (getValues(lineObj.str as any) === "")
-                                  return;
-                                setValue(
-                                  lineObj.array as any,
-                                  (await [
-                                    ...getValues(lineObj.array as any),
-                                    getValues(lineObj.str as any),
-                                  ]) as never
-                                );
-                                setValue(lineObj.str as any, "");
-                              }
-                            }}
-                            onBlur={async () => {
-                              if (getValues(lineObj.str as any) !== "") {
-                                setValue(
-                                  lineObj.array as any,
-                                  (await [
-                                    ...getValues(lineObj.array as any),
-                                    getValues(lineObj.str as any),
-                                  ]) as never
-                                );
-                                setValue(lineObj.str as any, "");
-                              }
-                            }}
-                            placeholder="키워드 입력"
-                            maxLength={10}
-                          />
-
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              if (getValues(lineObj.str as any) === "") return;
-                              setValue(
-                                lineObj.array as any,
-                                (await [
-                                  ...getValues(lineObj.array as any),
-                                  getValues(lineObj.str as any),
-                                ]) as never
-                              );
-                              setValue(lineObj.str as any, "");
-                            }}
-                            className={`absolute right-0 px-[10px] ml-[5px] rounded-full text-blue-500`}
-                          >
-                            {" "}
-                            +{" "}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
+            <RequiredThumbnailDurationCategoryRow>
+              <RequiredThumbnail
+                getValues={getValues}
+                setValue={setValue}
+                control={control}
+                register={register}
+              />
               <div className="w-[400px] h-[350px] px-[60px] py-[30px]">
                 <span className="text-[#ff0000]">*</span>
                 <span className=""> 모집 기간</span>
@@ -780,7 +505,7 @@ function PostAddForm2() {
                   )}
                 </div>
               </div>
-            </div>
+            </RequiredThumbnailDurationCategoryRow>
 
             <div>
               {/* <p className="text-[20px] font-main">모집글 필수 내용</p> */}
@@ -845,7 +570,7 @@ function PostAddForm2() {
                 {/* </div> */}
               </div>
             </div>
-          </div>
+          </RequiredBox>
 
           <div className="mb-[30px] px-[10px] text-blue-600">
             * 아래는 전부 선택 사항입니다. 필요하다고 생각 하는 부분을
@@ -1201,7 +926,7 @@ function PostAddForm2() {
               </button>
             )}
           </div>
-        </form>
+        </Form>
       </div>
     </Outline>
   );
