@@ -31,17 +31,13 @@ export const dateDifference = (end: string) => {
 // D-Day 를 상시모집 과 같은 스트링으로 바꿔줌
 
 export const convertDateToString = (postStart: any, postEnd: any) => {
-  // console.log(new Date(postStart!), new Date());
-  // console.log(new Date(postStart!) > new Date());
-
   if (dateDifference(postStart) > 0) {
     if (dateDifference(postEnd!) < 0) return "모집 마감";
     else return "모집 예정";
-    //return "D+" + Math.abs(dateDifference(postEnd!));
   } else {
     if (dateDifference(postEnd!) === 0) {
       return "D-Day";
-    } else if (postEnd === "") {
+    } else if (postEnd === null) {
       return "상시 모집";
     } else if (dateDifference(postEnd!) > 0) {
       return "D-" + dateDifference(postEnd!);
