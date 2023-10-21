@@ -410,10 +410,12 @@ function PostAddForm2() {
     // console.log("Debug", newPost);
 
     if (state) {
+      if (!window.confirm("모집글을 수정 하시겠습니까?")) return;
       updatePost(state?.id, newPost as any);
       alert("모집글이 수정되었습니다.");
       navigate(-1);
     } else {
+      if (!window.confirm("모집글을 등록 하시겠습니까?")) return;
       createPostMutate(newPost as any);
     }
   };
@@ -557,7 +559,7 @@ function PostAddForm2() {
           </span>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit as any)} className="px-[20px] ">
+        <form className="px-[20px] ">
           <div className="bg-slate-100 p-[50px] rounded-3xl mb-[50px]">
             <div className="flex justify-between w-full relative">
               <div className="flex items-center mb-[10px]">
@@ -1333,7 +1335,8 @@ function PostAddForm2() {
           <div className="flex justify-center mt-[50px]">
             {checkSubmit() ? (
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit(onSubmit as any)}
                 className="text-white bg-blue-500  text-[18px] px-[20px] py-[8px] rounded-lg"
               >
                 {state ? "모집글 수정하기" : "모집글 등록하기"}
@@ -1341,11 +1344,11 @@ function PostAddForm2() {
             ) : (
               <button
                 disabled
-                type="submit"
+                type="button"
                 className="text-gray-400 bg-gray-200  text-[18px] px-[20px] py-[8px] rounded-lg"
               >
                 {" "}
-                모집글 등록하기
+                {state ? "모집글 수정하기" : "모집글 등록하기"}
               </button>
             )}
           </div>
