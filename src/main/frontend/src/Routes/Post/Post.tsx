@@ -620,7 +620,7 @@ function Post() {
             {/* </Outline> */}
           </Outline>
 
-          {unionData.length === 0 && (
+          {!isLoading && unionData.length === 0 && (
             <div className="flex justify-center items-center min-w-[1470px] h-[50px] text-[17px] bg-slate-100 text-black pt-[50px]">
               <i className="fa-solid fa-circle-exclamation text-black mx-[10px]">
                 &nbsp;

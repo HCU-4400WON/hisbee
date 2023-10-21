@@ -74,7 +74,7 @@ function Router() {
         {/* <Route path="post2/:id" element={<Detail2 />}></Route> */}
         <Route
           path="modify/:id"
-          element={<PrivateRoute component={<PostModifyForm />} />}
+          element={<PrivateRoute component={<PostAddForm2 />} />}
         ></Route>
         <Route path="signUp" element={<SignUp2 />}></Route>
         {/* <Route path="profile2" element={<Profile2 />}></Route> */}

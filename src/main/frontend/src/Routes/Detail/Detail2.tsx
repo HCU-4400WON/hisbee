@@ -604,7 +604,7 @@ function Detail2() {
                 </div>
                 {/* 키워드들 */}
 
-                <div className="m-[30px]">
+                <div className="my-[30px]">
                   {data?.postTypes.map((postType, index) => (
                     <button
                       key={index}

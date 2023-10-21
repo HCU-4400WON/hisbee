@@ -7,7 +7,7 @@ import "./css/heading.css";
 import "./css/date.css";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { EditorState, convertToRaw } from "draft-js";
+import { ContentState, EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import styled from "styled-components";
 
@@ -19,7 +19,7 @@ import {
   IPostExample,
   PostExamples,
 } from "./components/PostExamples";
-import { createPost, ICreatePost } from "api";
+import { createPost, ICreatePost, updatePost } from "api";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
 import { useRecoilState } from "recoil";
@@ -37,7 +37,9 @@ import ConfirmModal from "components/ConfirmModal";
 import AlertModal from "components/AlertModal";
 import Outline from "components/Outline";
 import { TextField, TextareaAutosize } from "@mui/material";
-import "./css/textarea.css";
+import { useLocation } from "react-router";
+import htmlToDraft from "html-to-draftjs";
+// import "./css/textarea.css";
 
 const MyBlock = styled.div`
   background-color: white;
@@ -73,33 +75,164 @@ const ThumbnailCategoryButton = tw(motion.div)`
 `;
 
 function PostAddForm2() {
+  const { state } = useLocation();
+
+  const stateConverter = (type: string, data: any) => {
+    if (type === "duration") {
+      if (
+        [
+          "미설정",
+          "봄학기",
+          "가을학기",
+          "여름방학",
+          "겨울방학",
+          "1년",
+          "1학기",
+          "2학기",
+          "3학기",
+          "4학기",
+        ].includes(data)
+      ) {
+        return data;
+      }
+      return "직접 입력";
+    } else if (type === "durationText") {
+      if (
+        [
+          "미설정",
+          "봄학기",
+          "가을학기",
+          "여름방학",
+          "겨울방학",
+          "1년",
+          "1학기",
+          "2학기",
+          "3학기",
+          "4학기",
+        ].includes(data)
+      ) {
+        return "";
+      }
+      return data;
+    } else if (type === "postTypes") {
+      let newDate = [...data];
+      const judge = (object: any) =>
+        [
+          "동아리",
+          "학회",
+          "프로젝트",
+          "학술모임",
+          "공모전/대회",
+          "운동/게임/취미",
+          "전공 스터디",
+        ].includes(object);
+
+      for (let i = 0; i < newDate.length; ++i) {
+        if (judge(newDate[i]) === false) {
+          newDate.splice(i, 1);
+          newDate.push("기타 모임");
+          return newDate;
+        }
+      }
+
+      return newDate;
+    } else if (type === "categoryETC") {
+      const judge = (object: any) =>
+        [
+          "동아리",
+          "학회",
+          "프로젝트",
+          "학술모임",
+          "공모전/대회",
+          "운동/게임/취미",
+          "전공 스터디",
+        ].includes(object);
+
+      for (let i = 0; i < data.length; ++i) {
+        if (judge(data[i]) === false) {
+          return data[i];
+        }
+      }
+      return "";
+    } else if (type === "keywords") {
+      // console.log("before", data);
+      const newKeywords = data?.filter((elem: string) => {
+        const list = [
+          ...state?.postTypes,
+          ...state?.tags?.first,
+          ...state?.tags?.second,
+        ];
+        // console.log("comp", list, elem);
+        // console.log(list.includes(elem));
+        if (list.includes(elem) === true) return false;
+        else return true;
+      });
+      // console.log("after", newKeywords);
+      return newKeywords;
+    }
+  };
+
   const { register, watch, handleSubmit, getValues, setValue, control } =
     useForm({
       mode: "onSubmit",
       defaultValues: {
-        title: "",
-        summary: "",
-        first: [],
-        second: [],
-        postTypes: ["수업 내 프로젝트"],
-        recruitStart: converter("year", new Date()), // string
-        recruitEnd: converter("year", new Date()), // string
-        duration: "미설정",
-        contact: "",
-        targetCount: "",
-        contactDetails: "",
-        content: "",
-        years: [],
-        departments: [],
+        title: state ? state?.title : "",
+        summary: state ? state?.summary : "",
+        first: state ? state?.tags?.first : [],
+        second: state ? state?.tags?.second : [],
+        postTypes: state ? state?.postTypes : ["수업 내 프로젝트"],
+        recruitStart: state
+          ? converter("dateTime", state?.recruitStart)
+          : converter("year", new Date()), // string
+        recruitEnd: state
+          ? converter("dateTime", state?.recruitEnd)
+          : converter("year", new Date()), // string
+        duration: state
+          ? stateConverter("duration", state?.duration)
+          : "미설정",
+        contact: state ? state?.contact : "",
+        targetCount: state ? state?.targetCount : "",
+        contactDetails: state ? state?.contactDetails : "",
+        years: state ? state?.years : [],
+        departments: state ? state?.departments : [],
         keyword: "",
-        keywords: [],
+        keywords: state ? stateConverter("keywords", state?.keywords) : [],
         firstKeyword: "",
         secondKeyword: "",
-        qualifications: "",
+        qualifications: state ? state?.qualifications : "",
         positionToggle: false,
-        total: "",
-        durationText: "",
-        categoryETC: "",
+        total: state ? state?.total : "",
+        categoryETC: state
+          ? stateConverter("categoryETC", state?.postTypes)
+          : "",
+        durationText: state
+          ? stateConverter("durationText", state?.duration)
+          : "",
+        // etc: state?.etc,
+
+        // title: "",
+        // summary: "",
+        // first: [],
+        // second: [],
+        // postTypes: ["수업 내 프로젝트"],
+        // recruitStart: converter("year", new Date()), // string
+        // recruitEnd: converter("year", new Date()), // string
+        // duration: "미설정",
+        // contact: "",
+        // targetCount: "",
+        // contactDetails: "",
+        // content: "",
+        // years: [],
+        // departments: [],
+        // keyword: "",
+        // keywords: [],
+        // firstKeyword: "",
+        // secondKeyword: "",
+        // qualifications: "",
+        // positionToggle: false,
+        // total: "",
+        // durationText: "",
+        // categoryETC: "",
       },
     });
 
@@ -202,7 +335,9 @@ function PostAddForm2() {
       }
     );
 
-  const [imageURLList, setImageURLList] = useState<string[] | []>([]);
+  const [imageURLList, setImageURLList] = useState<string[] | []>(
+    state?.posterPaths
+  );
 
   const onSubmit = (data: ISubmitDate, e: any) => {
     let newIsETC = false;
@@ -271,9 +406,19 @@ function PostAddForm2() {
       keywords: newKeywords,
       posterPaths: imageURLList?.length !== 0 ? imageURLList : null,
       isETC: newIsETC,
+      qualifications:
+        data?.qualifications?.length !== 0 ? data?.qualifications : null,
     };
 
-    createPostMutate(newPost as any);
+    console.log("Debug", newPost);
+
+    if (state) {
+      updatePost(state?.id, newPost as any);
+      alert("모집글이 수정되었습니다.");
+      navigate(-1);
+    } else {
+      createPostMutate(newPost as any);
+    }
   };
 
   const Categories = [
@@ -292,7 +437,16 @@ function PostAddForm2() {
   // useState로 상태관리하기 초기값은 EditorState.createEmpty()
   // EditorState의 비어있는 ContentState 기본 구성으로 새 개체를 반환 => 이렇게 안하면 상태 값을 나중에 변경할 수 없음.
 
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [editorState, setEditorState] = useState(() => {
+    if (!state.content) return EditorState.createEmpty();
+    const contentDraft = htmlToDraft(state?.content);
+    const { contentBlocks, entityMap } = contentDraft;
+    const contentState = ContentState.createFromBlockArray(
+      contentBlocks,
+      entityMap
+    );
+    return EditorState.createWithContent(contentState);
+  });
 
   const onEditorStateChange = (editorState: any) => {
     // editorState에 값 설정
@@ -400,7 +554,9 @@ function PostAddForm2() {
               <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
             </button>
 
-            <p className="text-[25px] font-[400]">모집글 작성하기</p>
+            <p className="text-[25px] font-[400]">
+              {state ? "모집글 수정하기" : "모집글 작성하기"}
+            </p>
           </span>
         </div>
 
@@ -874,7 +1030,7 @@ function PostAddForm2() {
               {getValues("departments").length === 0 ? (
                 <div className={`ml-[30px] ${FunctionBUTTON}`}>전공 무관</div>
               ) : (
-                getValues("departments").map((department) => (
+                getValues("departments").map((department: string) => (
                   <div className={`ml-[30px] ${FunctionBUTTON}`}>
                     {department}
                   </div>
@@ -883,7 +1039,7 @@ function PostAddForm2() {
               {getValues("years").length === 0 ? (
                 <div className={`ml-[30px] ${FunctionBUTTON}`}>학년 무관</div>
               ) : (
-                getValues("years").map((year) => (
+                getValues("years").map((year: string) => (
                   <div className={`ml-[30px] ${FunctionBUTTON}`}>{year}</div>
                 ))
               )}
@@ -1183,8 +1339,7 @@ function PostAddForm2() {
                 type="submit"
                 className="text-white bg-blue-500  text-[18px] px-[20px] py-[8px] rounded-lg"
               >
-                {" "}
-                모집글 등록하기
+                {state ? "모집글 수정하기" : "모집글 등록하기"}
               </button>
             ) : (
               <button
