@@ -42,7 +42,7 @@ function Thumbnail({
         {categories.map((category, index) => (
           <span
             key={index}
-            className="px-[11px] py-[2px] rounded-full text-[13px] bg-blue-100 mr-[10px] rounded-full"
+            className="px-[11px] py-[2px] rounded-full text-[13px] bg-blue-200 mr-[10px] rounded-full"
           >
             {category}
           </span>
@@ -53,7 +53,7 @@ function Thumbnail({
         {keywordsFirstLine.map((keyword, index) => (
           <span
             key={index}
-            className="px-[11px] py-[2px] rounded-full text-[13px] bg-blue-200 mr-[10px] rounded-full"
+            className="px-[11px] py-[2px] rounded-full text-[13px] bg-blue-100 mr-[10px] rounded-full"
           >
             {keyword}
           </span>
@@ -63,7 +63,7 @@ function Thumbnail({
         {keywordsSecondLine.map((keyword, index) => (
           <span
             key={index}
-            className="px-[11px] py-[2px] rounded-full text-[13px] bg-blue-200 mr-[10px] rounded-full "
+            className="px-[11px] py-[2px] rounded-full text-[13px] bg-blue-100 mr-[10px] rounded-full "
           >
             {keyword}
           </span>

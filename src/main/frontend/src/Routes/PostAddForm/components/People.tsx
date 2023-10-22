@@ -1,6 +1,8 @@
 import { TextField } from "@mui/material";
 import { Controller } from "react-hook-form";
 export function People({ getValues, setValue, register, control }: any) {
+  
+  
   const MainBLUE = "bg-blue-200";
 
   const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8px] rounded-lg`;

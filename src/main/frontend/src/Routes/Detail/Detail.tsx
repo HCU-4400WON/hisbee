@@ -1,6 +1,12 @@
 import tw from "tailwind-styled-components";
 import React, { useEffect, useState } from "react";
-import { IPost, loginCheckApi, readOnePost, updatePost } from "api";
+import {
+  IPost,
+  IUpdatePost,
+  loginCheckApi,
+  readOnePost,
+  updatePost,
+} from "api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 
@@ -423,7 +429,7 @@ function Detail() {
     };
     if (id) {
       console.log(newData, "new");
-      await updatePost(+id, newData);
+      await updatePost(+id, newData as any);
 
       refetch();
     }

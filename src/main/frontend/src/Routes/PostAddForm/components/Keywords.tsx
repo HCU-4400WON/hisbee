@@ -45,6 +45,7 @@ export function Keywords({ getValues, setValue, register, control }: any) {
             (v: string, index: number) =>
               v !== "기타 모임" && (
                 <motion.button
+                  type="button"
                   whileFocus="vibrate"
                   initial="vibrateInit"
                   // animate="vibrateInit"

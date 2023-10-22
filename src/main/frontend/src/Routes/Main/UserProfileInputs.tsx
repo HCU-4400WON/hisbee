@@ -1,25 +1,10 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  ImemberSignup,
-  IRandomNickname,
-  majorAutoComplete,
-  memberSignUp,
-  randomNickname,
-  validationNickname,
-} from "api";
-import { isExtraSignupModalState, isSignupModalState } from "components/atom";
-import LoadingAnimation from "components/LoadingAnimation";
+import { IRandomNickname, randomNickname, validationNickname } from "api";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useLocation, useNavigate } from "react-router";
-import { Link } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
 import tw from "tailwind-styled-components";
 import { FunctionButton } from "components/FunctionButton";
 
-import * as wjCore from "@grapecity/wijmo";
-import * as wjcInput from "@grapecity/wijmo.react.input";
+import { Autocomplete, TextField } from "@mui/material";
 
 const departmentList = [
   "해당없음",
@@ -52,7 +37,6 @@ const departmentList = [
 const ValidationVariant = {
   hidden: {
     y: -10,
-    // color: "red",
     opacity: 0,
   },
 
@@ -75,16 +59,16 @@ font-main
 
 `;
 
-const InfoInput = tw.input`
+const InfoInput = tw(TextField)`
 w-full
 h-[35px]
 text-[15px]
 border-b-2
 px-[0px]
-
 `;
 
 const InfoBox = tw.div`
+
 `;
 
 const onKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -99,9 +83,10 @@ export default function UserProfileInputs({
   watch,
   getValues,
   setValue,
+  control,
   formState,
 }: any) {
-  watch(["nickname"]);
+  watch(["nickname", "major1", "major2", "canMajor2", "canMajor1"]);
   useEffect(() => {
     const validationNickFn = async () => {
       const result = await validationNickname(getValues("nickname"));
@@ -110,27 +95,16 @@ export default function UserProfileInputs({
     };
     validationNickFn();
   }, [getValues("nickname")]);
-  // console.log(getValues("nickname"));
 
   const [isPresent, setIsPresent] = useState<boolean>(false);
 
-  const [showList1, setShowList1] = useState<string[] | []>([]);
-  const [showList2, setShowList2] = useState<string[] | []>([]);
-
-  const [isShowList1, setIsShowList1] = useState<boolean>(false);
-  const [isShowList2, setIsShowList2] = useState<boolean>(false);
-
   useEffect(() => {
-    majorAutoComplete(getValues("major1")).then((data) => {
-      setShowList1(data.results);
-    });
     setValue("canMajor1", checkMajor(getValues("major1")));
   }, [getValues("major1")]);
 
   useEffect(() => {
-    majorAutoComplete(getValues("major2")).then((data) =>
-      setShowList2(data.results)
-    );
+    // majorAutoComplete(getValues("major2")).then((data) =>
+    // );
     setValue("canMajor2", checkMajor(getValues("major2")));
   }, [getValues("major2")]);
 
@@ -146,15 +120,16 @@ export default function UserProfileInputs({
 
         <div className={`w-[220px] px-[20px] `}>
           <InfoInput
+            inputProps={{ maxLength: 8 }}
             className={`${inputBgColor}`}
             type="text"
+            variant="standard"
             id="nicknameInput"
             onKeyPress={onKeyPress}
             {...register("nickname", {
               required: "필수 항목입니다.",
             })}
             placeholder="8자 이내로 작성해주세요"
-            maxLength={8}
           />
         </div>
         <FunctionButton
@@ -166,18 +141,6 @@ export default function UserProfileInputs({
           }}
         />
         <AnimatePresence>
-          {/* {(formState.errors.nickname?.message as string) && (
-            <motion.div
-              variants={ValidationVariant}
-              className={`absolute top-[38px] left-[60px] text-[13px] text-red-600 `}
-              initial="hidden"
-              animate="showing"
-              exit="exit"
-            >
-              * {formState.errors.nickname?.message as string}
-            </motion.div>
-          )} */}
-
           {getValues("nickname") !== "" && (
             <motion.div
               variants={ValidationVariant}
@@ -200,35 +163,27 @@ export default function UserProfileInputs({
         <InfoBox className="z-20 relative flex w-full items-start mb-[10px] h-[100px]">
           <Info className="mt-[5px]">1전공</Info>
           <div className={`w-[300px] px-[20px] flex flex-col`}>
-            <InfoInput
-              className={` ${inputBgColor} mb-[10px] `}
-              type="text"
-              onFocus={() => setIsShowList1(true)}
-              onKeyPress={onKeyPress}
-              {...register("major1", {
-                required: "필수 항목입니다.",
-                maxLength: {
-                  value: 10,
-                  message: "10자 이하만 가능합니다",
-                },
-              })}
-              placeholder="GLS는 1전공만 입력"
+            <Autocomplete
+              options={departmentList}
+              onChange={(e, newValue) => {
+                setValue("major1", newValue);
+              }}
+              defaultValue={getValues("major1")}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  type="text"
+                  variant="standard"
+                  onKeyPress={onKeyPress}
+                  {...register("major1", {
+                    maxLength: {
+                      value: 10,
+                      message: "10자 이하만 가능합니다",
+                    },
+                  })}
+                />
+              )}
             />
-            {isShowList1 && (
-              <select className="bg-gray-100" size={3}>
-                {showList1.length !== 0 &&
-                  showList1.map((elem, index) => (
-                    <option
-                      className="bg-slate-100"
-                      value={elem}
-                      key={index}
-                      onClick={() => setValue("major1", elem)}
-                    >
-                      {elem}
-                    </option>
-                  ))}
-              </select>
-            )}
           </div>
           <div
             className={`text-[13px] w-[100px] mt-[10px] ${
@@ -244,35 +199,28 @@ export default function UserProfileInputs({
           <Info className="mt-[5px]">2전공</Info>
           <div className={`w-[300px] px-[20px] `}>
             <div>
-              <InfoInput
-                className={` ${inputBgColor}`}
-                type="text"
-                onKeyPress={onKeyPress}
-                onFocus={() => setIsShowList2(true)}
-                {...register("major2", {
-                  maxLength: {
-                    value: 10,
-                    message: "10자 이하만 가능합니다",
-                  },
-                })}
+              <Autocomplete
+                options={departmentList}
+                onChange={(e, newValue) => {
+                  setValue("major2", newValue);
+                }}
+                defaultValue={getValues("major2")}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    type="text"
+                    variant="standard"
+                    onKeyPress={onKeyPress}
+                    {...register("major2", {
+                      maxLength: {
+                        value: 10,
+                        message: "10자 이하만 가능합니다",
+                      },
+                    })}
+                  />
+                )}
               />
             </div>
-
-            {isShowList2 && (
-              <select className="bg-gray-100 mt-[10px]" size={3}>
-                {showList2.length !== 0 &&
-                  showList2.map((elem, index) => (
-                    <option
-                      className="bg-slate-100"
-                      value={elem}
-                      key={index}
-                      onClick={() => setValue("major2", elem)}
-                    >
-                      {elem}
-                    </option>
-                  ))}
-              </select>
-            )}
           </div>
           <div
             className={`text-[13px] w-[100px] mt-[10px] ${

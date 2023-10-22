@@ -668,30 +668,36 @@ export const deletePost = (id: number) => {
   }
 };
 
-export interface IUpdatePost {
-  title?: string;
-  summary?: string;
-  tags?: ITags;
-  postTypes?: string[];
-  recruitStart?: string;
-  recruitEnd?: string;
-  // projectStart?: string;
-  targetCount?: string; // positions : 없을 경우 "전체", 인원 : ~ 로 넣어서 요청해주기
-  contact?: string;
-  qualifications?: string;
-  // Optional
-  duration?: string;
-  contactDetails?: string;
-  content?: string; // 텍스트 에디터 변환 코드가 들어갈 예정
-  years?: string[];
-  departments?: string[];
-  keywords?: string[];
-  posterPaths?: string[];
-  isClosed?: boolean;
-  isArchived?: boolean;
+export interface IClosePost {
+  isClosed: boolean;
 }
 
-export const updatePost = (id: number, data: IUpdatePost) => {
+export interface ITags {
+  first?: string[];
+  second?: string[];
+}
+
+export interface IUpdatePost {
+  title: string;
+  summary?: string | null;
+  tags: ITags;
+  postTypes: string[];
+  recruitStart?: string | null;
+  recruitEnd?: string | null;
+  duration?: string | null;
+  targetCount?: string;
+  contact: string;
+  contactDetails?: string | null;
+  content?: string | null;
+  years?: string[] | null;
+  departments?: string[] | null;
+  keywords?: string[] | null;
+  posterPaths?: string[] | null; // imageURLList를 string 배열로 추측, 실제로는 타입을 확인하셔야 합니다.
+  isETC?: boolean; // newIsETC를 boolean으로 추측, 실제로는 타입을 확인하셔야 합니다.
+  qualifications?: string | null;
+}
+
+export const updatePost = (id: number, data: IUpdatePost | IClosePost) => {
   try {
     // console.log("DD", data);
     const TOKEN = localStorage.getItem("key");
@@ -868,11 +874,6 @@ export interface IPosition {
   count: number;
 }
 
-export interface ITags {
-  first: string[];
-  second: string[];
-}
-
 export interface IReadOnePost {
   id: number;
   title: string;
@@ -914,25 +915,22 @@ export interface IReadAllPosts {
 
 export interface ICreatePost {
   title: string;
-  summary?: string;
-  tags?: ITags;
-  // tags?: string[];
+  summary?: string | null;
+  tags: ITags;
   postTypes: string[];
-  recruitStart: string;
-  recruitEnd?: string;
-  // projectStart?: string;
-  targetCount?: string; // positions : 없을 경우 "전체", 인원 : ~ 로 넣어서 요청해주기
+  recruitStart?: string | null;
+  recruitEnd?: string | null;
+  duration?: string | null;
+  targetCount?: string | null;
   contact: string;
-  qualifications?: string;
-  // Optional
-  duration?: string;
-  contactDetails?: string;
-  content?: string; // 텍스트 에디터 변환 코드가 들어갈 예정
-  years?: string[];
-  departments?: string[];
-  keywords?: string[];
-  posterPaths?: string[];
-  isETC: boolean;
+  contactDetails?: string | null;
+  content?: string | null;
+  years?: string[] | null;
+  departments?: string[] | null;
+  keywords?: string[] | null;
+  posterPaths?: string[] | null; // imageURLList를 string 배열로 추측, 실제로는 타입을 확인하셔야 합니다.
+  isETC?: boolean; // newIsETC를 boolean으로 추측, 실제로는 타입을 확인하셔야 합니다.
+  qualifications?: string | null;
 }
 
 export const createPost = async (data: ICreatePost) => {

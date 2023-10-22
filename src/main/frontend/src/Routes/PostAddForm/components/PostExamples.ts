@@ -1,26 +1,10 @@
 // converter
-export const converter = (what: string, info?: string | Date) => {
-  if (what === "year") {
-    let year = ((info as Date).getFullYear() + "").padStart(2, "0");
-    let month = ((info as Date).getMonth() + 1 + "").padStart(2, "0");
-    let date = ((info as Date).getDate() + "").padStart(2, "0");
-    let convertedDate = year + "-" + month + "-" + date;
-    // console.log("이거? " ,convertedDate);
-    return convertedDate;
-  } else if (what === "dateTime") {
-    if (!info) return null;
-    let year = (new Date(info as string).getFullYear() + "").padStart(2, "0");
-    let month = (new Date(info as string).getMonth() + 1 + "").padStart(2, "0");
-    let date = (new Date(info as string).getDate() + "").padStart(2, "0");
-    let convertedDate = year + "-" + month + "-" + date;
-    // console.log("이거? " ,convertedDate);
-    return convertedDate;
-  }
-};
+
+import { dataConverter } from "./Converter";
 
 // 현재 부터 end날짜까지의 디데이를 세줌
 export const dateDifference = (end: string) => {
-  const date1 = new Date(converter("year", new Date())!);
+  const date1 = new Date(dataConverter("year", new Date())!);
   const date2 = new Date(end);
 
   const diffDate = date2.getTime() - date1.getTime();
@@ -31,13 +15,14 @@ export const dateDifference = (end: string) => {
 // D-Day 를 상시모집 과 같은 스트링으로 바꿔줌
 
 export const convertDateToString = (postStart: any, postEnd: any) => {
+  console.log(postStart, postEnd);
   if (dateDifference(postStart) > 0) {
     if (dateDifference(postEnd!) < 0) return "모집 마감";
     else return "모집 예정";
   } else {
     if (dateDifference(postEnd!) === 0) {
       return "D-Day";
-    } else if (postEnd === "") {
+    } else if (postEnd === null) {
       return "상시 모집";
     } else if (dateDifference(postEnd!) > 0) {
       return "D-" + dateDifference(postEnd!);
@@ -166,7 +151,7 @@ export const PostExamples: IPostExamples = {
     {
       title: "데이터베이스 기초 프로젝트",
       subTitle: "데이터베이스 설계 및 구현 프로젝트",
-      categories: ["프로젝트", "학술모임"],
+      categories: ["수업 내 프로젝트"],
       keywordsFirstLine: ["데이터베이스", "SQL", "ERD"],
       keywordsSecondLine: ["MySQL", "정규화"],
       Likes: 8,
@@ -176,7 +161,7 @@ export const PostExamples: IPostExamples = {
     {
       title: "브랜딩 디자인 프로젝트",
       subTitle: "새로운 스타트업 브랜드 아이덴티티 디자인",
-      categories: ["프로젝트", "디자인"],
+      categories: ["수업 내 프로젝트"],
       keywordsFirstLine: ["브랜딩", "로고 디자인", "아이덴티티"],
       keywordsSecondLine: ["팔레트", "타이포", "모션그래픽"],
       Likes: 18,
@@ -186,7 +171,7 @@ export const PostExamples: IPostExamples = {
     {
       title: "UI/UX 디자인 워크숍",
       subTitle: "모바일 앱 인터페이스 리디자인 프로젝트",
-      categories: ["프로젝트", "디자인"],
+      categories: ["수업 내 프로젝트"],
       keywordsFirstLine: ["UI/UX", "앱 디자인", "인터렉션"],
       keywordsSecondLine: ["프로토타이핑", "스케치", "Figma"],
       Likes: 24,
@@ -196,7 +181,7 @@ export const PostExamples: IPostExamples = {
     {
       title: "인공지능 모델 프로젝트",
       subTitle: "기계 학습 모델을 활용한 이미지 분류 프로젝트",
-      categories: ["프로젝트", "학술모임"],
+      categories: ["수업 내 프로젝트"],
       keywordsFirstLine: ["인공지능", "기계 학습", "딥러닝"],
       keywordsSecondLine: ["TensorFlow", "PyTorch", "CNN"],
       Likes: 20,
@@ -208,7 +193,7 @@ export const PostExamples: IPostExamples = {
     {
       title: "웹 서비스 프로젝트",
       subTitle: "방학 동안 포트폴리오 함께 만들자!",
-      categories: ["프로젝트", "학술모임"],
+      categories: ["자율 프로젝트"],
       keywordsFirstLine: ["웹/앱", "리액트", "자바"],
       keywordsSecondLine: ["전공 무관 누구든지"],
       Likes: 5,
@@ -218,7 +203,7 @@ export const PostExamples: IPostExamples = {
     {
       title: "iF공모전 참여할 콘디생 모집",
       subTitle: "디리기1,2 수업 수강 중이거나 수강 완료하신 분",
-      categories: ["공모전/대회", "운동/게임/취미"],
+      categories: ["자율 프로젝트"],
       keywordsFirstLine: ["UX", "제품 디자인"],
       keywordsSecondLine: ["5학기 이상"],
       Likes: 15,
@@ -229,7 +214,7 @@ export const PostExamples: IPostExamples = {
       title: "한동대 주최 해커톤, 놀이톤",
       subTitle:
         "한동대학교에서 주최하는 두 번째 해커톤인 놀이톤에 여러분을 초대합니다.",
-      categories: ["프로젝트"],
+      categories: ["자율 프로젝트"],
       keywordsFirstLine: ["한동대", "포스텍"],
       keywordsSecondLine: ["기획자", "디자이너", "개발자"],
       Likes: 35,
@@ -240,7 +225,7 @@ export const PostExamples: IPostExamples = {
       title: "시각디자인 학회 도트 리쿠르팅",
       subTitle:
         "도트는 그래픽,편집,타이포 등 다양한 분야의 디자인을 실험적으로 연구하는 학회입니다.",
-      categories: ["학회"],
+      categories: ["자율 프로젝트"],
       keywordsFirstLine: ["시각디자인", "2전공 가능", "콘디 학회"],
       keywordsSecondLine: ["1,2학년 리쿠르팅"],
       Likes: 21,

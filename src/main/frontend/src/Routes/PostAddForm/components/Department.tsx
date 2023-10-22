@@ -3,7 +3,6 @@ import { UseFormReturn } from "react-hook-form";
 
 export function Department({ getValues, setValue }: any) {
   const Majors = [
-    // {"상관없음":[]},
     { 경영경제학부: ["경영학", "경제학", "GM"] },
     { 상당심리사회복지학부: ["상담심리학", "사회복지학"] },
     { 생명과학부: ["생명과학부"] },
@@ -16,12 +15,24 @@ export function Department({ getValues, setValue }: any) {
     { 공간환경시스템공학부: ["건설공학", "도시환경공학"] },
     { 콘텐츠융합디자인학부: ["시각디자인", "제품디자인"] },
   ];
+
+  const departments = getValues("departments");
+
+  const initialVisibleValues = Majors.map((majorObj) =>
+    Object.values(majorObj)[0].some((major: string) =>
+      departments.includes(major)
+    )
+  );
+
   const [visible, setVisible] = useState<Boolean[]>(
-    Array.from({ length: Majors.length }, () => false)
+    // Array.from({ length: Majors.length }, () => false)
+    initialVisibleValues
   );
   const MainBLUE = "bg-blue-200";
   const LightMainBLUE = "bg-blue-100";
-  const [majorToggle, setMajorToggle] = useState<boolean>(false);
+  const [majorToggle, setMajorToggle] = useState<boolean>(
+    getValues("departments").length === 0 ? false : true
+  );
   const MajorSeletedBUTTON = `border-2 border-blue-300 ${MainBLUE} px-[15px] py-[8px] rounded-lg`;
 
   const DetailSelectedBUTTON = `border-2 border-blue-300 ${LightMainBLUE} px-[15px] py-[8px] rounded-lg`;
