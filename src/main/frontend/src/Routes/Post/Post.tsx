@@ -32,6 +32,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import { Autocomplete, TextField } from "@mui/material";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import { BsPlusLg } from "react-icons/bs";
 const SelectFilterBox = tw.select`
 mr-[20px] px-[10px] bg-[#F9FAFB] py-[5px] rounded-lg text-center border
 text-gray-500 text-[16px] w-auto
@@ -231,17 +232,9 @@ function Post() {
     if (selectedId === "categoryButton") {
       setSelectedCategory(selectedValue);
     }
-
     // else i
     else if (selectedId === "deleteKeywordButton") {
-      setSelectedKeywords((prev) => {
-        const deleteIdx = prev.findIndex((elem) => elem === selectedValue);
-        const newKeywords = [
-          ...prev.slice(0, deleteIdx),
-          ...prev.slice(deleteIdx + 1),
-        ];
-        return newKeywords;
-      });
+      setSelectedKeywords((prev) => prev.filter((e) => e !== selectedValue));
     } else if (selectedId === "insertKeywordButton") {
       setSelectedKeywords((prev) => {
         const newKeywords = [...prev, selectedValue];
@@ -318,16 +311,6 @@ function Post() {
 
   const io = new IntersectionObserver((entries, observer) => {
     entries.forEach((entry) => {
-      // if (getPageNums < 4) {
-      //   console.log("!!!!!!!!!!!!!");
-      //   // window.removeEventListener("scroll", handleScroll);
-      //   observer.unobserve(document.getElementById("sentinel") as Element);
-
-      //   setHideSentinel(true);
-      //   console.log("debug", getPageNums);
-      //   return;
-      // }
-
       if (!entry.isIntersecting) return;
       setNowPage((prev) => prev + 1);
       //entry가 interscting 중이 아니라면 함수를 실행하지 않습니다.
@@ -368,6 +351,7 @@ function Post() {
 
   const searchKeyword = (e: any) => {
     e.preventDefault();
+    if (keywordInput === "") return;
     setSelectedKeywords((prev) => [...prev, keywordInput]);
     setKeywords((prev) => [...prev, keywordInput]);
     setKeywordInput("");
@@ -376,7 +360,6 @@ function Post() {
   const onEnterPress = useCallback(
     (e: any) => {
       if (e.key === "Enter" && !autocompleteOpenRef.current) {
-        console.log("enter");
         searchKeyword(e);
       }
     },
@@ -407,10 +390,7 @@ function Post() {
         ) : null}
 
         <Container>
-          <Banner
-            src="./img/banner_post.png"
-            className="min-w-[1470px]"
-          ></Banner>
+          <Banner src="./img/banner_post.png" className="w-full  "></Banner>
 
           <Outline bgColor="bg-white">
             {/* <div className=" mx-auto flex items-center w-full h-[40px] md:h-[60px] bg-white "> */}
@@ -474,7 +454,7 @@ function Post() {
 
                   <SearchOutlinedIcon
                     className="search"
-                    sx={{ width: "22px", mr: "10px" }}
+                    sx={{ width: "22px", mr: "20px" }}
                     onClick={searchKeyword}
                   />
 
@@ -485,7 +465,7 @@ function Post() {
                           id="deleteKeywordButton"
                           onClick={onClick}
                           key={index}
-                          className=" flex justify-center text-[14px] bg-white flex items-center py-[5px] border-0 rounded-lg text-center px-[13px] h-[30px]"
+                          className="flex justify-center text-[14px] bg-white flex items-center py-[5px] border-0 rounded-lg text-center px-[13px] h-[30px]"
                         >
                           <p>{keyword}</p>
                           <CloseIcon sx={{ width: "17px", ml: "4px" }} />
@@ -510,7 +490,7 @@ function Post() {
                           className="flex justify-center text-[14px] bg-gray-200 flex items-center py-[5px] border-0 rounded-lg text-center px-[13px] h-[30px]"
                         >
                           <p>{keyword}</p>{" "}
-                          <AddIcon sx={{ width: "17px", ml: "4px" }} />
+                          <BsPlusLg style={{ marginLeft: "5px" }} />
                         </button>
                       )
                   )}
@@ -543,7 +523,6 @@ function Post() {
                         value={selectedMajor}
                         onChange={(e: any) => {
                           setSelectedMajor(e.currentTarget.value);
-                          // console.log(selectedGrade);
                         }}
                         // ref={majorRef}
                         id="majorSelect"

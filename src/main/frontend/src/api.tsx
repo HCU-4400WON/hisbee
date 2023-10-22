@@ -921,7 +921,7 @@ export interface ICreatePost {
   recruitStart?: string | null;
   recruitEnd?: string | null;
   duration?: string | null;
-  targetCount?: string;
+  targetCount?: string | null;
   contact: string;
   contactDetails?: string | null;
   content?: string | null;

@@ -129,7 +129,6 @@ function Profile2() {
       setValue("nickname", data.profile.nickname);
       setValue("major1", data?.profile.major1);
       setValue("major2", data?.profile?.major2);
-      // console.log(data);
     },
     onError: (error) => {
       // if (((error as AxiosError).response as AxiosResponse).status === 401) {
@@ -141,16 +140,23 @@ function Profile2() {
     },
   });
 
-  const { register, handleSubmit, formState, setValue, getValues, watch } =
-    useForm({
-      defaultValues: {
-        nickname: "",
-        major1: "",
-        major2: "",
-        canMajor1: "",
-        canMajor2: "",
-      },
-    });
+  const {
+    register,
+    handleSubmit,
+    formState,
+    setValue,
+    getValues,
+    watch,
+    control,
+  } = useForm({
+    defaultValues: {
+      nickname: "",
+      major1: "",
+      major2: "",
+      canMajor1: "",
+      canMajor2: "",
+    },
+  });
 
   watch(["major1", "major2", "nickname", "canMajor1", "canMajor2"]);
 
@@ -238,7 +244,7 @@ function Profile2() {
       <Helmet>
         <title>{data?.profile.nickname}</title>
       </Helmet>
-      <div className="w-full flex">
+      <div className="min-w-[1000px] flex">
         <Sidebar>
           <SidebarTitle className="relative">마이 페이지</SidebarTitle>
 
@@ -294,6 +300,7 @@ function Profile2() {
                 {modifyToggle ? (
                   <>
                     <UserProfileInputs
+                      control={control}
                       watch={watch}
                       register={register}
                       getValues={getValues}

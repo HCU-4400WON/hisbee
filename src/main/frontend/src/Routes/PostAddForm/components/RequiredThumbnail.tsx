@@ -5,6 +5,7 @@ import Soon from "components/Soon";
 import { Controller } from "react-hook-form";
 import { TextField } from "@mui/material";
 import { LightMainBLUE } from "./color";
+import ClearIcon from "@mui/icons-material/Clear";
 
 const presenseVariant = {
   initial: {
@@ -54,7 +55,7 @@ flex items-center
 `;
 
 const ThumbnailKeywordsButton = tw(motion.div)`
-  text-[15px] px-[15px] py-[2px] rounded-full mr-[10px] bg-blue-100
+  flex items-center gap-[3px] text-[15px] px-[15px] rounded-full mr-[10px] bg-blue-100
 `;
 
 const PostTypesButton = tw(motion.div)`
@@ -75,10 +76,6 @@ relative
 
 const KeywordInputRow = tw.div`
   flex items-center absolute
-`;
-
-const CustomKeywordInput = tw.input`
-KeywordInput py-[2px] text-[15px] px-[15px] rounded-full ${LightMainBLUE}
 `;
 
 const KeywordAddIcon = tw.button`
@@ -241,7 +238,8 @@ export default function RequiredThumbnail({
                   exit="exit"
                 >
                   {keyword}
-                  <KeywordDeleteIcon
+                  <ClearIcon
+                    sx={{ fontSize: "15px", color: "gray" }}
                     onClick={() =>
                       handleThumbnailKeywordDelete(LineIndex, keywordIndex)
                     }
@@ -253,8 +251,9 @@ export default function RequiredThumbnail({
           <KeywordInputContainer>
             {getValues(lineObj.array as any).length < 3 && (
               <KeywordInputRow>
-                <CustomKeywordInput
+                <input
                   type="text"
+                  className={`KeywordInput py-[2px] text-[15px] px-[15px] rounded-full ${LightMainBLUE}`}
                   style={{
                     width:
                       getValues(lineObj.str as any).length > 5

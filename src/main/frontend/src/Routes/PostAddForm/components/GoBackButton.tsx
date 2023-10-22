@@ -1,5 +1,6 @@
 import { isConfirmModalState } from "components/atom";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 export default function GoBackButton() {
   const setIsGoBackConfirmModal = useSetRecoilState(isConfirmModalState);
@@ -10,7 +11,7 @@ export default function GoBackButton() {
 
   return (
     <button onClick={handleGoBack}>
-      <i className="fa-solid fa-arrow-left-long text-[20px]"></i>
+      <ArrowBackIcon className="text-[25px]"></ArrowBackIcon>
     </button>
   );
 }

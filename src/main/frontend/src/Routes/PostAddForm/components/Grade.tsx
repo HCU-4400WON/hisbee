@@ -17,7 +17,9 @@ export function Grade({ getValues, setValue }: any) {
   const DetailUnSelectedBUTTON = `bg-blue-100 px-[15px] py-[8px] rounded-lg`;
   const MajorSeletedBUTTON = `border-2 border-blue-300 bg-blue-200 px-[15px] py-[8px] rounded-lg`;
   const UnSelectedBUTTON = `bg-gray-200 text-gray-400 px-[15px] py-[8px] rounded-lg`;
-  const [gradeToggle, setGradeToggle] = useState<boolean>(false);
+  const [gradeToggle, setGradeToggle] = useState<boolean>(
+    getValues("years").length === 0 ? false : true
+  );
 
   return (
     <div className="w-[56%]">

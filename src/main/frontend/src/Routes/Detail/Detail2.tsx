@@ -17,6 +17,7 @@ import { isLoginState, isPostDeleteModalState } from "components/atom";
 import PostDeleteModal from "Routes/Detail/PostDeleteModal";
 
 import { AxiosError, AxiosResponse } from "axios";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
@@ -34,25 +35,24 @@ min-h-[800px]
 flex
 `;
 const GoBackSpan = tw.span`
-md:min-w-[100px] py-[62px] border-gray-300  flex justify-end
+min-w-[100px] py-[58px] border-gray-300  flex justify-end
 `;
 
 const GoBackButton = tw.button`
-md:mr-[40px] mr-[10px] h-[30px]`;
+mr-[40px] h-[30px]`;
 
-const GoBackIcon = tw.i`
-fa-solid fa-arrow-left text-[18px] md:text-[23px]
+const GoBackIcon = tw(ArrowBackIcon)`
+text-[23px]
 `;
 
 const Form = tw.div`
 w-full
 `;
 const FormHeader = tw.header`
-pt-[62px] md:pt-[55px] flex items-center justify-between `;
+pt-[55px] flex items-center justify-between `;
 
 const FormTitle = tw.div`
-text-[20px] md:text-[25px] font-semibold 
-font-main
+text-[25px] font-main
 `;
 
 const FormAuthorNButtonRow = tw.div`
@@ -61,8 +61,8 @@ flex justify-between
 
 const Grid = tw.div`
 grid 
-md:grid-cols-2  
-grid-cols-1
+grid-cols-2  
+
 border-gray-300 
 
 
@@ -96,22 +96,20 @@ font-medium
 const FormAuthorSpan = tw.div`
 
 flex 
-flex-col md:flex-row items-center
+flex-row items-center
 py-[20px]
 `;
 
 const WriterSpan = tw.span`
-flex w-[200px] md:w-[auto]
+flex w-[auto]
 `;
 const WriteInfo = tw.span`
-text-[13px]
-md:text-[17px]
+text-[17px]
 
-md:w-auto
+w-auto
 mr-[20px]
 text-gray-400
-h-[20px]
-md:h-auto
+h-auto
 `;
 
 function Detail2() {
@@ -473,7 +471,7 @@ function Detail2() {
                 </div>
               </Form>
 
-              <div className="min-w-[40px] md:min-w-[100px] "></div>
+              <div className="min-w-[100px] "></div>
             </Container>
           </Outline>
         </>
