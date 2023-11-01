@@ -43,9 +43,12 @@ function Footer() {
               className="w-[80px] h-[40px] md:w-[100px] md:h-[50px]"
             />
           </a> */}
-          <span className=" hover:opacity-60 mr-[30px] font-unique text-[23px]">
-            CONTACT
-          </span>
+          <a href="https://forms.gle/LxuwbuM3fs6L3Hbz6" target="_blank">
+            <span className=" hover:opacity-60 mr-[30px] font-unique text-[23px]">
+              CONTACT
+            </span>
+          </a>
+
           <span>
             <p
               onMouseOver={() => setIsTeamModal(true)}
