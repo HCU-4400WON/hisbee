@@ -97,7 +97,7 @@ function Header() {
           <NavLeftBox>
             <Link to="/">
               <Logo
-                src="/img/logo_hisbee.png"
+                src="/img/teamPlusLogo.png"
                 variants={LogoVairants}
                 initial="initial"
                 whileHover="hover"

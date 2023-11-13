@@ -390,7 +390,7 @@ function Post() {
         ) : null}
 
         <Container>
-          <Banner src="./img/banner_post.png" className="w-full  "></Banner>
+          <Banner src="./img/teamPlusBanner.png" className="w-full  "></Banner>
 
           <Outline bgColor="bg-white">
             {/* <div className=" mx-auto flex items-center w-full h-[40px] md:h-[60px] bg-white "> */}
