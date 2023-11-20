@@ -1,5 +1,5 @@
 import tw from "tailwind-styled-components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
@@ -15,11 +15,21 @@ import {
   IPostExample,
   PostExamples,
 } from "./components/PostExamples";
-import { createPost, ICreatePost, IUpdatePost, updatePost } from "api";
+import {
+  createPost,
+  ICreatePost,
+  IUpdatePost,
+  loginCheckApi,
+  updatePost,
+} from "api";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError, AxiosResponse } from "axios";
-import { useRecoilState } from "recoil";
-import { isAlertModalState, isConfirmModalState } from "components/atom";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  isAlertModalState,
+  isConfirmModalState,
+  isLoginState,
+} from "components/atom";
 import Soon from "components/Soon";
 import { AnimatePresence, motion } from "framer-motion";
 import { ImageUpload } from "./components/ImageUpload";
@@ -178,6 +188,22 @@ const optionalFoldText = [
 ];
 
 function PostAddForm2() {
+  const setIsLogin = useSetRecoilState(isLoginState);
+
+  const { mutate: loginCheckMutate, isLoading: isLoginCheckLoading } =
+    useMutation(["loginCheckApiPost" as string], loginCheckApi, {
+      onError: (error) => {
+        if (((error as AxiosError).response as AxiosResponse).status === 401) {
+          if (localStorage.getItem("key")) localStorage.removeItem("key");
+          setIsLogin(false);
+        }
+      },
+    });
+
+  useEffect(() => {
+    loginCheckMutate();
+  }, []);
+
   const [isGoBackConfirmModal, setIsGoBackConfirmModal] =
     useRecoilState(isConfirmModalState);
 

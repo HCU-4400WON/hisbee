@@ -205,7 +205,7 @@ function Post() {
     });
 
   useEffect(() => {
-    // loginCheckMutate();
+    loginCheckMutate();
   }, []);
 
   const onInput = (event: React.FormEvent<HTMLSelectElement>) => {
