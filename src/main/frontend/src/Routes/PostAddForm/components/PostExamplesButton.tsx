@@ -36,7 +36,7 @@ export default function PostExamplesButton({ getValues }: IProps) {
                 닫기
               </button>
             </div>
-            <motion.div className="w-600px h-[300px] bg-gray-200 flex items-center overflow-scroll ">
+            <motion.div className=" h-[300px] bg-gray-200 flex items-center overflow-scroll w-full">
               {postExampleToggle &&
                 (
                   PostExamples[
