@@ -376,7 +376,7 @@ function Post() {
       {(isLoading || isLoginCheckLoading) && <LoadingLottie isPost={true} />}
       <>
         <Helmet>
-          <title>Hisbee</title>
+          <title>팀 플러스</title>
         </Helmet>
         {isLoginModal ? <Login /> : null}
         {isSignupModal ? <SignUp2 /> : null}
