@@ -30,7 +30,7 @@ function Footer() {
     <Outline>
       <div className="min-w-[1470px] h-[150px] pr-[50px] flex justify-between items-center mt-[0px]">
         <div className="flex justify-start items-end">
-          <img src="/img/logo_hisbee.png" className="w-[140px] mx-[30px]" />
+          <img src="/img/teamPlusLogo.png" className="w-[140px] mx-[30px]" />
           <span className="text-[12px] pb-[6px] z-10 min-w-[220px] font-unique text-gray-500 block">
             <strong>ⓒ</strong> 2023 Team.Hot6 All rights reserved
           </span>
@@ -38,16 +38,16 @@ function Footer() {
 
         <div className="flex justify-end w-[300px] items-center relative">
           {/* <a href="https://github.com/HCU-4400WON/hot6" target="_blank">
-            <img
+            <imgr
               src="/img/github.png"
               className="w-[80px] h-[40px] md:w-[100px] md:h-[50px]"
             />
           </a> */}
-          <a href="https://forms.gle/LxuwbuM3fs6L3Hbz6" target="_blank">
+          {/* <a href="https://forms.gle/LxuwbuM3fs6L3Hbz6" target="_blank">
             <span className=" hover:opacity-60 mr-[30px] font-unique text-[23px]">
               CONTACT
             </span>
-          </a>
+          </a> */}
 
           <span>
             <p

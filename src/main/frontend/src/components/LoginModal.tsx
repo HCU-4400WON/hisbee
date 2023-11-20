@@ -40,7 +40,7 @@ function Login() {
       <div className="modal fixed  z-20 w-[700px] h-[420px] bg-[#fff]  p-[50px]">
         <div className="flex justify-between w-full h-[20px] items-center mb-[20px]">
           {/* <img src="/img/logo_hisbee.png" className="w-[110px] mb-[0px]" /> */}
-          <img src="/img/logo_hisbee.png" className="w-[110px] mb-[20px]" />
+          <img src="/img/teamPlusLogo.png" className="w-[110px] mb-[20px]" />
 
           <svg
             onClick={onClick}

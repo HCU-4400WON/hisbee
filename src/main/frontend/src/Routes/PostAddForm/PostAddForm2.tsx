@@ -199,7 +199,7 @@ function PostAddForm2() {
         summary: state ? state?.summary : "",
         first: state ? state?.tags?.first : [],
         second: state ? state?.tags?.second : [],
-        postTypes: state ? state?.postTypes : ["수업 내 프로젝트"],
+        postTypes: state ? state?.postTypes : ["공모전/대회/프로젝트"],
         recruitStart: state
           ? dataConverter("dateTime", state?.recruitStart)
           : dataConverter("year", new Date()), // string
