@@ -57,7 +57,7 @@ function Login() {
         <div></div>
         <div className=" flex flex-col items-center pt-[40px] pb-[40px] text-[16px] text-center">
           <p className="text-[22px] font-[500] mb-[30px]"> Login </p>
-          🗝 로그인을 통해 HISBEE 서비스의 기능들을 이용해보세요! <br></br>
+          🗝 로그인을 통해 팀플러스를 이용해보세요! <br></br>
           {/* 글
           작성 , 좋아요 , 마이페이지 기능이 제공됩니다. */}
         </div>

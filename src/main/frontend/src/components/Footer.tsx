@@ -32,7 +32,7 @@ function Footer() {
         <div className="flex justify-start items-end">
           <img src="/img/teamPlusLogo.png" className="w-[140px] mx-[30px]" />
           <span className="text-[12px] pb-[6px] z-10 min-w-[220px] font-unique text-gray-500 block">
-            <strong>ⓒ</strong> 2023 Team.Hot6 All rights reserved
+            <strong>ⓒ</strong> 2023 Team+. All rights reserved.
           </span>
         </div>
 
