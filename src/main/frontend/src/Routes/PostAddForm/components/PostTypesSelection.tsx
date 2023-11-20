@@ -13,8 +13,15 @@ export default function PostTypesSelection({ getValues, setValue }: any) {
     // "운동/게임/취미",
     // "전공 스터디",
     // "기타 모임",
-    "수업 내 프로젝트",
-    "자율 프로젝트",
+    // "수업 내 프로젝트",
+    // "자율 프로젝트",
+    // "전체",
+    "공모전/대회/프로젝트",
+    "동아리",
+    "학회",
+    "수업 팀플/스터디",
+    "운동/게임/취미",
+    // "기타 모임",
   ];
 
   return (
@@ -29,7 +36,7 @@ export default function PostTypesSelection({ getValues, setValue }: any) {
       </span>
 
       <div className="flex">
-        <div className="grid grid-cols-2 gap-x-[20px] w-[350px]">
+        <div className="grid grid-cols-2 gap-x-[20px] w-[450px]">
           {Categories.map((category, index) => (
             <span key={index} className="flex items-center mt-[20px]">
               <button
@@ -38,7 +45,7 @@ export default function PostTypesSelection({ getValues, setValue }: any) {
                   getValues("postTypes")?.includes(category as never)
                     ? MajorSeletedBUTTON
                     : UnSelectedBUTTON
-                } px-[15px] py-[8px] rounded-lg w-[150px]`}
+                } px-[15px] py-[8px] rounded-lg w-[200px]`}
                 onClick={(e) => {
                   const gv = getValues("postTypes");
                   if (gv.length === 0) {

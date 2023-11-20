@@ -33,7 +33,7 @@ export default function AlertModal({ text, onClick }: any) {
           <span className="flex justify-between ">
             <div className="w-[10px]"></div>
 
-            <img className="w-[120px]" src="/img/logo_hisbee.png " />
+            <img className="w-[120px]" src="/img/teamPlusLogo.png " />
             <i
               onClick={onClick}
               id="no"
