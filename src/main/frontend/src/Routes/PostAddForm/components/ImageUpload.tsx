@@ -52,9 +52,9 @@ export function ImageUpload({ imageURLList, setImageURLList }: IProps) {
       () => {
         e.target.value = "";
         getDownloadURL(storageRef).then((downloadURL) => {
-          // console.log("File available at", downloadURL);
+          console.log("File available at", downloadURL);
           setImageURL(downloadURL);
-          setImageURLList((prev) => [...prev, downloadURL]);
+          setImageURLList((prev: any) => [...prev, downloadURL]);
           setPosterUploadList((prev) => [...prev.slice(0, prev.length - 1)]);
         });
       }

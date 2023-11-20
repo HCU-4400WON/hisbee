@@ -283,7 +283,7 @@ function PostAddForm2() {
     useRecoilState(isAlertModalState);
 
   const [imageURLList, setImageURLList] = useState<string[] | []>(
-    state?.posterPaths
+    state?.posterPaths ? state?.posterPaths : []
   );
 
   // useState로 상태관리하기 초기값은 EditorState.createEmpty()
