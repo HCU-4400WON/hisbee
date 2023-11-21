@@ -365,6 +365,7 @@ function Detail2() {
                           href={`${data?.contact}`}
                           className=" text-[15px] font-bold underline"
                           target="_blank"
+                          rel="noreferrer"
                         >
                           {data.contact.length > 45
                             ? data?.contact.slice(0, 45) + "..."
