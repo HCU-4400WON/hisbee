@@ -135,7 +135,7 @@ function Detail2() {
       },
       onError: () => {
         alert("존재하지 않는 게시물입니다.");
-        navigate(-1);
+        navigate("/");
       },
     }
   );
@@ -362,9 +362,15 @@ function Detail2() {
                       <GridItem>
                         <ItemTitle>신청 경로</ItemTitle>
                         <a
-                          href={`${data?.contact}`}
+                          href={`${
+                            data?.contact.includes("http://") ||
+                            data?.contact.includes("https://")
+                              ? data?.contact
+                              : `http://${data?.contact}`
+                          }`}
                           className=" text-[15px] font-bold underline"
                           target="_blank"
+                          rel="noreferrer"
                         >
                           {data.contact.length > 45
                             ? data?.contact.slice(0, 45) + "..."
